@@ -18,6 +18,7 @@ public class FileUtils
     private static File friendIdMapFile;
     private static File cooperationIdMapFile;
     private static File reserveIdMapFile;
+    private static File beachIdMapFile;
     private static File cityCodeMapFile;
     private static File statisticsFile;
     private static File exportedStatisticsFile;
@@ -28,27 +29,49 @@ public class FileUtils
     private static File runtimeLogFile;
     private static File cityCodeFile;
 
+    private static void copyFile(File srcDir, File dstDir, String filename) {
+        File file = new File(srcDir, filename);
+        if (!file.exists()) {
+            return;
+        }
+        String content = readFromFile(file);
+        file = new File(dstDir, filename);
+        write2File(content, file);
+    }
     @SuppressWarnings("deprecation")
     public static File getMainDirectoryFile() {
-        if(mainDirectory == null) {
-            mainDirectory = new File(Environment.getExternalStorageDirectory(), "xqe");
-            if(mainDirectory.exists()) {
-                if(mainDirectory.isFile())
-                {
-                    mainDirectory.delete();
-                    mainDirectory.mkdirs();
-                }
-            } else {
+        if (mainDirectory == null) {
+            File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (!storageDir.exists()) {
+                storageDir.mkdirs();
+            }
+            mainDirectory = new File(storageDir, "xqe");
+            if (!mainDirectory.exists()) {
                 mainDirectory.mkdirs();
+
+                File oldDirectory = new File(Environment.getExternalStorageDirectory(), "xqe");
+                if (oldDirectory.exists()) {
+                    File deprecatedFile = new File(oldDirectory, "deprecated");
+                    if (!deprecatedFile.exists()) {
+                        copyFile(oldDirectory, mainDirectory, "config.json");
+                        copyFile(oldDirectory, mainDirectory, "friendId.list");
+                        copyFile(oldDirectory, mainDirectory, "cooperationId.list");
+                        copyFile(oldDirectory, mainDirectory, "reserveId.list");
+                        copyFile(oldDirectory, mainDirectory, "statistics.json");
+                        copyFile(oldDirectory, mainDirectory, "cityCode.json");
+                        try {
+                            deprecatedFile.createNewFile();
+                        } catch (Throwable ignored) { }
+                    }
+                }
             }
         }
         return mainDirectory;
     }
 
-    @SuppressWarnings("deprecation")
     public static File getConfigDirectoryFile() {
         if(configDirectory == null) {
-            configDirectory = new File(Environment.getExternalStorageDirectory(), "xqe/config");
+            configDirectory = new File(getMainDirectoryFile(), "config");
             if(configDirectory.exists()) {
                 if(configDirectory.isFile()) {
                     configDirectory.delete();
@@ -118,6 +141,15 @@ public class FileUtils
                 reserveIdMapFile.delete();
         }
         return reserveIdMapFile;
+    }
+
+    public static File getBeachIdMapFile() {
+        if (beachIdMapFile == null) {
+            beachIdMapFile = new File(getMainDirectoryFile(), "beachId.list");
+            if (beachIdMapFile.exists() && beachIdMapFile.isDirectory())
+                beachIdMapFile.delete();
+        }
+        return beachIdMapFile;
     }
 
     public static File getCityCodeMapFile() {
