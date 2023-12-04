@@ -3,6 +3,7 @@ package pansong291.xposed.quickenergy.util;
 import android.os.Environment;
 import pansong291.xposed.quickenergy.AntForestToast;
 import pansong291.xposed.quickenergy.data.RuntimeInfo;
+import pansong291.xposed.quickenergy.hook.ClassMember;
 
 import java.io.Closeable;
 import java.io.File;
@@ -49,7 +50,10 @@ public class FileUtils {
     @SuppressWarnings("deprecation")
     public static File getMainDirectoryFile() {
         if (mainDirectory == null) {
-            File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            String storageDirStr =
+                    Environment.getExternalStorageDirectory() + File.separator + "Android" + File.separator + "media" +
+                            File.separator + ClassMember.PACKAGE_NAME;
+            File storageDir = new File(storageDirStr);
             if (!storageDir.exists()) {
                 storageDir.mkdirs();
             }
@@ -369,7 +373,7 @@ public class FileUtils {
 
     public static boolean write2File(String s, File f) {
         if (f.exists() && !f.canWrite()) {
-            AntForestToast.show(f.getName() + "没有写入权限！", true);
+            AntForestToast.show(f.getAbsoluteFile() + "没有写入权限！", true);
             return false;
         }
         boolean success = false;
@@ -389,7 +393,7 @@ public class FileUtils {
 
     public static boolean append2File(String s, File f) {
         if (f.exists() && !f.canWrite()) {
-            AntForestToast.show(f.getName() + "没有写入权限！", true);
+            AntForestToast.show(f.getAbsoluteFile() + "没有写入权限！", true);
             return false;
         }
         boolean success = false;
