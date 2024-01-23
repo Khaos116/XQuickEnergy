@@ -1,19 +1,16 @@
 package pansong291.xposed.quickenergy;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+
+import java.text.DateFormat;
+
 import pansong291.xposed.quickenergy.data.RuntimeInfo;
 import pansong291.xposed.quickenergy.util.Config;
 import pansong291.xposed.quickenergy.util.TimeUtil;
-
-import java.text.DateFormat;
 
 public class AntForestNotification {
     public static final int NOTIFICATION_ID = 99;
@@ -98,13 +95,15 @@ public class AntForestNotification {
     }
 
     private static void innerSetContentText() {
-        String preContent = (nextScanTime > 0) ? "下次扫描时间" + TimeUtil.getTimeStr(nextScanTime) + "\n" : "";
-        Notification.BigTextStyle style = new Notification.BigTextStyle();
-        style.bigText(preContent + contentText);
+        String preContent = (nextScanTime > 0) ? "下次扫描 " + TimeUtil.getTimeStr(nextScanTime) + "\n" : "";
+        //Notification.BigTextStyle style = new Notification.BigTextStyle();
+        //style.bigText(preContent + contentText);
 //        Notification.InboxStyle style = new Notification.InboxStyle();
 //        style.addLine(preContent);
 //        style.addLine(contentText);
-        builder.setStyle(style);
+//        builder.setStyle(style);
+        builder.setContentTitle("芝麻粒 "+preContent);
+        builder.setContentText(contentText);
 
         mNotification = builder.build();
         if (mNotifyManager != null)
