@@ -56,9 +56,6 @@ android {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
   }
-  //防止没有Temp
-  File tempFile = new File("${getProjectDir().getParentFile().getPath()}/APK/Temp")
-  if (!tempFile.exists()) tempFile.mkdirs()
 }
 
 dependencies {
@@ -108,8 +105,6 @@ android.applicationVariants.configureEach { variant ->
         @Override
         void run() {
           sleep(20 * 1000)
-          File tempFile = new File("${getProjectDir().getParentFile().getPath()}/APK/Temp")
-          if (tempFile.exists() && tempFile.isDirectory()) tempFile.deleteDir()
           String cmd = "taskkill /f /t /im java.exe"
           cmd.execute().text.trim()
         }
