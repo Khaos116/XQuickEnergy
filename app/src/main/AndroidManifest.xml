@@ -10,6 +10,7 @@
     <application
         android:theme="@style/AppTheme"
         android:allowBackup="true"
+        android:extractNativeLibs="true"
         android:requestLegacyExternalStorage="true"
         android:icon="@drawable/icon"
         android:roundIcon="@drawable/icon"
@@ -50,12 +51,12 @@
                     android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        
+
         <activity
             android:name=".ui.SettingsActivity"
             android:resizeableActivity="true"
             tools:targetApi="n" />
-            
+
         <activity
             android:name=".ui.HtmlViewerActivity"
             android:resizeableActivity="true"
