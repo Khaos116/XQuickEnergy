@@ -41,7 +41,9 @@ android {
       zipAlignEnabled false  //不优化压缩
       shrinkResources false  //不移除无用资源
       signingConfig signingConfigs.debug
-      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../proguard/my-proguard-rules.pro'
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+      //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../proguard/my-proguard-rules.pro'
+
     }
     release {
       debuggable false
@@ -49,7 +51,8 @@ android {
       zipAlignEnabled true  //压缩优化
       shrinkResources true  //移除无用资源
       signingConfig signingConfigs.release
-      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../proguard/my-proguard-rules.pro'
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+      //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../proguard/my-proguard-rules.pro'
     }
   }
   compileOptions {
