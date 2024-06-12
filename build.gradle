@@ -1,45 +1,53 @@
+import java.text.SimpleDateFormat
+
 buildscript {
-    repositories {
-        maven { url 'https://maven.aliyun.com/repository/public/' }
-        maven { url 'https://maven.aliyun.com/repository/google/'}
-        maven { url 'https://maven.aliyun.com/repository/jcenter/'}
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "com.android.tools.build:gradle:7.2.2"
-    }
+  repositories {
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    maven { url 'https://maven.aliyun.com/repository/google/' }
+    maven { url 'https://maven.aliyun.com/repository/jcenter/' }
+    google()
+    mavenCentral()
+  }
+  dependencies {
+    classpath "com.android.tools.build:gradle:7.2.2"
+  }
 }
 
 tasks.register('clean', Delete) {
-    delete rootProject.buildDir
+  delete rootProject.buildDir
 }
 
-//gradle.taskGraph.whenReady {
-//    allTasks.forEach { task ->//测试版跳过Lint和Test相关的task,以加速编译
-//        if (task.name.contains("DebugAndroidTest")) {
-//            task.enabled = false
-//        }
-//        else if (task.name.contains("Debug")) {
-//            task.enabled = !task.name.contains("Lint") && !task.name.contains("Upload")
-//        }
-//    }
-//}
+gradle.taskGraph.whenReady {
+  for (final def task in getTasks()) {//测试版跳过Lint和Test相关的task,以加速编译
+    System.err.println("任务名称：" + task.name)
+    if (task.name.contains("DebugAndroidTest")) {
+      task.enabled = false
+    } else if (task.name.contains("Debug")) {
+      task.enabled = !task.name.contains("Lint") && !task.name.contains("Upload")
+    }
+  }
+}
 
-//gradle.buildFinished {
-//    boolean hasRun = project.gradle.taskGraph.allTasks.any { t -> t.name.lowercase().contains("assemble") }
-//    new Thread() {
-//        @Override
-//        void run() {
-//            if (hasRun) {
-//                System.err.println("5秒后释放java进程(${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())})")
-//                sleep(5 * 1000L) // 将延迟时间转换为毫秒
-//            }
-//            else {
-//                System.err.println("立即释放java进程(${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())})")
-//            }
-//            String cmd = "taskkill /f /t /im java.exe"
-//            cmd.execute().text.trim()
-//        }
-//    }.start()
-//}
+gradle.buildFinished {
+  boolean hasRun = false
+  for (final def task in project.gradle.taskGraph.allTasks) {
+    if (task.name.toLowerCase().contains("assemble")) {
+      hasRun = true
+      break
+    }
+  }
+  new Thread() {
+    @Override
+    void run() {
+      String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())
+      if (hasRun) {
+        System.err.println("5秒后释放java进程(${date})")
+        sleep(5 * 1000L) // 将延迟时间转换为毫秒
+      } else {
+        System.err.println("立即释放java进程(${date})")
+      }
+      String cmd = "taskkill /f /t /im java.exe"
+      cmd.execute().text.trim()
+    }
+  }.start()
+}
