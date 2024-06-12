@@ -42,9 +42,9 @@ public class AntOrchard extends Task {
                             if (jo.has("lotteryPlusInfo"))
                                 drawLotteryPlus(jo.getJSONObject("lotteryPlusInfo"));
                             extraInfoGet();
-                            if (!joo.optBoolean("hireCountOnceLimit", true)
-                                    && !joo.optBoolean("hireCountOneDayLimit", true))
-                                batchHireAnimalRecommend();
+                            //if (!joo.optBoolean("hireCountOnceLimit", true)
+                            //        && !joo.optBoolean("hireCountOneDayLimit", true))
+                            //    batchHireAnimalRecommend();
                             if (Config.INSTANCE.isReceiveOrchardTaskAward()) {
                                 doOrchardDailyTask(userId);
                                 triggerTbTask();
