@@ -14,6 +14,7 @@
     <application
         android:theme="@style/AppTheme"
         android:allowBackup="true"
+        android:extractNativeLibs="true"
         android:requestLegacyExternalStorage="true"
         android:icon="@drawable/icon"
         android:roundIcon="@drawable/icon"
