@@ -1,24 +1,45 @@
-
 buildscript {
     repositories {
         maven { url 'https://maven.aliyun.com/repository/public/' }
         maven { url 'https://maven.aliyun.com/repository/google/'}
         maven { url 'https://maven.aliyun.com/repository/jcenter/'}
+        google()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0'
-    }
-}
-
-allprojects {
-    repositories {
-        maven { url 'https://maven.aliyun.com/repository/public/' }
-        maven { url 'https://maven.aliyun.com/repository/google/'}
-        maven { url 'https://maven.aliyun.com/repository/jcenter/'}
-        mavenCentral()
+        classpath "com.android.tools.build:gradle:7.2.2"
     }
 }
 
 tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
+
+//gradle.taskGraph.whenReady {
+//    allTasks.forEach { task ->//测试版跳过Lint和Test相关的task,以加速编译
+//        if (task.name.contains("DebugAndroidTest")) {
+//            task.enabled = false
+//        }
+//        else if (task.name.contains("Debug")) {
+//            task.enabled = !task.name.contains("Lint") && !task.name.contains("Upload")
+//        }
+//    }
+//}
+
+//gradle.buildFinished {
+//    boolean hasRun = project.gradle.taskGraph.allTasks.any { t -> t.name.lowercase().contains("assemble") }
+//    new Thread() {
+//        @Override
+//        void run() {
+//            if (hasRun) {
+//                System.err.println("5秒后释放java进程(${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())})")
+//                sleep(5 * 1000L) // 将延迟时间转换为毫秒
+//            }
+//            else {
+//                System.err.println("立即释放java进程(${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())})")
+//            }
+//            String cmd = "taskkill /f /t /im java.exe"
+//            cmd.execute().text.trim()
+//        }
+//    }.start()
+//}
