@@ -15,4 +15,4 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--keep class pansong291.xposed.quickenergy.hook.** { *; }
+-keep class pansong291.xposed.quickenergy.** { *; }
