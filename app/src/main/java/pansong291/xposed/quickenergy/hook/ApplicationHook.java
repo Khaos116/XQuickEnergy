@@ -672,4 +672,119 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         }
     }
 
+    public static boolean isHooked() {
+        return hooked;
+    }
+
+    public static void setHooked(boolean hooked) {
+        ApplicationHook.hooked = hooked;
+    }
+
+    public static boolean isInit() {
+        return init;
+    }
+
+    public static void setInit(boolean init) {
+        ApplicationHook.init = init;
+    }
+
+    public static boolean isOffline() {
+        return offline;
+    }
+
+    public static ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public static void setClassLoader(ClassLoader classLoader) {
+        ApplicationHook.classLoader = classLoader;
+    }
+
+    public static Context getContext() {
+        return context;
+    }
+
+    public static void setContext(Context context) {
+        ApplicationHook.context = context;
+    }
+
+    public static Service getService() {
+        return service;
+    }
+
+    public static void setService(Service service) {
+        ApplicationHook.service = service;
+    }
+
+    public static Handler getMainHandler() {
+        return mainHandler;
+    }
+
+    public static void setMainHandler(Handler mainHandler) {
+        ApplicationHook.mainHandler = mainHandler;
+    }
+
+    public static Runnable getMainRunner() {
+        return mainRunner;
+    }
+
+    public static void setMainRunner(Runnable mainRunner) {
+        ApplicationHook.mainRunner = mainRunner;
+    }
+
+    public static RpcBridge getRpcBridge() {
+        return rpcBridge;
+    }
+
+    public static void setRpcBridge(RpcBridge rpcBridge) {
+        ApplicationHook.rpcBridge = rpcBridge;
+    }
+
+    public static PowerManager.WakeLock getWakeLock() {
+        return wakeLock;
+    }
+
+    public static void setWakeLock(PowerManager.WakeLock wakeLock) {
+        ApplicationHook.wakeLock = wakeLock;
+    }
+
+    public static PendingIntent getAlarmLastPi() {
+        return alarmLastPi;
+    }
+
+    public static void setAlarmLastPi(PendingIntent alarmLastPi) {
+        ApplicationHook.alarmLastPi = alarmLastPi;
+    }
+
+    public static PendingIntent getAlarm0Pi() {
+        return alarm0Pi;
+    }
+
+    public static void setAlarm0Pi(PendingIntent alarm0Pi) {
+        ApplicationHook.alarm0Pi = alarm0Pi;
+    }
+
+    public static PendingIntent getAlarm7Pi() {
+        return alarm7Pi;
+    }
+
+    public static void setAlarm7Pi(PendingIntent alarm7Pi) {
+        ApplicationHook.alarm7Pi = alarm7Pi;
+    }
+
+    public static XC_MethodHook.Unhook getRpcRequestUnhook() {
+        return rpcRequestUnhook;
+    }
+
+    public static void setRpcRequestUnhook(XC_MethodHook.Unhook rpcRequestUnhook) {
+        ApplicationHook.rpcRequestUnhook = rpcRequestUnhook;
+    }
+
+    public static XC_MethodHook.Unhook getRpcResponseUnhook() {
+        return rpcResponseUnhook;
+    }
+
+    public static void setRpcResponseUnhook(XC_MethodHook.Unhook rpcResponseUnhook) {
+        ApplicationHook.rpcResponseUnhook = rpcResponseUnhook;
+    }
 }
