@@ -86,4 +86,24 @@ public final class ModelConfig implements Serializable {
     public <T extends ModelField> T getModelFieldExt(String fieldCode) {
         return (T) fields.get(fieldCode);
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public ModelFields getFields() {
+        return fields;
+    }
 }
