@@ -3,10 +3,12 @@ package pansong291.xposed.quickenergy.task.model.antOcean;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import pansong291.xposed.quickenergy.task.common.Task;
+import pansong291.xposed.quickenergy.data.ModelFields;
+import pansong291.xposed.quickenergy.task.common.ModelTask;
 import pansong291.xposed.quickenergy.task.common.TaskCommon;
 import pansong291.xposed.quickenergy.task.model.antFarm.AntFarm.TaskStatus;
 import pansong291.xposed.quickenergy.task.model.antForest.AntForestRpcCall;
+import pansong291.xposed.quickenergy.task.model.antForest.AntForestV2;
 import pansong291.xposed.quickenergy.util.Config;
 import pansong291.xposed.quickenergy.util.UserIdMap;
 import pansong291.xposed.quickenergy.util.Log;
@@ -16,8 +18,18 @@ import pansong291.xposed.quickenergy.util.StringUtil;
  * @author Constanline
  * @since 2023/08/01
  */
-public class AntOcean extends Task {
+public class AntOcean extends ModelTask {
     private static final String TAG = AntOcean.class.getSimpleName();
+
+    @Override
+    public String setName() {
+        return "海洋";
+    }
+
+    @Override
+    public ModelFields setFields() {
+        return null;
+    }
 
     public Boolean check() {
         return Config.INSTANCE.isAntOcean() && !TaskCommon.IS_MORNING;
@@ -376,7 +388,7 @@ public class AntOcean extends Task {
         }
         try {
             String userId = fillFlag.getString("userId");
-            if (Config.INSTANCE.getDontCollectSet().contains(userId)) {
+            if (AntForestV2.dontCollectMap.containsKey(userId)) {
                 return;
             }
             String s = AntOceanRpcCall.queryFriendPage(userId);

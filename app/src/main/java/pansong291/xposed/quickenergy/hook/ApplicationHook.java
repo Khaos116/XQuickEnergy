@@ -16,7 +16,10 @@ import android.os.PowerManager;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -24,14 +27,16 @@ import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import lombok.Getter;
+import pansong291.xposed.quickenergy.data.ConfigV2;
+import pansong291.xposed.quickenergy.data.ModelType;
+import pansong291.xposed.quickenergy.data.ViewAppInfo;
 import pansong291.xposed.quickenergy.entity.RpcEntity;
 import pansong291.xposed.quickenergy.rpc.NewRpcBridge;
 import pansong291.xposed.quickenergy.rpc.OldRpcBridge;
 import pansong291.xposed.quickenergy.rpc.RpcBridge;
-import pansong291.xposed.quickenergy.task.common.Task;
+import pansong291.xposed.quickenergy.task.common.ModelTask;
 import pansong291.xposed.quickenergy.task.common.TaskCommon;
 import pansong291.xposed.quickenergy.task.model.antMember.AntMemberRpcCall;
-import pansong291.xposed.quickenergy.ui.MainActivity;
 import pansong291.xposed.quickenergy.util.ClassUtil;
 import pansong291.xposed.quickenergy.util.Config;
 import pansong291.xposed.quickenergy.util.FileUtils;
@@ -52,7 +57,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
     private static volatile boolean init = false;
 
     @Getter
-    private static volatile boolean offline = true;
+    private static volatile boolean offline = false;
 
     @Getter
     private static volatile ClassLoader classLoader;
@@ -90,12 +95,11 @@ public class ApplicationHook implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
         if ("pansong291.xposed.quickenergy.repair".equals(lpparam.packageName)) {
-            XposedHelpers.findAndHookMethod(MainActivity.class.getName(), lpparam.classLoader, "setModuleActive", boolean.class, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) {
-                    param.args[0] = true;
-                }
-            });
+            try {
+                XposedHelpers.callStaticMethod(lpparam.classLoader.loadClass(ViewAppInfo.class.getName()), "setModelTypeByCode", ModelType.MODEL.getCode());
+            } catch (ClassNotFoundException e) {
+                Log.printStackTrace(e);
+            }
         } else if (ClassUtil.PACKAGE_NAME.equals(lpparam.packageName) && ClassUtil.PACKAGE_NAME.equals(lpparam.processName)) {
             if (hooked) {
                 return;
@@ -139,6 +143,16 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                 String targetUid = getUserId();
                                 if (targetUid == null) {
                                     return;
+                                }
+                                String currentUid = UserIdMap.getCurrentUid();
+                                if (!targetUid.equals(currentUid)) {
+                                    UserIdMap.setCurrentUid(targetUid);
+                                    if (currentUid != null) {
+                                        Toast.show("芝麻粒切换用户");
+                                        startHandler(true);
+                                        Log.i(TAG, "Activity changeUser");
+                                        return;
+                                    }
                                 }
                                 if (offline) {
                                     startHandler(false);
@@ -246,7 +260,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     return;
                 }
                 Log.record("开始加载");
-                Config config = Config.load();
+                ConfigV2 config = ConfigV2.load();
                 if (!config.isImmediateEffect()) {
                     Log.record("芝麻粒已禁用");
                     Toast.show("芝麻粒已禁用");
@@ -393,7 +407,6 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                         Log.printStackTrace(TAG, t);
                     }
                 }
-                Task.initAllTask();
                 Statistics.load();
                 mainRunner = new Runnable() {
                     @Override
@@ -403,7 +416,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                         }
                         Log.record("开始执行");
                         try {
-                            Config config = Config.INSTANCE;
+                            ConfigV2 config = ConfigV2.INSTANCE;
                             String targetUid = getUserId();
                             if (targetUid == null) {
                                 Log.record("用户为空，放弃执行");
@@ -411,10 +424,8 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                             }
                             String currentUid = UserIdMap.getCurrentUid();
                             if (!targetUid.equals(currentUid)) {
-                                UserIdMap.setCurrentUid(targetUid);
                                 if (currentUid != null) {
-                                    offline = true;
-                                    mainHandler.postDelayed(this, config.getCheckInterval());
+                                    reLogin();
                                     return;
                                 }
                             }
@@ -431,12 +442,14 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                 FutureTask<Boolean> checkTask = new FutureTask<>(AntMemberRpcCall::check);
                                 Thread checkThread = new Thread(checkTask);
                                 checkThread.start();
-                                if (!checkTask.get()) {
-                                    if (!reLogin()) {
-                                        mainHandler.postDelayed(this, config.getCheckInterval());
-                                        return;
-                                    }
+                                if (!checkTask.get(2, TimeUnit.SECONDS)) {
+                                    reLogin();
+                                    return;
                                 }
+                            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                                Log.i(TAG, "check timeout");
+                                mainHandler.postDelayed(this, config.getCheckInterval());
+                                return;
                             } catch (Exception e) {
                                 Log.i(TAG, "check err:");
                                 Log.printStackTrace(TAG, e);
@@ -444,7 +457,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                 return;
                             }
                             TaskCommon.update();
-                            Task.startAllTask(false);
+                            ModelTask.startAllTask(false);
                             int checkInterval = config.getCheckInterval();
                             mainHandler.postDelayed(this, checkInterval);
                             Notification.setNextScanTime(System.currentTimeMillis() + checkInterval);
@@ -465,6 +478,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         } catch (Throwable th) {
             Log.i(TAG, "startHandler err:");
             Log.printStackTrace(TAG, th);
+            Toast.show("芝麻粒加载失败");
         }
     }
 
@@ -520,7 +534,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     rpcBridge = null;
                 }
             }
-            Task.stopAllTask();
+            ModelTask.stopAllTask();
         } catch (Throwable th) {
             Log.i(TAG, "stopHandler err:");
             Log.printStackTrace(TAG, th);
@@ -578,7 +592,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         try {
             context.sendBroadcast(new Intent("com.eg.android.AlipayGphone.xqe.reLogin"));
         } catch (Throwable th) {
-            Log.i(TAG, "reLoginByBroadcast err:");
+            Log.i(TAG, "sendBroadcast reLogin err:");
             Log.printStackTrace(TAG, th);
         }
     }
@@ -587,7 +601,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         try {
             context.sendBroadcast(new Intent("com.eg.android.AlipayGphone.xqe.restart"));
         } catch (Throwable th) {
-            Log.i(TAG, "restartByBroadcast err:");
+            Log.i(TAG, "sendBroadcast restart err:");
             Log.printStackTrace(TAG, th);
         }
     }
@@ -621,35 +635,48 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         return null;
     }
 
-    public static Boolean reLogin() {
+    public static void reLogin() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setClassName(ClassUtil.PACKAGE_NAME, ClassUtil.CURRENT_USING_ACTIVITY);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         offline = true;
         context.startActivity(intent);
-        return true;
-        /*Object authService = getExtServiceByInterface("com.alipay.mobile.framework.service.ext.security.AuthService");
+    }
+
+    /*public static Boolean reLogin() {
+        Object authService = getExtServiceByInterface("com.alipay.mobile.framework.service.ext.security.AuthService");
         if ((Boolean) XposedHelpers.callMethod(authService, "rpcAuth")) {
             return true;
         }
         Log.record("重新登录失败");
-        return false;*/
-    }
+        return false;
+    }*/
 
     private static class AlipayBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.i("broadcast action:" + action + " intent:" + intent);
-            if ("com.eg.android.AlipayGphone.xqe.restart".equals(action)) {
-                startHandler(true);
-            } else if ("com.eg.android.AlipayGphone.xqe.execute".equals(action)) {
-                startHandler(false);
-            } else if ("com.eg.android.AlipayGphone.xqe.reLogin".equals(action)) {
-                reLogin();
-                startHandler(false);
-            } else if ("com.eg.android.AlipayGphone.xqe.test".equals(action)) {
-                Log.record("收到测试消息");
+            if (action != null) {
+                switch (action) {
+                    case "com.eg.android.AlipayGphone.xqe.restart":
+                        startHandler(true);
+                        break;
+                    case "com.eg.android.AlipayGphone.xqe.execute":
+                        startHandler(false);
+                        break;
+                    case "com.eg.android.AlipayGphone.xqe.reLogin":
+                        reLogin();
+                        break;
+                    case "com.eg.android.AlipayGphone.xqe.status":
+                        try {
+                            context.sendBroadcast(new Intent("pansong291.xposed.quickenergy.status"));
+                        } catch (Throwable th) {
+                            Log.i(TAG, "sendBroadcast xqe status err:");
+                            Log.printStackTrace(TAG, th);
+                        }
+                        break;
+                }
             }
         }
     }
@@ -661,8 +688,12 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             intentFilter.addAction("com.eg.android.AlipayGphone.xqe.restart");
             intentFilter.addAction("com.eg.android.AlipayGphone.xqe.execute");
             intentFilter.addAction("com.eg.android.AlipayGphone.xqe.reLogin");
-            intentFilter.addAction("com.eg.android.AlipayGphone.xqe.test");
-            context.registerReceiver(new AlipayBroadcastReceiver(), intentFilter);
+            intentFilter.addAction("com.eg.android.AlipayGphone.xqe.status");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.registerReceiver(new AlipayBroadcastReceiver(), intentFilter, Context.RECEIVER_EXPORTED);
+            } else {
+                context.registerReceiver(new AlipayBroadcastReceiver(), intentFilter);
+            }
             Log.i(TAG, "hook registerBroadcastReceiver successfully");
         } catch (Throwable th) {
             Log.i(TAG, "hook registerBroadcastReceiver err:");

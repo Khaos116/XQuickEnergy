@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import lombok.Data;
+import pansong291.xposed.quickenergy.task.model.antCooperate.AntCooperate;
+import pansong291.xposed.quickenergy.task.model.antForest.AntForestV2;
 
 @Data
 public class Statistics {
@@ -65,7 +67,7 @@ public class Statistics {
 
     public static void addData(DataType dt, int i) {
         Statistics stat = INSTANCE;
-        resetToday();
+        //resetToday();
         switch (dt) {
             case COLLECTED:
                 stat.day.collected += i;
@@ -259,7 +261,7 @@ public class Statistics {
     }
 
     public static boolean canCooperateWaterToday(String uid, String coopId) {
-        return !INSTANCE.cooperateWaterList.contains(uid + "_" + coopId);
+        return !AntCooperate.cooperateWaterList.getValue().getKey().containsKey(uid + "_" + coopId);
     }
 
     public static void cooperateWaterToday(String uid, String coopId) {
@@ -567,7 +569,7 @@ public class Statistics {
         Statistics stat = INSTANCE;
         if (stat.exchangeDoubleCard < stat.day.time) {
             return true;
-        } else return stat.exchangeTimes < Config.INSTANCE.getExchangeEnergyDoubleClickCount();
+        } else return stat.exchangeTimes < AntForestV2.exchangeEnergyDoubleClickCount.getValue();
     }
 
     public static void exchangeDoubleCardToday(boolean isSuccess) {
@@ -578,7 +580,7 @@ public class Statistics {
         if (isSuccess) {
             stat.exchangeTimes += 1;
         } else {
-            stat.exchangeTimes = Config.INSTANCE.getExchangeEnergyDoubleClickCount();
+            stat.exchangeTimes = AntForestV2.exchangeEnergyDoubleClickCount.getValue();
         }
         save();
     }
@@ -640,7 +642,7 @@ public class Statistics {
         }
     }
 
-    public static void resetToday() {
+    public static Boolean resetToday() {
         Statistics stat = INSTANCE;
         String formatDate = Log.getFormatDate();
         String[] dateStr = formatDate.split("-");
@@ -648,20 +650,21 @@ public class Statistics {
         int mo = Integer.parseInt(dateStr[1]);
         int da = Integer.parseInt(dateStr[2]);
 
-        Log.record("原：" + stat.year.time + "-" + stat.month.time + "-" + stat.day.time + "；新：" + formatDate);
         if (ye > stat.year.time) {
             stat.year.reset(ye);
             stat.month.reset(mo);
             stat.day.reset(da);
-            dayClear();
         } else if (mo > stat.month.time) {
             stat.month.reset(mo);
             stat.day.reset(da);
-            dayClear();
         } else if (da > stat.day.time) {
             stat.day.reset(da);
-            dayClear();
+        } else {
+            return false;
         }
+        Log.record("日期更新，昨天：" + stat.year.time + "-" + stat.month.time + "-" + stat.day.time + "，今天：" + formatDate);
+        dayClear();
+        return true;
     }
 
     private static void dayClear() {
@@ -689,9 +692,6 @@ public class Statistics {
         stat.exchangeTimes = 0;
         stat.doubleTimes = 0;
         save();
-        FileUtils.getForestLogFile().delete();
-        FileUtils.getFarmLogFile().delete();
-        FileUtils.getOtherLogFile().delete();
     }
 
     private static Statistics defInit() {
