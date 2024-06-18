@@ -101,9 +101,9 @@ public class Notification {
                     .setContentTitle("芝麻粒")
                     .setAutoCancel(false)
                     .setContentIntent(pi);
-            if (ConfigV2.INSTANCE.isEnableOnGoing()) {
+            //if (ConfigV2.INSTANCE.isEnableOnGoing()) {
                 builder.setOngoing(true);
-            }
+            //}
             mNotification = builder.build();
         }
     }
@@ -116,14 +116,15 @@ public class Notification {
     }
 
     private static void innerSetContentText() {
-        String preContent = (nextExecTime > 0) ? "下次扫描时间" + TimeUtil.getTimeStr(nextExecTime) + "\n" : "";
-        android.app.Notification.BigTextStyle style = new android.app.Notification.BigTextStyle();
-        style.bigText(preContent + contentText);
-//        Notification.InboxStyle style = new Notification.InboxStyle();
-//        style.addLine(preContent);
-//        style.addLine(contentText);
-        builder.setStyle(style);
-
+        String preContent = (nextExecTime > 0) ? "下次扫描" + TimeUtil.getTimeStr(nextExecTime) + "\n" : "";
+        //android.app.Notification.BigTextStyle style = new android.app.Notification.BigTextStyle();
+        //style.bigText(preContent + contentText);
+        //Notification.InboxStyle style = new Notification.InboxStyle();
+        //style.addLine(preContent);
+        //style.addLine(contentText);
+        //builder.setStyle(style);
+        builder.setContentTitle("芝麻粒 "+preContent);
+        builder.setContentText(contentText);
         mNotification = builder.build();
         if (mNotifyManager != null) {
             mNotifyManager.notify(NOTIFICATION_ID, mNotification);
