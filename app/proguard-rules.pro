@@ -16,3 +16,5 @@
 #   public *;
 #}
 -keep class pansong291.xposed.quickenergy.** { *; }
+-keep class com.fasterxml.jackson.** { *; }
+-keep class com.elvishew.xlog.** { *; }
