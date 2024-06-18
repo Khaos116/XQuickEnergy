@@ -533,8 +533,10 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     rpcBridge.unload();
                     rpcBridge = null;
                 }
+                ModelTask.destroyAllTask();
+            } else {
+                ModelTask.stopAllTask();
             }
-            ModelTask.stopAllTask();
         } catch (Throwable th) {
             Log.i(TAG, "stopHandler err:");
             Log.printStackTrace(TAG, th);
