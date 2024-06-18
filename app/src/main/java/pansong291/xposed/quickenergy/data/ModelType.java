@@ -39,4 +39,11 @@ public enum ModelType {
         return MAP.get(code);
     }
 
+    public Integer getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

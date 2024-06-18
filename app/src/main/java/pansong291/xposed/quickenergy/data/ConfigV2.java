@@ -275,4 +275,135 @@ public class ConfigV2 {
         return INSTANCE;
     }
 
+    public static boolean isInit() {
+        return init;
+    }
+
+    public static void setInit(boolean init) {
+        ConfigV2.init = init;
+    }
+
+    public boolean isImmediateEffect() {
+        return immediateEffect;
+    }
+
+    public void setImmediateEffect(boolean immediateEffect) {
+        this.immediateEffect = immediateEffect;
+    }
+
+    public boolean isRecordLog() {
+        return recordLog;
+    }
+
+    public void setRecordLog(boolean recordLog) {
+        this.recordLog = recordLog;
+    }
+
+    public boolean isShowToast() {
+        return showToast;
+    }
+
+    public void setShowToast(boolean showToast) {
+        this.showToast = showToast;
+    }
+
+    public int getToastOffsetY() {
+        return toastOffsetY;
+    }
+
+    public void setToastOffsetY(int toastOffsetY) {
+        this.toastOffsetY = toastOffsetY;
+    }
+
+    public int getCheckInterval() {
+        return checkInterval;
+    }
+
+    public void setCheckInterval(int checkInterval) {
+        this.checkInterval = checkInterval;
+    }
+
+    public boolean isStayAwake() {
+        return stayAwake;
+    }
+
+    public void setStayAwake(boolean stayAwake) {
+        this.stayAwake = stayAwake;
+    }
+
+    public boolean isTimeoutRestart() {
+        return timeoutRestart;
+    }
+
+    public void setTimeoutRestart(boolean timeoutRestart) {
+        this.timeoutRestart = timeoutRestart;
+    }
+
+    public boolean isStartAt0() {
+        return startAt0;
+    }
+
+    public void setStartAt0(boolean startAt0) {
+        this.startAt0 = startAt0;
+    }
+
+    public boolean isStartAt7() {
+        return startAt7;
+    }
+
+    public void setStartAt7(boolean startAt7) {
+        this.startAt7 = startAt7;
+    }
+
+    public boolean isEnableOnGoing() {
+        return enableOnGoing;
+    }
+
+    public void setEnableOnGoing(boolean enableOnGoing) {
+        this.enableOnGoing = enableOnGoing;
+    }
+
+    public boolean isBatteryPerm() {
+        return batteryPerm;
+    }
+
+    public void setBatteryPerm(boolean batteryPerm) {
+        this.batteryPerm = batteryPerm;
+    }
+
+    public boolean isNewRpc() {
+        return newRpc;
+    }
+
+    public void setNewRpc(boolean newRpc) {
+        this.newRpc = newRpc;
+    }
+
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
+    }
+
+    public boolean isLanguageSimplifiedChinese() {
+        return languageSimplifiedChinese;
+    }
+
+    public void setLanguageSimplifiedChinese(boolean languageSimplifiedChinese) {
+        this.languageSimplifiedChinese = languageSimplifiedChinese;
+    }
+
+    public int getWaitWhenException() {
+        return waitWhenException;
+    }
+
+    public void setWaitWhenException(int waitWhenException) {
+        this.waitWhenException = waitWhenException;
+    }
+
+    public Map<String, ModelFields> getModelFieldsMap() {
+        return modelFieldsMap;
+    }
 }

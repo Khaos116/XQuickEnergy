@@ -98,4 +98,36 @@ public final class ViewAppInfo {
             return false;
         }
     }
+
+    public static Context getContext() {
+        return context;
+    }
+
+    public static void setContext(Context context) {
+        ViewAppInfo.context = context;
+    }
+
+    public static String getAppTitle() {
+        return appTitle;
+    }
+
+    public static void setAppTitle(String appTitle) {
+        ViewAppInfo.appTitle = appTitle;
+    }
+
+    public static String getAppVersion() {
+        return appVersion;
+    }
+
+    public static void setAppVersion(String appVersion) {
+        ViewAppInfo.appVersion = appVersion;
+    }
+
+    public static ModelType getModelType() {
+        return modelType;
+    }
+
+    public static void setModelType(ModelType modelType) {
+        ViewAppInfo.modelType = modelType;
+    }
 }
