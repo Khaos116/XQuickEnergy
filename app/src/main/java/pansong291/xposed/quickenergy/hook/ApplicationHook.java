@@ -14,10 +14,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -424,6 +421,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 try {
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, new Intent("com.eg.android.AlipayGphone.xqe.execute"), getPendingIntentFlag());
                     Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeZone(TimeZone.getTimeZone("GMT+8")); // 设置时区为东八区（北京时间）
                     if (calendar.get(Calendar.HOUR_OF_DAY) == 23 && calendar.get(Calendar.MINUTE) == 57) {
                         calendar.add(Calendar.DAY_OF_MONTH, 1);
                     }
@@ -441,6 +439,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     try {
                         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 2, new Intent("com.eg.android.AlipayGphone.xqe.execute"), getPendingIntentFlag());
                         Calendar calendar = Calendar.getInstance();
+                        calendar.setTimeZone(TimeZone.getTimeZone("GMT+8")); // 设置时区为东八区（北京时间）
                         calendar.add(Calendar.DAY_OF_MONTH, 1);
                         calendar.set(Calendar.HOUR_OF_DAY, 0);
                         calendar.set(Calendar.MINUTE, 0);
@@ -457,6 +456,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     try {
                         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 3, new Intent("com.eg.android.AlipayGphone.xqe.restart"), getPendingIntentFlag());
                         Calendar calendar = Calendar.getInstance();
+                        calendar.setTimeZone(TimeZone.getTimeZone("GMT+8")); // 设置时区为东八区（北京时间）
                         if (calendar.get(Calendar.HOUR_OF_DAY) >= 7 || (calendar.get(Calendar.HOUR_OF_DAY) >= 6 && calendar.get(Calendar.MINUTE) >= 55)) {
                             calendar.add(Calendar.DAY_OF_MONTH, 1);
                         }
