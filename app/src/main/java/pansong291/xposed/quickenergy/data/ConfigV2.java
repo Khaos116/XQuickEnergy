@@ -29,21 +29,21 @@ public class ConfigV2 {
     @Getter
     private static volatile boolean init;
 
-    private boolean immediateEffect = true;
-    private boolean recordLog = true;
-    private boolean showToast = true;
-    private int toastOffsetY = 0;
+    private boolean immediateEffect = true;//立即生效
+    private boolean recordLog = true;//记录日志
+    private boolean showToast = true;//气泡提示
+    private int toastOffsetY = -200;//气泡纵向偏移
     private int checkInterval = 1800_000;
-    private boolean stayAwake = true;
+    private boolean stayAwake = true;//保持唤醒
     private List<String> execAtTimeList = ListUtil.newArrayList("00,065555");
-    private boolean timeoutRestart = true;
-    private boolean startAt0 = true;
-    private boolean startAt7 = true;
-    private boolean enableOnGoing = false;
-    private boolean batteryPerm = true;
-    private boolean newRpc = true;
-    private boolean debugMode = false;
-    private boolean languageSimplifiedChinese = false;
+    private boolean timeoutRestart = true;//超时重启
+    private boolean startAt0 = true;//0点整执行
+    private boolean startAt7 = true;//7点前启动
+    private boolean enableOnGoing = true;//开启状态栏禁删
+    private boolean batteryPerm = true;//为支付宝申请后台运行权限
+    private boolean newRpc = true;//使用新接口
+    private boolean debugMode = false;//开启抓包
+    private boolean languageSimplifiedChinese = true;//界面始终使用中文
     private int waitWhenException = 60 * 60 * 1000;
 
     private final Map<String, ModelFields> modelFieldsMap = new ConcurrentHashMap<>();
