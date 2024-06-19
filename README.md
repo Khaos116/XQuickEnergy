@@ -1,7 +1,12 @@
 # XQuickEnergy
 
 ```diff
-+ ### <table><tr><td bgcolor=#FF0000>修改点</td></tr></table>
+- text in red
++ text in green
+! text in orange
+# text in gray
+@@ text in purple (and bold)@@
+```
 
 序号|更改内容
 :---:|:---:
