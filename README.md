@@ -1,7 +1,7 @@
 # XQuickEnergy
 
 ### <table><tr><td bgcolor=#FF0000>修改点</td></tr></table>
-### <span style="color:red;">更改内容</span>
+<font color=red>更改内容</font>
 
 序号|更改内容
 :---:|:---:
