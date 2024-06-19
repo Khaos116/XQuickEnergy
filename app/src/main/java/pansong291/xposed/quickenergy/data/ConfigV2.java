@@ -5,6 +5,8 @@ import android.os.Build;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,26 +26,31 @@ public class ConfigV2 {
 
     private static final String TAG = ConfigV2.class.getSimpleName();
 
+    public static final List<String> DEFAULT_EXEC_AT_TIME_LIST = Collections.unmodifiableList(ListUtil.newArrayList("065530", "2359", "24"));
+
+    public static final List<String> DEFAULT_WAKEN_AT_TIME_LIST = Collections.unmodifiableList(ListUtil.newArrayList("0650", "2350"));
+
     public static final ConfigV2 INSTANCE = new ConfigV2();
 
     @Getter
     private static volatile boolean init;
 
-    private boolean immediateEffect = true;//立即生效
-    private boolean recordLog = true;//记录日志
-    private boolean showToast = true;//气泡提示
-    private int toastOffsetY = -200;//气泡纵向偏移
+    private boolean immediateEffect = true;
+    private boolean recordLog = true;
+    private boolean showToast = true;
+    private int toastOffsetY = 0;
     private int checkInterval = 1800_000;
-    private boolean stayAwake = true;//保持唤醒
-    private List<String> execAtTimeList = ListUtil.newArrayList("00,065555");
-    private boolean timeoutRestart = true;//超时重启
-    private boolean startAt0 = true;//0点整执行
-    private boolean startAt7 = true;//7点前启动
-    private boolean enableOnGoing = true;//开启状态栏禁删
-    private boolean batteryPerm = true;//为支付宝申请后台运行权限
-    private boolean newRpc = true;//使用新接口
-    private boolean debugMode = false;//开启抓包
-    private boolean languageSimplifiedChinese = true;//界面始终使用中文
+    private boolean stayAwake = true;
+    private List<String> execAtTimeList = new ArrayList<>(DEFAULT_EXEC_AT_TIME_LIST);
+    private List<String> wakenAtTimeList = new ArrayList<>(DEFAULT_WAKEN_AT_TIME_LIST);
+    private boolean timeoutRestart = true;
+    private boolean startAt0 = true;
+    private boolean startAt7 = true;
+    private boolean enableOnGoing = false;
+    private boolean batteryPerm = true;
+    private boolean newRpc = true;
+    private boolean debugMode = false;
+    private boolean languageSimplifiedChinese = false;
     private int waitWhenException = 60 * 60 * 1000;
 
     private final Map<String, ModelFields> modelFieldsMap = new ConcurrentHashMap<>();
@@ -284,135 +291,4 @@ public class ConfigV2 {
         return INSTANCE;
     }
 
-    public static boolean isInit() {
-        return init;
-    }
-
-    public static void setInit(boolean init) {
-        ConfigV2.init = init;
-    }
-
-    public boolean isImmediateEffect() {
-        return immediateEffect;
-    }
-
-    public void setImmediateEffect(boolean immediateEffect) {
-        this.immediateEffect = immediateEffect;
-    }
-
-    public boolean isRecordLog() {
-        return recordLog;
-    }
-
-    public void setRecordLog(boolean recordLog) {
-        this.recordLog = recordLog;
-    }
-
-    public boolean isShowToast() {
-        return showToast;
-    }
-
-    public void setShowToast(boolean showToast) {
-        this.showToast = showToast;
-    }
-
-    public int getToastOffsetY() {
-        return toastOffsetY;
-    }
-
-    public void setToastOffsetY(int toastOffsetY) {
-        this.toastOffsetY = toastOffsetY;
-    }
-
-    public int getCheckInterval() {
-        return checkInterval;
-    }
-
-    public void setCheckInterval(int checkInterval) {
-        this.checkInterval = checkInterval;
-    }
-
-    public boolean isStayAwake() {
-        return stayAwake;
-    }
-
-    public void setStayAwake(boolean stayAwake) {
-        this.stayAwake = stayAwake;
-    }
-
-    public boolean isTimeoutRestart() {
-        return timeoutRestart;
-    }
-
-    public void setTimeoutRestart(boolean timeoutRestart) {
-        this.timeoutRestart = timeoutRestart;
-    }
-
-    public boolean isStartAt0() {
-        return startAt0;
-    }
-
-    public void setStartAt0(boolean startAt0) {
-        this.startAt0 = startAt0;
-    }
-
-    public boolean isStartAt7() {
-        return startAt7;
-    }
-
-    public void setStartAt7(boolean startAt7) {
-        this.startAt7 = startAt7;
-    }
-
-    public boolean isEnableOnGoing() {
-        return enableOnGoing;
-    }
-
-    public void setEnableOnGoing(boolean enableOnGoing) {
-        this.enableOnGoing = enableOnGoing;
-    }
-
-    public boolean isBatteryPerm() {
-        return batteryPerm;
-    }
-
-    public void setBatteryPerm(boolean batteryPerm) {
-        this.batteryPerm = batteryPerm;
-    }
-
-    public boolean isNewRpc() {
-        return newRpc;
-    }
-
-    public void setNewRpc(boolean newRpc) {
-        this.newRpc = newRpc;
-    }
-
-    public boolean isDebugMode() {
-        return debugMode;
-    }
-
-    public void setDebugMode(boolean debugMode) {
-        this.debugMode = debugMode;
-    }
-
-    public boolean isLanguageSimplifiedChinese() {
-        return languageSimplifiedChinese;
-    }
-
-    public void setLanguageSimplifiedChinese(boolean languageSimplifiedChinese) {
-        this.languageSimplifiedChinese = languageSimplifiedChinese;
-    }
-
-    public int getWaitWhenException() {
-        return waitWhenException;
-    }
-
-    public void setWaitWhenException(int waitWhenException) {
-        this.waitWhenException = waitWhenException;
-    }
-
-    public Map<String, ModelFields> getModelFieldsMap() {
-        return modelFieldsMap;
-    }
 }
