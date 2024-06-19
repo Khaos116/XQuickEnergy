@@ -218,150 +218,151 @@ public class Config {
     public static Config defInit() {
         Config c = new Config();
 
-        c.immediateEffect = true;
-        c.recordLog = true;
-        c.showToast = true;
-        c.toastOffsetY = 0;
-        c.stayAwake = true;
-        c.timeoutRestart = true;
-        c.startAt7 = false;
-        c.enableOnGoing = false;
-        c.languageSimplifiedChinese = false;
+        c.immediateEffect = true;//立即生效
+        c.recordLog = true;//记录日志
+        c.showToast = true;//气泡提示
+        c.toastOffsetY = -200;
+        c.stayAwake = true;//保持唤醒
+        c.timeoutRestart = true;//超时重启
+        c.startAt7 = true;//7点前启动
+        c.enableOnGoing = true;//开启状态栏禁删
+        c.languageSimplifiedChinese = true;//界面始终使用中文
 
-        c.collectEnergy = false;
-        c.collectWateringBubble = true;
-        c.batchRobEnergy = false;
-        c.collectProp = true;
+        c.collectEnergy = true;//收集能量
+        c.collectWateringBubble = true;//收金球
+        c.batchRobEnergy = true;//一键收能量
+        c.collectProp = true;//收集道具
         c.checkInterval = 1800_000;
         c.waitWhenException = 60 * 60 * 1000;
-        c.limitCollect = true;
-        c.limitCount = 50;
-        c.doubleCard = false;
+        c.limitCollect = true;//限制收取
+        c.limitCount = 50;//限制每分钟收取个数
+        c.doubleCard = true;//使用双击卡
         c.doubleCardTime = new ArrayList<>();
         c.doubleCardTime.add("0700-0730");
         c.doubleCountLimit = 6;
         c.advanceTime = 0;
         c.collectInterval = 350;
         c.collectTimeout = 2_000;
-        c.returnWater33 = 0;
-        c.returnWater18 = 0;
-        c.returnWater10 = 0;
-        c.helpFriendCollect = true;
+        c.returnWater33 = 0;//返水33g
+        c.returnWater18 = 0;//返水18g
+        c.returnWater10 = 0;//返水10g
+        c.helpFriendCollect = true;//复活好友能量
         if (c.dontCollectSet == null)
             c.dontCollectSet = new HashSet<>();
         if (c.dontHelpCollectList == null)
             c.dontHelpCollectList = new ArrayList<>();
-        c.receiveForestTaskAward = true;
+        c.receiveForestTaskAward = true;//收取森林任务奖励
         if (c.waterFriendList == null)
             c.waterFriendList = new ArrayList<>();
         if (c.waterCountList == null)
             c.waterCountList = new ArrayList<>();
-        c.waterFriendCount = 66;
-        c.cooperateWater = true;
+        c.waterFriendCount = 66;//每次浇水克数
+        c.cooperateWater = false;//合种
         if (c.cooperateWaterList == null)
             c.cooperateWaterList = new ArrayList<>();
         if (c.cooperateWaterNumList == null)
             c.cooperateWaterNumList = new ArrayList<>();
         if (c.ancientTreeCityCodeList == null)
             c.ancientTreeCityCodeList = new ArrayList<>();
-        c.ancientTree = false;
-        c.reserve = true;
+        c.ancientTree = false;//保护古树
+        c.reserve = false;//每日兑换保护地
         if (c.reserveList == null)
             c.reserveList = new ArrayList<>();
         if (c.reserveCountList == null)
             c.reserveCountList = new ArrayList<>();
-        c.beach = true;
+        c.beach = true;//保护海洋
         if (c.beachList == null)
             c.beachList = new ArrayList<>();
         if (c.beachCountList == null)
             c.beachCountList = new ArrayList<>();
-        c.energyRain = true;
+        c.energyRain = true;//能量雨
         if (c.giveEnergyRainList == null)
             c.giveEnergyRainList = new ArrayList<>();
-        c.exchangeEnergyDoubleClick = false;
+        c.exchangeEnergyDoubleClick = false;//活力值兑换限时双击卡
         c.exchangeEnergyDoubleClickCount = 6;
-        c.ancientTreeOnlyWeek = true;
-        c.antdodoCollect = true;
-        c.antOcean = true;
-        c.userPatrol = true;
-        c.animalConsumeProp = true;
-        c.collectGiftBox = true;
-        c.totalCertCount = false;
+        c.ancientTreeOnlyWeek = true;//仅星期一、三、五运行保护古树
+        c.antdodoCollect = true;//神奇物种开卡
+        c.antOcean = true;//神奇海洋
+        c.userPatrol = true;//巡护森林
+        c.animalConsumeProp = true;//派遣动物
+        c.collectGiftBox = true;//领取礼盒
+        c.totalCertCount = false;//记录证书总数
 
-        c.enableFarm = true;
-        c.rewardFriend = false;
-        c.sendBackAnimal = true;
+        c.enableFarm = true;//开启庄园
+        c.rewardFriend = false;//打赏好友
+        c.sendBackAnimal = false;//遣返小鸡
         c.sendType = SendType.NORMAL;
         if (c.dontSendFriendList == null)
             c.dontSendFriendList = new ArrayList<>();
         c.recallAnimalType = RecallAnimalType.ALWAYS;
-        c.receiveFarmToolReward = true;
-        c.recordFarmGame = true;
-        c.kitchen = true;
-        c.useSpecialFood = false;
-        c.useNewEggTool = true;
-        c.harvestProduce = true;
-        c.donation = true;
-        c.answerQuestion = true;
-        c.receiveFarmTaskAward = true;
-        c.feedAnimal = true;
-        c.useAccelerateTool = true;
+        c.receiveFarmToolReward = true;//收取道具奖励
+        c.recordFarmGame = true;//游戏改分
+        c.kitchen = true;//小鸡厨房
+        c.useSpecialFood = true;//使用特殊食品
+        c.useNewEggTool = false;//使用新蛋卡
+        c.harvestProduce = true;//收获爱心鸡蛋
+        c.donation = true;//捐赠爱心鸡蛋
+        c.answerQuestion = true;//回答问题
+        c.receiveFarmTaskAward = true;//收取饲料奖励
+        c.feedAnimal = true;//喂小鸡
+        c.useAccelerateTool = true;//使用加速卡
         if (c.feedFriendAnimalList == null)
             c.feedFriendAnimalList = new ArrayList<>();
         if (c.feedFriendCountList == null)
             c.feedFriendCountList = new ArrayList<>();
-        c.farmGameTime = new ArrayList<>();
-        c.farmGameTime.add("2200-2400");
+        c.farmGameTime = new ArrayList<>();//小鸡游戏时间
+        c.farmGameTime.add("0830-1100");
+        c.farmGameTime.add("2300-2400");
         c.animalSleepTime = new ArrayList<>();
-        c.animalSleepTime.add("2300-2400");
-        c.animalSleepTime.add("0000-0559");
-        c.notifyFriend = false;
+        c.animalSleepTime.add("0200-0300");
+        c.animalSleepTime.add("0400-0559");
+        c.notifyFriend = false;//通知好友赶鸡
         if (c.dontNotifyFriendList == null)
             c.dontNotifyFriendList = new ArrayList<>();
         c.whoYouWantGiveTo = new ArrayList<>();
         c.sendFriendCard = new ArrayList<>();
-        c.acceptGift = true;
+        c.acceptGift = true;//收麦子
         if (c.visitFriendList == null)
             c.visitFriendList = new ArrayList<>();
         if (c.visitFriendCountList == null)
             c.visitFriendCountList = new ArrayList<>();
-        c.chickenDiary = true;
-        c.antOrchard = true;
-        c.receiveOrchardTaskAward = true;
-        c.orchardSpreadManureCount = 0;
+        c.chickenDiary = true;//小鸡日记
+        c.antOrchard = true;//农场
+        c.receiveOrchardTaskAward = true;//收取农场任务奖励
+        c.orchardSpreadManureCount = 1;//农场每日施肥次数
 
-        c.enableStall = false;
-        c.stallAutoClose = false;
-        c.stallAutoOpen = false;
-        c.stallAutoTask = true;
-        c.stallReceiveAward = false;
-        c.stallOpenType = true;
+        c.enableStall = false;//新村
+        c.stallAutoClose = false;//村自动收摊
+        c.stallAutoOpen = false;//新村自动摆摊
+        c.stallAutoTask = false;//新村自动任务
+        c.stallReceiveAward = false;//新村自动领奖
+        c.stallOpenType = true;//摊位类型(打开:摆摊列表/关闭:不摆列表)
         c.stallOpenList = new ArrayList<>();
         c.stallWhiteList = new ArrayList<>();
         c.stallBlackList = new ArrayList<>();
         c.stallAllowOpenTime = 121;
         c.stallSelfOpenTime = 120;
-        c.stallDonate = false;
-        c.stallInviteRegister = false;
-        c.stallThrowManure = false;
+        c.stallDonate = false;//新村自动捐赠
+        c.stallInviteRegister = false;//邀请好友开通新村
+        c.stallThrowManure = false;//新村丢肥料
         c.stallInviteShopList = new ArrayList<>();
 
-        c.receivePoint = true;
-        c.openTreasureBox = true;
-        c.receiveCoinAsset = true;
-        c.donateCharityCoin = false;
-        c.kbSignIn = true;
+        c.receivePoint = false;//积分
+        c.openTreasureBox = false;//开启运动宝箱
+        c.receiveCoinAsset = false;//收集运动币
+        c.donateCharityCoin = false;//捐运动币
+        c.kbSignIn = true;//口碑签到
         c.syncStepCount = 22000;
-        c.ecoLifeTick = true;
-        c.tiyubiz = true;
-        c.insBlueBeanExchange = true;
-        c.collectSesame = false;
-        c.zcjSignIn = false;
-        c.merchantKmdk = false;
-        c.greenFinance = false;
-        c.antBookRead = false;
-        c.consumeGold = false;
-        c.omegakoiTown = false;
+        c.ecoLifeTick = true;//绿色行动打卡
+        c.tiyubiz = true;//文体中心
+        c.insBlueBeanExchange = false;//安心豆兑换时光加速器
+        c.collectSesame = false;//收芝麻粒
+        c.zcjSignIn = false;//招财金签到
+        c.merchantKmdk = false;//商户开门打卡
+        c.greenFinance = true;//开启绿色经营
+        c.antBookRead = true;//读书听书
+        c.consumeGold = false;//支付宝消费金
+        c.omegakoiTown = false;//支小镇
         return c;
     }
 
