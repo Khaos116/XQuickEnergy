@@ -15,6 +15,7 @@
 3|闹钟设定为GMT+8时区
 4|正式版混淆配置
 5|关闭一键捉鸡
+6|修改默认配置
 
 [![License](https://img.shields.io/github/license/TKaxv-7S/XQuickEnergy.svg)](LICENSE)
 [![Latest Release](https://img.shields.io/github/release/TKaxv-7S/XQuickEnergy.svg)](../../releases)
