@@ -2,13 +2,14 @@
 
 ### <table><tr><td bgcolor=#FF0000>修改点</td></tr></table>
 
-序号|<font color="red">更改内容</font>
-:---------------------------:|:---------------------------:
+序号|更改内容
+:---:|:---:
 1|图标压缩
 2|取消通知栏折叠
 3|闹钟设定为GMT+8时区
 4|正式版混淆配置
 5|关闭一键捉鸡
+<span style="color:red;">更改内容</span>
 
 [![License](https://img.shields.io/github/license/TKaxv-7S/XQuickEnergy.svg)](LICENSE)
 [![Latest Release](https://img.shields.io/github/release/TKaxv-7S/XQuickEnergy.svg)](../../releases)
