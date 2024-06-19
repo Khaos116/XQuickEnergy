@@ -5,7 +5,11 @@
 + text in green
 ! text in orange
 # text in gray
-@@ Fork修改内容如下：
+@@ Fork修改内容如下：text in purple (and bold)@@
+- Fork修改内容如下
++ Fork修改内容如下
+! Fork修改内容如下
+# Fork修改内容如下
 ```
 
 序号|更改内容
