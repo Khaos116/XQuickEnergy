@@ -5,7 +5,6 @@
 + text in green
 ! text in orange
 # text in gray
-@@ text in purple (and bold)@@
 Fork修改内容如下：
 ```
 
