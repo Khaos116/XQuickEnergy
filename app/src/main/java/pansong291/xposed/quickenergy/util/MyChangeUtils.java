@@ -6,7 +6,9 @@ import android.app.NotificationManager;
 import java.util.*;
 
 import pansong291.xposed.quickenergy.data.ConfigV2;
-import pansong291.xposed.quickenergy.task.model.antFarm.AntFarm;
+import pansong291.xposed.quickenergy.data.ModelFields;
+import pansong291.xposed.quickenergy.data.modelFieldExt.BooleanModelField;
+import pansong291.xposed.quickenergy.task.model.antForest.AntForestV2;
 
 /**
  * 在IDEA中添加@Getter注解后报红问题解决方案：需要在IDEA中安装lombok插件，并引入 lombok的依赖即可
@@ -133,6 +135,7 @@ public class MyChangeUtils {
     c.omegakoiTown = false;//支小镇
   }
 
+  //修改版本基础配置
   public static ConfigV2 useMyConfigV2(ConfigV2 c) {
     c.immediateEffect = true;//立即生效
     c.recordLog = true;//记录日志
@@ -148,5 +151,22 @@ public class MyChangeUtils {
     c.debugMode = false;//开启抓包
     c.languageSimplifiedChinese = true;//界面始终使用中文
     return c;
+  }
+
+  //修改蚂蚁森林V2配置
+  public static void useMyAntForestV2(ModelFields modelFields) {
+    changeBooleanModelField(modelFields, AntForestV2.exchangeEnergyDoubleClick, false);//活力值兑换限时双击卡
+    changeBooleanModelField(modelFields, AntForestV2.animalConsumeProp, true);//派遣动物
+    changeBooleanModelField(modelFields, AntForestV2.userPatrol, true);//巡护森林
+    changeBooleanModelField(modelFields, AntForestV2.antdodoCollect, true);//神奇物种开卡
+    changeBooleanModelField(modelFields, AntForestV2.totalCertCount, true);//记录证书总数
+    changeBooleanModelField(modelFields, AntForestV2.collectGiftBox, true);//领取礼盒
+    changeBooleanModelField(modelFields, AntForestV2.ecoLifeTick, true);//绿色行动打卡
+  }
+
+  //重新赋值给默认配置
+  private static void changeBooleanModelField(ModelFields modelFields, BooleanModelField field, boolean open) {
+    Object ob = modelFields.get(field.getCode());
+    if (ob instanceof BooleanModelField) ((BooleanModelField) ob).setValue(open);//活力值兑换限时双击卡
   }
 }

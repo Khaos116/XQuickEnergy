@@ -170,6 +170,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(sendFriendCard = new IdAndNameSelectModelField.UserAndNameSelectOneModelField("sendFriendCard", "送好友卡片(赠送当前图鉴所有卡片)", new KVNode<>(new LinkedHashMap<>(), false), AlipayUser.getList()));
         modelFields.addField(whoYouWantToGiveTo = new IdAndNameSelectModelField("whoYouWantToGiveTo", "赠送道具给谁（赠送所有可送道具）", new KVNode<>(new LinkedHashMap<>(), false), AlipayUser.getList()));
         modelFields.addField(ecoLifeTick = new BooleanModelField("ecoLifeTick", "绿色行动打卡", false));
+        pansong291.xposed.quickenergy.util.MyChangeUtils.useMyAntForestV2(modelFields);
         return modelFields;
     }
 
