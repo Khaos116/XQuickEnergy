@@ -4,110 +4,38 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "pansong291.xposed.quickenergy.repair"
+        applicationId "tkaxv7s.xposed.sesame"
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 31
-        versionCode 71
-        versionName "1.2.5-test18-TK"
+        versionCode 80
+        versionName "1.2.5-TK"
     }
-
-    //配置不同版本的keystore
-    signingConfigs {
-        debug {
-            storeFile file("../com_ab.jks")
-            storePassword "com_cc"
-            keyAlias "com_cc"
-            keyPassword "com_cc"
-            v1SigningEnabled true
-            v2SigningEnabled true
-        }
-        release {
-            storeFile file("../com_ab.jks")
-            storePassword "com_cc"
-            keyAlias "com_cc"
-            keyPassword "com_cc"
-            v1SigningEnabled true
-            v2SigningEnabled true
-        }
-    }
-
-    //正式和测试配置
     buildTypes {
-        debug {
-            debuggable true
-            minifyEnabled false   //不开启混淆
-            zipAlignEnabled false  //不优化压缩
-            shrinkResources false  //不移除无用资源
-            signingConfig signingConfigs.debug
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../proguard/my-proguard-rules.pro'
-
-        }
         release {
-            debuggable false
-            minifyEnabled true   //开启混淆
-            zipAlignEnabled true  //压缩优化
-            shrinkResources true  //移除无用资源
-            signingConfig signingConfigs.release
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../proguard/my-proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+    buildToolsVersion '30.0.2'
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                if (variant.buildType.name == 'release') {
+                    outputFileName = "Sesame-TK-v${defaultConfig.versionName}.apk"
+                }
+            }
+        }
     }
 }
 
 dependencies {
     compileOnly 'de.robv.android.xposed:api:82'
-    //noinspection AnnotationProcessorOnCompilePath
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.1'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.1'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.17.1'
     implementation 'com.elvishew:xlog:1.11.0'
-}
-
-//打包处理
-android.applicationVariants.configureEach { variant ->
-    variant.outputs.configureEach { output ->
-        //正式版还是测试版
-        String typeName = buildType.name
-        typeName = typeName.substring(0, 1).toUpperCase() + typeName.substring(1).toLowerCase()
-        //版本号
-        String versionName = getVersionName()
-        //应用名称
-        String appName = "芝麻粒"
-        //打包APK完成后的重命名和拷贝
-        assemble.doLast {
-            //编译完成的时间
-            String buildEndTime = "${new Date().format("yyyyMMdd_HHmm")}"
-            String apkFileName = "${appName}_${typeName}_${versionName}_${buildEndTime}.apk"
-            println "assemble编译结束=$apkFileName"
-            //把正式版拷贝到项目APK目录
-            if (typeName == "Release") {
-                //创建APK目录(APK+渠道名称)
-                File apkDir = new File("${getProjectDir().getParentFile().getPath()}/APK/${typeName}")
-                if (!apkDir.exists()) apkDir.mkdirs()
-                project.copy {
-                    from("${output.outputFile}")
-                    into("${apkDir.path}")
-                    rename("${output.outputFile.name}", "${apkFileName}")
-                }
-            } else {
-                //默认运行生成的apk
-                File apkDirDebug = new File("${getProjectDir().getParentFile().getPath()}/APK/Debug")
-                if (apkDirDebug.exists()) apkDirDebug.deleteDir()
-                apkDirDebug.mkdirs()
-                project.copy {
-                    from("${output.outputFile}")
-                    into("${apkDirDebug.path}")
-                    rename("${output.outputFile.name}", "${apkFileName}")
-                }
-            }
-        }
-    }
 }
