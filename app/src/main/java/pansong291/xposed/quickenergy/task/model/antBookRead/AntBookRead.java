@@ -25,7 +25,7 @@ public class AntBookRead extends ModelTask {
     @Override
     public ModelFields setFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(antBookRead = new BooleanModelField("antBookRead", "开启读书听书", false));
+        modelFields.addField(antBookRead = new BooleanModelField("antBookRead", "开启读书听书", true));
         return modelFields;
     }
 

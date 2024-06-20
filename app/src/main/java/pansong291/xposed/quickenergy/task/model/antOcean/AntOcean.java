@@ -32,7 +32,7 @@ public class AntOcean extends ModelTask {
     @Override
     public ModelFields setFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(enableOcean = new BooleanModelField("enableOcean", "开启海洋", false));
+        modelFields.addField(enableOcean = new BooleanModelField("enableOcean", "开启海洋", true));
         return modelFields;
     }
 

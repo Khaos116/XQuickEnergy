@@ -22,8 +22,8 @@ public class KBMember extends ModelTask {
     @Override
     public ModelFields setFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(enableKb = new BooleanModelField("enableKb", "开启口碑", false));
-        modelFields.addField(kbSignIn = new BooleanModelField("kbSignIn", "口碑签到", false));
+        modelFields.addField(enableKb = new BooleanModelField("enableKb", "开启口碑", true));
+        modelFields.addField(kbSignIn = new BooleanModelField("kbSignIn", "口碑签到", true));
         return modelFields;
     }
 

@@ -153,20 +153,7 @@ public class MyChangeUtils {
     return c;
   }
 
-  //修改蚂蚁森林V2配置
-  public static void useMyAntForestV2(ModelFields modelFields) {
-    changeBooleanModelField(modelFields, AntForestV2.exchangeEnergyDoubleClick, false);//活力值兑换限时双击卡
-    changeBooleanModelField(modelFields, AntForestV2.animalConsumeProp, true);//派遣动物
-    changeBooleanModelField(modelFields, AntForestV2.userPatrol, true);//巡护森林
-    changeBooleanModelField(modelFields, AntForestV2.antdodoCollect, true);//神奇物种开卡
-    changeBooleanModelField(modelFields, AntForestV2.totalCertCount, true);//记录证书总数
-    changeBooleanModelField(modelFields, AntForestV2.collectGiftBox, true);//领取礼盒
-    changeBooleanModelField(modelFields, AntForestV2.ecoLifeTick, true);//绿色行动打卡
-  }
+  public static void fixAntOrchard(){
 
-  //重新赋值给默认配置
-  private static void changeBooleanModelField(ModelFields modelFields, BooleanModelField field, boolean open) {
-    Object ob = modelFields.get(field.getCode());
-    if (ob instanceof BooleanModelField) ((BooleanModelField) ob).setValue(open);//活力值兑换限时双击卡
   }
 }
