@@ -65,7 +65,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
 
     private static volatile boolean init = false;
 
-    private static volatile Calendar dayCalendar = Calendar.getInstance();
+    private static volatile Calendar dayCalendar = pansong291.xposed.quickenergy.util.MyChangeUtils.getInstance();
 
     @Getter
     private static volatile boolean offline = false;
@@ -129,7 +129,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                             protected void afterHookedMethod(MethodHookParam param) {
                                 int originStep = (Integer) param.getResult();
                                 int step = AntSports.tmpStepCount();
-                                if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < 6 || originStep >= step) {
+                                if (pansong291.xposed.quickenergy.util.MyChangeUtils.getInstance().get(Calendar.HOUR_OF_DAY) < 6 || originStep >= step) {
                                     return;
                                 }
                                 param.setResult(step);
@@ -344,7 +344,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             if (config.isStartAt0() || hasWakenAtTime) {
                 try {
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent("com.eg.android.AlipayGphone.xqe.execute"), getPendingIntentFlag());
-                    Calendar calendar = Calendar.getInstance();
+                    Calendar calendar = pansong291.xposed.quickenergy.util.MyChangeUtils.getInstance();
                     calendar.add(Calendar.DAY_OF_MONTH, 1);
                     calendar.set(Calendar.HOUR_OF_DAY, 0);
                     calendar.set(Calendar.MINUTE, 0);
@@ -360,7 +360,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 }
             }
             if (hasWakenAtTime) {
-                Calendar nowCalendar = Calendar.getInstance();
+                Calendar nowCalendar = pansong291.xposed.quickenergy.util.MyChangeUtils.getInstance();
                 for (int i = 1, len = wakenAtTimeList.size(); i < len; i++) {
                     try {
                         String wakenAtTime = wakenAtTimeList.get(i);
@@ -418,7 +418,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
     }
 
     private void updateDay() {
-        Calendar nowCalendar = Calendar.getInstance();
+        Calendar nowCalendar = pansong291.xposed.quickenergy.util.MyChangeUtils.getInstance();
         int nowYear = nowCalendar.get(Calendar.YEAR);
         int nowMonth = nowCalendar.get(Calendar.MONTH);
         int nowDay = nowCalendar.get(Calendar.DAY_OF_MONTH);

@@ -116,18 +116,21 @@ public class NotificationUtil {
     }
 
     private static void innerSetContentText() {
-        String preContent = (nextExecTime > 0) ? "下次扫描时间" + TimeUtil.getTimeStr(nextExecTime) + "\n" : "";
-        Notification.BigTextStyle style = new Notification.BigTextStyle();
-        style.bigText(preContent + contentText);
-//        Notification.InboxStyle style = new Notification.InboxStyle();
-//        style.addLine(preContent);
-//        style.addLine(contentText);
-        builder.setStyle(style);
-
-        mNotification = builder.build();
-        if (mNotifyManager != null) {
-            mNotifyManager.notify(NOTIFICATION_ID, mNotification);
-        }
+//        String preContent = (nextExecTime > 0) ? "下次扫描时间" + TimeUtil.getTimeStr(nextExecTime) + "\n" : "";
+//        Notification.BigTextStyle style = new Notification.BigTextStyle();
+//        style.bigText(preContent + contentText);
+////        Notification.InboxStyle style = new Notification.InboxStyle();
+////        style.addLine(preContent);
+////        style.addLine(contentText);
+//        builder.setStyle(style);
+//
+//        mNotification = builder.build();
+//        if (mNotifyManager != null) {
+//            mNotifyManager.notify(NOTIFICATION_ID, mNotification);
+//        }
+        pansong291.xposed.quickenergy.util.MyChangeUtils.innerSetContentText(
+            nextExecTime,builder,contentText,mNotifyManager
+        );
     }
 
     public static void setContentText(CharSequence cs) {

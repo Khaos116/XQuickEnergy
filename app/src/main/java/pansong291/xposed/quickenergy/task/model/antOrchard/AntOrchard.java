@@ -72,7 +72,7 @@ public class AntOrchard extends ModelTask {
                             extraInfoGet();
                             if (!joo.optBoolean("hireCountOnceLimit", true)
                                     && !joo.optBoolean("hireCountOneDayLimit", true))
-                                batchHireAnimalRecommend();
+                                pansong291.xposed.quickenergy.util.MyChangeUtils.batchHireAnimalRecommend();
                             if (receiveOrchardTaskAward.getValue()) {
                                 doOrchardDailyTask(userId);
                                 triggerTbTask();
