@@ -65,7 +65,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
 
     private static volatile boolean init = false;
 
-    private static volatile Calendar dayCalendar = Calendar.getInstance();
+    private static volatile Calendar dayCalendar = pansong291.xposed.quickenergy.util.MyChangeUtils.getInstance();
 
     @Getter
     private static volatile boolean offline = false;
@@ -124,18 +124,18 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             }
             try {
                 XposedHelpers.findAndHookMethod("com.alibaba.health.pedometer.core.datasource.PedometerAgent", classLoader,
-                        "readDailyStep", new XC_MethodHook() {
-                            @Override
-                            protected void afterHookedMethod(MethodHookParam param) {
-                                int originStep = (Integer) param.getResult();
-                                int step = AntSports.tmpStepCount();
-                                if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < 6 || originStep >= step) {
-                                    return;
-                                }
-                                param.setResult(step);
-
+                    "readDailyStep", new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) {
+                            int originStep = (Integer) param.getResult();
+                            int step = AntSports.tmpStepCount();
+                            if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < 6 || originStep >= step) {
+                                return;
                             }
-                        });
+                            param.setResult(step);
+
+                        }
+                    });
                 Log.i(TAG, "hook readDailyStep successfully");
             } catch (Throwable t) {
                 Log.i(TAG, "hook readDailyStep err:");
@@ -143,34 +143,34 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             }
             try {
                 XposedHelpers.findAndHookMethod("com.alipay.mobile.quinox.LauncherActivity", classLoader,
-                        "onResume", new XC_MethodHook() {
-                            @Override
-                            protected void afterHookedMethod(MethodHookParam param) {
-                                Log.i(TAG, "Activity onResume");
-                                if (!init) {
+                    "onResume", new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) {
+                            Log.i(TAG, "Activity onResume");
+                            if (!init) {
+                                return;
+                            }
+                            String targetUid = getUserId();
+                            if (targetUid == null) {
+                                return;
+                            }
+                            String currentUid = UserIdMap.getCurrentUid();
+                            if (!targetUid.equals(currentUid)) {
+                                UserIdMap.setCurrentUid(targetUid);
+                                if (currentUid != null) {
+                                    Toast.show("芝麻粒切换用户");
+                                    initHandler(true);
+                                    Log.i(TAG, "Activity changeUser");
                                     return;
-                                }
-                                String targetUid = getUserId();
-                                if (targetUid == null) {
-                                    return;
-                                }
-                                String currentUid = UserIdMap.getCurrentUid();
-                                if (!targetUid.equals(currentUid)) {
-                                    UserIdMap.setCurrentUid(targetUid);
-                                    if (currentUid != null) {
-                                        Toast.show("芝麻粒切换用户");
-                                        initHandler(true);
-                                        Log.i(TAG, "Activity changeUser");
-                                        return;
-                                    }
-                                }
-                                if (offline) {
-                                    execHandler();
-                                    ((Activity) param.thisObject).finish();
-                                    Log.i(TAG, "Activity reLogin");
                                 }
                             }
-                        });
+                            if (offline) {
+                                execHandler();
+                                ((Activity) param.thisObject).finish();
+                                Log.i(TAG, "Activity reLogin");
+                            }
+                        }
+                    });
                 Log.i(TAG, "hook login successfully");
             } catch (Throwable t) {
                 Log.i(TAG, "hook login err:");
@@ -178,106 +178,106 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             }
             try {
                 XposedHelpers.findAndHookMethod(
-                        "android.app.Service", classLoader, "onCreate", new XC_MethodHook() {
+                    "android.app.Service", classLoader, "onCreate", new XC_MethodHook() {
 
-                            @SuppressLint("WakelockTimeout")
-                            @Override
-                            protected void afterHookedMethod(MethodHookParam param) {
-                                Service appService = (Service) param.thisObject;
-                                if (!ClassUtil.CURRENT_USING_SERVICE.equals(appService.getClass().getCanonicalName())) {
-                                    return;
-                                }
-                                Log.i(TAG, "Service onCreate");
-                                context = appService.getApplicationContext();
-                                service = appService;
-                                mainHandler = new Handler();
-                                mainRunner = new Runnable() {
+                        @SuppressLint("WakelockTimeout")
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) {
+                            Service appService = (Service) param.thisObject;
+                            if (!ClassUtil.CURRENT_USING_SERVICE.equals(appService.getClass().getCanonicalName())) {
+                                return;
+                            }
+                            Log.i(TAG, "Service onCreate");
+                            context = appService.getApplicationContext();
+                            service = appService;
+                            mainHandler = new Handler();
+                            mainRunner = new Runnable() {
 
-                                    private volatile long lastExecTime = 0;
+                                private volatile long lastExecTime = 0;
 
-                                    @Override
-                                    public void run() {
-                                        if (!init) {
+                                @Override
+                                public void run() {
+                                    if (!init) {
+                                        return;
+                                    }
+                                    Log.record("开始执行");
+                                    try {
+                                        ConfigV2 config = ConfigV2.INSTANCE;
+                                        int checkInterval = Math.max(config.getCheckInterval(), 180_000);
+                                        if (lastExecTime + 5000 > System.currentTimeMillis()) {
+                                            Log.record("执行间隔较短，跳过执行");
+                                            execDelayedHandler(checkInterval);
                                             return;
                                         }
-                                        Log.record("开始执行");
+                                        updateDay();
+                                        String targetUid = getUserId();
+                                        if (targetUid == null) {
+                                            Log.record("用户为空，放弃执行");
+                                            return;
+                                        }
+                                        String currentUid = UserIdMap.getCurrentUid();
+                                        if (!targetUid.equals(currentUid)) {
+                                            if (currentUid != null) {
+                                                reLogin();
+                                                return;
+                                            }
+                                        }
+                                        UserIdMap.setCurrentUid(targetUid);
+
                                         try {
-                                            ConfigV2 config = ConfigV2.INSTANCE;
-                                            int checkInterval = Math.max(config.getCheckInterval(), 180_000);
-                                            if (lastExecTime + 5000 > System.currentTimeMillis()) {
-                                                Log.record("执行间隔较短，跳过执行");
-                                                execDelayedHandler(checkInterval);
+                                            FutureTask<Boolean> checkTask = new FutureTask<>(AntMemberRpcCall::check);
+                                            Thread checkThread = new Thread(checkTask);
+                                            checkThread.start();
+                                            if (!checkTask.get(2, TimeUnit.SECONDS)) {
+                                                reLogin();
                                                 return;
                                             }
-                                            updateDay();
-                                            String targetUid = getUserId();
-                                            if (targetUid == null) {
-                                                Log.record("用户为空，放弃执行");
-                                                return;
-                                            }
-                                            String currentUid = UserIdMap.getCurrentUid();
-                                            if (!targetUid.equals(currentUid)) {
-                                                if (currentUid != null) {
-                                                    reLogin();
-                                                    return;
-                                                }
-                                            }
-                                            UserIdMap.setCurrentUid(targetUid);
+                                        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                                            Log.i(TAG, "check timeout");
+                                            execDelayedHandler(checkInterval);
+                                            return;
+                                        } catch (Exception e) {
+                                            Log.i(TAG, "check err:");
+                                            Log.printStackTrace(TAG, e);
+                                            execDelayedHandler(checkInterval);
+                                            return;
+                                        }
+                                        TaskCommon.update();
+                                        ModelTask.startAllTask(false);
+                                        lastExecTime = System.currentTimeMillis();
 
-                                            try {
-                                                FutureTask<Boolean> checkTask = new FutureTask<>(AntMemberRpcCall::check);
-                                                Thread checkThread = new Thread(checkTask);
-                                                checkThread.start();
-                                                if (!checkTask.get(2, TimeUnit.SECONDS)) {
-                                                    reLogin();
-                                                    return;
-                                                }
-                                            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                                                Log.i(TAG, "check timeout");
-                                                execDelayedHandler(checkInterval);
-                                                return;
-                                            } catch (Exception e) {
-                                                Log.i(TAG, "check err:");
-                                                Log.printStackTrace(TAG, e);
-                                                execDelayedHandler(checkInterval);
-                                                return;
-                                            }
-                                            TaskCommon.update();
-                                            ModelTask.startAllTask(false);
-                                            lastExecTime = System.currentTimeMillis();
-
-                                            try {
-                                                List<String> execAtTimeList = config.getExecAtTimeList();
-                                                if (execAtTimeList != null) {
-                                                    Calendar lastExecTimeCalendar = TimeUtil.getCalendarByTimeMillis(lastExecTime);
-                                                    Calendar nextExecTimeCalendar = TimeUtil.getCalendarByTimeMillis(lastExecTime + checkInterval);
-                                                    for (String execAtTime : execAtTimeList) {
-                                                        Calendar execAtTimeCalendar = TimeUtil.getTodayCalendarByTimeStr(execAtTime);
-                                                        if (execAtTimeCalendar != null && lastExecTimeCalendar.compareTo(execAtTimeCalendar) < 0 && nextExecTimeCalendar.compareTo(execAtTimeCalendar) > 0) {
-                                                            Log.record("设置定时执行:" + execAtTime);
-                                                            execDelayedHandler(execAtTimeCalendar.getTimeInMillis() - lastExecTime);
-                                                            FileUtil.clearLog();
-                                                            return;
-                                                        }
+                                        try {
+                                            List<String> execAtTimeList = config.getExecAtTimeList();
+                                            if (execAtTimeList != null) {
+                                                Calendar lastExecTimeCalendar = TimeUtil.getCalendarByTimeMillis(lastExecTime);
+                                                Calendar nextExecTimeCalendar = TimeUtil.getCalendarByTimeMillis(lastExecTime + checkInterval);
+                                                for (String execAtTime : execAtTimeList) {
+                                                    Calendar execAtTimeCalendar = TimeUtil.getTodayCalendarByTimeStr(execAtTime);
+                                                    if (execAtTimeCalendar != null && lastExecTimeCalendar.compareTo(execAtTimeCalendar) < 0 && nextExecTimeCalendar.compareTo(execAtTimeCalendar) > 0) {
+                                                        Log.record("设置定时执行:" + execAtTime);
+                                                        execDelayedHandler(execAtTimeCalendar.getTimeInMillis() - lastExecTime);
+                                                        FileUtil.clearLog();
+                                                        return;
                                                     }
                                                 }
-                                            } catch (Exception e) {
-                                                Log.i(TAG, "execAtTime err:");
-                                                Log.printStackTrace(TAG, e);
                                             }
-
-                                            execDelayedHandler(checkInterval);
-                                            FileUtil.clearLog();
                                         } catch (Exception e) {
-                                            Log.record("执行异常:");
-                                            Log.printStackTrace(e);
+                                            Log.i(TAG, "execAtTime err:");
+                                            Log.printStackTrace(TAG, e);
                                         }
+
+                                        execDelayedHandler(checkInterval);
+                                        FileUtil.clearLog();
+                                    } catch (Exception e) {
+                                        Log.record("执行异常:");
+                                        Log.printStackTrace(e);
                                     }
-                                };
-                                registerBroadcastReceiver(appService);
-                                initHandler(true);
-                            }
-                        });
+                                }
+                            };
+                            registerBroadcastReceiver(appService);
+                            initHandler(true);
+                        }
+                    });
                 Log.i(TAG, "hook service onCreate successfully");
             } catch (Throwable t) {
                 Log.i(TAG, "hook service onCreate err:");
@@ -344,7 +344,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             if (config.isStartAt0() || hasWakenAtTime) {
                 try {
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent("com.eg.android.AlipayGphone.xqe.execute"), getPendingIntentFlag());
-                    Calendar calendar = Calendar.getInstance();
+                    Calendar calendar = pansong291.xposed.quickenergy.util.MyChangeUtils.getInstance();
                     calendar.add(Calendar.DAY_OF_MONTH, 1);
                     calendar.set(Calendar.HOUR_OF_DAY, 0);
                     calendar.set(Calendar.MINUTE, 0);
@@ -360,7 +360,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 }
             }
             if (hasWakenAtTime) {
-                Calendar nowCalendar = Calendar.getInstance();
+                Calendar nowCalendar = pansong291.xposed.quickenergy.util.MyChangeUtils.getInstance();
                 for (int i = 1, len = wakenAtTimeList.size(); i < len; i++) {
                     try {
                         String wakenAtTime = wakenAtTimeList.get(i);
@@ -418,7 +418,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
     }
 
     private void updateDay() {
-        Calendar nowCalendar = Calendar.getInstance();
+        Calendar nowCalendar = pansong291.xposed.quickenergy.util.MyChangeUtils.getInstance();
         int nowYear = nowCalendar.get(Calendar.YEAR);
         int nowMonth = nowCalendar.get(Calendar.MONTH);
         int nowDay = nowCalendar.get(Calendar.DAY_OF_MONTH);
@@ -527,29 +527,29 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 if (config.isNewRpc() && config.isDebugMode()) {
                     try {
                         rpcRequestUnhook = XposedHelpers.findAndHookMethod(
-                                "com.alibaba.ariver.commonability.network.rpc.RpcBridgeExtension", classLoader
-                                , "rpc"
-                                , String.class, boolean.class, boolean.class, String.class, classLoader.loadClass(ClassUtil.JSON_OBJECT_NAME), String.class, classLoader.loadClass(ClassUtil.JSON_OBJECT_NAME), boolean.class, boolean.class, int.class, boolean.class, String.class, classLoader.loadClass("com.alibaba.ariver.app.api.App"), classLoader.loadClass("com.alibaba.ariver.app.api.Page"), classLoader.loadClass("com.alibaba.ariver.engine.api.bridge.model.ApiContext"), classLoader.loadClass("com.alibaba.ariver.engine.api.bridge.extension.BridgeCallback")
-                                , new XC_MethodHook() {
+                            "com.alibaba.ariver.commonability.network.rpc.RpcBridgeExtension", classLoader
+                            , "rpc"
+                            , String.class, boolean.class, boolean.class, String.class, classLoader.loadClass(ClassUtil.JSON_OBJECT_NAME), String.class, classLoader.loadClass(ClassUtil.JSON_OBJECT_NAME), boolean.class, boolean.class, int.class, boolean.class, String.class, classLoader.loadClass("com.alibaba.ariver.app.api.App"), classLoader.loadClass("com.alibaba.ariver.app.api.Page"), classLoader.loadClass("com.alibaba.ariver.engine.api.bridge.model.ApiContext"), classLoader.loadClass("com.alibaba.ariver.engine.api.bridge.extension.BridgeCallback")
+                            , new XC_MethodHook() {
 
-                                    @SuppressLint("WakelockTimeout")
-                                    @Override
-                                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                        Object[] args = param.args;
-                                        rpcHookMap.put(args[15], true);
-                                        Log.debug("record request | method: " + args[0] + " | args: " + args[4]);
+                                @SuppressLint("WakelockTimeout")
+                                @Override
+                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                    Object[] args = param.args;
+                                    rpcHookMap.put(args[15], true);
+                                    Log.debug("record request | method: " + args[0] + " | args: " + args[4]);
+                                }
+
+                                @SuppressLint("WakelockTimeout")
+                                @Override
+                                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                                    if (rpcHookMap.containsKey(param.args[15])) {
+                                        rpcHookMap.remove(param.args[15]);
+                                        Log.debug("record request removed");
                                     }
+                                }
 
-                                    @SuppressLint("WakelockTimeout")
-                                    @Override
-                                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                        if (rpcHookMap.containsKey(param.args[15])) {
-                                            rpcHookMap.remove(param.args[15]);
-                                            Log.debug("record request removed");
-                                        }
-                                    }
-
-                                });
+                            });
                         Log.i(TAG, "hook record request successfully");
                     } catch (Throwable t) {
                         Log.i(TAG, "hook record request err:");
@@ -557,20 +557,20 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     }
                     try {
                         rpcResponseUnhook = XposedHelpers.findAndHookMethod(
-                                "com.alibaba.ariver.engine.common.bridge.internal.DefaultBridgeCallback", classLoader
-                                , "sendJSONResponse"
-                                , classLoader.loadClass(ClassUtil.JSON_OBJECT_NAME)
-                                , new XC_MethodHook() {
+                            "com.alibaba.ariver.engine.common.bridge.internal.DefaultBridgeCallback", classLoader
+                            , "sendJSONResponse"
+                            , classLoader.loadClass(ClassUtil.JSON_OBJECT_NAME)
+                            , new XC_MethodHook() {
 
-                                    @SuppressLint("WakelockTimeout")
-                                    @Override
-                                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                        if (Boolean.TRUE.equals(rpcHookMap.remove(param.thisObject))) {
-                                            Log.debug("record response | data: " + param.args[0]);
-                                        }
+                                @SuppressLint("WakelockTimeout")
+                                @Override
+                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                    if (Boolean.TRUE.equals(rpcHookMap.remove(param.thisObject))) {
+                                        Log.debug("record response | data: " + param.args[0]);
                                     }
+                                }
 
-                                });
+                            });
                         Log.i(TAG, "hook record response successfully");
                     } catch (Throwable t) {
                         Log.i(TAG, "hook record response err:");
