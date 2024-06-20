@@ -122,8 +122,8 @@ public class AntOrchard extends ModelTask {
     }
 
     private boolean canSpreadManureContinue(String stageBefore, String stageAfter) {
-        Double bef = Double.parseDouble(StringUtil.getSubString(stageBefore, "施肥", "%"));
-        Double aft = Double.parseDouble(StringUtil.getSubString(stageAfter, "施肥", "%"));
+        Double bef = pansong291.xposed.quickenergy.util.MyChangeUtils.fixAntOrchardParseDouble(StringUtil.getSubString(stageBefore, "施肥", "%"));
+        Double aft = pansong291.xposed.quickenergy.util.MyChangeUtils.fixAntOrchardParseDouble(StringUtil.getSubString(stageAfter, "施肥", "%"));
         if (bef - aft != 0.01)
             return true;
         Log.record("施肥只加0.01%进度今日停止施肥！");

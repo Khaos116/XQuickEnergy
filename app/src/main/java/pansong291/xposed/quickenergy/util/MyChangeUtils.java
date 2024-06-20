@@ -6,9 +6,6 @@ import android.app.NotificationManager;
 import java.util.*;
 
 import pansong291.xposed.quickenergy.data.ConfigV2;
-import pansong291.xposed.quickenergy.data.ModelFields;
-import pansong291.xposed.quickenergy.data.modelFieldExt.BooleanModelField;
-import pansong291.xposed.quickenergy.task.model.antForest.AntForestV2;
 
 /**
  * 在IDEA中添加@Getter注解后报红问题解决方案：需要在IDEA中安装lombok插件，并引入 lombok的依赖即可
@@ -153,7 +150,16 @@ public class MyChangeUtils {
     return c;
   }
 
-  public static void fixAntOrchard(){
+  public static Double fixAntOrchardParseDouble(String s) {
+    try {
+      return Double.parseDouble(s.replace("再施", ""));
+    } catch (Exception e) {
+      Log.record(e.getMessage());
+      return 0.0;
+    }
+  }
 
+  public static boolean fixCalendarHasNull(Calendar c1, Calendar c2, Calendar c3) {
+    return c1 == null || c2 == null || c3 == null;
   }
 }

@@ -253,7 +253,8 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                                     Calendar nextExecTimeCalendar = TimeUtil.getCalendarByTimeMillis(lastExecTime + checkInterval);
                                                     for (String execAtTime : execAtTimeList) {
                                                         Calendar execAtTimeCalendar = TimeUtil.getTodayCalendarByTimeStr(execAtTime);
-                                                        if (execAtTimeCalendar != null && lastExecTimeCalendar.compareTo(execAtTimeCalendar) < 0 && nextExecTimeCalendar.compareTo(execAtTimeCalendar) > 0) {
+                                                        boolean hasNull = pansong291.xposed.quickenergy.util.MyChangeUtils.fixCalendarHasNull(lastExecTimeCalendar,nextExecTimeCalendar,execAtTimeCalendar);
+                                                        if (!hasNull && lastExecTimeCalendar.compareTo(execAtTimeCalendar) < 0 && nextExecTimeCalendar.compareTo(execAtTimeCalendar) > 0) {
                                                             Log.record("设置定时执行:" + execAtTime);
                                                             execDelayedHandler(execAtTimeCalendar.getTimeInMillis() - lastExecTime);
                                                             FileUtil.clearLog();
