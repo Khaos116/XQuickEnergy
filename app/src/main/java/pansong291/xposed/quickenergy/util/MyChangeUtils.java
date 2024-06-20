@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 
 import java.util.*;
 
+import pansong291.xposed.quickenergy.data.ConfigV2;
 import pansong291.xposed.quickenergy.task.model.antFarm.AntFarm;
 
 /**
@@ -42,7 +43,7 @@ public class MyChangeUtils {
   }
 
   //我自己的默认配置参数1
-  public static void useMyConfig(Config c){
+  public static void useMyConfig(Config c) {
     c.immediateEffect = true;//立即生效
     c.recordLog = true;//记录日志
     c.showToast = true;//气泡提示
@@ -188,5 +189,22 @@ public class MyChangeUtils {
     c.antBookRead = true;//读书听书
     c.consumeGold = false;//支付宝消费金
     c.omegakoiTown = false;//支小镇
+  }
+
+  public static ConfigV2 useMyConfigV2(ConfigV2 c) {
+    c.immediateEffect = true;//立即生效
+    c.recordLog = true;//记录日志
+    c.showToast = true;//气泡提示
+    c.toastOffsetY = -200;//气泡纵向偏移
+    c.stayAwake = true;//保持唤醒
+    c.timeoutRestart = true;//超时重启
+    c.startAt0 = true;//0点整执行
+    c.startAt7 = true;//7点前启动
+    c.enableOnGoing = true;//开启状态栏禁删
+    c.batteryPerm = true;//为支付宝申请后台运行权限
+    c.newRpc = true;//使用新接口
+    c.debugMode = false;//开启抓包
+    c.languageSimplifiedChinese = true;//界面始终使用中文
+    return c;
   }
 }
