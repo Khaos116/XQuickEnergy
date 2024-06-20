@@ -58,52 +58,17 @@ public class MyChangeUtils {
     c.collectWateringBubble = true;//收金球
     c.batchRobEnergy = true;//一键收能量
     c.collectProp = true;//收集道具
-    c.checkInterval = 1800_000;
-    c.waitWhenException = 60 * 60 * 1000;
     c.limitCollect = true;//限制收取
     c.limitCount = 50;//限制每分钟收取个数
     c.doubleCard = true;//使用双击卡
-    c.doubleCardTime = new ArrayList<>();
-    c.doubleCardTime.add("0700-0730");
-    c.doubleCountLimit = 6;
-    c.advanceTime = 0;
-    c.collectInterval = 350;
-    c.collectTimeout = 2_000;
-    c.returnWater33 = 0;//返水33g
-    c.returnWater18 = 0;//返水18g
-    c.returnWater10 = 0;//返水10g
     c.helpFriendCollect = true;//复活好友能量
-    if (c.dontCollectSet == null)
-      c.dontCollectSet = new HashSet<>();
-    if (c.dontHelpCollectList == null)
-      c.dontHelpCollectList = new ArrayList<>();
     c.receiveForestTaskAward = true;//收取森林任务奖励
-    if (c.waterFriendList == null)
-      c.waterFriendList = new ArrayList<>();
-    if (c.waterCountList == null)
-      c.waterCountList = new ArrayList<>();
     c.waterFriendCount = 66;//每次浇水克数
     c.cooperateWater = false;//合种
-    if (c.cooperateWaterList == null)
-      c.cooperateWaterList = new ArrayList<>();
-    if (c.cooperateWaterNumList == null)
-      c.cooperateWaterNumList = new ArrayList<>();
-    if (c.ancientTreeCityCodeList == null)
-      c.ancientTreeCityCodeList = new ArrayList<>();
     c.ancientTree = false;//保护古树
     c.reserve = false;//每日兑换保护地
-    if (c.reserveList == null)
-      c.reserveList = new ArrayList<>();
-    if (c.reserveCountList == null)
-      c.reserveCountList = new ArrayList<>();
     c.beach = true;//保护海洋
-    if (c.beachList == null)
-      c.beachList = new ArrayList<>();
-    if (c.beachCountList == null)
-      c.beachCountList = new ArrayList<>();
     c.energyRain = true;//能量雨
-    if (c.giveEnergyRainList == null)
-      c.giveEnergyRainList = new ArrayList<>();
     c.exchangeEnergyDoubleClick = false;//活力值兑换限时双击卡
     c.exchangeEnergyDoubleClickCount = 6;
     c.ancientTreeOnlyWeek = true;//仅星期一、三、五运行保护古树
@@ -117,10 +82,6 @@ public class MyChangeUtils {
     c.enableFarm = true;//开启庄园
     c.rewardFriend = false;//打赏好友
     c.sendBackAnimal = false;//遣返小鸡
-    c.sendType = AntFarm.SendType.NORMAL;
-    if (c.dontSendFriendList == null)
-      c.dontSendFriendList = new ArrayList<>();
-    c.recallAnimalType = Config.RecallAnimalType.ALWAYS;
     c.receiveFarmToolReward = true;//收取道具奖励
     c.recordFarmGame = true;//游戏改分
     c.kitchen = true;//小鸡厨房
@@ -132,10 +93,6 @@ public class MyChangeUtils {
     c.receiveFarmTaskAward = true;//收取饲料奖励
     c.feedAnimal = true;//喂小鸡
     c.useAccelerateTool = true;//使用加速卡
-    if (c.feedFriendAnimalList == null)
-      c.feedFriendAnimalList = new ArrayList<>();
-    if (c.feedFriendCountList == null)
-      c.feedFriendCountList = new ArrayList<>();
     c.farmGameTime = new ArrayList<>();//小鸡游戏时间
     c.farmGameTime.add("0830-1100");
     c.farmGameTime.add("2300-2400");
@@ -143,15 +100,7 @@ public class MyChangeUtils {
     c.animalSleepTime.add("0200-0300");
     c.animalSleepTime.add("0400-0559");
     c.notifyFriend = false;//通知好友赶鸡
-    if (c.dontNotifyFriendList == null)
-      c.dontNotifyFriendList = new ArrayList<>();
-    c.whoYouWantGiveTo = new ArrayList<>();
-    c.sendFriendCard = new ArrayList<>();
     c.acceptGift = true;//收麦子
-    if (c.visitFriendList == null)
-      c.visitFriendList = new ArrayList<>();
-    if (c.visitFriendCountList == null)
-      c.visitFriendCountList = new ArrayList<>();
     c.chickenDiary = true;//小鸡日记
     c.antOrchard = true;//农场
     c.receiveOrchardTaskAward = true;//收取农场任务奖励
@@ -163,22 +112,15 @@ public class MyChangeUtils {
     c.stallAutoTask = false;//新村自动任务
     c.stallReceiveAward = false;//新村自动领奖
     c.stallOpenType = true;//摊位类型(打开:摆摊列表/关闭:不摆列表)
-    c.stallOpenList = new ArrayList<>();
-    c.stallWhiteList = new ArrayList<>();
-    c.stallBlackList = new ArrayList<>();
-    c.stallAllowOpenTime = 121;
-    c.stallSelfOpenTime = 120;
     c.stallDonate = false;//新村自动捐赠
     c.stallInviteRegister = false;//邀请好友开通新村
     c.stallThrowManure = false;//新村丢肥料
-    c.stallInviteShopList = new ArrayList<>();
 
     c.receivePoint = false;//积分
     c.openTreasureBox = false;//开启运动宝箱
     c.receiveCoinAsset = false;//收集运动币
     c.donateCharityCoin = false;//捐运动币
     c.kbSignIn = true;//口碑签到
-    c.syncStepCount = 22000;
     c.ecoLifeTick = true;//绿色行动打卡
     c.tiyubiz = true;//文体中心
     c.insBlueBeanExchange = false;//安心豆兑换时光加速器
