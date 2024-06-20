@@ -12,11 +12,7 @@ import tkaxv7s.xposed.sesame.data.modelFieldExt.IntegerModelField;
 import tkaxv7s.xposed.sesame.task.common.ModelTask;
 import tkaxv7s.xposed.sesame.task.common.TaskCommon;
 import tkaxv7s.xposed.sesame.task.model.antFarm.AntFarm;
-import tkaxv7s.xposed.sesame.util.FileUtil;
-import tkaxv7s.xposed.sesame.util.Log;
-import tkaxv7s.xposed.sesame.util.RandomUtil;
-import tkaxv7s.xposed.sesame.util.Statistics;
-import tkaxv7s.xposed.sesame.util.UserIdMap;
+import tkaxv7s.xposed.sesame.util.*;
 
 public class AntOrchard extends ModelTask {
     private static final String TAG = AntOrchard.class.getSimpleName();
@@ -44,7 +40,7 @@ public class AntOrchard extends ModelTask {
         modelFields.addField(antOrchard = new BooleanModelField("antOrchard", "开启农场", true));
         modelFields.addField(executeInterval = new IntegerModelField("executeInterval", "执行间隔(毫秒)", 500));
         modelFields.addField(receiveOrchardTaskAward = new BooleanModelField("receiveOrchardTaskAward", "收取农场任务奖励", true));
-        modelFields.addField(orchardSpreadManureCount = new IntegerModelField("orchardSpreadManureCount", "农场每日施肥次数", 0));
+        modelFields.addField(orchardSpreadManureCount = new IntegerModelField("orchardSpreadManureCount", "农场每日施肥次数", 1));
         return modelFields;
     }
 
@@ -71,7 +67,7 @@ public class AntOrchard extends ModelTask {
                             extraInfoGet();
                             if (!joo.optBoolean("hireCountOnceLimit", true)
                                     && !joo.optBoolean("hireCountOneDayLimit", true))
-                                batchHireAnimalRecommend();
+                                MyChangeUtils.batchHireAnimalRecommend();
                             if (receiveOrchardTaskAward.getValue()) {
                                 doOrchardDailyTask(userId);
                                 triggerTbTask();

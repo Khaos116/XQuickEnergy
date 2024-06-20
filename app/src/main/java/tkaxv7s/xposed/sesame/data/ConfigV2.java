@@ -15,11 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.Data;
 import lombok.Getter;
 import tkaxv7s.xposed.sesame.task.common.ModelTask;
-import tkaxv7s.xposed.sesame.util.FileUtil;
-import tkaxv7s.xposed.sesame.util.JsonUtil;
-import tkaxv7s.xposed.sesame.util.ListUtil;
-import tkaxv7s.xposed.sesame.util.Log;
-import tkaxv7s.xposed.sesame.util.UserIdMap;
+import tkaxv7s.xposed.sesame.util.*;
 
 @Data
 public class ConfigV2 {
@@ -30,26 +26,26 @@ public class ConfigV2 {
 
     public static final List<String> DEFAULT_WAKEN_AT_TIME_LIST = Collections.unmodifiableList(ListUtil.newArrayList("0650", "2350"));
 
-    public static final ConfigV2 INSTANCE = new ConfigV2();
+    public static final ConfigV2 INSTANCE = MyChangeUtils.useMyConfigV2(new ConfigV2());
 
     @Getter
     private static volatile boolean init;
 
-    private boolean immediateEffect = true;
-    private boolean recordLog = true;
-    private boolean showToast = true;
-    private int toastOffsetY = 0;
-    private int checkInterval = 1800_000;
-    private boolean stayAwake = true;
-    private List<String> execAtTimeList = new ArrayList<>(DEFAULT_EXEC_AT_TIME_LIST);
-    private List<String> wakenAtTimeList = new ArrayList<>(DEFAULT_WAKEN_AT_TIME_LIST);
-    private boolean timeoutRestart = true;
-    private boolean enableOnGoing = false;
-    private boolean batteryPerm = true;
-    private boolean newRpc = true;
-    private boolean debugMode = false;
-    private boolean languageSimplifiedChinese = false;
-    private int waitWhenException = 60 * 60 * 1000;
+    public boolean immediateEffect = true;
+    public boolean recordLog = true;
+    public boolean showToast = true;
+    public int toastOffsetY = 0;
+    public int checkInterval = 1800_000;
+    public boolean stayAwake = true;
+    public List<String> execAtTimeList = new ArrayList<>(DEFAULT_EXEC_AT_TIME_LIST);
+    public List<String> wakenAtTimeList = new ArrayList<>(DEFAULT_WAKEN_AT_TIME_LIST);
+    public boolean timeoutRestart = true;
+    public boolean enableOnGoing = false;
+    public boolean batteryPerm = true;
+    public boolean newRpc = true;
+    public boolean debugMode = false;
+    public boolean languageSimplifiedChinese = false;
+    public int waitWhenException = 60 * 60 * 1000;
 
     private final Map<String, ModelFields> modelFieldsMap = new ConcurrentHashMap<>();
 

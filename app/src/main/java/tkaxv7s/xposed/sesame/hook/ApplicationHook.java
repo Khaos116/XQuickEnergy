@@ -42,14 +42,7 @@ import tkaxv7s.xposed.sesame.task.common.ModelTask;
 import tkaxv7s.xposed.sesame.task.common.TaskCommon;
 import tkaxv7s.xposed.sesame.task.model.antMember.AntMemberRpcCall;
 import tkaxv7s.xposed.sesame.task.model.antSports.AntSports;
-import tkaxv7s.xposed.sesame.util.ClassUtil;
-import tkaxv7s.xposed.sesame.util.FileUtil;
-import tkaxv7s.xposed.sesame.util.Log;
-import tkaxv7s.xposed.sesame.util.NotificationUtil;
-import tkaxv7s.xposed.sesame.util.PermissionUtil;
-import tkaxv7s.xposed.sesame.util.Statistics;
-import tkaxv7s.xposed.sesame.util.TimeUtil;
-import tkaxv7s.xposed.sesame.util.UserIdMap;
+import tkaxv7s.xposed.sesame.util.*;
 
 public class ApplicationHook implements IXposedHookLoadPackage {
 
@@ -64,7 +57,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
 
     private static volatile boolean init = false;
 
-    private static volatile Calendar dayCalendar = Calendar.getInstance();
+    private static volatile Calendar dayCalendar = MyChangeUtils.getInstance();
 
     @Getter
     private static volatile boolean offline = false;
@@ -128,7 +121,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                             protected void afterHookedMethod(MethodHookParam param) {
                                 int originStep = (Integer) param.getResult();
                                 int step = AntSports.tmpStepCount();
-                                if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < 6 || originStep >= step) {
+                                if (MyChangeUtils.getInstance().get(Calendar.HOUR_OF_DAY) < 6 || originStep >= step) {
                                     return;
                                 }
                                 param.setResult(step);
@@ -252,7 +245,8 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                                     Calendar nextExecTimeCalendar = TimeUtil.getCalendarByTimeMillis(lastExecTime + checkInterval);
                                                     for (String execAtTime : execAtTimeList) {
                                                         Calendar execAtTimeCalendar = TimeUtil.getTodayCalendarByTimeStr(execAtTime);
-                                                        if (execAtTimeCalendar != null && lastExecTimeCalendar.compareTo(execAtTimeCalendar) < 0 && nextExecTimeCalendar.compareTo(execAtTimeCalendar) > 0) {
+                                                        boolean hasNull = MyChangeUtils.fixCalendarHasNull(lastExecTimeCalendar,nextExecTimeCalendar,execAtTimeCalendar);
+                                                        if (!hasNull && lastExecTimeCalendar.compareTo(execAtTimeCalendar) < 0 && nextExecTimeCalendar.compareTo(execAtTimeCalendar) > 0) {
                                                             Log.record("设置定时执行:" + execAtTime);
                                                             execDelayedHandler(execAtTimeCalendar.getTimeInMillis() - lastExecTime);
                                                             FileUtil.clearLog();
@@ -340,7 +334,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             ConfigV2 config = ConfigV2.INSTANCE;
             try {
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent("com.eg.android.AlipayGphone.sesame.execute"), getPendingIntentFlag());
-                Calendar calendar = Calendar.getInstance();
+                Calendar calendar = MyChangeUtils.getInstance();
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
                 calendar.set(Calendar.MINUTE, 0);
@@ -356,7 +350,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             }
             List<String> wakenAtTimeList = config.getWakenAtTimeList();
             if (wakenAtTimeList != null && !wakenAtTimeList.isEmpty()) {
-                Calendar nowCalendar = Calendar.getInstance();
+                Calendar nowCalendar = MyChangeUtils.getInstance();
                 for (int i = 1, len = wakenAtTimeList.size(); i < len; i++) {
                     try {
                         String wakenAtTime = wakenAtTimeList.get(i);
@@ -414,7 +408,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
     }
 
     private void updateDay() {
-        Calendar nowCalendar = Calendar.getInstance();
+        Calendar nowCalendar = MyChangeUtils.getInstance();
         int nowYear = nowCalendar.get(Calendar.YEAR);
         int nowMonth = nowCalendar.get(Calendar.MONTH);
         int nowDay = nowCalendar.get(Calendar.DAY_OF_MONTH);

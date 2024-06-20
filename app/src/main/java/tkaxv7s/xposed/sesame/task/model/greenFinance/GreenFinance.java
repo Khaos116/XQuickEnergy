@@ -29,7 +29,7 @@ public class GreenFinance extends ModelTask {
     @Override
     public ModelFields setFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(greenFinance = new BooleanModelField("greenFinance", "开启绿色经营", false));
+        modelFields.addField(greenFinance = new BooleanModelField("greenFinance", "开启绿色经营", true));
         modelFields.addField(executeInterval = new IntegerModelField("executeInterval", "执行间隔(毫秒)", 5000));
         return modelFields;
     }

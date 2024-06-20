@@ -163,7 +163,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(returnWater10 = new IntegerModelField("returnWater10", "浇水10克需收能量(关闭:0)", 0));
         modelFields.addField(returnWater18 = new IntegerModelField("returnWater18", "浇水18克需收能量(关闭:0)", 0));
         modelFields.addField(returnWater33 = new IntegerModelField("returnWater33", "浇水33克需收能量(关闭:0)", 0));
-        modelFields.addField(exchangeEnergyDoubleClick = new BooleanModelField("exchangeEnergyDoubleClick", "活力值兑换限时双击卡", true));
+        modelFields.addField(exchangeEnergyDoubleClick = new BooleanModelField("exchangeEnergyDoubleClick", "活力值兑换限时双击卡", false));
         modelFields.addField(exchangeEnergyDoubleClickCount = new IntegerModelField("exchangeEnergyDoubleClickCount", "兑换限时双击卡数量", 6));
         modelFields.addField(doubleCard = new BooleanModelField("doubleCard", "使用双击卡", true));
         modelFields.addField(doubleCountLimit = new IntegerModelField("doubleCountLimit", "使用双击卡次数", 6));
@@ -179,15 +179,15 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(collectProp = new BooleanModelField("collectProp", "收集道具", true));
         modelFields.addField(collectWateringBubble = new BooleanModelField("collectWateringBubble", "收金球", true));
         modelFields.addField(energyRain = new BooleanModelField("energyRain", "能量雨", true));
-        modelFields.addField(animalConsumeProp = new BooleanModelField("animalConsumeProp", "派遣动物", false));
-        modelFields.addField(userPatrol = new BooleanModelField("userPatrol", "巡护森林", false));
+        modelFields.addField(animalConsumeProp = new BooleanModelField("animalConsumeProp", "派遣动物", true));
+        modelFields.addField(userPatrol = new BooleanModelField("userPatrol", "巡护森林", true));
         modelFields.addField(receiveForestTaskAward = new BooleanModelField("receiveForestTaskAward", "收取森林任务奖励", true));
-        modelFields.addField(antdodoCollect = new BooleanModelField("antdodoCollect", "神奇物种开卡", false));
+        modelFields.addField(antdodoCollect = new BooleanModelField("antdodoCollect", "神奇物种开卡", true));
         modelFields.addField(totalCertCount = new BooleanModelField("totalCertCount", "记录证书总数", false));
-        modelFields.addField(collectGiftBox = new BooleanModelField("collectGiftBox", "领取礼盒", false));
+        modelFields.addField(collectGiftBox = new BooleanModelField("collectGiftBox", "领取礼盒", true));
         modelFields.addField(sendFriendCard = new SelectModelField.SelectOneModelField("sendFriendCard", "送好友卡片(赠送当前图鉴所有卡片)", new KVNode<>(new LinkedHashMap<>(), false), AlipayUser.getList()));
         modelFields.addField(whoYouWantToGiveTo = new SelectModelField("whoYouWantToGiveTo", "赠送道具给谁（赠送所有可送道具）", new KVNode<>(new LinkedHashMap<>(), false), AlipayUser.getList()));
-        modelFields.addField(ecoLifeTick = new BooleanModelField("ecoLifeTick", "绿色行动打卡", false));
+        modelFields.addField(ecoLifeTick = new BooleanModelField("ecoLifeTick", "绿色行动打卡", true));
         return modelFields;
     }
 
