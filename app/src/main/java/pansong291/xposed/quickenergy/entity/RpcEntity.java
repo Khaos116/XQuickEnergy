@@ -38,48 +38,4 @@ public class RpcEntity {
     public void setError() {
         this.hasError = true;
     }
-
-    public Thread getRequestThread() {
-        return requestThread;
-    }
-
-    public String getRequestMethod() {
-        return requestMethod;
-    }
-
-    public String getRequestData() {
-        return requestData;
-    }
-
-    public Boolean getHasResult() {
-        return hasResult;
-    }
-
-    public void setHasResult(Boolean hasResult) {
-        this.hasResult = hasResult;
-    }
-
-    public Boolean getHasError() {
-        return hasError;
-    }
-
-    public void setHasError(Boolean hasError) {
-        this.hasError = hasError;
-    }
-
-    public Object getResponseObject() {
-        return responseObject;
-    }
-
-    public void setResponseObject(Object responseObject) {
-        this.responseObject = responseObject;
-    }
-
-    public String getResponseString() {
-        return responseString;
-    }
-
-    public void setResponseString(String responseString) {
-        this.responseString = responseString;
-    }
 }

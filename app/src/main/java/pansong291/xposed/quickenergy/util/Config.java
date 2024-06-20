@@ -307,7 +307,6 @@ public class Config {
         c.antBookRead = false;
         c.consumeGold = false;
         c.omegakoiTown = false;
-        pansong291.xposed.quickenergy.util.MyChangeUtils.useMyConfig(c);
         return c;
     }
 

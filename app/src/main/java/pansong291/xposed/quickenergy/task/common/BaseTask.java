@@ -160,19 +160,4 @@ public abstract class BaseTask {
         };
     }
 
-    public Runnable getRunnable() {
-        return runnable;
-    }
-
-    public Thread getThread() {
-        return thread;
-    }
-
-    public void setThread(Thread thread) {
-        this.thread = thread;
-    }
-
-    public Map<String, BaseTask> getChildTaskMap() {
-        return childTaskMap;
-    }
 }

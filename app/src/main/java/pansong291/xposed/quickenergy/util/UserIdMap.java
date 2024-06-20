@@ -151,27 +151,4 @@ public class UserIdMap {
         }
     }
 
-    public static void setIdMap(Map<String, String> idMap) {
-        UserIdMap.idMap = idMap;
-    }
-
-    public static boolean isShouldReload() {
-        return shouldReload;
-    }
-
-    public static void setShouldReload(boolean shouldReload) {
-        UserIdMap.shouldReload = shouldReload;
-    }
-
-    public static String getCurrentUid() {
-        return currentUid;
-    }
-
-    public static boolean isHasChanged() {
-        return hasChanged;
-    }
-
-    public static void setHasChanged(boolean hasChanged) {
-        UserIdMap.hasChanged = hasChanged;
-    }
 }
