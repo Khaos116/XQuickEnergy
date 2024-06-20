@@ -128,8 +128,8 @@ public class NotificationUtil {
     //if (mNotifyManager != null) {
     //  mNotifyManager.notify(NOTIFICATION_ID, mNotification);
     //}
-    pansong291.xposed.quickenergy.util.MyChangeUtils.NotificationUtil_innerSetContentText(
-        nextExecTime,builder,contentText,mNotification,mNotifyManager
+    pansong291.xposed.quickenergy.util.MyChangeUtils.innerSetContentText(
+        nextExecTime,builder,contentText,mNotifyManager
     );
   }
 
