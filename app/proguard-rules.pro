@@ -15,6 +15,6 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--keep class pansong291.xposed.quickenergy.** { *; }
+-keep class tkaxv7s.xposed.sesame.** { *; }
 -keep class com.fasterxml.jackson.** { *; }
 -keep class com.elvishew.xlog.** { *; }
