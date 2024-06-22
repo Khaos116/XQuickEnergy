@@ -26,6 +26,12 @@ public class IntegerModelField extends ModelField {
         super(value);
     }
 
+    public IntegerModelField(Object value, Integer minLimit, Integer maxLimit) {
+        super(value);
+        this.minLimit = minLimit;
+        this.maxLimit = maxLimit;
+    }
+
     public IntegerModelField(String code, String name, Integer value) {
         super(code, name, value);
     }
@@ -67,6 +73,7 @@ public class IntegerModelField extends ModelField {
         btn.setBackground(context.getResources().getDrawable(R.drawable.button));
         btn.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         btn.setMinHeight(150);
+        btn.setMaxHeight(180);
         btn.setPaddingRelative(40, 0, 40, 0);
         btn.setAllCaps(false);
         btn.setOnClickListener(v -> StringDialog.showEditDialog(v.getContext(), ((Button) v).getText(), this));

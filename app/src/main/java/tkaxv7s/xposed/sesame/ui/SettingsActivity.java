@@ -125,7 +125,9 @@ public class SettingsActivity extends Activity {
             @Override
             public void setConfigValue(String value) {
                 super.setConfigValue(value);
-                config.setCheckInterval(getValue() * 60_000);
+                Integer newValue = getValue();
+                newValue = Math.max(1, newValue);
+                config.setCheckInterval(newValue * 60_000);
             }
 
             @Override
