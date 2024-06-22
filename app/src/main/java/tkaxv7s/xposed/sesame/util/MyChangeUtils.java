@@ -41,31 +41,6 @@ public class MyChangeUtils {
 
   }
 
-  //修改版本基础配置
-  public static ConfigV2 useMyConfigV2(ConfigV2 c) {
-    c.immediateEffect = true;//立即生效
-    c.recordLog = true;//记录日志
-    c.showToast = true;//气泡提示
-    c.toastOffsetY = -200;//气泡纵向偏移
-    c.stayAwake = true;//保持唤醒
-    c.timeoutRestart = true;//超时重启
-    c.enableOnGoing = true;//开启状态栏禁删
-    c.batteryPerm = true;//为支付宝申请后台运行权限
-    c.newRpc = true;//使用新接口
-    c.debugMode = false;//开启抓包
-    c.languageSimplifiedChinese = true;//界面始终使用中文
-    return c;
-  }
-
-  public static Double fixAntOrchardParseDouble(String s) {
-    try {
-      return Double.parseDouble(s.replace("再施", ""));
-    } catch (Exception e) {
-      Log.record(e.getMessage());
-      return 0.0;
-    }
-  }
-
   public static boolean fixCalendarHasNull(Calendar c1, Calendar c2, Calendar c3) {
     return c1 == null || c2 == null || c3 == null;
   }
