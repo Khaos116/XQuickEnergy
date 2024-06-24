@@ -451,7 +451,7 @@ public class AntOcean extends ModelTask {
                     if (bizInfo.optBoolean("autoCompleteTask", false) || taskType.startsWith("DAOLIU_")) {
                         String sceneCode = jo.getString("sceneCode");
                         jo = new JSONObject(AntOceanRpcCall.finishTask(sceneCode, taskType));
-                        if (jo.getBoolean("success")) {
+                        if (jo.optBoolean("success")) {
                             String taskTitle = bizInfo.optString("taskTitle", taskType);
                             Log.forest("海洋任务🧾[" + taskTitle + "]");
                         } else {
@@ -484,7 +484,7 @@ public class AntOcean extends ModelTask {
                     String taskType = jo.getString("taskType");
                     String sceneCode = jo.getString("sceneCode");
                     jo = new JSONObject(AntOceanRpcCall.receiveTaskAward(sceneCode, taskType));
-                    if (jo.getBoolean("success")) {
+                    if (jo.optBoolean("success")) {
                         String taskTitle = bizInfo.optString("taskTitle", taskType);
                         String taskDesc = bizInfo.optString("taskDesc", taskType);
                         Log.forest("领取奖励🎖️[" + taskTitle + "]#" + taskDesc);

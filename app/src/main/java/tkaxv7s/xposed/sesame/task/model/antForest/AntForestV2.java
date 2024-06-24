@@ -940,7 +940,7 @@ public class AntForestV2 extends ModelTask {
     private static void whackMole() {
         try {
             JSONObject jo = new JSONObject(AntForestRpcCall.startWhackMole());
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONArray moleInfo = jo.optJSONArray("moleInfo");
                 if (moleInfo != null) {
                     List<String> whackMoleIdList = new ArrayList<>();
@@ -971,11 +971,11 @@ public class AntForestV2 extends ModelTask {
     private static void sendEnergyByAction(String sourceType) {
         try {
             JSONObject jo = new JSONObject(AntForestRpcCall.consultForSendEnergyByAction(sourceType));
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONObject data = jo.getJSONObject("data");
                 if(data.optBoolean("canSendEnergy",false)){
                     jo = new JSONObject(AntForestRpcCall.sendEnergyByAction(sourceType));
-                    if (jo.getBoolean("success")) {
+                    if (jo.optBoolean("success")) {
                         data = jo.getJSONObject("data");
                         if(data.optBoolean("canSendEnergy",false)){
                             int receivedEnergyAmount = data.getInt("receivedEnergyAmount");
@@ -1102,7 +1102,7 @@ public class AntForestV2 extends ModelTask {
             String skuId = null;
             String spuId = null;
             double price = 0d;
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONArray itemInfoVOList = jo.optJSONArray("itemInfoVOList");
                 if (itemInfoVOList != null && itemInfoVOList.length() > 0) {
                     for (int i = 0; i < itemInfoVOList.length(); i++) {
@@ -1203,7 +1203,7 @@ public class AntForestV2 extends ModelTask {
                         String taskStatus = taskBaseInfo.getString("taskStatus");
                         if (TaskStatus.FINISHED.name().equals(taskStatus)) {
                             JSONObject joAward = new JSONObject(AntForestRpcCall.receiveTaskAward(sceneCode, taskType));
-                            if (joAward.getBoolean("success")) {
+                            if (joAward.optBoolean("success")) {
                                 Log.forest("任务奖励🎖️[" + taskTitle + "]#" + awardCount + "个");
                                 doubleCheck = true;
                             } else {
@@ -1216,7 +1216,7 @@ public class AntForestV2 extends ModelTask {
                                     || taskType.endsWith("_BAOHUDI") || taskType.startsWith("GYG")) {
                                 JSONObject joFinishTask = new JSONObject(
                                         AntForestRpcCall.finishTask(sceneCode, taskType));
-                                if (joFinishTask.getBoolean("success")) {
+                                if (joFinishTask.optBoolean("success")) {
                                     Log.forest("森林任务🧾️[" + taskTitle + "]");
                                     doubleCheck = true;
                                 } else {
@@ -1263,7 +1263,7 @@ public class AntForestV2 extends ModelTask {
                     if (bizInfo.optBoolean("autoCompleteTask")) {
                         JSONObject joFinishTask = new JSONObject(
                                 AntForestRpcCall.finishTask(sceneCode, taskType));
-                        if (joFinishTask.getBoolean("success")) {
+                        if (joFinishTask.optBoolean("success")) {
                             Log.forest("完成任务🧾️[" + taskTitle + "]");
                         } else {
                             Log.record("完成任务" + taskTitle + "失败,");
@@ -1623,7 +1623,7 @@ public class AntForestV2 extends ModelTask {
                         if (TaskStatus.FINISHED.name().equals(taskStatus)) {
                             JSONObject joAward = new JSONObject(
                                     AntForestRpcCall.antdodoReceiveTaskAward(sceneCode, taskType));
-                            if (joAward.getBoolean("success"))
+                            if (joAward.optBoolean("success"))
                                 Log.forest("任务奖励🎖️[" + taskTitle + "]#" + awardCount + "个");
                             else
                                 Log.record("领取失败，" + s);
@@ -1632,7 +1632,7 @@ public class AntForestV2 extends ModelTask {
                             if ("SEND_FRIEND_CARD".equals(taskType)) {
                                 JSONObject joFinishTask = new JSONObject(
                                         AntForestRpcCall.antdodoFinishTask(sceneCode, taskType));
-                                if (joFinishTask.getBoolean("success")) {
+                                if (joFinishTask.optBoolean("success")) {
                                     Log.forest("物种任务🧾️[" + taskTitle + "]");
                                     antdodoReceiveTaskAward();
                                     return;

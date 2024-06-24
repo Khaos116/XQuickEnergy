@@ -43,7 +43,7 @@ public class WelfareCenter extends ModelTask {
 //            String s = WelfareCenterRpcCall.welfareIndex();
 //            try {
 //                JSONObject jo = new JSONObject(s);
-//                if (!jo.getBoolean("success")) {
+//                if (!jo.optBoolean("success")) {
 //                    Log.i(TAG, jo.optString("resultDesc"));
 //                    return;
 //                }
@@ -72,7 +72,7 @@ public class WelfareCenter extends ModelTask {
             String signInSceneId = "PLAY102815727";
             String str = WelfareCenterRpcCall.queryEnableVirtualProfitV2(signInSceneId);
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".batchUseVirtualProfit", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -90,7 +90,7 @@ public class WelfareCenter extends ModelTask {
                 }
                 str = WelfareCenterRpcCall.batchUseVirtualProfit(virtualProfitIds);
                 result = new JSONObject(str);
-                if (!result.getBoolean("success")) {
+                if (!result.optBoolean("success")) {
                     Log.i(TAG + ".batchUseVirtualProfit", result.optString("resultDesc"));
                     continue;
                 }
@@ -117,7 +117,7 @@ public class WelfareCenter extends ModelTask {
         try {
             String str = WelfareCenterRpcCall.signInTrigger(sceneId);
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".signIn", jsonObject.optString("resultDesc"));
                 return;
             }

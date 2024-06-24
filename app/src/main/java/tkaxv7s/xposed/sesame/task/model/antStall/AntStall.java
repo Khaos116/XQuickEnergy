@@ -494,7 +494,7 @@ public class AntStall extends ModelTask {
         String s = AntStallRpcCall.receiveTaskAward(taskType);
         try {
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 Log.farm("蚂蚁新村⛪[领取奖励]");
             } else {
                 Log.record("receiveTaskAward err:" + " " + s);
@@ -511,7 +511,7 @@ public class AntStall extends ModelTask {
         String s = AntStallRpcCall.finishTask(taskType + "_" + System.currentTimeMillis(), taskType);
         try {
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 return true;
             } else {
                 Log.record("finishTask err:" + " " + s);
@@ -562,7 +562,7 @@ public class AntStall extends ModelTask {
         try {
             String s = AntStallRpcCall.shareP2P();
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 String shareId = jo.getString("shareId");
                 /* 保存shareId到Statistics */
                 Statistics.stallShareIdToday(UserIdMap.getCurrentUid(), shareId);
@@ -587,7 +587,7 @@ public class AntStall extends ModelTask {
                     if (shareId != null && Statistics.canStallP2PHelpToday(uid)) {
                         String s = AntStallRpcCall.achieveBeShareP2P(shareId);
                         JSONObject jo = new JSONObject(s);
-                        if (jo.getBoolean("success")) {
+                        if (jo.optBoolean("success")) {
                             Log.farm("新村助力🎈[" + UserIdMap.getNameById(uid) + "]");
                             Statistics.stallHelpToday(UserIdMap.getCurrentUid(), false);
                             Statistics.stallBeHelpToday(uid, false);
@@ -691,7 +691,7 @@ public class AntStall extends ModelTask {
         String s = AntStallRpcCall.queryManureInfo();
         try {
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONObject astManureInfoVO = jo.getJSONObject("astManureInfoVO");
                 if (astManureInfoVO.optBoolean("hasManure")) {
                     int manure = astManureInfoVO.getInt("manure");
