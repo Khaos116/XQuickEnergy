@@ -72,7 +72,7 @@ public class SesameCredit extends ModelTask {
             try {
                 String s = SesameCreditRpcCall.queryHome();
                 JSONObject jo = new JSONObject(s);
-                if (!jo.getBoolean("success")) {
+                if (!jo.optBoolean("success")) {
                     Log.i(TAG + ".init.queryHome", jo.optString("errorMsg"));
                     return;
                 }
@@ -103,7 +103,7 @@ public class SesameCredit extends ModelTask {
             //模拟从生活记录->明细->任务->明细（两次，不知原因）
             String str = SesameCreditRpcCall.promiseQueryHome();
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".doPromise.promiseQueryHome", jsonObject.optString("errorMsg"));
                 return;
             }
@@ -133,7 +133,7 @@ public class SesameCredit extends ModelTask {
                     str = SesameCreditRpcCall.promiseAddComment("🌈ᑋᵉᑊᑊᵒ ᵕ✨ ◡ 解锁新的一年",
                             "https://mdn.alipayobjects.com/afts/img/A*-JdRRKBx4O4AAAAAAAAAAAAAAQAAAQ/original?bz=APM_68687674&width=864&height=1920");
                     jsonObject = new JSONObject(str);
-                    if (!jsonObject.getBoolean("success")) {
+                    if (!jsonObject.optBoolean("success")) {
                         Log.i(TAG + ".doPromise.promiseAddComment", jsonObject.optString("errorMsg"));
                         continue;
                     }
@@ -147,7 +147,7 @@ public class SesameCredit extends ModelTask {
                         "\"joinRule\":{\"joinRuleType\":\"DYNAMIC_DAY\",\"selectValue\":\"7\"},\"periodTargetRule\":{\"periodTargetRuleType\":\"CAL_COUNT\",\"selectValue\":\"3\"}," +
                         "\"templateId\":\"go_alipay_sports_route\"}");
                 jsonObject = new JSONObject(str);
-                if (!jsonObject.getBoolean("success")) {
+                if (!jsonObject.optBoolean("success")) {
                     Log.i(TAG + ".doPromise.promiseJoin", jsonObject.optString("errorMsg"));
                     return;
                 }
@@ -176,7 +176,7 @@ public class SesameCredit extends ModelTask {
         try {
             String str = SesameCreditRpcCall.queryMultiSceneWaitToGainList();
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".securityFund.queryMultiSceneWaitToGainList", jsonObject.optString("errorMsg"));
                 return;
             }
@@ -226,7 +226,7 @@ public class SesameCredit extends ModelTask {
      */
     private boolean gainMyAndFamilySumInsured(JSONObject jsonObject, boolean isRepeat, String recordId) throws JSONException {
         JSONObject jo = new JSONObject(SesameCreditRpcCall.gainMyAndFamilySumInsured(jsonObject));
-        if (!jo.getBoolean("success")) {
+        if (!jo.optBoolean("success")) {
             Log.i(TAG + ".gainMyAndFamilySumInsured", jo.optString("errorMsg"));
             return true;
         }
@@ -247,7 +247,7 @@ public class SesameCredit extends ModelTask {
      */
     private JSONObject promiseQueryDetail(String recordId) throws JSONException {
         JSONObject jo = new JSONObject(SesameCreditRpcCall.promiseQueryDetail(recordId));
-        if (!jo.getBoolean("success")) {
+        if (!jo.optBoolean("success")) {
             Log.i(TAG + ".promiseQueryDetail", jo.optString("errorMsg"));
             return null;
         }
@@ -260,7 +260,7 @@ public class SesameCredit extends ModelTask {
     private void collectSesame() {
         try {
             JSONObject jo = new JSONObject(SesameCreditRpcCall.queryCreditFeedback());
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(TAG + ".collectSesame.queryCreditFeedback", jo.optString("resultView"));
                 return;
             }
@@ -274,7 +274,7 @@ public class SesameCredit extends ModelTask {
                 String creditFeedbackId = jo.getString("creditFeedbackId");
                 String potentialSize = jo.getString("potentialSize");
                 jo = new JSONObject(SesameCreditRpcCall.collectCreditFeedback(creditFeedbackId));
-                if (!jo.getBoolean("success")) {
+                if (!jo.optBoolean("success")) {
                     Log.i(TAG + ".collectSesame.collectCreditFeedback", jo.optString("resultView"));
                     continue;
                 }
@@ -299,7 +299,7 @@ public class SesameCredit extends ModelTask {
         try {
             String s = SesameCreditRpcCall.pageRender();
             JSONObject jo = new JSONObject(s);
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(TAG + ".insBlueBean.pageRender", jo.optString("resultView"));
                 return;
             }
@@ -350,7 +350,7 @@ public class SesameCredit extends ModelTask {
         try {
             String str = SesameCreditRpcCall.planConsult();
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".insBlueBeanPlanConsult.planConsult", jsonObject.optString("resultView"));
                 return;
             }
@@ -382,7 +382,7 @@ public class SesameCredit extends ModelTask {
         try {
             String s = SesameCreditRpcCall.taskProcess(appletId);
             JSONObject jo = new JSONObject(s);
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(TAG + ".insBlueBeanTask.taskProcess", jo.optString("resultView"));
                 return;
             }
@@ -394,7 +394,7 @@ public class SesameCredit extends ModelTask {
             }
             s = SesameCreditRpcCall.taskTrigger(appletId, "insportal-marketing");
             JSONObject joTrigger = new JSONObject(s);
-            if (!joTrigger.getBoolean("success")) {
+            if (!joTrigger.optBoolean("success")) {
                 Log.i(TAG + ".insBlueBeanTask.taskTrigger", joTrigger.optString("resultView"));
                 return;
             }
@@ -420,7 +420,7 @@ public class SesameCredit extends ModelTask {
         try {
             String s = SesameCreditRpcCall.queryUserAccountInfo();
             JSONObject jo = new JSONObject(s);
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(TAG + ".insBlueBeanExchange.queryUserAccountInfo", jo.optString("resultView"));
                 return;
             }
@@ -430,7 +430,7 @@ public class SesameCredit extends ModelTask {
                 return;
             }
             jo = new JSONObject(SesameCreditRpcCall.exchangeDetail(itemId));
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(TAG + ".insBlueBeanExchange.exchangeDetail", jo.optString("resultView"));
                 return;
             }
@@ -445,7 +445,7 @@ public class SesameCredit extends ModelTask {
                 return;
             }
             jo = new JSONObject(SesameCreditRpcCall.exchange(itemId, pointAmount));
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(TAG + ".insBlueBeanExchange.exchange", jo.optString("resultView"));
                 return;
             }

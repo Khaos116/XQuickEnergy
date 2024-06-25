@@ -62,7 +62,7 @@ public class OtherTask extends ModelTask {
         try {
             String str = OtherTaskRpcCall.goldBillIndex();
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".goldTicket.goldBillIndex", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -86,7 +86,7 @@ public class OtherTask extends ModelTask {
                         }
                         str = OtherTaskRpcCall.goldBillTrigger(object2.getString("taskId"));
                         jsonObject = new JSONObject(str);
-                        if (!jsonObject.getBoolean("success")) {
+                        if (!jsonObject.optBoolean("success")) {
                             Log.i(TAG + ".goldTicket.goldBillTrigger", jsonObject.optString("resultDesc"));
                             continue;
                         }
@@ -115,7 +115,7 @@ public class OtherTask extends ModelTask {
         try {
             String str = OtherTaskRpcCall.goldBillCollect(signInfo);
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".goldBillCollect.goldBillCollect", jsonObject.optString("resultDesc"));
                 return;
             }
