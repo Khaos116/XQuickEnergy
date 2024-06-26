@@ -51,7 +51,7 @@ public class SesameCredit extends ModelTask {
     @Override
     public ModelFields setFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(sesameCredit = new BooleanModelField("sesameCredit", "开启芝麻信用", false));
+        modelFields.addField(sesameCredit = new BooleanModelField("sesameCredit", "开启芝麻信用", true));
         modelFields.addField(executeInterval = new IntegerModelField("executeInterval", "执行间隔(毫秒)", 5000));
         modelFields.addField(collectSecurityFund = new BooleanModelField("collectSecurityFund", "记录 | 坚持攒保障金(可开启持续做)", false));
         modelFields.addField(promiseSportsRoute = new BooleanModelField("promiseSportsRoute", "记录 | 坚持锻炼，走运动路线(只自动加入任务)", false));
