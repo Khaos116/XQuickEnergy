@@ -70,6 +70,7 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.17.1'
     implementation 'com.elvishew:xlog:1.11.0'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+}
 
 //打包处理
 android.applicationVariants.configureEach { variant ->
