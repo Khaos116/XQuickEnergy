@@ -482,7 +482,7 @@ public class AntStall extends ModelTask {
                                 }
                                 s = AntStallRpcCall.queryCallAppSchema(sceneCode);
                                 jo = new JSONObject(s);
-                                if (!jo.getBoolean("success")) {
+                                if (!jo.optBoolean("success")) {
                                     Log.i(TAG, "taskList.queryCallAppSchema err:" + jo.optString("resultDesc"));
                                 }
                                 TimeUtil.sleep(5000);
@@ -507,7 +507,7 @@ public class AntStall extends ModelTask {
                                     JSONObject jsonObject = jsonArray.getJSONObject(j);
                                     s = AntStallRpcCall.finish(pid, jsonObject);
                                     jo = new JSONObject(s);
-                                    if (!jo.getBoolean("success")) {
+                                    if (!jo.optBoolean("success")) {
                                         Log.i(TAG, "taskList.finish err:" + jo.optString("resultDesc"));
                                     }
                                     TimeUtil.sleep(5000);
@@ -655,7 +655,7 @@ public class AntStall extends ModelTask {
                 JSONObject jsonObject = new JSONObject(str);
                 Thread.sleep(5000);
                 String name = UserIdMap.getNameById(uid);
-                if (!jsonObject.getBoolean("success")) {
+                if (!jsonObject.optBoolean("success")) {
                     String code = jsonObject.getString("code");
                     if ("600000028".equals(code)) {
                         Log.record("新村助力🐮被助力次数上限[" + name + "]");
@@ -885,7 +885,7 @@ public class AntStall extends ModelTask {
             while (true) {
                 String str = AntStallRpcCall.nextTicketFriend();
                 JSONObject jsonObject = new JSONObject(str);
-                if (!jsonObject.getBoolean("success")) {
+                if (!jsonObject.optBoolean("success")) {
                     Log.i(TAG, "pasteTicket.nextTicketFriend err:" + jsonObject.optString("resultDesc"));
                     return;
                 }
@@ -897,7 +897,7 @@ public class AntStall extends ModelTask {
                 String friendId = jsonObject.getString("friendUserId");
                 str = AntStallRpcCall.friendHome(friendId, "ch_appcenter__chsub_9patch");
                 jsonObject = new JSONObject(str);
-                if (!jsonObject.getBoolean("success")) {
+                if (!jsonObject.optBoolean("success")) {
                     Log.i(TAG, "pasteTicket.friendHome err:" + jsonObject.optString("resultDesc"));
                     return;
                 }
@@ -925,7 +925,7 @@ public class AntStall extends ModelTask {
                     str = AntStallRpcCall.ticket(jo.getString("rentLastBill"), jo.getString("seatId"),
                             jo.getString("rentLastShop"), rentLastUser, jo.getString("userId"));
                     jo = new JSONObject(str);
-                    if (!jo.getBoolean("success")) {
+                    if (!jo.optBoolean("success")) {
                         Log.i(TAG, "pasteTicket.ticket err:" + jo.optString("resultDesc"));
                         continue;
                     }
