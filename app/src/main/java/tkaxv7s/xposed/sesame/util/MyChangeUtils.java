@@ -36,11 +36,6 @@ public class MyChangeUtils {
     return calendar;
   }
 
-  //关闭一键捉鸡
-  public static void batchHireAnimalRecommend() {
-
-  }
-
   public static boolean fixCalendarHasNull(Calendar c1, Calendar c2, Calendar c3) {
     return c1 == null || c2 == null || c3 == null;
   }
