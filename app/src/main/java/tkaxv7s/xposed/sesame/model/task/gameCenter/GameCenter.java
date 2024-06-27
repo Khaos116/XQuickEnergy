@@ -39,9 +39,9 @@ public class GameCenter extends ModelTask {
     @Override
     public ModelFields setFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(gameCenter = new BooleanModelField("gameCenter", "开启游戏中心", false));
-        modelFields.addField(bmSignIn = new BooleanModelField("bmSignIn", "开启 | 签到", false));
-        modelFields.addField(bmBatchReceive = new BooleanModelField("bmBatchReceive", "开启 | 领取", false));
+        modelFields.addField(gameCenter = new BooleanModelField("gameCenter", "开启游戏中心", true));
+        modelFields.addField(bmSignIn = new BooleanModelField("bmSignIn", "开启 | 签到", true));
+        modelFields.addField(bmBatchReceive = new BooleanModelField("bmBatchReceive", "开启 | 领取", true));
         return modelFields;
     }
 
@@ -75,7 +75,7 @@ public class GameCenter extends ModelTask {
         try {
             String str = GameCenterRpcCall.querySignInBall();
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".signIn.querySignInBall", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -85,7 +85,7 @@ public class GameCenter extends ModelTask {
             }
             str = GameCenterRpcCall.continueSignIn();
             jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".signIn.continueSignIn", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -103,7 +103,7 @@ public class GameCenter extends ModelTask {
         try {
             String str = GameCenterRpcCall.queryPointBallList();
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".batchReceive.queryPointBallList", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -113,7 +113,7 @@ public class GameCenter extends ModelTask {
             }
             str = GameCenterRpcCall.batchReceivePointBall();
             jsonObject = new JSONObject(str);
-            if (jsonObject.getBoolean("success")) {
+            if (jsonObject.optBoolean("success")) {
                 Log.other("游戏中心🎮全部领取成功[" + JsonUtil.getValueByPath(jsonObject, "data.totalAmount") + "]乐豆");
             } else {
                 Log.i(TAG + ".batchReceive.batchReceivePointBall", jsonObject.optString("resultDesc"));
