@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import tkaxv7s.xposed.sesame.data.ModelFields;
 import tkaxv7s.xposed.sesame.data.ModelTask;
 import tkaxv7s.xposed.sesame.data.modelFieldExt.BooleanModelField;
-import tkaxv7s.xposed.sesame.data.modelFieldExt.IntegerModelField;
 import tkaxv7s.xposed.sesame.model.base.TaskCommon;
 import tkaxv7s.xposed.sesame.util.JsonUtil;
 import tkaxv7s.xposed.sesame.util.Log;
@@ -22,42 +21,26 @@ public class SesameCredit extends ModelTask {
 
     private static final String TAG = SesameCredit.class.getSimpleName();
 
-    private Integer executeIntervalInt;
     /**
-     * 是否启用芝麻信用
+     * 是否启用芝麻粒
      */
     private BooleanModelField sesameCredit;
-
-    /**
-     * 收保障金
-     */
     private BooleanModelField collectSecurityFund;
-    /**
-     * 执行间隔时间
-     */
-    private IntegerModelField executeInterval;
-    public BooleanModelField insBlueBeanExchange;
-    public BooleanModelField insBlueBeanExchangeGoldTicket;
-
     public BooleanModelField promiseSportsRoute;
-
     public BooleanModelField promiseAddComment;
 
     @Override
     public String setName() {
-        return "芝麻信用";
+        return "芝麻粒";
     }
 
     @Override
     public ModelFields setFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(sesameCredit = new BooleanModelField("sesameCredit", "开启芝麻信用", true));
-        modelFields.addField(executeInterval = new IntegerModelField("executeInterval", "执行间隔(毫秒)", 5000));
+        modelFields.addField(sesameCredit = new BooleanModelField("sesameCredit", "开启芝麻粒", false));
         modelFields.addField(collectSecurityFund = new BooleanModelField("collectSecurityFund", "记录 | 坚持攒保障金(可开启持续做)", false));
         modelFields.addField(promiseSportsRoute = new BooleanModelField("promiseSportsRoute", "记录 | 坚持锻炼，走运动路线(只自动加入任务)", false));
         modelFields.addField(promiseAddComment = new BooleanModelField("promiseAddComment", "记录 | 坚持陪伴爱宠并记录(只自动发布记录)", false));
-        modelFields.addField(insBlueBeanExchange = new BooleanModelField("insBlueBeanExchange", "安心豆 | 兑换时光加速器", false));
-        modelFields.addField(insBlueBeanExchangeGoldTicket = new BooleanModelField("insBlueBeanExchangeGoldTicket", "安心豆 | 兑换黄金票", false));
         return modelFields;
     }
 
@@ -67,29 +50,35 @@ public class SesameCredit extends ModelTask {
     }
 
     @Override
-    public Runnable init() {
-        return () -> {
-            executeIntervalInt = Math.max(executeInterval.getValue(), 5000);
-            try {
-                String s = SesameCreditRpcCall.queryHome();
-                JSONObject jo = new JSONObject(s);
-                if (!jo.optBoolean("success")) {
-                    Log.i(TAG + ".init.queryHome", jo.optString("errorMsg"));
-                    return;
-                }
-                JSONObject entrance = jo.getJSONObject("entrance");
-                if (!entrance.optBoolean("openApp")) {
-                    Log.other("芝麻信用💌未开通");
-                    return;
-                }
-                doPromise();
-                insBlueBean();
-                collectSesame();
-            } catch (Throwable th) {
-                Log.i(TAG, "init err:");
-                Log.printStackTrace(TAG, th);
+    public void run() {
+        try {
+            String s = SesameCreditRpcCall.queryHome();
+            JSONObject jo = new JSONObject(s);
+            if (!jo.getBoolean("success")) {
+                Log.i(TAG + ".run.queryHome", jo.optString("errorMsg"));
+                return;
             }
-        };
+            JSONObject entrance = jo.getJSONObject("entrance");
+            if (!entrance.optBoolean("openApp")) {
+                Log.other("芝麻信用💌未开通");
+                return;
+            }
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                Log.printStackTrace(e);
+            }
+            doPromise();
+            try {
+                Thread.sleep(8000);
+            } catch (InterruptedException e) {
+                Log.printStackTrace(e);
+            }
+            collectSesame();
+        } catch (Throwable th) {
+            Log.i(TAG, "run err:");
+            Log.printStackTrace(TAG, th);
+        }
     }
 
     /**
@@ -104,7 +93,7 @@ public class SesameCredit extends ModelTask {
             //模拟从生活记录->明细->任务->明细（两次，不知原因）
             String str = SesameCreditRpcCall.promiseQueryHome();
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.optBoolean("success")) {
+            if (!jsonObject.getBoolean("success")) {
                 Log.i(TAG + ".doPromise.promiseQueryHome", jsonObject.optString("errorMsg"));
                 return;
             }
@@ -122,6 +111,11 @@ public class SesameCredit extends ModelTask {
                 if (collectSecurityFund.getValue() && "坚持攒保障金".equals(promiseName)) {
                     promiseQueryDetail(recordId);
                     securityFund(isRepeat, recordId);
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        Log.printStackTrace(e);
+                    }
                     promiseQueryDetail(recordId);
                     promiseQueryDetail(recordId);
                 }
@@ -136,7 +130,7 @@ public class SesameCredit extends ModelTask {
                     str = SesameCreditRpcCall.promiseAddComment("🌈ᑋᵉᑊᑊᵒ ᵕ✨ ◡ 解锁新的一年",
                             "https://mdn.alipayobjects.com/afts/img/A*-JdRRKBx4O4AAAAAAAAAAAAAAQAAAQ/original?bz=APM_68687674&width=864&height=1920");
                     jsonObject = new JSONObject(str);
-                    if (!jsonObject.optBoolean("success")) {
+                    if (!jsonObject.getBoolean("success")) {
                         Log.i(TAG + ".doPromise.promiseAddComment", jsonObject.optString("errorMsg"));
                         continue;
                     }
@@ -150,7 +144,7 @@ public class SesameCredit extends ModelTask {
                         "\"joinRule\":{\"joinRuleType\":\"DYNAMIC_DAY\",\"selectValue\":\"7\"},\"periodTargetRule\":{\"periodTargetRuleType\":\"CAL_COUNT\",\"selectValue\":\"3\"}," +
                         "\"templateId\":\"go_alipay_sports_route\"}");
                 jsonObject = new JSONObject(str);
-                if (!jsonObject.optBoolean("success")) {
+                if (!jsonObject.getBoolean("success")) {
                     Log.i(TAG + ".doPromise.promiseJoin", jsonObject.optString("errorMsg"));
                     return;
                 }
@@ -160,12 +154,6 @@ public class SesameCredit extends ModelTask {
         } catch (Throwable t) {
             Log.i(TAG, "doPromise err:");
             Log.printStackTrace(TAG, t);
-        } finally {
-            try {
-                Thread.sleep(executeIntervalInt);
-            } catch (InterruptedException e) {
-                Log.printStackTrace(e);
-            }
         }
     }
 
@@ -179,7 +167,7 @@ public class SesameCredit extends ModelTask {
         try {
             String str = SesameCreditRpcCall.queryMultiSceneWaitToGainList();
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.optBoolean("success")) {
+            if (!jsonObject.getBoolean("success")) {
                 Log.i(TAG + ".securityFund.queryMultiSceneWaitToGainList", jsonObject.optString("errorMsg"));
                 return;
             }
@@ -209,12 +197,6 @@ public class SesameCredit extends ModelTask {
         } catch (Throwable t) {
             Log.i(TAG, "securityFund err:");
             Log.printStackTrace(TAG, t);
-        } finally {
-            try {
-                Thread.sleep(executeIntervalInt);
-            } catch (InterruptedException e) {
-                Log.printStackTrace(e);
-            }
         }
     }
 
@@ -229,7 +211,7 @@ public class SesameCredit extends ModelTask {
      */
     private boolean gainMyAndFamilySumInsured(JSONObject jsonObject, boolean isRepeat, String recordId) throws JSONException {
         JSONObject jo = new JSONObject(SesameCreditRpcCall.gainMyAndFamilySumInsured(jsonObject));
-        if (!jo.optBoolean("success")) {
+        if (!jo.getBoolean("success")) {
             Log.i(TAG + ".gainMyAndFamilySumInsured", jo.optString("errorMsg"));
             return true;
         }
@@ -250,7 +232,7 @@ public class SesameCredit extends ModelTask {
      */
     private JSONObject promiseQueryDetail(String recordId) throws JSONException {
         JSONObject jo = new JSONObject(SesameCreditRpcCall.promiseQueryDetail(recordId));
-        if (!jo.optBoolean("success")) {
+        if (!jo.getBoolean("success")) {
             Log.i(TAG + ".promiseQueryDetail", jo.optString("errorMsg"));
             return null;
         }
@@ -263,7 +245,7 @@ public class SesameCredit extends ModelTask {
     private void collectSesame() {
         try {
             JSONObject jo = new JSONObject(SesameCreditRpcCall.queryCreditFeedback());
-            if (!jo.optBoolean("success")) {
+            if (!jo.getBoolean("success")) {
                 Log.i(TAG + ".collectSesame.queryCreditFeedback", jo.optString("resultView"));
                 return;
             }
@@ -277,7 +259,7 @@ public class SesameCredit extends ModelTask {
                 String creditFeedbackId = jo.getString("creditFeedbackId");
                 String potentialSize = jo.getString("potentialSize");
                 jo = new JSONObject(SesameCreditRpcCall.collectCreditFeedback(creditFeedbackId));
-                if (!jo.optBoolean("success")) {
+                if (!jo.getBoolean("success")) {
                     Log.i(TAG + ".collectSesame.collectCreditFeedback", jo.optString("resultView"));
                     continue;
                 }
@@ -286,183 +268,6 @@ public class SesameCredit extends ModelTask {
         } catch (Throwable t) {
             Log.i(TAG, "collectSesame err:");
             Log.printStackTrace(TAG, t);
-        } finally {
-            try {
-                Thread.sleep(executeIntervalInt);
-            } catch (InterruptedException e) {
-                Log.printStackTrace(e);
-            }
-        }
-    }
-
-    /**
-     * 安心豆
-     */
-    private void insBlueBean() {
-        try {
-            String s = SesameCreditRpcCall.pageRender();
-            JSONObject jo = new JSONObject(s);
-            if (!jo.optBoolean("success")) {
-                Log.i(TAG + ".insBlueBean.pageRender", jo.optString("resultView"));
-                return;
-            }
-            JSONObject result = jo.getJSONObject("result");
-            JSONArray modules = result.getJSONArray("modules");
-            for (int i = 0; i < modules.length(); i++) {
-                jo = modules.getJSONObject(i);
-                String name = jo.getString("name");
-                if ("签到配置".equals(name)) {
-                    insBlueBeanTask(JsonUtil.getValueByPath(jo, "content.signConfig.appletId"));
-                } else if (("兑换时光加速器".equals(name) && insBlueBeanExchange.getValue())
-                        || ("10份黄金票".equals(name) && insBlueBeanExchangeGoldTicket.getValue())) {
-                    insBlueBeanExchange(JsonUtil.getValueByPath(jo, "content.beanDeductBanner.oneStopId"));
-                } else if ("任务分类".equals(name)) {
-                    JSONArray jsonArray = (JSONArray) JsonUtil.getValueByPathObject(jo, "content.taskClassification");
-                    if (jsonArray == null) {
-                        continue;
-                    }
-                    for (int j = 0; j < jsonArray.length(); j++) {
-                        jo = jsonArray.getJSONObject(j);
-                        JSONArray ja = jo.getJSONArray("taskAppletIdList");
-                        for (int h = 0; h < ja.length(); h++) {
-                            jo = ja.getJSONObject(h);
-                            insBlueBeanTask(jo.getString("appletId"));
-                        }
-                    }
-                }
-            }
-
-            insBlueBeanPlanConsult();
-        } catch (Throwable t) {
-            Log.i(TAG, "insBlueBean err:");
-            Log.printStackTrace(TAG, t);
-        } finally {
-            try {
-                Thread.sleep(executeIntervalInt);
-            } catch (InterruptedException e) {
-                Log.printStackTrace(e);
-            }
-        }
-    }
-
-    /**
-     * 查询安心豆任务
-     */
-    private void insBlueBeanPlanConsult() {
-        try {
-            String str = SesameCreditRpcCall.planConsult();
-            JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.optBoolean("success")) {
-                Log.i(TAG + ".insBlueBeanPlanConsult.planConsult", jsonObject.optString("resultView"));
-                return;
-            }
-            JSONArray jsonArray = (JSONArray) JsonUtil.getValueByPathObject(jsonObject, "result.rspContext.params.taskAppletResult");
-            if (jsonArray == null) {
-                return;
-            }
-            for (int i = 0; i < jsonArray.length(); i++) {
-                jsonObject = jsonArray.getJSONObject(i);
-                insBlueBeanTask(jsonObject.optString("appletId"));
-            }
-
-        } catch (Throwable t) {
-            Log.i(TAG, "planConsult err:");
-            Log.printStackTrace(TAG, t);
-        } finally {
-            try {
-                Thread.sleep(executeIntervalInt / 10);
-            } catch (InterruptedException e) {
-                Log.printStackTrace(e);
-            }
-        }
-    }
-
-    /**
-     * 安心豆任务
-     *
-     * @param appletId appletId
-     */
-    private void insBlueBeanTask(String appletId) {
-        try {
-            String s = SesameCreditRpcCall.taskProcess(appletId);
-            JSONObject jo = new JSONObject(s);
-            if (!jo.optBoolean("success")) {
-                Log.i(TAG + ".insBlueBeanTask.taskProcess", jo.optString("resultView"));
-                return;
-            }
-            JSONObject result = jo.getJSONObject("result");
-            if (!result.getBoolean("canPush") || "FULLY_DONE".equals(result.getString("renderStatus"))
-                    || "LIFE_TASK".equals(result.getString("taskType"))) {
-                //垃圾任务都跳过
-                return;
-            }
-            s = SesameCreditRpcCall.taskTrigger(appletId, "insportal-marketing");
-            JSONObject joTrigger = new JSONObject(s);
-            if (!joTrigger.optBoolean("success")) {
-                Log.i(TAG + ".insBlueBeanTask.taskTrigger", joTrigger.optString("resultView"));
-                return;
-            }
-            Log.other("安心豆🥔[" + JsonUtil.getValueByPath(joTrigger, "result.prizeSendOrderDTOList.[0].prizeName") + "]完成");
-        } catch (Throwable t) {
-            Log.i(TAG, "insBlueBeanTask err:");
-            Log.printStackTrace(TAG, t);
-        } finally {
-            try {
-                Thread.sleep(executeIntervalInt / 10);
-            } catch (InterruptedException e) {
-                Log.printStackTrace(e);
-            }
-        }
-    }
-
-    /**
-     * 安心豆兑换
-     *
-     * @param itemId itemId
-     */
-    private void insBlueBeanExchange(String itemId) {
-        try {
-            String s = SesameCreditRpcCall.queryUserAccountInfo();
-            JSONObject jo = new JSONObject(s);
-            if (!jo.optBoolean("success")) {
-                Log.i(TAG + ".insBlueBeanExchange.queryUserAccountInfo", jo.optString("resultView"));
-                return;
-            }
-            JSONObject result = jo.getJSONObject("result");
-            int userCurrentPoint = result.optInt("userCurrentPoint", 0);
-            if (userCurrentPoint <= 0) {
-                return;
-            }
-            jo = new JSONObject(SesameCreditRpcCall.exchangeDetail(itemId));
-            if (!jo.optBoolean("success")) {
-                Log.i(TAG + ".insBlueBeanExchange.exchangeDetail", jo.optString("resultView"));
-                return;
-            }
-            JSONObject exchangeDetail = jo.getJSONObject("result").getJSONObject("rspContext")
-                    .getJSONObject("params").getJSONObject("exchangeDetail");
-            if (!"ITEM_GOING".equals(exchangeDetail.getString("status"))) {
-                return;
-            }
-            JSONObject itemExchangeConsultDTO = exchangeDetail.getJSONObject("itemExchangeConsultDTO");
-            int pointAmount = itemExchangeConsultDTO.getInt("realConsumePointAmount");
-            if (!itemExchangeConsultDTO.getBoolean("canExchange") || userCurrentPoint < pointAmount) {
-                return;
-            }
-            jo = new JSONObject(SesameCreditRpcCall.exchange(itemId, pointAmount));
-            if (!jo.optBoolean("success")) {
-                Log.i(TAG + ".insBlueBeanExchange.exchange", jo.optString("resultView"));
-                return;
-            }
-            Log.other("[" + pointAmount + "]安心豆🥔兑换成功[" + exchangeDetail.getString("itemName") + "]");
-        } catch (Throwable t) {
-            Log.i(TAG, "insBlueBeanExchange err:");
-            Log.printStackTrace(TAG, t);
-        } finally {
-            try {
-                Thread.sleep(executeIntervalInt);
-            } catch (InterruptedException e) {
-                Log.printStackTrace(e);
-            }
         }
     }
 
