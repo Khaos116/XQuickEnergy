@@ -44,13 +44,13 @@ public class GreenFinance extends ModelTask {
     @Override
     public ModelFields getFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(greenFinanceLsxd = new BooleanModelField("greenFinanceLsxd", "打卡 | 绿色行动", false));
-        modelFields.addField(greenFinanceLscg = new BooleanModelField("greenFinanceLscg", "打卡 | 绿色采购", false));
-        modelFields.addField(greenFinanceLsbg = new BooleanModelField("greenFinanceLsbg", "打卡 | 绿色办公", false));
-        modelFields.addField(greenFinanceWdxd = new BooleanModelField("greenFinanceWdxd", "打卡 | 绿色销售", false));
-        modelFields.addField(greenFinanceLswl = new BooleanModelField("greenFinanceLswl", "打卡 | 绿色物流", false));
-        modelFields.addField(greenFinancePointFriend = new BooleanModelField("greenFinancePointFriend", "收取 | 好友金币", false));
-        modelFields.addField(greenFinanceDonation = new BooleanModelField("greenFinanceDonation", "捐助 | 快过期金币", false));
+        modelFields.addField(greenFinanceLsxd = new BooleanModelField("greenFinanceLsxd", "打卡 | 绿色行动", true));
+        modelFields.addField(greenFinanceLscg = new BooleanModelField("greenFinanceLscg", "打卡 | 绿色采购", true));
+        modelFields.addField(greenFinanceLsbg = new BooleanModelField("greenFinanceLsbg", "打卡 | 绿色办公", true));
+        modelFields.addField(greenFinanceWdxd = new BooleanModelField("greenFinanceWdxd", "打卡 | 绿色销售", true));
+        modelFields.addField(greenFinanceLswl = new BooleanModelField("greenFinanceLswl", "打卡 | 绿色物流", true));
+        modelFields.addField(greenFinancePointFriend = new BooleanModelField("greenFinancePointFriend", "收取 | 好友金币", true));
+        modelFields.addField(greenFinanceDonation = new BooleanModelField("greenFinanceDonation", "捐助 | 快过期金币", true));
         return modelFields;
     }
 
@@ -64,7 +64,7 @@ public class GreenFinance extends ModelTask {
         String s = GreenFinanceRpcCall.greenFinanceIndex();
         try {
             JSONObject jo = new JSONObject(s);
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(TAG, jo.optString("resultDesc"));
                 return;
             }
@@ -120,7 +120,7 @@ public class GreenFinance extends ModelTask {
         String s = GreenFinanceRpcCall.batchSelfCollect(bsnIds);
         try {
             JSONObject joSelfCollect = new JSONObject(s);
-            if (joSelfCollect.getBoolean("success")) {
+            if (joSelfCollect.optBoolean("success")) {
                 int totalCollectPoint = joSelfCollect.getJSONObject("result").getInt("totalCollectPoint");
                 Log.other("绿色经营📊收集获得" + totalCollectPoint);
             } else {
@@ -147,7 +147,7 @@ public class GreenFinance extends ModelTask {
         try {
             String s = GreenFinanceRpcCall.signInQuery(sceneId);
             JSONObject jo = new JSONObject(s);
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(TAG + ".signIn.signInQuery", jo.optString("resultDesc"));
                 return;
             }
@@ -157,7 +157,7 @@ public class GreenFinance extends ModelTask {
             }
             s = GreenFinanceRpcCall.signInTrigger(sceneId);
             jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 Log.other("绿色经营📊签到成功");
             } else {
                 Log.i(TAG + ".signIn.signInTrigger", jo.optString("resultDesc"));
@@ -209,7 +209,7 @@ public class GreenFinance extends ModelTask {
         try {
             String str = GreenFinanceRpcCall.queryUserTickItem(type);
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".doTick.queryUserTickItem", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -221,7 +221,7 @@ public class GreenFinance extends ModelTask {
                 }
                 str = GreenFinanceRpcCall.submitTick(type, jsonObject.getString("behaviorCode"));
                 JSONObject object = new JSONObject(str);
-                if (!object.getBoolean("success")
+                if (!object.optBoolean("success")
                         || !String.valueOf(true).equals(JsonUtil.getValueByPath(object, "result.result"))) {
                     Log.i(TAG + ".doTick.submitTick", object.optString("resultDesc"));
                     continue;
@@ -251,7 +251,7 @@ public class GreenFinance extends ModelTask {
         try {
             String str = GreenFinanceRpcCall.queryExpireMcaPoint(1);
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".donation.queryExpireMcaPoint", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -267,7 +267,7 @@ public class GreenFinance extends ModelTask {
             Log.other("绿色经营📊1天内过期的金币[" + amount + "]");
             str = GreenFinanceRpcCall.queryAllDonationProjectNew();
             jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".donation.queryAllDonationProjectNew", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -295,7 +295,7 @@ public class GreenFinance extends ModelTask {
                 }
                 str = GreenFinanceRpcCall.donation(id, am);
                 jsonObject = new JSONObject(str);
-                if (!jsonObject.getBoolean("success")) {
+                if (!jsonObject.optBoolean("success")) {
                     Log.i(TAG + ".donation." + id, jsonObject.optString("resultDesc"));
                     return;
                 }
@@ -325,7 +325,7 @@ public class GreenFinance extends ModelTask {
             String campId = "CP14664674";
             String str = GreenFinanceRpcCall.queryPrizes(campId);
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".prizes.queryPrizes", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -346,7 +346,7 @@ public class GreenFinance extends ModelTask {
             }
             str = GreenFinanceRpcCall.campTrigger(campId);
             jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".prizes.campTrigger", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -380,7 +380,7 @@ public class GreenFinance extends ModelTask {
                 try {
                     String str = GreenFinanceRpcCall.queryRankingList(n);
                     JSONObject jsonObject = new JSONObject(str);
-                    if (!jsonObject.getBoolean("success")) {
+                    if (!jsonObject.optBoolean("success")) {
                         Log.i(TAG + ".batchStealFriend.queryRankingList", jsonObject.optString("resultDesc"));
                         continue;
                     }
@@ -403,7 +403,7 @@ public class GreenFinance extends ModelTask {
                         }
                         str = GreenFinanceRpcCall.queryGuestIndexPoints(friendId);
                         jsonObject = new JSONObject(str);
-                        if (!jsonObject.getBoolean("success")) {
+                        if (!jsonObject.optBoolean("success")) {
                             Log.i(TAG + ".batchStealFriend.queryGuestIndexPoints", jsonObject.optString("resultDesc"));
                             continue;
                         }
@@ -423,7 +423,7 @@ public class GreenFinance extends ModelTask {
                         }
                         str = GreenFinanceRpcCall.batchSteal(jsonArray, friendId);
                         jsonObject = new JSONObject(str);
-                        if (!jsonObject.getBoolean("success")) {
+                        if (!jsonObject.optBoolean("success")) {
                             Log.i(TAG + ".batchStealFriend.batchSteal", jsonObject.optString("resultDesc"));
                             continue;
                         }

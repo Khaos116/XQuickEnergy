@@ -37,8 +37,8 @@ public class AntOrchard extends ModelTask {
     public ModelFields getFields() {
         ModelFields modelFields = new ModelFields();
         modelFields.addField(executeInterval = new IntegerModelField("executeInterval", "执行间隔(毫秒)", 500));
-        modelFields.addField(receiveOrchardTaskAward = new BooleanModelField("receiveOrchardTaskAward", "收取农场任务奖励", false));
-        modelFields.addField(orchardSpreadManureCount = new IntegerModelField("orchardSpreadManureCount", "农场每日施肥次数", 0));
+        modelFields.addField(receiveOrchardTaskAward = new BooleanModelField("receiveOrchardTaskAward", "收取农场任务奖励", true));
+        modelFields.addField(orchardSpreadManureCount = new IntegerModelField("orchardSpreadManureCount", "农场每日施肥次数", 1));
         modelFields.addField(batchHireAnimal = new BooleanModelField("batchHireAnimal", "一键捉鸡除草", false));
         return modelFields;
     }
@@ -142,7 +142,7 @@ public class AntOrchard extends ModelTask {
                             String taskType = spreadManureStage.getString("taskType");
                             int awardCount = spreadManureStage.getInt("awardCount");
                             JSONObject joo = new JSONObject(AntOrchardRpcCall.receiveTaskAward(sceneCode, taskType));
-                            if (joo.getBoolean("success")) {
+                            if (joo.optBoolean("success")) {
                                 Log.farm("丰收礼包🎁[肥料*" + awardCount + "]");
                             } else {
                                 Log.record(joo.getString("desc"));
@@ -276,7 +276,7 @@ public class AntOrchard extends ModelTask {
                         String taskId = jo.getString("taskId");
                         String sceneCode = jo.getString("sceneCode");
                         jo = new JSONObject(AntOrchardRpcCall.finishTask(userId, sceneCode, taskId));
-                        if (jo.getBoolean("success")) {
+                        if (jo.optBoolean("success")) {
                             Log.farm("农场任务🧾[" + title + "]");
                         } else {
                             Log.record(jo.getString("desc"));
