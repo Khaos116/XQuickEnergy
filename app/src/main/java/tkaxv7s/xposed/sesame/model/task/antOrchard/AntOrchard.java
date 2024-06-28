@@ -2,21 +2,16 @@ package tkaxv7s.xposed.sesame.model.task.antOrchard;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import tkaxv7s.xposed.sesame.data.ModelFields;
+import tkaxv7s.xposed.sesame.data.ModelTask;
+import tkaxv7s.xposed.sesame.data.modelFieldExt.BooleanModelField;
+import tkaxv7s.xposed.sesame.data.modelFieldExt.IntegerModelField;
+import tkaxv7s.xposed.sesame.model.base.TaskCommon;
+import tkaxv7s.xposed.sesame.model.task.antFarm.AntFarm;
+import tkaxv7s.xposed.sesame.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import tkaxv7s.xposed.sesame.data.ModelFields;
-import tkaxv7s.xposed.sesame.data.modelFieldExt.BooleanModelField;
-import tkaxv7s.xposed.sesame.data.modelFieldExt.IntegerModelField;
-import tkaxv7s.xposed.sesame.data.ModelTask;
-import tkaxv7s.xposed.sesame.model.base.TaskCommon;
-import tkaxv7s.xposed.sesame.model.task.antFarm.AntFarm;
-import tkaxv7s.xposed.sesame.util.FileUtil;
-import tkaxv7s.xposed.sesame.util.Log;
-import tkaxv7s.xposed.sesame.util.RandomUtil;
-import tkaxv7s.xposed.sesame.util.Statistics;
-import tkaxv7s.xposed.sesame.util.UserIdMap;
 
 public class AntOrchard extends ModelTask {
     private static final String TAG = AntOrchard.class.getSimpleName();
@@ -28,31 +23,29 @@ public class AntOrchard extends ModelTask {
 
     private Integer executeIntervalInt;
 
-    public static BooleanModelField antOrchard;
     private static IntegerModelField executeInterval;
     private static BooleanModelField receiveOrchardTaskAward;
     private static IntegerModelField orchardSpreadManureCount;
     private static BooleanModelField batchHireAnimal;
 
     @Override
-    public String setName() {
+    public String getName() {
         return "农场";
     }
 
     @Override
-    public ModelFields setFields() {
+    public ModelFields getFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(antOrchard = new BooleanModelField("antOrchard", "开启农场", true));
         modelFields.addField(executeInterval = new IntegerModelField("executeInterval", "执行间隔(毫秒)", 500));
-        modelFields.addField(receiveOrchardTaskAward = new BooleanModelField("receiveOrchardTaskAward", "收取农场任务奖励", true));
-        modelFields.addField(orchardSpreadManureCount = new IntegerModelField("orchardSpreadManureCount", "农场每日施肥次数", 1));
+        modelFields.addField(receiveOrchardTaskAward = new BooleanModelField("receiveOrchardTaskAward", "收取农场任务奖励", false));
+        modelFields.addField(orchardSpreadManureCount = new IntegerModelField("orchardSpreadManureCount", "农场每日施肥次数", 0));
         modelFields.addField(batchHireAnimal = new BooleanModelField("batchHireAnimal", "一键捉鸡除草", false));
         return modelFields;
     }
 
     @Override
     public Boolean check() {
-        return antOrchard.getValue() && !TaskCommon.IS_ENERGY_TIME;
+        return !TaskCommon.IS_ENERGY_TIME;
     }
 
     @Override
@@ -97,7 +90,7 @@ public class AntOrchard extends ModelTask {
                         Log.i(jo.toString());
                     }
                 } else {
-                    antOrchard.setValue(false);
+                    getEnableField().setValue(false);
                     Log.record("请先开启芭芭农场！");
                 }
             } else {
@@ -135,59 +128,62 @@ public class AntOrchard extends ModelTask {
     private void orchardSpreadManure() {
         try {
             do {
-                JSONObject jo = new JSONObject(AntOrchardRpcCall.orchardIndex());
-                if (!"100".equals(jo.getString("resultCode"))) {
-                    Log.i(TAG, jo.getString("resultDesc"));
-                    return;
-                }
-                if (jo.has("spreadManureActivity")) {
-                    JSONObject spreadManureStage = jo.getJSONObject("spreadManureActivity")
-                            .getJSONObject("spreadManureStage");
-                    if ("FINISHED".equals(spreadManureStage.getString("status"))) {
-                        String sceneCode = spreadManureStage.getString("sceneCode");
-                        String taskType = spreadManureStage.getString("taskType");
-                        int awardCount = spreadManureStage.getInt("awardCount");
-                        JSONObject joo = new JSONObject(AntOrchardRpcCall.receiveTaskAward(sceneCode, taskType));
-                        if (joo.optBoolean("success")) {
-                            Log.farm("丰收礼包🎁[肥料*" + awardCount + "]");
-                        } else {
-                            Log.record(joo.getString("desc"));
-                            Log.i(joo.toString());
+                try {
+                    JSONObject jo = new JSONObject(AntOrchardRpcCall.orchardIndex());
+                    if (!"100".equals(jo.getString("resultCode"))) {
+                        Log.i(TAG, jo.getString("resultDesc"));
+                        return;
+                    }
+                    if (jo.has("spreadManureActivity")) {
+                        JSONObject spreadManureStage = jo.getJSONObject("spreadManureActivity")
+                                .getJSONObject("spreadManureStage");
+                        if ("FINISHED".equals(spreadManureStage.getString("status"))) {
+                            String sceneCode = spreadManureStage.getString("sceneCode");
+                            String taskType = spreadManureStage.getString("taskType");
+                            int awardCount = spreadManureStage.getInt("awardCount");
+                            JSONObject joo = new JSONObject(AntOrchardRpcCall.receiveTaskAward(sceneCode, taskType));
+                            if (joo.getBoolean("success")) {
+                                Log.farm("丰收礼包🎁[肥料*" + awardCount + "]");
+                            } else {
+                                Log.record(joo.getString("desc"));
+                                Log.i(joo.toString());
+                            }
                         }
                     }
-                }
-                String taobaoData = jo.getString("taobaoData");
-                jo = new JSONObject(taobaoData);
-                JSONObject plantInfo = jo.getJSONObject("gameInfo").getJSONObject("plantInfo");
-                boolean canExchange = plantInfo.getBoolean("canExchange");
-                if (canExchange) {
-                    Log.farm("农场果树似乎可以兑换了！");
-                    return;
-                }
-                JSONObject seedStage = plantInfo.getJSONObject("seedStage");
-                treeLevel = Integer.toString(seedStage.getInt("stageLevel"));
-                JSONObject accountInfo = jo.getJSONObject("gameInfo").getJSONObject("accountInfo");
-                int happyPoint = Integer.parseInt(accountInfo.getString("happyPoint"));
-                int wateringCost = accountInfo.getInt("wateringCost");
-                int wateringLeftTimes = accountInfo.getInt("wateringLeftTimes");
-                if (happyPoint > wateringCost && wateringLeftTimes > 0
-                        && (200 - wateringLeftTimes < orchardSpreadManureCount.getValue())) {
-                    jo = new JSONObject(AntOrchardRpcCall.orchardSpreadManure(getWua()));
-                    if (!"100".equals(jo.getString("resultCode"))) {
-                        Log.record(jo.getString("resultDesc"));
-                        Log.i(jo.toString());
-                        return;
-                    }
-                    taobaoData = jo.getString("taobaoData");
+                    String taobaoData = jo.getString("taobaoData");
                     jo = new JSONObject(taobaoData);
-                    String stageText = jo.getJSONObject("currentStage").getString("stageText");
-                    Log.farm("农场施肥💩[" + stageText + "]");
-                    if (!canSpreadManureContinue(seedStage.getInt("totalValue"), jo.getJSONObject("currentStage").getInt("totalValue"))) {
-                        Statistics.spreadManureToday(userId);
+                    JSONObject plantInfo = jo.getJSONObject("gameInfo").getJSONObject("plantInfo");
+                    boolean canExchange = plantInfo.getBoolean("canExchange");
+                    if (canExchange) {
+                        Log.farm("农场果树似乎可以兑换了！");
                         return;
                     }
+                    JSONObject seedStage = plantInfo.getJSONObject("seedStage");
+                    treeLevel = Integer.toString(seedStage.getInt("stageLevel"));
+                    JSONObject accountInfo = jo.getJSONObject("gameInfo").getJSONObject("accountInfo");
+                    int happyPoint = Integer.parseInt(accountInfo.getString("happyPoint"));
+                    int wateringCost = accountInfo.getInt("wateringCost");
+                    int wateringLeftTimes = accountInfo.getInt("wateringLeftTimes");
+                    if (happyPoint > wateringCost && wateringLeftTimes > 0
+                            && (200 - wateringLeftTimes < orchardSpreadManureCount.getValue())) {
+                        jo = new JSONObject(AntOrchardRpcCall.orchardSpreadManure(getWua()));
+                        if (!"100".equals(jo.getString("resultCode"))) {
+                            Log.record(jo.getString("resultDesc"));
+                            Log.i(jo.toString());
+                            return;
+                        }
+                        taobaoData = jo.getString("taobaoData");
+                        jo = new JSONObject(taobaoData);
+                        String stageText = jo.getJSONObject("currentStage").getString("stageText");
+                        Log.farm("农场施肥💩[" + stageText + "]");
+                        if (!canSpreadManureContinue(seedStage.getInt("totalValue"), jo.getJSONObject("currentStage").getInt("totalValue"))) {
+                            Statistics.spreadManureToday(userId);
+                            return;
+                        }
+                        continue;
+                    }
+                } finally {
                     Thread.sleep(executeIntervalInt);
-                    continue;
                 }
                 break;
             } while (true);
@@ -280,7 +276,7 @@ public class AntOrchard extends ModelTask {
                         String taskId = jo.getString("taskId");
                         String sceneCode = jo.getString("sceneCode");
                         jo = new JSONObject(AntOrchardRpcCall.finishTask(userId, sceneCode, taskId));
-                        if (jo.optBoolean("success")) {
+                        if (jo.getBoolean("success")) {
                             Log.farm("农场任务🧾[" + title + "]");
                         } else {
                             Log.record(jo.getString("desc"));

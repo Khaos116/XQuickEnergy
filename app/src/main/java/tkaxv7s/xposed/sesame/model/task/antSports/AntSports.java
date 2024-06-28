@@ -3,14 +3,13 @@ package tkaxv7s.xposed.sesame.model.task.antSports;
 import de.robv.android.xposed.XposedHelpers;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import tkaxv7s.xposed.sesame.model.normal.base.BaseModel;
-import tkaxv7s.xposed.sesame.data.BaseTask;
 import tkaxv7s.xposed.sesame.data.ModelFields;
 import tkaxv7s.xposed.sesame.data.ModelTask;
 import tkaxv7s.xposed.sesame.data.modelFieldExt.BooleanModelField;
 import tkaxv7s.xposed.sesame.data.modelFieldExt.IntegerModelField;
 import tkaxv7s.xposed.sesame.hook.ApplicationHook;
 import tkaxv7s.xposed.sesame.model.base.TaskCommon;
+import tkaxv7s.xposed.sesame.model.normal.base.BaseModel;
 import tkaxv7s.xposed.sesame.util.*;
 
 import java.util.HashSet;
@@ -23,11 +22,10 @@ public class AntSports extends ModelTask {
     private static int tmpStepCount = -1;
 
     @Override
-    public String setName() {
+    public String getName() {
         return "运动";
     }
 
-    public BooleanModelField enableSports;
     public BooleanModelField openTreasureBox;
     public BooleanModelField receiveCoinAsset;
     public BooleanModelField donateCharityCoin;
@@ -38,9 +36,8 @@ public class AntSports extends ModelTask {
     public BooleanModelField battleForFriends;
 
     @Override
-    public ModelFields setFields() {
+    public ModelFields getFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(enableSports = new BooleanModelField("enableSports", "开启运动", true));
         modelFields.addField(openTreasureBox = new BooleanModelField("openTreasureBox", "开启宝箱", false));
         modelFields.addField(receiveCoinAsset = new BooleanModelField("receiveCoinAsset", "收运动币", false));
         modelFields.addField(donateCharityCoin = new BooleanModelField("donateCharityCoin", "捐运动币", false));
@@ -54,28 +51,23 @@ public class AntSports extends ModelTask {
 
     @Override
     public Boolean check() {
-        return enableSports.getValue() && !TaskCommon.IS_ENERGY_TIME;
+        return !TaskCommon.IS_ENERGY_TIME;
     }
 
     @Override
     public void run() {
         try {
             if (Statistics.canSyncStepToday(UserIdMap.getCurrentUid()) && TimeUtil.isNowAfterOrCompareTimeStr("0600")) {
-                addChildTask(BaseTask.newInstance("syncStep", () -> {
+                addChildTask(new ChildModelTask(this, "syncStep", () -> {
                     int step = AntSports.tmpStepCount();
                     try {
-                        if ((Boolean) XposedHelpers.callMethod(
-                                XposedHelpers.callStaticMethod(
-                                        ApplicationHook.getClassLoader().loadClass("com.alibaba.health.pedometer.intergation.rpc.RpcManager"),
-                                        "a"),
-                                "a", new Object[]{step, Boolean.FALSE, "system"})) {
+                        if ((Boolean) XposedHelpers.callMethod(XposedHelpers.callStaticMethod(ApplicationHook.getClassLoader().loadClass("com.alibaba.health.pedometer.intergation.rpc.RpcManager"), "a"), "a", new Object[]{step, Boolean.FALSE, "system"})) {
                             Log.other("同步步数🏃🏻‍♂️[" + step + "步]");
                         } else {
                             Log.record("同步运动步数失败:" + step);
                         }
                         Statistics.SyncStepToday(UserIdMap.getCurrentUid());
                     } catch (Throwable t) {
-                        Log.i(TAG, "StepTask.run err:");
                         Log.printStackTrace(TAG, t);
                     }
                 }));

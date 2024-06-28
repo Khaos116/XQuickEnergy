@@ -1,6 +1,7 @@
 package tkaxv7s.xposed.sesame.data;
 
 import lombok.Data;
+import tkaxv7s.xposed.sesame.data.modelFieldExt.BooleanModelField;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -25,14 +26,12 @@ public final class ModelConfig implements Serializable {
     public ModelConfig(Model model) {
         this();
         this.code = model.getClass().getSimpleName();
-        this.name = model.setName();
-        addFields(model.setFields());
-    }
-
-    public void addFields(ModelFields newFields) {
-        fields.clear();
-        if (newFields != null) {
-            for (Map.Entry<String, ModelField> entry : newFields.entrySet()) {
+        this.name = model.getName();
+        BooleanModelField enableField = model.getEnableField();
+        fields.put(enableField.getCode(), enableField);
+        ModelFields modelFields = model.getFields();
+        if (modelFields != null) {
+            for (Map.Entry<String, ModelField> entry : modelFields.entrySet()) {
                 ModelField modelField = entry.getValue();
                 if (modelField != null) {
                     fields.put(modelField.getCode(), modelField);

@@ -2,11 +2,9 @@ package tkaxv7s.xposed.sesame.model.task.antBookRead;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import tkaxv7s.xposed.sesame.data.ModelFields;
-import tkaxv7s.xposed.sesame.data.RuntimeInfo;
-import tkaxv7s.xposed.sesame.data.modelFieldExt.BooleanModelField;
 import tkaxv7s.xposed.sesame.data.ModelTask;
+import tkaxv7s.xposed.sesame.data.RuntimeInfo;
 import tkaxv7s.xposed.sesame.model.base.TaskCommon;
 import tkaxv7s.xposed.sesame.util.Log;
 import tkaxv7s.xposed.sesame.util.RandomUtil;
@@ -16,24 +14,18 @@ public class AntBookRead extends ModelTask {
     private static final String TAG = AntBookRead.class.getSimpleName();
 
     @Override
-    public String setName() {
+    public String getName() {
         return "读书听书";
     }
 
-    private BooleanModelField antBookRead;
-
     @Override
-    public ModelFields setFields() {
+    public ModelFields getFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(antBookRead = new BooleanModelField("antBookRead", "开启读书听书", true));
         return modelFields;
     }
 
     @Override
     public Boolean check() {
-        if (!antBookRead.getValue()) {
-            return false;
-        }
         if (TaskCommon.IS_ENERGY_TIME || !TaskCommon.IS_AFTER_8AM) {
             return false;
         }
@@ -58,13 +50,13 @@ public class AntBookRead extends ModelTask {
         try {
             String s = AntBookReadRpcCall.queryTaskCenterPage();
             JSONObject jo = new JSONObject(s);
-            if (jo.optBoolean("success")) {
+            if (jo.getBoolean("success")) {
                 JSONObject data = jo.getJSONObject("data");
                 String todayPlayDurationText = data.getJSONObject("benefitAggBlock").getString("todayPlayDurationText");
                 int PlayDuration = Integer.parseInt(StringUtil.getSubString(todayPlayDurationText, "今日听读时长", "分钟"));
                 if (PlayDuration < 450) {
                     jo = new JSONObject(AntBookReadRpcCall.queryHomePage());
-                    if (jo.optBoolean("success")) {
+                    if (jo.getBoolean("success")) {
                         JSONArray bookList = jo.getJSONObject("data").getJSONArray("dynamicCardList").getJSONObject(0)
                                 .getJSONObject("data").getJSONArray("bookList");
                         int bookListLength = bookList.length();
@@ -72,15 +64,15 @@ public class AntBookRead extends ModelTask {
                         JSONObject book = bookList.getJSONObject(postion);
                         String bookId = book.getString("bookId");
                         jo = new JSONObject(AntBookReadRpcCall.queryReaderContent(bookId));
-                        if (jo.optBoolean("success")) {
+                        if (jo.getBoolean("success")) {
                             String nextChapterId = jo.getJSONObject("data").getString("nextChapterId");
                             String name = jo.getJSONObject("data").getJSONObject("readerHomePageVO").getString("name");
                             for (int i = 0; i < 17; i++) {
                                 int energy = 0;
                                 jo = new JSONObject(AntBookReadRpcCall.syncUserReadInfo(bookId, nextChapterId));
-                                if (jo.optBoolean("success")) {
+                                if (jo.getBoolean("success")) {
                                     jo = new JSONObject(AntBookReadRpcCall.queryReaderForestEnergyInfo(bookId));
-                                    if (jo.optBoolean("success")) {
+                                    if (jo.getBoolean("success")) {
                                         String tips = jo.getJSONObject("data").getString("tips");
                                         if (tips.contains("已得")) {
                                             energy = Integer.parseInt(StringUtil.getSubString(tips, "已得", "g"));
@@ -112,7 +104,7 @@ public class AntBookRead extends ModelTask {
         try {
             String s = AntBookReadRpcCall.queryTaskCenterPage();
             JSONObject jo = new JSONObject(s);
-            if (jo.optBoolean("success")) {
+            if (jo.getBoolean("success")) {
                 JSONObject data = jo.getJSONObject("data");
                 JSONArray userTaskGroupList = data.getJSONObject("userTaskListModuleVO")
                         .getJSONArray("userTaskGroupList");
@@ -172,7 +164,7 @@ public class AntBookRead extends ModelTask {
         try {
             String s = AntBookReadRpcCall.collectTaskPrize(taskId, taskType);
             JSONObject jo = new JSONObject(s);
-            if (jo.optBoolean("success")) {
+            if (jo.getBoolean("success")) {
                 int coinNum = jo.getJSONObject("data").getInt("coinNum");
                 Log.other("阅读任务📖[" + name + "]#" + coinNum);
             }
@@ -186,7 +178,7 @@ public class AntBookRead extends ModelTask {
         try {
             String s = AntBookReadRpcCall.taskFinish(taskId, taskType);
             JSONObject jo = new JSONObject(s);
-            if (jo.optBoolean("success")) {
+            if (jo.getBoolean("success")) {
 
             }
         } catch (Throwable t) {
@@ -199,14 +191,14 @@ public class AntBookRead extends ModelTask {
         try {
             String s = AntBookReadRpcCall.queryTreasureBox();
             JSONObject jo = new JSONObject(s);
-            if (jo.optBoolean("success")) {
+            if (jo.getBoolean("success")) {
                 JSONObject treasureBoxVo = jo.getJSONObject("data").getJSONObject("treasureBoxVo");
                 if (treasureBoxVo.has("countdown"))
                     return;
                 String status = treasureBoxVo.getString("status");
                 if ("CAN_OPEN".equals(status)) {
                     jo = new JSONObject(AntBookReadRpcCall.openTreasureBox());
-                    if (jo.optBoolean("success")) {
+                    if (jo.getBoolean("success")) {
                         int coinNum = jo.getJSONObject("data").getInt("coinNum");
                         Log.other("阅读任务📖[打开宝箱]#" + coinNum);
                     }

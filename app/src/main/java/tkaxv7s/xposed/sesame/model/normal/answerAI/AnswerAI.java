@@ -13,22 +13,19 @@ public class AnswerAI extends Model {
     private static final String TAG = AnswerAI.class.getSimpleName();
 
     @Override
-    public String setName() {
+    public String getName() {
         return "AI答题";
     }
 
     private static AnswerAIInterface answerAIInterface = AnswerAIInterface.getInstance();
-
-    private final BooleanModelField enableAI = new BooleanModelField("enableAI", "开启AI答题", false);
 
     private final BooleanModelField useGeminiAI = new BooleanModelField("useGeminiAI", "GeminiAI | 使用答题", false);
 
     private final StringModelField setGeminiAIToken = new StringModelField("useGeminiAIToken", "GeminiAI | 设置令牌", "");
 
     @Override
-    public ModelFields setFields() {
+    public ModelFields getFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(enableAI);
         modelFields.addField(useGeminiAI);
         modelFields.addField(setGeminiAIToken);
         return modelFields;
@@ -36,10 +33,8 @@ public class AnswerAI extends Model {
 
     @Override
     public void config() {
-        if (enableAI.getValue()) {
-            if (useGeminiAI.getValue()) {
-                answerAIInterface = new GenAI(setGeminiAIToken.getValue());
-            }
+        if (useGeminiAI.getValue()) {
+            answerAIInterface = new GenAI(setGeminiAIToken.getValue());
         }
     }
 

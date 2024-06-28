@@ -51,11 +51,10 @@ public class AntFarm extends ModelTask {
     }
 
     @Override
-    public String setName() {
+    public String getName() {
         return "庄园";
     }
 
-    private BooleanModelField enableFarm;
     private BooleanModelField rewardFriend;
     private BooleanModelField sendBackAnimal;
     private ChoiceModelField sendType;
@@ -83,46 +82,44 @@ public class AntFarm extends ModelTask {
     public BooleanModelField enableChouchoule;
 
     @Override
-    public ModelFields setFields() {
+    public ModelFields getFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(enableFarm = new BooleanModelField("enableFarm", "开启庄园", true));
-        modelFields.addField(rewardFriend = new BooleanModelField("rewardFriend", "打赏好友", true));
+        modelFields.addField(rewardFriend = new BooleanModelField("rewardFriend", "打赏好友", false));
         modelFields.addField(sendBackAnimal = new BooleanModelField("sendBackAnimal", "遣返 | 开启", false));
         modelFields.addField(sendType = new ChoiceModelField("sendType", "遣返 | 方式", SendType.NORMAL, AntFarm.SendType.nickNames));
         modelFields.addField(dontSendFriendList = new SelectModelField("dontSendFriendList", "遣返 | 不遣返小鸡好友列表", new KVNode<>(new LinkedHashMap<>(), false), AlipayUser.getList()));
         modelFields.addField(recallAnimalType = new ChoiceModelField("recallAnimalType", "召回小鸡", RecallAnimalType.ALWAYS, RecallAnimalType.nickNames));
-        modelFields.addField(receiveFarmToolReward = new BooleanModelField("receiveFarmToolReward", "收取道具奖励", true));
-        modelFields.addField(recordFarmGame = new BooleanModelField("recordFarmGame", "游戏改分(星星球、登山赛)", true));
+        modelFields.addField(receiveFarmToolReward = new BooleanModelField("receiveFarmToolReward", "收取道具奖励", false));
+        modelFields.addField(recordFarmGame = new BooleanModelField("recordFarmGame", "游戏改分(星星球、登山赛)", false));
         List<String> farmGameTimeList = new ArrayList<>();
-        farmGameTimeList.add("0830-1100");
-        farmGameTimeList.add("2300-2400");
+        farmGameTimeList.add("2200-2400");
         modelFields.addField(farmGameTime = new ListModelField.ListJoinCommaToStringModelField("farmGameTime", "小鸡游戏时间(范围)", farmGameTimeList));
-        modelFields.addField(kitchen = new BooleanModelField("kitchen", "小鸡厨房", true));
-        modelFields.addField(useSpecialFood = new BooleanModelField("useSpecialFood", "使用特殊食品", true));
+        modelFields.addField(kitchen = new BooleanModelField("kitchen", "小鸡厨房", false));
+        modelFields.addField(useSpecialFood = new BooleanModelField("useSpecialFood", "使用特殊食品", false));
         modelFields.addField(useNewEggTool = new BooleanModelField("useNewEggTool", "使用新蛋卡", false));
-        modelFields.addField(harvestProduce = new BooleanModelField("harvestProduce", "收获爱心鸡蛋", true));
+        modelFields.addField(harvestProduce = new BooleanModelField("harvestProduce", "收获爱心鸡蛋", false));
         modelFields.addField(donation = new BooleanModelField("donation", "捐赠爱心鸡蛋", false));
-        modelFields.addField(answerQuestion = new BooleanModelField("answerQuestion", "开启答题", true));
-        modelFields.addField(receiveFarmTaskAward = new BooleanModelField("receiveFarmTaskAward", "收取饲料奖励", true));
-        modelFields.addField(feedAnimal = new BooleanModelField("feedAnimal", "喂小鸡", true));
-        modelFields.addField(useAccelerateTool = new BooleanModelField("useAccelerateTool", "使用加速卡", true));
+        modelFields.addField(answerQuestion = new BooleanModelField("answerQuestion", "开启答题", false));
+        modelFields.addField(receiveFarmTaskAward = new BooleanModelField("receiveFarmTaskAward", "收取饲料奖励", false));
+        modelFields.addField(feedAnimal = new BooleanModelField("feedAnimal", "喂小鸡", false));
+        modelFields.addField(useAccelerateTool = new BooleanModelField("useAccelerateTool", "使用加速卡", false));
         modelFields.addField(feedFriendAnimalList = new SelectModelField("feedFriendAnimalList", "喂好友小鸡列表", new KVNode<>(new LinkedHashMap<>(), true), AlipayUser.getList()));
         List<String> animalSleepTimeList = new ArrayList<>();
-        animalSleepTimeList.add("0200-0300");
-        animalSleepTimeList.add("0400-0559");
+        animalSleepTimeList.add("2300-2400");
+        animalSleepTimeList.add("0000-0559");
         modelFields.addField(animalSleepTime = new ListModelField.ListJoinCommaToStringModelField("animalSleepTime", "小鸡睡眠时间(范围)", animalSleepTimeList));
         modelFields.addField(notifyFriend = new BooleanModelField("notifyFriend", "赶鸡 | 通知好友", false));
         modelFields.addField(dontNotifyFriendList = new SelectModelField("dontNotifyFriendList", "赶鸡 | 不通知好友列表", new KVNode<>(new LinkedHashMap<>(), false), AlipayUser.getList()));
-        modelFields.addField(acceptGift = new BooleanModelField("acceptGift", "收麦子", true));
+        modelFields.addField(acceptGift = new BooleanModelField("acceptGift", "收麦子", false));
         modelFields.addField(visitFriendList = new SelectModelField("visitFriendList", "送麦子名单", new KVNode<>(new LinkedHashMap<>(), true), AlipayUser.getList()));
-        modelFields.addField(chickenDiary = new BooleanModelField("chickenDiary", "小鸡日记", true));
-        modelFields.addField(enableChouchoule = new BooleanModelField("enableChouchoule", "开启小鸡抽抽乐", true));
+        modelFields.addField(chickenDiary = new BooleanModelField("chickenDiary", "小鸡日记", false));
+        modelFields.addField(enableChouchoule = new BooleanModelField("enableChouchoule", "开启小鸡抽抽乐", false));
         return modelFields;
     }
 
     @Override
     public Boolean check() {
-        return enableFarm.getValue() && !TaskCommon.IS_ENERGY_TIME;
+        return !TaskCommon.IS_ENERGY_TIME;
     }
 
     @Override
@@ -617,7 +614,7 @@ public class AntFarm extends ModelTask {
                             case TODO:
                                 s = DadaDailyRpcCall.home("100");
                                 jo = new JSONObject(s);
-                                if (jo.optBoolean("success")) {
+                                if (jo.getBoolean("success")) {
                                     JSONObject question = jo.getJSONObject("question");
                                     Log.i("题目:" + question, "");
                                     long questionId = question.getLong("questionId");
@@ -645,7 +642,7 @@ public class AntFarm extends ModelTask {
 
                                     s = DadaDailyRpcCall.submit("100", answer, questionId);
                                     JSONObject joDailySubmit = new JSONObject(s);
-                                    if (joDailySubmit.optBoolean("success")) {
+                                    if (joDailySubmit.getBoolean("success")) {
                                         Log.record("提交完成");
                                         dadaDailySet = new HashSet<>();
                                         JSONObject extInfo = joDailySubmit.getJSONObject("extInfo");
@@ -775,10 +772,10 @@ public class AntFarm extends ModelTask {
                                 String contentId = videoUrl.substring(videoUrl.indexOf("&contentId=") + 1,
                                         videoUrl.indexOf("&refer"));
                                 jo = new JSONObject(AntFarmRpcCall.videoDeliverModule(contentId));
-                                if (jo.optBoolean("success")) {
+                                if (jo.getBoolean("success")) {
                                     Thread.sleep(15100);
                                     jo = new JSONObject(AntFarmRpcCall.videoTrigger(contentId));
-                                    if (jo.optBoolean("success")) {
+                                    if (jo.getBoolean("success")) {
                                         Log.farm("庄园任务🧾[" + title + "]#获得饲料" + awardCount + "g");
                                     } else {
                                         Log.record(jo.getString("resultMsg"));
@@ -1158,7 +1155,7 @@ public class AntFarm extends ModelTask {
                     if (manurePot.getInt("manurePotNum") >= 100) {
                         JSONObject joManurePot = new JSONObject(
                                 AntFarmRpcCall.collectManurePot(manurePot.getString("manurePotNO")));
-                        if (joManurePot.optBoolean("success")) {
+                        if (joManurePot.getBoolean("success")) {
                             int collectManurePotNum = joManurePot.getInt("collectManurePotNum");
                             Log.farm("打扫鸡屎🧹[" + collectManurePotNum + "g]");
                         }
@@ -1568,7 +1565,7 @@ public class AntFarm extends ModelTask {
             try {
                 String s = AntFarmRpcCall.chouchouleListFarmTask();
                 JSONObject jo = new JSONObject(s);
-                if (jo.optBoolean("success")) {
+                if (jo.getBoolean("success")) {
                     JSONArray farmTaskList = jo.getJSONArray("farmTaskList");
                     for (int i = 0; i < farmTaskList.length(); i++) {
                         jo = farmTaskList.getJSONObject(i);
@@ -1602,13 +1599,13 @@ public class AntFarm extends ModelTask {
         try {
             String s = AntFarmRpcCall.enterDrawMachine();
             JSONObject jo = new JSONObject(s);
-            if (jo.optBoolean("success")) {
+            if (jo.getBoolean("success")) {
                 JSONObject userInfo = jo.getJSONObject("userInfo");
                 int leftDrawTimes = userInfo.optInt("leftDrawTimes", 0);
                 if (leftDrawTimes > 0) {
                     for (int i = 0; i < leftDrawTimes; i++) {
                         jo = new JSONObject(AntFarmRpcCall.DrawPrize());
-                        if (jo.optBoolean("success")) {
+                        if (jo.getBoolean("success")) {
                             String title = jo.getString("title");
                             int prizeNum = jo.optInt("prizeNum", 0);
                             Log.farm("庄园小鸡🎁[领取:抽抽乐" + title + "*" + prizeNum + "]");

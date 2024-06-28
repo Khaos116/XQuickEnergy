@@ -2,17 +2,24 @@ package tkaxv7s.xposed.sesame.model.task.antOcean;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import tkaxv7s.xposed.sesame.data.ModelFields;
-import tkaxv7s.xposed.sesame.data.modelFieldExt.BooleanModelField;
 import tkaxv7s.xposed.sesame.data.ModelTask;
+import tkaxv7s.xposed.sesame.data.modelFieldExt.BooleanModelField;
+import tkaxv7s.xposed.sesame.data.modelFieldExt.SelectModelField;
+import tkaxv7s.xposed.sesame.entity.AlipayBeach;
+import tkaxv7s.xposed.sesame.entity.KVNode;
 import tkaxv7s.xposed.sesame.model.base.TaskCommon;
 import tkaxv7s.xposed.sesame.model.task.antFarm.AntFarm.TaskStatus;
 import tkaxv7s.xposed.sesame.model.task.antForest.AntForestRpcCall;
 import tkaxv7s.xposed.sesame.model.task.antForest.AntForestV2;
+import tkaxv7s.xposed.sesame.util.BeachIdMap;
 import tkaxv7s.xposed.sesame.util.Log;
 import tkaxv7s.xposed.sesame.util.StringUtil;
 import tkaxv7s.xposed.sesame.util.UserIdMap;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Constanline
@@ -22,22 +29,24 @@ public class AntOcean extends ModelTask {
     private static final String TAG = AntOcean.class.getSimpleName();
 
     @Override
-    public String setName() {
+    public String getName() {
         return "海洋";
     }
 
-    public static BooleanModelField enableOcean;
+    public static BooleanModelField protectOcean;
+    public static SelectModelField protectOceanList;
 
     @Override
-    public ModelFields setFields() {
+    public ModelFields getFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(enableOcean = new BooleanModelField("enableOcean", "开启海洋", true));
+        modelFields.addField(protectOcean = new BooleanModelField("protectOcean", "保护 | 开启", false));
+        modelFields.addField(protectOceanList = new SelectModelField("protectOceanList", "保护 | 海洋列表", new KVNode<>(new LinkedHashMap<>(), true), AlipayBeach.getList()));
         return modelFields;
     }
 
     @Override
     public Boolean check() {
-        return enableOcean.getValue() && !TaskCommon.IS_ENERGY_TIME;
+        return !TaskCommon.IS_ENERGY_TIME;
     }
 
     @Override
@@ -49,11 +58,14 @@ public class AntOcean extends ModelTask {
                 if (jo.getBoolean("opened")) {
                     queryHomePage();
                 } else {
-                    enableOcean.setValue(false);
+                    getEnableField().setValue(false);
                     Log.record("请先开启神奇海洋，并完成引导教程");
                 }
             } else {
                 Log.i(TAG, jo.getString("resultDesc"));
+            }
+            if (protectOcean.getValue()) {
+                protectOcean();
             }
         } catch (Throwable t) {
             Log.i(TAG, "start.run err:");
@@ -392,7 +404,7 @@ public class AntOcean extends ModelTask {
         }
         try {
             String userId = fillFlag.getString("userId");
-            AntForestV2 task = ModelTask.getTask(AntForestV2.class);
+            AntForestV2 task = ModelTask.getModel(AntForestV2.class);
             if (task == null || task.getDontCollectMap().containsKey(userId)) {
                 return;
             }
@@ -452,7 +464,7 @@ public class AntOcean extends ModelTask {
                     if (bizInfo.optBoolean("autoCompleteTask", false) || taskType.startsWith("DAOLIU_")) {
                         String sceneCode = jo.getString("sceneCode");
                         jo = new JSONObject(AntOceanRpcCall.finishTask(sceneCode, taskType));
-                        if (jo.optBoolean("success")) {
+                        if (jo.getBoolean("success")) {
                             String taskTitle = bizInfo.optString("taskTitle", taskType);
                             Log.forest("海洋任务🧾[" + taskTitle + "]");
                         } else {
@@ -485,7 +497,7 @@ public class AntOcean extends ModelTask {
                     String taskType = jo.getString("taskType");
                     String sceneCode = jo.getString("sceneCode");
                     jo = new JSONObject(AntOceanRpcCall.receiveTaskAward(sceneCode, taskType));
-                    if (jo.optBoolean("success")) {
+                    if (jo.getBoolean("success")) {
                         String taskTitle = bizInfo.optString("taskTitle", taskType);
                         String taskDesc = bizInfo.optString("taskDesc", taskType);
                         Log.forest("领取奖励🎖️[" + taskTitle + "]#" + taskDesc);
@@ -502,6 +514,121 @@ public class AntOcean extends ModelTask {
             Log.i(TAG, "receiveTaskAward err:");
             Log.printStackTrace(TAG, t);
         }
+    }
+
+    private void protectOcean() {
+        try {
+            String s = AntOceanRpcCall.queryCultivationList();
+            JSONObject jo = new JSONObject(s);
+            if ("SUCCESS".equals(jo.getString("resultCode"))) {
+                JSONArray ja = jo.getJSONArray("cultivationItemVOList");
+                for (int i = 0; i < ja.length(); i++) {
+                    jo = ja.getJSONObject(i);
+                    if (!jo.has("templateSubType"))
+                        continue;
+                    if (!"BEACH".equals(jo.getString("templateSubType"))
+                            && !"COOPERATE_SEA_TREE".equals(jo.getString("templateSubType")) && !"SEA_ANIMAL".equals(jo.getString("templateSubType")))
+                        continue;
+                    if (!"AVAILABLE".equals(jo.getString("applyAction")))
+                        continue;
+                    String cultivationName = jo.getString("cultivationName");
+                    String templateCode = jo.getString("templateCode");
+                    int energy = jo.getInt("energy");
+                    JSONObject projectConfig = jo.getJSONObject("projectConfigVO");
+                    String projectCode = projectConfig.getString("code");
+                    BeachIdMap.putIdMap(templateCode, cultivationName + "(" + energy + "g)");
+                    Map<String, Integer> map = protectOceanList.getValue().getKey();
+                    for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                        if (Objects.equals(entry.getKey(), templateCode)) {
+                            Integer count = entry.getValue();
+                            if (count != null && count > 0) {
+                                oceanExchangeTree(templateCode, projectCode, cultivationName, count);
+                            }
+                            break;
+                        }
+                    }
+                }
+            } else {
+                Log.i(TAG, jo.getString("resultDesc"));
+            }
+        } catch (Throwable t) {
+            Log.i(TAG, "protectBeach err:");
+            Log.printStackTrace(TAG, t);
+        }
+        BeachIdMap.saveIdMap();
+    }
+
+    private static void oceanExchangeTree(String cultivationCode, String projectCode, String itemName, int count) {
+        try {
+            String s;
+            JSONObject jo;
+            int appliedTimes = queryCultivationDetail(cultivationCode, projectCode, count);
+            if (appliedTimes < 0)
+                return;
+            for (int applyCount = 1; applyCount <= count; applyCount++) {
+                s = AntOceanRpcCall.oceanExchangeTree(cultivationCode, projectCode);
+                jo = new JSONObject(s);
+                if ("SUCCESS".equals(jo.getString("resultCode"))) {
+                    JSONArray awardInfos = jo.getJSONArray("rewardItemVOs");
+                    StringBuilder award = new StringBuilder();
+                    for (int i = 0; i < awardInfos.length(); i++) {
+                        jo = awardInfos.getJSONObject(i);
+                        award.append(jo.getString("name")).append("*").append(jo.getInt("num"));
+                    }
+                    String str = "保护海洋🏖️[" + itemName + "]#第" + appliedTimes + "次"
+                            + "-获得奖励" + award;
+                    Log.forest(str);
+                } else {
+                    Log.record(jo.getString("resultDesc"));
+                    Log.i(jo.toString());
+                    Log.forest("保护海洋🏖️[" + itemName + "]#发生未知错误，停止申请");
+                    break;
+                }
+                Thread.sleep(300);
+                appliedTimes = queryCultivationDetail(cultivationCode, projectCode, count);
+                if (appliedTimes < 0) {
+                    break;
+                } else {
+                    Thread.sleep(300);
+                }
+            }
+        } catch (Throwable t) {
+            Log.i(TAG, "oceanExchangeTree err:");
+            Log.printStackTrace(TAG, t);
+        }
+    }
+
+    private static int queryCultivationDetail(String cultivationCode, String projectCode, int count) {
+        int appliedTimes = -1;
+        try {
+            String s = AntOceanRpcCall.queryCultivationDetail(cultivationCode, projectCode);
+            JSONObject jo = new JSONObject(s);
+            if ("SUCCESS".equals(jo.getString("resultCode"))) {
+                JSONObject userInfo = jo.getJSONObject("userInfoVO");
+                int currentEnergy = userInfo.getInt("currentEnergy");
+                jo = jo.getJSONObject("cultivationDetailVO");
+                String applyAction = jo.getString("applyAction");
+                int certNum = jo.getInt("certNum");
+                if ("AVAILABLE".equals(applyAction)) {
+                    if (currentEnergy >= jo.getInt("energy")) {
+                        if (certNum < count) {
+                            appliedTimes = certNum + 1;
+                        }
+                    } else {
+                        Log.forest("保护海洋🏖️[" + jo.getString("cultivationName") + "]#能量不足停止申请");
+                    }
+                } else {
+                    Log.forest("保护海洋🏖️[" + jo.getString("cultivationName") + "]#似乎没有了");
+                }
+            } else {
+                Log.record(jo.getString("resultDesc"));
+                Log.i(s);
+            }
+        } catch (Throwable t) {
+            Log.i(TAG, "queryCultivationDetail err:");
+            Log.printStackTrace(TAG, t);
+        }
+        return appliedTimes;
     }
 
 }
