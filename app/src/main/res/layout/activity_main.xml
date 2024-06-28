@@ -33,7 +33,7 @@
                 android:gravity="center"
                 android:onClick="onClick"
                 android:scaleType="centerInside"
-                app:srcCompat="@drawable/main" />
+                app:srcCompat="@drawable/logo" />
 
         <LinearLayout
                 android:id="@+id/lyt_bottom1"
