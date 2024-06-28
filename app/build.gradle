@@ -9,7 +9,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdk 31
         versionCode 80
-        versionName "1.2.6-test6-TK"
+        versionName "1.2.6-test7-TK"
     }
 
     //配置不同版本的keystore
