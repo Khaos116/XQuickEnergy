@@ -8,6 +8,7 @@ import java.util.*;
 import tkaxv7s.xposed.sesame.data.ConfigV2;
 
 /**
+ * 重置配置，删除：/storage/emulated/0/Android/media/com.eg.android.AlipayGphone/sesame文件夹
  * 在IDEA中添加@Getter注解后报红问题解决方案：需要在IDEA中安装lombok插件，并引入 lombok的依赖即可
  * Author:XX
  * Date:2024/6/20
