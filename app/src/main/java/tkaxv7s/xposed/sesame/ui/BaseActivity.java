@@ -1,6 +1,6 @@
 package tkaxv7s.xposed.sesame.ui;
 
-import androidx.annotation.ColorInt;
+import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import tkaxv7s.xposed.sesame.R;
@@ -11,9 +11,14 @@ public class BaseActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ViewAppInfo.init(getApplicationContext());
+    }
+
+    @Override
     public void onContentChanged() {
         super.onContentChanged();
-        ViewAppInfo.init(getApplicationContext());
         toolbar = findViewById(R.id.x_toolbar);
         toolbar.setTitle(getBaseTitle());
         toolbar.setSubtitle(getBaseSubtitle());
@@ -36,11 +41,11 @@ public class BaseActivity extends AppCompatActivity {
         toolbar.setSubtitle(subTitle);
     }
 
-    public void setBaseTitleTextColor(@ColorInt int color) {
+    public void setBaseTitleTextColor(int color) {
         toolbar.setTitleTextColor(color);
     }
 
-    public void setBaseSubtitleTextColor(@ColorInt int color) {
+    public void setBaseSubtitleTextColor(int color) {
         toolbar.setSubtitleTextColor(color);
     }
 

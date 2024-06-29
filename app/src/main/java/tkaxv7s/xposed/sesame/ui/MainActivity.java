@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tvStatistics = findViewById(R.id.tv_statistics);
-        ViewAppInfo.init(getApplicationContext());
+        ViewAppInfo.checkRunType();
         updateSubTitle(ViewAppInfo.getRunType());
         viewHandler = new Handler();
         titleRunner = () -> updateSubTitle(RunType.DISABLE);
@@ -290,16 +290,16 @@ public class MainActivity extends BaseActivity {
     }
 
     private void updateSubTitle(RunType runType) {
-        setBaseSubtitle("【" + runType.getName() + "】");
+        setBaseTitle(ViewAppInfo.getAppTitle() + "【" + runType.getName() + "】");
         switch (runType) {
             case DISABLE:
-                setBaseSubtitleTextColor(Color.parseColor("#333333"));
+                setBaseTitleTextColor(Color.parseColor("#333333"));
                 break;
             case MODEL:
-                setBaseSubtitleTextColor(getResources().getColor(R.color.textColorPrimary));
+                setBaseTitleTextColor(getResources().getColor(R.color.textColorPrimary));
                 break;
             case PACKAGE:
-                setBaseSubtitleTextColor(getResources().getColor(R.color.textColorPrimary));
+                setBaseTitleTextColor(getResources().getColor(R.color.textColorPrimary));
                 break;
         }
     }
