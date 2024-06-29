@@ -488,7 +488,7 @@ public class AntStall extends ModelTask {
                         }
                         s = AntStallRpcCall.queryCallAppSchema(sceneCode);
                         jo = new JSONObject(s);
-                        if (!jo.getBoolean("success")) {
+                        if (!jo.optBoolean("success")) {
                             Log.i(TAG, "taskList.queryCallAppSchema err:" + jo.optString("resultDesc"));
                         }
                         TimeUtil.sleep(5000);
@@ -513,7 +513,7 @@ public class AntStall extends ModelTask {
                             JSONObject jsonObject = jsonArray.getJSONObject(j);
                             s = AntStallRpcCall.finish(pid, jsonObject);
                             jo = new JSONObject(s);
-                            if (!jo.getBoolean("success")) {
+                            if (!jo.optBoolean("success")) {
                                 Log.i(TAG, "taskList.finish err:" + jo.optString("resultDesc"));
                             }
                             TimeUtil.sleep(5000);
@@ -550,7 +550,7 @@ public class AntStall extends ModelTask {
         String s = AntStallRpcCall.receiveTaskAward(taskType);
         try {
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 Log.farm("蚂蚁新村⛪[领取奖励]");
             } else {
                 Log.record("receiveTaskAward err:" + " " + s);
@@ -567,7 +567,7 @@ public class AntStall extends ModelTask {
         String s = AntStallRpcCall.finishTask(taskType + "_" + System.currentTimeMillis(), taskType);
         try {
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 return true;
             } else {
                 Log.record("finishTask err:" + " " + s);
@@ -624,7 +624,7 @@ public class AntStall extends ModelTask {
         try {
             String s = AntStallRpcCall.shareP2P();
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 String shareId = jo.getString("shareId");
                 /* 保存shareId到Statistics */
                 Statistics.stallShareIdToday(UserIdMap.getCurrentUid(), shareId);
@@ -653,7 +653,7 @@ public class AntStall extends ModelTask {
                 JSONObject jsonObject = new JSONObject(str);
                 Thread.sleep(5000);
                 String name = UserIdMap.getNameById(uid);
-                if (!jsonObject.getBoolean("success")) {
+                if (!jsonObject.optBoolean("success")) {
                     String code = jsonObject.getString("code");
                     if ("600000028".equals(code)) {
                         Log.record("新村助力🐮被助力次数上限[" + name + "]");
@@ -692,7 +692,7 @@ public class AntStall extends ModelTask {
                     if (shareId != null && Statistics.canStallP2PHelpToday(uid)) {
                         String s = AntStallRpcCall.achieveBeShareP2P(shareId);
                         JSONObject jo = new JSONObject(s);
-                        if (jo.getBoolean("success")) {
+                        if (jo.optBoolean("success")) {
                             Log.farm("新村助力🎈[" + UserIdMap.getNameById(uid) + "]");
                             Statistics.stallHelpToday(UserIdMap.getCurrentUid(), false);
                             Statistics.stallBeHelpToday(uid, false);
@@ -796,7 +796,7 @@ public class AntStall extends ModelTask {
         String s = AntStallRpcCall.queryManureInfo();
         try {
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONObject astManureInfoVO = jo.getJSONObject("astManureInfoVO");
                 if (astManureInfoVO.optBoolean("hasManure")) {
                     int manure = astManureInfoVO.getInt("manure");
@@ -907,7 +907,7 @@ public class AntStall extends ModelTask {
                     }
                     str = AntStallRpcCall.friendHome(friendId, "ch_appcenter__chsub_9patch");
                     jsonObject = new JSONObject(str);
-                    if (!jsonObject.getBoolean("success")) {
+                    if (!jsonObject.optBoolean("success")) {
                         Log.i(TAG, "pasteTicket.friendHome err:" + jsonObject.optString("resultDesc"));
                         return;
                     }
