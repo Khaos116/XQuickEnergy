@@ -32,7 +32,15 @@ public abstract class Model {
     }
 
     public Model() {
-        this.enableField = new BooleanModelField("enable", getEnableFieldName(), false);
+        String name = getEnableFieldName();
+        boolean defaultValue = name.contains("模块")
+            || name.contains("森林")
+            || name.contains("庄园")
+            || name.contains("农场")
+            || name.contains("运动")
+            || name.contains("会员")
+            || name.contains("经营");
+        this.enableField = new BooleanModelField("enable", name, defaultValue);
     }
 
     public String getEnableFieldName() {

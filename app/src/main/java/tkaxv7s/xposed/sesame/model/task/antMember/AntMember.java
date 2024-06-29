@@ -36,7 +36,7 @@ public class AntMember extends ModelTask {
         modelFields.addField(collectSesame = new BooleanModelField("collectSesame", "芝麻粒领取", true));
         modelFields.addField(enableKb = new BooleanModelField("enableKb", "口碑签到", true));
         modelFields.addField(enableGoldTicket = new BooleanModelField("enableGoldTicket", "黄金票签到", true));
-        modelFields.addField(enableGameCenter = new BooleanModelField("enableGameCenter", "游戏中心签到", false));
+        modelFields.addField(enableGameCenter = new BooleanModelField("enableGameCenter", "游戏中心签到", true));
         modelFields.addField(zcjSignIn = new BooleanModelField("zcjSignIn", "招财金签到", false));
         modelFields.addField(merchantKmdk = new BooleanModelField("merchantKmdk", "商户开门打卡", false));
         return modelFields;
