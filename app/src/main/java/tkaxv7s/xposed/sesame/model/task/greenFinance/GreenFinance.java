@@ -69,7 +69,7 @@ public class GreenFinance extends ModelTask {
                 return;
             }
             JSONObject result = jo.getJSONObject("result");
-            if (!result.getBoolean("greenFinanceSigned")) {
+            if (!result.optBoolean("greenFinanceSigned")) {
                 Log.other("绿色经营📊未开通");
                 return;
             }
@@ -152,7 +152,7 @@ public class GreenFinance extends ModelTask {
                 return;
             }
             JSONObject result = jo.getJSONObject("result");
-            if (result.getBoolean("isTodaySignin")) {
+            if (result.optBoolean("isTodaySignin")) {
                 return;
             }
             s = GreenFinanceRpcCall.signInTrigger(sceneId);
@@ -385,7 +385,7 @@ public class GreenFinance extends ModelTask {
                         continue;
                     }
                     JSONObject result = jsonObject.getJSONObject("result");
-                    if (result.getBoolean("lastPage")) {
+                    if (result.optBoolean("lastPage")) {
                         Log.other("绿色经营🙋，好友的金币已全部巡查完毕~");
                         Status.greenFinancePointFriend();
                         return;
@@ -394,7 +394,7 @@ public class GreenFinance extends ModelTask {
                     JSONArray list = result.getJSONArray("rankingList");
                     for (int i = 0; i < list.length(); i++) {
                         JSONObject object = list.getJSONObject(i);
-                        if (!object.getBoolean("collectFlag")) {
+                        if (!object.optBoolean("collectFlag")) {
                             continue;
                         }
                         String friendId = object.optString("uid");
@@ -414,7 +414,7 @@ public class GreenFinance extends ModelTask {
                         JSONArray jsonArray = new JSONArray();
                         for (int j = 0; j < points.length(); j++) {
                             jsonObject = points.getJSONObject(j);
-                            if (!jsonObject.getBoolean("collectFlag")) {
+                            if (!jsonObject.optBoolean("collectFlag")) {
                                 jsonArray.put(jsonObject.getString("bsnId"));
                             }
                         }

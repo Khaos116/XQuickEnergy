@@ -153,7 +153,7 @@ public class AntOrchard extends ModelTask {
                     String taobaoData = jo.getString("taobaoData");
                     jo = new JSONObject(taobaoData);
                     JSONObject plantInfo = jo.getJSONObject("gameInfo").getJSONObject("plantInfo");
-                    boolean canExchange = plantInfo.getBoolean("canExchange");
+                    boolean canExchange = plantInfo.optBoolean("canExchange");
                     if (canExchange) {
                         Log.farm("农场果树似乎可以兑换了！");
                         return;
@@ -228,7 +228,7 @@ public class AntOrchard extends ModelTask {
             for (int i = 0; i < ja.length(); i++) {
                 jo = ja.getJSONObject(i);
                 if (jo.getString("itemId").equals(itemId)) {
-                    if (!jo.getBoolean("received")) {
+                    if (!jo.optBoolean("received")) {
                         jo = new JSONObject(AntOrchardRpcCall.drawLottery());
                         if ("100".equals(jo.getString("resultCode"))) {
                             JSONArray userEverydayGiftItems = jo.getJSONObject("lotteryPlusInfo")
@@ -297,7 +297,7 @@ public class AntOrchard extends ModelTask {
     private void orchardSign(JSONObject signTaskInfo) {
         try {
             JSONObject currentSignItem = signTaskInfo.getJSONObject("currentSignItem");
-            if (!currentSignItem.getBoolean("signed")) {
+            if (!currentSignItem.optBoolean("signed")) {
                 JSONObject joSign = new JSONObject(AntOrchardRpcCall.orchardSign());
                 if ("100".equals(joSign.getString("resultCode"))) {
                     int awardCount = joSign.getJSONObject("signTaskInfo").getJSONObject("currentSignItem")

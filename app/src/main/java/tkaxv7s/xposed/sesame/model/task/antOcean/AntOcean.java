@@ -55,7 +55,7 @@ public class AntOcean extends ModelTask {
             String s = AntOceanRpcCall.queryOceanStatus();
             JSONObject jo = new JSONObject(s);
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                if (jo.getBoolean("opened")) {
+                if (jo.optBoolean("opened")) {
                     queryHomePage();
                 } else {
                     getEnableField().setValue(false);
@@ -321,7 +321,7 @@ public class AntOcean extends ModelTask {
                     if (chapterVO.getString("chapterCode").equals(currentChapterCode)) {
                         isFinish = repairedSeaAreaNum >= seaAreaNum;
                     } else {
-                        if (repairedSeaAreaNum >= seaAreaNum || !chapterVO.getBoolean("chapterOpen")) {
+                        if (repairedSeaAreaNum >= seaAreaNum || !chapterVO.optBoolean("chapterOpen")) {
                             continue;
                         }
                         dstChapterName = chapterVO.getString("chapterName");
@@ -363,7 +363,7 @@ public class AntOcean extends ModelTask {
                     JSONArray fishVOs = seaAreaVO.getJSONArray("fishVO");
                     for (int j = 0; j < fishVOs.length(); j++) {
                         JSONObject fishVO = fishVOs.getJSONObject(j);
-                        if (!fishVO.getBoolean("unlock") && "COMPLETED".equals(fishVO.getString("status"))) {
+                        if (!fishVO.optBoolean("unlock") && "COMPLETED".equals(fishVO.getString("status"))) {
                             String fishId = fishVO.getString("id");
                             combineFish(fishId);
                         }

@@ -70,7 +70,7 @@ public final class ViewAppInfo {
             if (result == null) {
                 return runType = RunType.DISABLE;
             }
-            if (result.getBoolean("active", false)) {
+            if (result.optBoolean("active", false)) {
                 return runType = RunType.MODEL;
             }
             return runType = RunType.DISABLE;

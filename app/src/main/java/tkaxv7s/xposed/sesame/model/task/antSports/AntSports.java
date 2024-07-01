@@ -209,7 +209,7 @@ public class AntSports extends ModelTask {
             JSONObject jo = new JSONObject();
             for (int i = allPathBaseInfoList.length() - 1; i >= 0; i--) {
                 jo = allPathBaseInfoList.getJSONObject(i);
-                if (jo.getBoolean("unlocked")) {
+                if (jo.optBoolean("unlocked")) {
                     title = jo.getString("title");
                     pathId = jo.getString("pathId");
                     index = i;
@@ -219,7 +219,7 @@ public class AntSports extends ModelTask {
             if (index < 0 || index == allPathBaseInfoList.length() - 1) {
                 for (int j = otherAllPathBaseInfoList.length() - 1; j >= 0; j--) {
                     jo = otherAllPathBaseInfoList.getJSONObject(j);
-                    if (jo.getBoolean("unlocked")) {
+                    if (jo.optBoolean("unlocked")) {
                         if (j != otherAllPathBaseInfoList.length() - 1 || index != allPathBaseInfoList.length() - 1) {
                             title = jo.getString("title");
                             pathId = jo.getString("pathId");
@@ -416,7 +416,7 @@ public class AntSports extends ModelTask {
                     s = AntSportsRpcCall.walkDonateSignInfo(produceQuantity);
                     s = AntSportsRpcCall.donateWalkHome(produceQuantity);
                     jo = new JSONObject(s);
-                    if (!jo.getBoolean("isSuccess"))
+                    if (!jo.optBoolean("isSuccess"))
                         return;
                     JSONObject walkDonateHomeModel = jo.getJSONObject("walkDonateHomeModel");
                     JSONObject walkUserInfoModel = walkDonateHomeModel.getJSONObject("walkUserInfoModel");
@@ -431,7 +431,7 @@ public class AntSports extends ModelTask {
 
                     s = AntSportsRpcCall.exchange(activityId, produceQuantity, donateToken);
                     jo = new JSONObject(s);
-                    if (jo.getBoolean("isSuccess")) {
+                    if (jo.optBoolean("isSuccess")) {
                         JSONObject donateExchangeResultModel = jo.getJSONObject("donateExchangeResultModel");
                         int userCount = donateExchangeResultModel.getInt("userCount");
                         double amount = donateExchangeResultModel.getJSONObject("userAmount").getDouble("amount");

@@ -117,7 +117,7 @@ public class AncientTree extends ModelTask {
                 JSONArray ancientTreeList = data.getJSONArray("ancientTreeList");
                 for (int i = 0; i < ancientTreeList.length(); i++) {
                     JSONObject ancientTreeItem = ancientTreeList.getJSONObject(i);
-                    if (ancientTreeItem.getBoolean("hasProtected"))
+                    if (ancientTreeItem.optBoolean("hasProtected"))
                         continue;
                     JSONObject ancientTreeControlInfo = ancientTreeItem.getJSONObject("ancientTreeControlInfo");
                     int quota = ancientTreeControlInfo.optInt("quota", 0);
@@ -128,7 +128,7 @@ public class AncientTree extends ModelTask {
                     JSONObject ancientTreeDetail = new JSONObject(AncientTreeRpcCall.projectDetail(itemId, cityCode));
                     if ("SUCCESS".equals(ancientTreeDetail.getString("resultCode"))) {
                         data = ancientTreeDetail.getJSONObject("data");
-                        if (data.getBoolean("canProtect")) {
+                        if (data.optBoolean("canProtect")) {
                             int currentEnergy = data.getInt("currentEnergy");
                             JSONObject ancientTree = data.getJSONObject("ancientTree");
                             String activityId = ancientTree.getString("activityId");
