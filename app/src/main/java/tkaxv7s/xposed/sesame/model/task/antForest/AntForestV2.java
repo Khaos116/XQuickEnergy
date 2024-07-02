@@ -715,7 +715,7 @@ public class AntForestV2 extends ModelTask {
                             }
                         }
                     }
-                    if (collectGiftBox.getValue() && friendObject.getBoolean("canCollectGiftBox")) {
+                    if (collectGiftBox.getValue() && friendObject.optBoolean("canCollectGiftBox")) {
                         if (userHomeObject == null) {
                             userHomeObject = queryFriendHome(userId);
                         }
@@ -784,7 +784,7 @@ public class AntForestV2 extends ModelTask {
                         if (wateringBubble.getJSONObject("extInfo").optInt("restTimes", 0) == 0) {
                             Status.protectBubbleToday(selfId);
                         }
-                        if (!wateringBubble.getBoolean("canProtect")) {
+                        if (!wateringBubble.optBoolean("canProtect")) {
                             continue;
                         }
                         JSONObject joProtect = new JSONObject(AntForestRpcCall.protectBubble(userId));
@@ -884,7 +884,7 @@ public class AntForestV2 extends ModelTask {
                             Log.record("收取[" + UserIdMap.getMaskName(userId) + "]的能量失败");
                             Log.i("，UserID：" + userId + "，BubbleId：" + bubbleId);
                         }
-                        if (jo.getBoolean("canBeRobbedAgain")) {
+                        if (jo.optBoolean("canBeRobbedAgain")) {
                             doBizNo = null;
                             isDouble = true;
                             needDouble = true;
@@ -991,7 +991,7 @@ public class AntForestV2 extends ModelTask {
                         List<Long> newBubbleIdList = new ArrayList<>();
                         for (int i = 0; i < jaBubbles.length(); i++) {
                             JSONObject bubble = jaBubbles.getJSONObject(i);
-                            if (bubble.getBoolean("canBeRobbedAgain")) {
+                            if (bubble.optBoolean("canBeRobbedAgain")) {
                                 newBubbleIdList.add(bubble.getLong("id"));
                             }
                             collected += bubble.getInt("collectedEnergy");
@@ -1089,7 +1089,7 @@ public class AntForestV2 extends ModelTask {
             TimeUtil.sleep(1000);
             JSONObject jo = new JSONObject(s);
             int countj = 0;
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONObject response = jo.getJSONObject("data").getJSONObject("response");
                 JSONArray energyGeneratedList = response.optJSONArray("energyGeneratedList");
                 if (energyGeneratedList != null && energyGeneratedList.length() > 0) {
@@ -1111,7 +1111,7 @@ public class AntForestV2 extends ModelTask {
                                 if (!"null".equals(feedId)) {
                                     jo = new JSONObject(AntForestRpcCall.produce_forest_energy(feedId));
                                     TimeUtil.sleep(1000);
-                                    if (jo.getBoolean("success")) {
+                                    if (jo.optBoolean("success")) {
                                         response = jo.getJSONObject("data").getJSONObject("response");
                                         int cumulativeEnergy = response.optInt("cumulativeEnergy");
                                         if (cumulativeEnergy > 0) {
@@ -1148,7 +1148,7 @@ public class AntForestV2 extends ModelTask {
                 String id = jo.getString("id");
                 try {
                     jo = new JSONObject(AntForestRpcCall.harvest_forest_energy(energy, id));
-                    if (jo.getBoolean("success")) {
+                    if (jo.optBoolean("success")) {
                         Log.forest("健康医疗🚑[收取能量]#" + energy + "g");
                     }
                 } finally {
@@ -1166,7 +1166,7 @@ public class AntForestV2 extends ModelTask {
         try {
             long start = System.currentTimeMillis();
             JSONObject jo = new JSONObject(AntForestRpcCall.startWhackMole());
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONArray moleInfo = jo.optJSONArray("moleInfo");
                 if (moleInfo != null) {
                     List<String> whackMoleIdList = new ArrayList<>();
@@ -1199,11 +1199,11 @@ public class AntForestV2 extends ModelTask {
     private void sendEnergyByAction(String sourceType) {
         try {
             JSONObject jo = new JSONObject(AntForestRpcCall.consultForSendEnergyByAction(sourceType));
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONObject data = jo.getJSONObject("data");
                 if (data.optBoolean("canSendEnergy", false)) {
                     jo = new JSONObject(AntForestRpcCall.sendEnergyByAction(sourceType));
-                    if (jo.getBoolean("success")) {
+                    if (jo.optBoolean("success")) {
                         data = jo.getJSONObject("data");
                         if (data.optBoolean("canSendEnergy", false)) {
                             int receivedEnergyAmount = data.getInt("receivedEnergyAmount");
@@ -1235,7 +1235,7 @@ public class AntForestV2 extends ModelTask {
                             JSONObject signRecord = signRecords.getJSONObject(j);
                             String signKey = signRecord.getString("signKey");
                             if (signKey.equals(currentSignKey)) {
-                                if (!signRecord.getBoolean("signed")) {
+                                if (!signRecord.optBoolean("signed")) {
                                     JSONObject resData2 = new JSONObject(
                                             AntForestRpcCall.antiepSign(signId, UserIdMap.getCurrentUid()));
                                     if ("100000000".equals(resData2.getString("code"))) {
@@ -1337,7 +1337,7 @@ public class AntForestV2 extends ModelTask {
             String skuId = null;
             String spuId = null;
             double price = 0d;
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONArray itemInfoVOList = jo.optJSONArray("itemInfoVOList");
                 if (itemInfoVOList != null && itemInfoVOList.length() > 0) {
                     for (int i = 0; i < itemInfoVOList.length(); i++) {
@@ -1408,7 +1408,7 @@ public class AntForestV2 extends ModelTask {
             String skuId = null;
             String spuId = null;
             double price = 0d;
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONArray itemInfoVOList = jo.optJSONArray("itemInfoVOList");
                 if (itemInfoVOList != null && itemInfoVOList.length() > 0) {
                     for (int i = 0; i < itemInfoVOList.length(); i++) {
@@ -1486,7 +1486,7 @@ public class AntForestV2 extends ModelTask {
                             JSONObject signRecord = signRecords.getJSONObject(i);
                             String signKey = signRecord.getString("signKey");
                             if (signKey.equals(currentSignKey)) {
-                                if (!signRecord.getBoolean("signed")) {
+                                if (!signRecord.optBoolean("signed")) {
                                     JSONObject joSign = new JSONObject(AntForestRpcCall.vitalitySign());
                                     if ("SUCCESS".equals(joSign.getString("resultCode")))
                                         Log.forest("森林签到📆");
@@ -1511,7 +1511,7 @@ public class AntForestV2 extends ModelTask {
                                 String taskStatus = taskBaseInfo.getString("taskStatus");
                                 if (TaskStatus.FINISHED.name().equals(taskStatus)) {
                                     JSONObject joAward = new JSONObject(AntForestRpcCall.receiveTaskAward(sceneCode, taskType));
-                                    if (joAward.getBoolean("success")) {
+                                    if (joAward.optBoolean("success")) {
                                         Log.forest("任务奖励🎖️[" + taskTitle + "]#" + awardCount + "个");
                                         doubleCheck = true;
                                     } else {
@@ -1524,7 +1524,7 @@ public class AntForestV2 extends ModelTask {
                                             || taskType.endsWith("_BAOHUDI") || taskType.startsWith("GYG")) {
                                         JSONObject joFinishTask = new JSONObject(
                                                 AntForestRpcCall.finishTask(sceneCode, taskType));
-                                        if (joFinishTask.getBoolean("success")) {
+                                        if (joFinishTask.optBoolean("success")) {
                                             Log.forest("森林任务🧾️[" + taskTitle + "]");
                                             doubleCheck = true;
                                         } else {
@@ -1576,7 +1576,7 @@ public class AntForestV2 extends ModelTask {
                     if (bizInfo.optBoolean("autoCompleteTask")) {
                         JSONObject joFinishTask = new JSONObject(
                                 AntForestRpcCall.finishTask(sceneCode, taskType));
-                        if (joFinishTask.getBoolean("success")) {
+                        if (joFinishTask.optBoolean("success")) {
                             Log.forest("完成任务🧾️[" + taskTitle + "]");
                         } else {
                             Log.record("完成任务" + taskTitle + "失败,");
@@ -1619,10 +1619,10 @@ public class AntForestV2 extends ModelTask {
         try {
             JSONObject joEnergyRainHome = new JSONObject(AntForestRpcCall.queryEnergyRainHome());
             if ("SUCCESS".equals(joEnergyRainHome.getString("resultCode"))) {
-                if (joEnergyRainHome.getBoolean("canPlayToday")) {
+                if (joEnergyRainHome.optBoolean("canPlayToday")) {
                     startEnergyRain();
                 }
-                if (joEnergyRainHome.getBoolean("canGrantStatus")) {
+                if (joEnergyRainHome.optBoolean("canGrantStatus")) {
                     Log.record("有送能量雨的机会");
                     JSONObject joEnergyRainCanGrantList = new JSONObject(
                             AntForestRpcCall.queryEnergyRainCanGrantList());
@@ -1632,7 +1632,7 @@ public class AntForestV2 extends ModelTask {
                     boolean granted = false;
                     for (int j = 0; j < grantInfos.length(); j++) {
                         JSONObject grantInfo = grantInfos.getJSONObject(j);
-                        if (grantInfo.getBoolean("canGrantedStatus")) {
+                        if (grantInfo.optBoolean("canGrantedStatus")) {
                             userId = grantInfo.getString("userId");
                             if (map.containsKey(userId)) {
                                 JSONObject joEnergyRainChance = new JSONObject(
@@ -1668,7 +1668,7 @@ public class AntForestV2 extends ModelTask {
             }
             joEnergyRainHome = new JSONObject(AntForestRpcCall.queryEnergyRainHome());
             if ("SUCCESS".equals(joEnergyRainHome.getString("resultCode"))
-                    && joEnergyRainHome.getBoolean("canPlayToday")) {
+                    && joEnergyRainHome.optBoolean("canPlayToday")) {
                 startEnergyRain();
             }
         } catch (Throwable th) {
@@ -1788,17 +1788,17 @@ public class AntForestV2 extends ModelTask {
     private void ecoLife() {
         try {
             JSONObject jsonObject = new JSONObject(EcoLifeRpcCall.queryHomePage());
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".ecoLife.queryHomePage", jsonObject.optString("resultDesc"));
                 return;
             }
             JSONObject data = jsonObject.getJSONObject("data");
-            if (!data.getBoolean("openStatus") && !ecoLifeOpen.getValue()) {
+            if (!data.optBoolean("openStatus") && !ecoLifeOpen.getValue()) {
                 Log.forest("绿色任务☘未开通");
                 return;
-            } else if (!data.getBoolean("openStatus")) {
+            } else if (!data.optBoolean("openStatus")) {
                 jsonObject = new JSONObject(EcoLifeRpcCall.openEcolife());
-                if (!jsonObject.getBoolean("success")) {
+                if (!jsonObject.optBoolean("success")) {
                     Log.i(TAG + ".ecoLife.openEcolife", jsonObject.optString("resultDesc"));
                     return;
                 }
@@ -1836,7 +1836,7 @@ public class AntForestV2 extends ModelTask {
                     if (!actionItem.has("actionId")) {
                         continue;
                     }
-                    if (actionItem.getBoolean("actionStatus")) {
+                    if (actionItem.optBoolean("actionStatus")) {
                         continue;
                     }
                     String actionId = actionItem.getString("actionId");
@@ -1869,7 +1869,7 @@ public class AntForestV2 extends ModelTask {
             //检查今日任务状态
             String str = EcoLifeRpcCall.queryDish(source, dayPoint);
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".photoGuangPan.ecolifeQueryDish", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -1912,7 +1912,7 @@ public class AntForestV2 extends ModelTask {
             str = EcoLifeRpcCall.uploadDishImage("BEFORE_MEALS",
                     photoGuangPanBeforeStr, 0.16571736, 0.07448776, 0.7597949, dayPoint);
             jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".photoGuangPan.uploadDishImage", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -1920,14 +1920,14 @@ public class AntForestV2 extends ModelTask {
             str = EcoLifeRpcCall.uploadDishImage("AFTER_MEALS",
                     photoGuangPanAfterStr, 0.00040030346, 0.99891376, 0.0006858421, dayPoint);
             jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".photoGuangPan.uploadDishImage", jsonObject.optString("resultDesc"));
                 return;
             }
             //提交
             str = EcoLifeRpcCall.tick("photoguangpan", dayPoint, source);
             jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".photoGuangPan.tick", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -1958,7 +1958,7 @@ public class AntForestV2 extends ModelTask {
             JSONObject jo = new JSONObject(s);
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
                 JSONObject data = jo.getJSONObject("data");
-                if (data.getBoolean("collect")) {
+                if (data.optBoolean("collect")) {
                     Log.record("神奇物种卡片今日收集完成！");
                 } else {
                     collectAnimalCard();
@@ -2059,7 +2059,7 @@ public class AntForestV2 extends ModelTask {
                         if (TaskStatus.FINISHED.name().equals(taskStatus)) {
                             JSONObject joAward = new JSONObject(
                                     AntForestRpcCall.antdodoReceiveTaskAward(sceneCode, taskType));
-                            if (joAward.getBoolean("success"))
+                            if (joAward.optBoolean("success"))
                                 Log.forest("任务奖励🎖️[" + taskTitle + "]#" + awardCount + "个");
                             else
                                 Log.record("领取失败，" + s);
@@ -2068,7 +2068,7 @@ public class AntForestV2 extends ModelTask {
                             if ("SEND_FRIEND_CARD".equals(taskType)) {
                                 JSONObject joFinishTask = new JSONObject(
                                         AntForestRpcCall.antdodoFinishTask(sceneCode, taskType));
-                                if (joFinishTask.getBoolean("success")) {
+                                if (joFinishTask.optBoolean("success")) {
                                     Log.forest("物种任务🧾️[" + taskTitle + "]");
                                     antdodoReceiveTaskAward();
                                     return;
