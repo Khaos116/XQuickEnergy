@@ -12,6 +12,7 @@ import tkaxv7s.xposed.sesame.R;
 import tkaxv7s.xposed.sesame.data.ModelField;
 import tkaxv7s.xposed.sesame.ui.StringDialog;
 import tkaxv7s.xposed.sesame.util.Log;
+import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
 public class IntegerModelField extends ModelField {
 
@@ -21,6 +22,11 @@ public class IntegerModelField extends ModelField {
 
     public IntegerModelField(String code, String name, Integer value) {
         super(code, name, value);
+        Integer newValue = MyChangeUtils.getDefaultIntegerModelField(code);
+        if (newValue != null) {
+          this.defaultValue = newValue;
+          this.value = newValue;
+        }
     }
 
     public IntegerModelField(String code, String name, Integer value, Integer minLimit, Integer maxLimit) {

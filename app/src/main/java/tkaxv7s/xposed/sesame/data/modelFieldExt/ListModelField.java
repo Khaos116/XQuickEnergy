@@ -12,6 +12,7 @@ import tkaxv7s.xposed.sesame.R;
 import tkaxv7s.xposed.sesame.data.ModelField;
 import tkaxv7s.xposed.sesame.ui.StringDialog;
 import tkaxv7s.xposed.sesame.util.JsonUtil;
+import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,11 @@ public class ListModelField extends ModelField {
 
         public ListJoinCommaToStringModelField(String code, String name, List<String> value) {
             super(code, name, value);
+            List<String> newList = MyChangeUtils.getDefaultListModelField(code);
+            if (!newList.isEmpty()) {
+              this.defaultValue = newList;
+              this.value = newList;
+            }
         }
 
         @Override

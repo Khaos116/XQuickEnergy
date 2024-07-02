@@ -3,6 +3,7 @@ package tkaxv7s.xposed.sesame.data.modelFieldExt;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import tkaxv7s.xposed.sesame.entity.IdAndName;
 import tkaxv7s.xposed.sesame.entity.KVNode;
 import tkaxv7s.xposed.sesame.ui.ListDialog;
 import tkaxv7s.xposed.sesame.util.JsonUtil;
+import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -78,6 +80,11 @@ public class SelectModelField extends ModelField {
 
         public SelectOneModelField(String code, String name, KVNode<Map<String, Integer>, Boolean> value, List<? extends IdAndName> idAndNameList) {
             super(code, name, value, idAndNameList);
+            Pair<LinkedHashMap<String, Integer>, Boolean> pair = MyChangeUtils.getDefaultSelectModelField(code);
+            if (pair != null) {
+              this.defaultValue = new KVNode<>(pair.first, pair.second);
+              this.value = new KVNode<>(pair.first, pair.second);
+            }
         }
 
         @Override
