@@ -109,7 +109,7 @@ public class MyChangeUtils {
   public static @Nullable Integer getDefaultIntegerModelField(String code) {
     Integer newValue = null;
     switch (code) {
-      case "toastOffsetY"://气泡纵向偏移
+      case "toastOffsetY"://气泡纵向偏移【Android API 30及其以上，Toast.setGravity无效】
         newValue = -200;
         break;
       case "orchardSpreadManureCount"://农场每日施肥次数

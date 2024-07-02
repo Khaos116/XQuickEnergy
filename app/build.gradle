@@ -7,7 +7,7 @@ android {
         applicationId "tkaxv7s.xposed.sesame"
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
-        targetSdk 31
+        targetSdk 31//Android API 30及其以上，Toast.setGravity无效
         versionCode 80
         versionName "1.2.7.1-TK"
     }
