@@ -14,24 +14,25 @@ import tkaxv7s.xposed.sesame.model.base.TaskCommon;
 import tkaxv7s.xposed.sesame.model.normal.answerAI.AnswerAI;
 import tkaxv7s.xposed.sesame.util.*;
 
+import java.text.DateFormat;
 import java.util.*;
 
 public class AntFarm extends ModelTask {
     private static final String TAG = AntFarm.class.getSimpleName();
 
-    private static String ownerFarmId;
-    private static String userId;
-    private static Animal[] animals;
-    private static Animal ownerAnimal;
-    private static int foodStock;
-    private static int foodStockLimit;
-    private static String rewardProductNum;
-    private static RewardFriend[] rewardList;
-    private static double benevolenceScore;
-    private static double harvestBenevolenceScore;
-    private static int unreceiveTaskAward = 0;
+    private String ownerFarmId;
+    private String userId;
+    private Animal[] animals;
+    private Animal ownerAnimal = new Animal();
+    private int foodStock;
+    private int foodStockLimit;
+    private String rewardProductNum;
+    private RewardFriend[] rewardList;
+    private double benevolenceScore;
+    private double harvestBenevolenceScore;
+    private int unreceiveTaskAward = 0;
 
-    private static FarmTool[] farmTools;
+    private FarmTool[] farmTools;
 
     private static final List<String> bizKeyList;
 
@@ -75,14 +76,14 @@ public class AntFarm extends ModelTask {
     private SelectModelField feedFriendAnimalList;
     private ListModelField.ListJoinCommaToStringModelField animalSleepTime;
     private BooleanModelField notifyFriend;
-    public static SelectModelField dontNotifyFriendList;
-    public BooleanModelField acceptGift;
-    public SelectModelField visitFriendList;
-    public BooleanModelField chickenDiary;
-    public BooleanModelField enableChouchoule;
-    public BooleanModelField enableHireAnimal;
-    public static SelectModelField dontHireFriendList;
-    public BooleanModelField enableDdrawGameCenterAward;
+    private SelectModelField dontNotifyFriendList;
+    private BooleanModelField acceptGift;
+    private SelectModelField visitFriendList;
+    private BooleanModelField chickenDiary;
+    private BooleanModelField enableChouchoule;
+    private BooleanModelField enableHireAnimal;
+    private SelectModelField dontHireFriendList;
+    private BooleanModelField enableDdrawGameCenterAward;
 
 
     @Override
@@ -90,7 +91,7 @@ public class AntFarm extends ModelTask {
         ModelFields modelFields = new ModelFields();
         modelFields.addField(rewardFriend = new BooleanModelField("rewardFriend", "打赏好友", true));
         modelFields.addField(sendBackAnimal = new BooleanModelField("sendBackAnimal", "遣返 | 开启", false));
-        modelFields.addField(sendType = new ChoiceModelField("sendType", "遣返 | 方式", SendType.NORMAL, AntFarm.SendType.nickNames));
+        modelFields.addField(sendType = new ChoiceModelField("sendType", "遣返 | 方式", SendType.NORMAL, SendType.nickNames));
         modelFields.addField(dontSendFriendList = new SelectModelField("dontSendFriendList", "遣返 | 不遣返小鸡好友列表", new KVNode<>(new LinkedHashMap<>(), false), AlipayUser.getList()));
         modelFields.addField(recallAnimalType = new ChoiceModelField("recallAnimalType", "召回小鸡", RecallAnimalType.ALWAYS, RecallAnimalType.nickNames));
         modelFields.addField(receiveFarmToolReward = new BooleanModelField("receiveFarmToolReward", "收取道具奖励", true));
@@ -353,7 +354,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void animalSleep() {
+    private void animalSleep() {
         try {
             String s = AntFarmRpcCall.queryLoveCabin(UserIdMap.getCurrentUid());
             JSONObject jo = new JSONObject(s);
@@ -373,7 +374,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void syncAnimalStatus(String farmId) {
+    private void syncAnimalStatus(String farmId) {
         try {
             String s = AntFarmRpcCall.syncAnimalStatus(farmId);
             parseSyncAnimalStatusResponse(s);
@@ -383,7 +384,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void syncAnimalStatusAtOtherFarm(String farmId) {
+    private void syncAnimalStatusAtOtherFarm(String farmId) {
         try {
             String s = AntFarmRpcCall.enterFarm(farmId, "");
             JSONObject jo = new JSONObject(s);
@@ -392,19 +393,19 @@ public class AntFarm extends ModelTask {
             for (int i = 0; i < jaAnimals.length(); i++) {
                 jo = jaAnimals.getJSONObject(i);
                 if (jo.getString("masterFarmId").equals(ownerFarmId)) {
-                    if (ownerAnimal == null)
-                        ownerAnimal = new Animal();
+                    Animal newOwnerAnimal = new Animal();
                     JSONObject animal = jaAnimals.getJSONObject(i);
-                    ownerAnimal.animalId = animal.getString("animalId");
-                    ownerAnimal.currentFarmId = animal.getString("currentFarmId");
-                    ownerAnimal.currentFarmMasterUserId = animal.getString("currentFarmMasterUserId");
-                    ownerAnimal.masterFarmId = ownerFarmId;
-                    ownerAnimal.animalBuff = animal.getString("animalBuff");
-                    ownerAnimal.locationType = animal.optString("locationType", "");
-                    ownerAnimal.subAnimalType = animal.getString("subAnimalType");
+                    newOwnerAnimal.animalId = animal.getString("animalId");
+                    newOwnerAnimal.currentFarmId = animal.getString("currentFarmId");
+                    newOwnerAnimal.currentFarmMasterUserId = animal.getString("currentFarmMasterUserId");
+                    newOwnerAnimal.masterFarmId = ownerFarmId;
+                    newOwnerAnimal.animalBuff = animal.getString("animalBuff");
+                    newOwnerAnimal.locationType = animal.optString("locationType", "");
+                    newOwnerAnimal.subAnimalType = animal.getString("subAnimalType");
                     animal = animal.getJSONObject("animalStatusVO");
-                    ownerAnimal.animalFeedStatus = animal.getString("animalFeedStatus");
-                    ownerAnimal.animalInteractStatus = animal.getString("animalInteractStatus");
+                    newOwnerAnimal.animalFeedStatus = animal.getString("animalFeedStatus");
+                    newOwnerAnimal.animalInteractStatus = animal.getString("animalInteractStatus");
+                    ownerAnimal = newOwnerAnimal;
                     break;
                 }
             }
@@ -414,7 +415,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void rewardFriend() {
+    private void rewardFriend() {
         try {
             if (rewardList != null) {
                 for (RewardFriend rewardFriend : rewardList) {
@@ -440,7 +441,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void recallAnimal(String animalId, String currentFarmId, String masterFarmId, String user) {
+    private void recallAnimal(String animalId, String currentFarmId, String masterFarmId, String user) {
         try {
             String s = AntFarmRpcCall.recallAnimal(animalId, currentFarmId, masterFarmId);
             JSONObject jo = new JSONObject(s);
@@ -504,7 +505,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void receiveToolTaskReward() {
+    private void receiveToolTaskReward() {
         try {
             String s = AntFarmRpcCall.listToolTaskDetails();
             JSONObject jo = new JSONObject(s);
@@ -556,7 +557,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void harvestProduce(String farmId) {
+    private void harvestProduce(String farmId) {
         try {
             String s = AntFarmRpcCall.harvestProduce(farmId);
             JSONObject jo = new JSONObject(s);
@@ -575,7 +576,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void donation() {
+    private void donation() {
         try {
             String s = AntFarmRpcCall.listActivityInfo();
             JSONObject jo = new JSONObject(s);
@@ -722,7 +723,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void recordFarmGame(GameType gameType) {
+    private void recordFarmGame(GameType gameType) {
         try {
             do {
                 try {
@@ -766,7 +767,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void doFarmDailyTask() {
+    private void doFarmDailyTask() {
         try {
             String s = AntFarmRpcCall.listFarmTask();
             JSONObject jo = new JSONObject(s);
@@ -825,7 +826,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void receiveFarmTaskAward() {
+    private void receiveFarmTaskAward() {
         try {
             String s = AntFarmRpcCall.listFarmTask();
             JSONObject jo = new JSONObject(s);
@@ -857,7 +858,7 @@ public class AntFarm extends ModelTask {
                             if ("SUCCESS".equals(memo)) {
                                 if (jo.has("foodStock")) {
                                     foodStock = jo.getInt("foodStock");
-                                    Log.farm("领取奖励🎖️[" + taskTitle + "]#" + jo.getInt("haveAddFoodStock") + "g");
+                                    Log.farm("领取奖励🎖️[" + taskTitle + "]#" + awardCount + "g");
                                 }
                                 if (unreceiveTaskAward > 0)
                                     unreceiveTaskAward--;
@@ -883,7 +884,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void sign(JSONObject signList) {
+    private void sign(JSONObject signList) {
         try {
             JSONArray jaFarmsignList = signList.getJSONArray("signList");
             boolean signed = true;
@@ -912,7 +913,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void feedAnimal(String farmId) {
+    private void feedAnimal(String farmId) {
         try {
             if (foodStock < 180) {
                 Log.record("喂鸡饲料不足");
@@ -935,7 +936,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void listFarmTool() {
+    private void listFarmTool() {
         try {
             String s = AntFarmRpcCall.listFarmTool();
             JSONObject jo = new JSONObject(s);
@@ -961,7 +962,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void useFarmTool(String targetFarmId, ToolType toolType) {
+    private void useFarmTool(String targetFarmId, ToolType toolType) {
         try {
             String s = AntFarmRpcCall.listFarmTool();
             JSONObject jo = new JSONObject(s);
@@ -1039,7 +1040,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void feedFriendAnimal(String friendFarmId, String user) {
+    private void feedFriendAnimal(String friendFarmId, String user) {
         try {
             Log.record("[" + user + "]的小鸡在挨饿");
             if (foodStock < 180) {
@@ -1133,8 +1134,8 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static boolean notifyFriend(JSONObject joAnimalStatusVO, String friendFarmId, String animalId,
-                                        String user) {
+    private boolean notifyFriend(JSONObject joAnimalStatusVO, String friendFarmId, String animalId,
+                                 String user) {
         try {
             if (AnimalInteractStatus.STEALING.name().equals(joAnimalStatusVO.getString("animalInteractStatus"))
                     && AnimalFeedStatus.EATING.name().equals(joAnimalStatusVO.getString("animalFeedStatus"))) {
@@ -1161,7 +1162,7 @@ public class AntFarm extends ModelTask {
         return false;
     }
 
-    private static void parseSyncAnimalStatusResponse(String resp) {
+    private void parseSyncAnimalStatusResponse(String resp) {
         try {
             JSONObject jo = new JSONObject(resp);
             if (!jo.has("subFarmVO")) {
@@ -1205,20 +1206,22 @@ public class AntFarm extends ModelTask {
             JSONArray jaAnimals = subFarmVO.getJSONArray("animals");
             animals = new Animal[jaAnimals.length()];
             for (int i = 0; i < animals.length; i++) {
-                animals[i] = new Animal();
-                JSONObject animal = jaAnimals.getJSONObject(i);
-                animals[i].animalId = animal.getString("animalId");
-                animals[i].currentFarmId = animal.getString("currentFarmId");
-                animals[i].masterFarmId = animal.getString("masterFarmId");
-                animals[i].animalBuff = animal.getString("animalBuff");
-                animals[i].subAnimalType = animal.getString("subAnimalType");
-                animals[i].currentFarmMasterUserId = animal.getString("currentFarmMasterUserId");
-                animals[i].locationType = animal.optString("locationType", "");
-                JSONObject animalStatusVO = animal.getJSONObject("animalStatusVO");
-                animals[i].animalFeedStatus = animalStatusVO.getString("animalFeedStatus");
-                animals[i].animalInteractStatus = animalStatusVO.getString("animalInteractStatus");
-                if (animals[i].masterFarmId.equals(ownerFarmId))
-                    ownerAnimal = animals[i];
+                Animal animal = new Animal();
+                JSONObject animalJsonObject = jaAnimals.getJSONObject(i);
+                animal.animalId = animalJsonObject.getString("animalId");
+                animal.currentFarmId = animalJsonObject.getString("currentFarmId");
+                animal.masterFarmId = animalJsonObject.getString("masterFarmId");
+                animal.animalBuff = animalJsonObject.getString("animalBuff");
+                animal.subAnimalType = animalJsonObject.getString("subAnimalType");
+                animal.currentFarmMasterUserId = animalJsonObject.getString("currentFarmMasterUserId");
+                animal.locationType = animalJsonObject.optString("locationType", "");
+                JSONObject animalStatusVO = animalJsonObject.getJSONObject("animalStatusVO");
+                animal.animalFeedStatus = animalStatusVO.getString("animalFeedStatus");
+                animal.animalInteractStatus = animalStatusVO.getString("animalInteractStatus");
+                if (animal.masterFarmId.equals(ownerFarmId)) {
+                    ownerAnimal = animal;
+                }
+                animals[i] = animal;
             }
         } catch (Throwable t) {
             Log.i(TAG, "parseSyncAnimalStatusResponse err:");
@@ -1226,7 +1229,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void add2FoodStock(int i) {
+    private void add2FoodStock(int i) {
         foodStock += i;
         if (foodStock > foodStockLimit)
             foodStock = foodStockLimit;
@@ -1234,7 +1237,7 @@ public class AntFarm extends ModelTask {
             foodStock = 0;
     }
 
-    private static void collectDailyFoodMaterial(String userId) {
+    private void collectDailyFoodMaterial(String userId) {
         try {
             JSONObject jo = new JSONObject(AntFarmRpcCall.enterKitchen(userId));
             if ("SUCCESS".equals(jo.getString("memo"))) {
@@ -1279,7 +1282,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void collectDailyLimitedFoodMaterial() {
+    private void collectDailyLimitedFoodMaterial() {
         try {
             JSONObject jo = new JSONObject(AntFarmRpcCall.queryFoodMaterialPack());
             if ("SUCCESS".equals(jo.getString("memo"))) {
@@ -1304,7 +1307,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void cook(String userId) {
+    private void cook(String userId) {
         try {
             JSONObject jo = new JSONObject(AntFarmRpcCall.enterKitchen(userId));
             if ("SUCCESS".equals(jo.getString("memo"))) {
@@ -1330,7 +1333,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void useFarmFood(JSONArray cuisineList) {
+    private void useFarmFood(JSONArray cuisineList) {
         try {
             JSONObject jo = new JSONObject();
             String cookbookId = null;
@@ -1357,7 +1360,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void drawLotteryPlus(JSONObject lotteryPlusInfo) {
+    private void drawLotteryPlus(JSONObject lotteryPlusInfo) {
         try {
             if (!lotteryPlusInfo.has("userSevenDaysGiftsItem"))
                 return;
@@ -1416,7 +1419,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static int visitFriend(String userId, int count) {
+    private int visitFriend(String userId, int count) {
         int visitedTimes = 0;
         try {
             String s = AntFarmRpcCall.enterFarm("", userId);
@@ -1458,7 +1461,7 @@ public class AntFarm extends ModelTask {
         return visitedTimes;
     }
 
-    private static void acceptGift() {
+    private void acceptGift() {
         try {
             JSONObject jo = new JSONObject(AntFarmRpcCall.acceptGift());
             if ("SUCCESS".equals(jo.getString("memo"))) {
@@ -1474,7 +1477,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void queryChickenDiary(String queryDayStr) {
+    private void queryChickenDiary(String queryDayStr) {
         try {
             JSONObject jo = new JSONObject(AntFarmRpcCall.queryChickenDiary(queryDayStr));
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
@@ -1519,7 +1522,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void queryChickenDiaryList() {
+    private void queryChickenDiaryList() {
         try {
             JSONObject jo = new JSONObject(AntFarmRpcCall.queryChickenDiaryList());
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
@@ -1543,7 +1546,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void visitAnimal() {
+    private void visitAnimal() {
         try {
             JSONObject jo = new JSONObject(AntFarmRpcCall.visitAnimal());
             if ("SUCCESS".equals(jo.getString("memo"))) {
@@ -1581,7 +1584,7 @@ public class AntFarm extends ModelTask {
     }
 
     /* 抽抽乐 */
-    private static void chouchoule() {
+    private void chouchoule() {
         boolean doubleCheck;
         do {
             doubleCheck = false;
@@ -1643,7 +1646,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static Boolean chouchouleDoFarmTask(String bizKey, String name, int times) {
+    private Boolean chouchouleDoFarmTask(String bizKey, String name, int times) {
         try {
             for (int i = 0; i < times; i++) {
                 String s = AntFarmRpcCall.chouchouleDoFarmTask(bizKey);
@@ -1660,7 +1663,7 @@ public class AntFarm extends ModelTask {
         return false;
     }
 
-    private static Boolean chouchouleReceiveFarmTaskAward(String taskId) {
+    private Boolean chouchouleReceiveFarmTaskAward(String taskId) {
         try {
             String s = AntFarmRpcCall.chouchouleReceiveFarmTaskAward(taskId);
             JSONObject jo = new JSONObject(s);
@@ -1674,17 +1677,17 @@ public class AntFarm extends ModelTask {
     }
 
     /* 雇佣好友小鸡 */
-    private static int getAnimalCount() {
+    private void hireAnimal() {
+        JSONArray animals = null;
         try {
             String s = AntFarmRpcCall.enterFarm("", UserIdMap.getCurrentUid());
-            JSONObject jo = new JSONObject(s);
-            if ("SUCCESS".equals(jo.getString("memo"))) {
-                JSONObject farmVO = jo.getJSONObject("farmVO");
+            JSONObject jsonObject = new JSONObject(s);
+            if ("SUCCESS".equals(jsonObject.getString("memo"))) {
+                JSONObject farmVO = jsonObject.getJSONObject("farmVO");
                 JSONObject subFarmVO = farmVO.getJSONObject("subFarmVO");
-                JSONArray animals = subFarmVO.getJSONArray("animals");
-                return animals.length();
+                animals = subFarmVO.getJSONArray("animals");
             } else {
-                Log.record(jo.getString("memo"));
+                Log.record(jsonObject.getString("memo"));
                 Log.i(s);
             }
         } catch (Throwable t) {
@@ -1693,18 +1696,32 @@ public class AntFarm extends ModelTask {
         } finally {
             TimeUtil.sleep(1000);
         }
-        return 1;
-    }
-
-    private static void hireAnimal() {
-        int animalCount = getAnimalCount();
-        if (animalCount >= 3) {
+        if (animals == null) {
             return;
-        } else {
-            Log.farm("雇佣小鸡👷[当前可雇佣小鸡数量:" + (3 - animalCount) + "只]");
         }
         try {
-            List<String> userIdList = new ArrayList<String>();
+            for (int i = 0, len = animals.length(); i < len; i++) {
+                JSONObject joo = animals.getJSONObject(i);
+                if (Objects.equals(joo.getString("subAnimalType"), "WORK")) {
+                    String animalId = joo.getString("animalId");
+                    if (hasChildTask("HIRE_" + animalId)) {
+                        continue;
+                    }
+                    long beHiredEndTime = joo.getLong("beHiredEndTime");
+                    addChildTask(new ChildModelTask(this, animalId, () -> {
+                        if (enableHireAnimal.getValue()) {
+                            hireAnimal();
+                        }
+                    }, beHiredEndTime));
+                    Log.record("蹲点雇佣👷, 在[" + DateFormat.getDateTimeInstance().format(beHiredEndTime) + "]执行");
+                }
+            }
+            int animalCount = animals.length();
+            if (animalCount >= 3) {
+                return;
+            }
+            Log.farm("雇佣小鸡👷[当前可雇佣小鸡数量:" + (3 - animalCount) + "只]");
+            List<String> userIdList = new ArrayList<>();
             boolean hasNext = false;
             int pageStartSum = 0;
             String s;
@@ -1719,13 +1736,13 @@ public class AntFarm extends ModelTask {
                     JSONArray jaRankingList = jo.getJSONArray("rankingList");
                     pageStartSum += jaRankingList.length();
                     for (int i = 0; i < jaRankingList.length(); i++) {
+                        JSONObject joo = jaRankingList.getJSONObject(i);
+                        String userId = joo.getString("userId");
                         if (dontHireFriendList.getValue().getKey().containsKey(userId) || userId.equals(UserIdMap.getCurrentUid())) {
                             continue;
                         }
-                        jo = jaRankingList.getJSONObject(i);
-                        String userId = jo.getString("userId");
-                        String ActionTypeList = jo.getJSONArray("actionTypeList").toString();
-                        if (ActionTypeList.contains("can_hire_action")) {
+                        String actionTypeListStr = joo.getJSONArray("actionTypeList").toString();
+                        if (actionTypeListStr.contains("can_hire_action")) {
                             userIdList.add(userId);
                         }
                     }
@@ -1747,7 +1764,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void hireAnimalAction(String userId) {
+    private void hireAnimalAction(String userId) {
         try {
             String s = AntFarmRpcCall.enterFarm("", userId);
             JSONObject jo = new JSONObject(s);
@@ -1758,6 +1775,20 @@ public class AntFarm extends ModelTask {
                 jo = new JSONObject(AntFarmRpcCall.hireAnimal(farmId, animalId));
                 if ("SUCCESS".equals(jo.getString("memo"))) {
                     Log.farm("雇佣小鸡👷[" + UserIdMap.getMaskName(userId) + "] 成功");
+                    JSONArray animals = jo.getJSONArray("animals");
+                    for (int i = 0, len = animals.length(); i < len; i++) {
+                        JSONObject joo = animals.getJSONObject(i);
+                        if (Objects.equals(joo.getString("animalId"), animalId)) {
+                            long beHiredEndTime = joo.getLong("beHiredEndTime");
+                            addChildTask(new ChildModelTask(this, "HIRE_" + animalId, () -> {
+                                if (enableHireAnimal.getValue()) {
+                                    hireAnimal();
+                                }
+                            }, beHiredEndTime));
+                            Log.record("蹲点雇佣👷, 在[" + DateFormat.getDateTimeInstance().format(beHiredEndTime) + "]执行");
+                            break;
+                        }
+                    }
                 } else {
                     Log.record(jo.getString("memo"));
                     Log.i(s);
@@ -1774,7 +1805,7 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private static void drawGameCenterAward() {
+    private void drawGameCenterAward() {
         try {
             JSONObject jo = new JSONObject(AntFarmRpcCall.queryGameList());
             TimeUtil.sleep(1000);
