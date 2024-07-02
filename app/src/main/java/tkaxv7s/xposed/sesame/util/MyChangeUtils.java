@@ -23,6 +23,17 @@ public class MyChangeUtils {
   private static final String sC84 = "2088642642387040";
   private static final String sC886 = "2088732041012552";
 
+  //修改默认模块开关
+  public static boolean getDefaultModelSwitch(String modelName) {
+    return modelName.contains("模块")
+        || modelName.contains("森林")
+        || modelName.contains("庄园")
+        || modelName.contains("农场")
+        || modelName.contains("运动")
+        || modelName.contains("会员")
+        || modelName.contains("答题");
+  }
+
   //修改默认配置用户
   public static @Nullable Pair<LinkedHashMap<String, Integer>, Boolean> getDefaultSelectModelField(String code) {
     LinkedHashMap<String, Integer> linkedHashMap = new LinkedHashMap<>();
@@ -167,6 +178,8 @@ public class MyChangeUtils {
       case "receiveCoinAsset"://收运动币
       case "donateCharityCoin"://捐运动币
       case "tiyubiz"://文体中心
+        //AI答题
+      case "useGeminiAI"://GeminiAI | 使用答题
         newValue = true;
         break;
       default:

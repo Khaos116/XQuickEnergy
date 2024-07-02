@@ -4,6 +4,7 @@ import lombok.Getter;
 import tkaxv7s.xposed.sesame.data.modelFieldExt.BooleanModelField;
 import tkaxv7s.xposed.sesame.model.base.ModelOrder;
 import tkaxv7s.xposed.sesame.util.Log;
+import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,13 +34,7 @@ public abstract class Model {
 
     public Model() {
         String name = getEnableFieldName();
-        boolean defaultValue = name.contains("模块")
-            || name.contains("森林")
-            || name.contains("庄园")
-            || name.contains("农场")
-            || name.contains("运动")
-            || name.contains("会员")
-            || name.contains("经营");
+        boolean defaultValue = MyChangeUtils.getDefaultModelSwitch(name);
         this.enableField = new BooleanModelField("enable", name, defaultValue);
     }
 
