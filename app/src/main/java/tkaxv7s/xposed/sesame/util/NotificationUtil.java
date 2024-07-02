@@ -13,7 +13,7 @@ import tkaxv7s.xposed.sesame.model.normal.base.BaseModel;
 import java.text.DateFormat;
 
 public class NotificationUtil {
-    private static final int NOTIFICATION_ID = 99;
+    public static final int NOTIFICATION_ID = 99;
     private static final String CHANNEL_ID = "tkaxv7s.xposed.sesame.ANTFOREST_NOTIFY_CHANNEL";
     private static NotificationManager mNotifyManager;
     private static Notification mNotification;
@@ -132,14 +132,17 @@ public class NotificationUtil {
 
     private static void sendText() {
         try {
-            Notification.BigTextStyle style = new Notification.BigTextStyle();
-            style.bigText((StringUtil.isEmpty(statusText) ? "" : statusText + "，") + nextExecText + (StringUtil.isEmpty(lastExecText) ? "" : "\n" + lastExecText));
-//          Notification.InboxStyle style = new Notification.InboxStyle();
-//          style.addLine(preContent);
-//          style.addLine(contentText);
-            builder.setStyle(style);
-            mNotification = builder.build();
-            mNotifyManager.notify(NOTIFICATION_ID, mNotification);
+//            Notification.BigTextStyle style = new Notification.BigTextStyle();
+//            style.bigText((StringUtil.isEmpty(statusText) ? "" : statusText + "，") + nextExecText + (StringUtil.isEmpty(lastExecText) ? "" : "\n" + lastExecText));
+////          Notification.InboxStyle style = new Notification.InboxStyle();
+////          style.addLine(preContent);
+////          style.addLine(contentText);
+//            builder.setStyle(style);
+//            mNotification = builder.build();
+//            mNotifyManager.notify(NOTIFICATION_ID, mNotification);
+            tkaxv7s.xposed.sesame.util.MyChangeUtils.innerSetContentText(
+             builder,(StringUtil.isEmpty(statusText) ? "" : statusText + "，") + nextExecText + (StringUtil.isEmpty(lastExecText) ? "" : "\n" + lastExecText),mNotifyManager
+            );
         } catch (Exception e) {
             Log.printStackTrace(e);
         }

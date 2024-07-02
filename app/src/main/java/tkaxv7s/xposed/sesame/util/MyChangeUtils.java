@@ -17,14 +17,11 @@ import tkaxv7s.xposed.sesame.data.ConfigV2;
 public class MyChangeUtils {
   //取消通知栏折叠
   public static void innerSetContentText(
-      Long nextExecTime,
       Notification.Builder builder,
       CharSequence contentText,
       NotificationManager mNotifyManager
   ) {
-    String preContent = (nextExecTime > 0) ? "下次扫描" + TimeUtil.getTimeStr(nextExecTime) + "\n" : "";
-    builder.setContentTitle("芝麻粒 " + preContent);
-    builder.setContentText(contentText);
+    builder.setContentTitle(contentText);
     if (mNotifyManager != null) {
       mNotifyManager.notify(NotificationUtil.NOTIFICATION_ID, builder.build());
     }
