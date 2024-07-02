@@ -663,8 +663,8 @@ public class Status {
     }
 
     public static synchronized Status load() {
+        String currentUid = UserIdMap.getCurrentUid();
         try {
-            String currentUid = UserIdMap.getCurrentUid();
             if (StringUtil.isEmpty(currentUid)) {
                 Log.i(TAG, "用户为空，状态加载失败");
                 throw new RuntimeException("用户为空，状态加载失败");
@@ -680,6 +680,7 @@ public class Status {
                     FileUtil.write2File(formatted, FileUtil.getStatusFile(currentUid));
                 }
             } else {
+                JsonUtil.MAPPER.updateValue(INSTANCE, new Status());
                 String formatted = JsonUtil.toJsonString(INSTANCE);
                 Log.i(TAG, "初始化 status.json");
                 Log.system(TAG, "初始化 status.json");
@@ -687,15 +688,25 @@ public class Status {
             }
         } catch (Throwable t) {
             Log.printStackTrace(TAG, t);
-            Log.i(TAG, "统计文件格式有误，已重置统计文件");
-            Log.system(TAG, "统计文件格式有误，已重置统计文件");
+            Log.i(TAG, "状态文件格式有误，已重置");
+            Log.system(TAG, "状态文件格式有误，已重置");
             try {
                 JsonUtil.MAPPER.updateValue(INSTANCE, new Status());
+                String formatted = JsonUtil.toJsonString(INSTANCE);
+                FileUtil.write2File(formatted, FileUtil.getStatusFile(currentUid));
             } catch (JsonMappingException e) {
                 Log.printStackTrace(TAG, t);
             }
         }
         return INSTANCE;
+    }
+
+    public static synchronized void unload() {
+        try {
+            JsonUtil.MAPPER.updateValue(INSTANCE, new Status());
+        } catch (JsonMappingException e) {
+            Log.printStackTrace(TAG, t);
+        }
     }
 
     private static void save() {

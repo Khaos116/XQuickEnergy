@@ -555,9 +555,11 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         try {
             if (force) {
                 if (context != null) {
+                    stopHandler();
                     NotificationUtil.stop(service, false);
                     BaseModel.destroyData();
-                    stopHandler();
+                    Status.unload();
+                    Statistics.unload();
                 }
                 if (rpcResponseUnhook != null) {
                     rpcResponseUnhook.unhook();
