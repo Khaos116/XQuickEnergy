@@ -404,7 +404,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
     }
 
     @SuppressLint("WakelockTimeout")
-    private static Boolean initHandler(Boolean force) {
+    private Boolean initHandler(Boolean force) {
         if (context == null) {
             return false;
         }
@@ -516,6 +516,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 }
                 Statistics.load();
                 Status.load();
+                updateDay();
                 BaseModel.initData();
                 NotificationUtil.start(service);
                 Log.record("加载完成");
@@ -607,6 +608,11 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             }*/
             try {
                 Statistics.INSTANCE.resetByCalendar(nowCalendar);
+            } catch (Exception e) {
+                Log.printStackTrace(e);
+            }
+            try {
+                Status.dayClear();
             } catch (Exception e) {
                 Log.printStackTrace(e);
             }
@@ -760,7 +766,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         return false;
     }*/
 
-    private static class AlipayBroadcastReceiver extends BroadcastReceiver {
+    private class AlipayBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
