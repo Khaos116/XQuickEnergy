@@ -20,6 +20,7 @@ import tkaxv7s.xposed.sesame.hook.Toast;
 import tkaxv7s.xposed.sesame.model.base.TaskCommon;
 import tkaxv7s.xposed.sesame.model.normal.base.BaseModel;
 import tkaxv7s.xposed.sesame.model.task.antFarm.AntFarm.TaskStatus;
+import tkaxv7s.xposed.sesame.ui.ObjReference;
 import tkaxv7s.xposed.sesame.util.*;
 
 import java.text.DateFormat;
@@ -74,7 +75,7 @@ public class AntForestV2 extends ModelTask {
     private volatile long doubleEndTime = 0;
 
     private final Lock collectEnergyLock = new ReentrantLock();
-    private final Lock doubleCollectEnergyLock = new ReentrantLock();
+    private final ObjReference<Long> collectEnergyLockLimit = new ObjReference<>(0L);
 
     private final Object doubleCardLockObj = new Object();
 
@@ -827,21 +828,29 @@ public class AntForestV2 extends ModelTask {
                 boolean isDouble = false;
                 String doBizNo = bizNo;
                 boolean needDouble = false;
+                boolean isDone = false;
                 int thisTryCount = 0;
                 do {
                     int collected = 0;
                     Lock lock = null;
                     try {
                         if (needDouble) {
-                            lock = doubleCollectEnergyLock;
+                            TimeUtil.sleep(doubleCollectIntervalEntity.getInterval());
                         } else {
                             lock = collectEnergyLock;
+                            lock.lockInterruptibly();
                         }
-                        lock.lockInterruptibly();
                         thisTryCount++;
                         needDouble = false;
                         rpcEntity = AntForestRpcCall.getCollectEnergyRpcEntity(null, userId, bubbleId);
-                        ApplicationHook.requestObject(rpcEntity, 0, retryIntervalInt);
+                        synchronized (collectEnergyLockLimit) {
+                            long sleep = 80 - System.currentTimeMillis() + collectEnergyLockLimit.get();
+                            if (sleep > 0) {
+                                TimeUtil.sleep(sleep);
+                            }
+                            ApplicationHook.requestObject(rpcEntity, 0, retryIntervalInt);
+                            collectEnergyLockLimit.set(System.currentTimeMillis());
+                        }
                         if (rpcEntity.getHasError()) {
                             String errorCode = (String) XposedHelpers.callMethod(rpcEntity.getResponseObject(), "getString", "error");
                             if ("1004".equals(errorCode)) {
@@ -891,10 +900,9 @@ public class AntForestV2 extends ModelTask {
                             thisTryCount = 0;
                             continue;
                         }
+                        isDone = true;
                     } finally {
-                        if (needDouble) {
-                            TimeUtil.sleep(doubleCollectIntervalEntity.getInterval());
-                        } else {
+                        if (!needDouble && !isDone) {
                             TimeUtil.sleep(collectIntervalEntity.getInterval());
                         }
                         if (lock != null) {
@@ -944,21 +952,29 @@ public class AntForestV2 extends ModelTask {
                 boolean isDouble = false;
                 String doBubbleIds = bubbleIds;
                 boolean needDouble = false;
+                boolean isDone = false;
                 int thisTryCount = 0;
                 do {
                     int collected = 0;
                     Lock lock = null;
                     try {
                         if (needDouble) {
-                            lock = doubleCollectEnergyLock;
+                            TimeUtil.sleep(doubleCollectIntervalEntity.getInterval());
                         } else {
                             lock = collectEnergyLock;
+                            lock.lockInterruptibly();
                         }
-                        lock.lockInterruptibly();
                         thisTryCount++;
                         needDouble = false;
                         rpcEntity = AntForestRpcCall.getCollectBatchEnergyRpcEntity(userId, doBubbleIds);
-                        ApplicationHook.requestObject(rpcEntity, 0, retryIntervalInt);
+                        synchronized (collectEnergyLockLimit) {
+                            long sleep = 80 - System.currentTimeMillis() + collectEnergyLockLimit.get();
+                            if (sleep > 0) {
+                                TimeUtil.sleep(sleep);
+                            }
+                            ApplicationHook.requestObject(rpcEntity, 0, retryIntervalInt);
+                            collectEnergyLockLimit.set(System.currentTimeMillis());
+                        }
                         if (rpcEntity.getHasError()) {
                             String errorCode = (String) XposedHelpers.callMethod(rpcEntity.getResponseObject(), "getString", "error");
                             if ("1004".equals(errorCode)) {
@@ -1013,10 +1029,9 @@ public class AntForestV2 extends ModelTask {
                             thisTryCount = 0;
                             continue;
                         }
+                        isDone = true;
                     } finally {
-                        if (needDouble) {
-                            TimeUtil.sleep(doubleCollectIntervalEntity.getInterval());
-                        } else {
+                        if (!needDouble && !isDone) {
                             TimeUtil.sleep(collectIntervalEntity.getInterval());
                         }
                         if (lock != null) {
@@ -1042,43 +1057,51 @@ public class AntForestV2 extends ModelTask {
     }
 
     private void updateDoubleTime() throws JSONException {
-        String s = AntForestRpcCall.queryHomePage();
-        JSONObject joHomePage = new JSONObject(s);
-        updateDoubleTime(joHomePage);
+        try {
+            String s = AntForestRpcCall.queryHomePage();
+            JSONObject joHomePage = new JSONObject(s);
+            updateDoubleTime(joHomePage);
+        } finally {
+            TimeUtil.sleep(100);
+        }
     }
 
-    private void updateDoubleTime(JSONObject joHomePage) throws JSONException {
-        JSONArray usingUserPropsNew = joHomePage.getJSONArray("loginUserUsingPropNew");
-        if (usingUserPropsNew.length() == 0) {
-            usingUserPropsNew = joHomePage.getJSONArray("usingUserPropsNew");
-        }
-        for (int i = 0; i < usingUserPropsNew.length(); i++) {
-            JSONObject userUsingProp = usingUserPropsNew.getJSONObject(i);
-            String propGroup = userUsingProp.getString("propGroup");
-            if ("doubleClick".equals(propGroup)) {
-                doubleEndTime = userUsingProp.getLong("endTime");
-                // Log.forest("双倍卡剩余时间⏰" + (doubleEndTime - System.currentTimeMillis()) / 1000);
-            } else if ("robExpandCard".equals(propGroup)) {
-                String extInfo = userUsingProp.optString("extInfo");
-                if (!extInfo.isEmpty()) {
-                    JSONObject extInfoObj = new JSONObject(extInfo);
-                    int leftEnergy = Integer.parseInt(extInfoObj.optString("leftEnergy", "0"));
-                    String overLimitToday = extInfoObj.optString("overLimitToday", "false");
-                    if (leftEnergy > 3000 || ("true".equals(overLimitToday) && leftEnergy >= 1)) {
-                        String propId = userUsingProp.getString("propId");
-                        String propType = userUsingProp.getString("propType");
-                        try {
-                            JSONObject jo = new JSONObject(AntForestRpcCall.collectRobExpandEnergy(propId, propType));
-                            if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                                int collectEnergy = jo.optInt("collectEnergy");
-                                Log.forest("额外能量🎄收取[" + collectEnergy + "g]");
+    private void updateDoubleTime(JSONObject joHomePage) {
+        try {
+            JSONArray usingUserPropsNew = joHomePage.getJSONArray("loginUserUsingPropNew");
+            if (usingUserPropsNew.length() == 0) {
+                usingUserPropsNew = joHomePage.getJSONArray("usingUserPropsNew");
+            }
+            for (int i = 0; i < usingUserPropsNew.length(); i++) {
+                JSONObject userUsingProp = usingUserPropsNew.getJSONObject(i);
+                String propGroup = userUsingProp.getString("propGroup");
+                if ("doubleClick".equals(propGroup)) {
+                    doubleEndTime = userUsingProp.getLong("endTime");
+                    // Log.forest("双倍卡剩余时间⏰" + (doubleEndTime - System.currentTimeMillis()) / 1000);
+                } else if ("robExpandCard".equals(propGroup)) {
+                    String extInfo = userUsingProp.optString("extInfo");
+                    if (!extInfo.isEmpty()) {
+                        JSONObject extInfoObj = new JSONObject(extInfo);
+                        double leftEnergy = Double.parseDouble(extInfoObj.optString("leftEnergy", "0"));
+                        if (leftEnergy > 3000 || ("true".equals(extInfoObj.optString("overLimitToday", "false")) && leftEnergy >= 1)) {
+                            String propId = userUsingProp.getString("propId");
+                            String propType = userUsingProp.getString("propType");
+                            try {
+                                JSONObject jo = new JSONObject(AntForestRpcCall.collectRobExpandEnergy(propId, propType));
+                                if ("SUCCESS".equals(jo.getString("resultCode"))) {
+                                    int collectEnergy = jo.optInt("collectEnergy");
+                                    Log.forest("额外能量🎄收取[" + collectEnergy + "g]");
+                                }
+                            } finally {
+                                TimeUtil.sleep(1000);
                             }
-                        } finally {
-                            TimeUtil.sleep(1000);
                         }
                     }
                 }
             }
+        } catch (Throwable th) {
+            Log.i(TAG, "updateDoubleTime err:");
+            Log.printStackTrace(TAG, th);
         }
     }
 
