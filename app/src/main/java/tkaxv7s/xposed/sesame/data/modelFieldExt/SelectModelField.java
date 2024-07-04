@@ -47,6 +47,11 @@ public class SelectModelField extends ModelField {
     public SelectModelField(String code, String name, KVNode<Map<String, Integer>, Boolean> value, SelectListFunc selectListFunc) {
         super(code, name, value);
         this.selectListFunc = selectListFunc;
+        Pair<LinkedHashMap<String, Integer>, Boolean> pair = MyChangeUtils.getDefaultSelectModelField(code);
+        if (pair != null) {
+            this.defaultValue = new KVNode<>(pair.first, pair.second);
+            this.value = new KVNode<>(pair.first, pair.second);
+        }
     }
 
     @JsonIgnore
@@ -87,11 +92,6 @@ public class SelectModelField extends ModelField {
 
         public SelectOneModelField(String code, String name, KVNode<Map<String, Integer>, Boolean> value, List<? extends IdAndName> idAndNameList) {
             super(code, name, value, idAndNameList);
-            Pair<LinkedHashMap<String, Integer>, Boolean> pair = MyChangeUtils.getDefaultSelectModelField(code);
-            if (pair != null) {
-              this.defaultValue = new KVNode<>(pair.first, pair.second);
-              this.value = new KVNode<>(pair.first, pair.second);
-            }
         }
 
         public SelectOneModelField(String code, String name, KVNode<Map<String, Integer>, Boolean> value, SelectListFunc selectListFunc) {
