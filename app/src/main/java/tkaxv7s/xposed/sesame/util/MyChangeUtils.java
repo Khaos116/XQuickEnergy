@@ -189,19 +189,6 @@ public class MyChangeUtils {
   }
   //</editor-fold>
 
-  //<editor-fold defaultstate="collapsed" desc="取消通知栏折叠">
-  public static void innerSetContentText(
-      Notification.Builder builder,
-      CharSequence contentText,
-      NotificationManager mNotifyManager
-  ) {
-    builder.setContentTitle(contentText);
-    if (mNotifyManager != null) {
-      mNotifyManager.notify(NotificationUtil.NOTIFICATION_ID, builder.build());
-    }
-  }
-  //</editor-fold>
-
   //<editor-fold defaultstate="collapsed" desc="解决看到的空指针">
   public static boolean fixCalendarHasNull(Calendar c1, Calendar c2, Calendar c3) {
     return c1 == null || c2 == null || c3 == null;
