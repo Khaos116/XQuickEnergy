@@ -1,12 +1,14 @@
 package tkaxv7s.xposed.sesame.hook;
 
 import android.annotation.SuppressLint;
-import android.app.*;
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -43,22 +45,19 @@ public class ApplicationHook implements IXposedHookLoadPackage {
     private static final Map<String, PendingIntent> wakenAtTimeAlarmMap = new ConcurrentHashMap<>();
 
     @Getter
-    private static String modelVersion = "";
-
-    @Getter
     private static volatile boolean hooked = false;
 
     private static volatile boolean canInit = false;
 
     private static volatile boolean init = false;
 
-    private static volatile Calendar dayCalendar = Calendar.getInstance();
+    private static volatile Calendar dayCalendar;
 
     @Getter
     private static volatile boolean offline = false;
 
     @Getter
-    private static volatile AtomicInteger reLoginCount = new AtomicInteger(0);
+    private static final AtomicInteger reLoginCount = new AtomicInteger(0);
 
     @Getter
     private static volatile ClassLoader classLoader;
@@ -96,11 +95,6 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 XposedHelpers.callStaticMethod(lpparam.classLoader.loadClass(ViewAppInfo.class.getName()), "setRunTypeByCode", RunType.MODEL.getCode());
             } catch (ClassNotFoundException e) {
                 Log.printStackTrace(e);
-            }
-            try {
-                Context applicationContext = AndroidAppHelper.currentApplication().getApplicationContext();
-                modelVersion = applicationContext.getPackageManager().getPackageInfo(applicationContext.getPackageName(), 0).versionName;
-            } catch (PackageManager.NameNotFoundException ignored) {
             }
         } else if (ClassUtil.PACKAGE_NAME.equals(lpparam.packageName) && ClassUtil.PACKAGE_NAME.equals(lpparam.processName)) {
             if (hooked) {
@@ -257,6 +251,8 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                     }
                                 });
                                 registerBroadcastReceiver(appService);
+                                NotificationUtil.start(service);
+                                dayCalendar = Calendar.getInstance();
                                 canInit = true;
                                 String targetUid = getUserId();
                                 if (targetUid != null) {
@@ -280,10 +276,11 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                         if (!ClassUtil.CURRENT_USING_SERVICE.equals(service.getClass().getCanonicalName())) {
                             return;
                         }
-                        NotificationUtil.updateStatusText("支付宝前台服务被销毁");
                         destroyHandler(true);
-                        Log.record("支付宝前台服务被销毁");
+                        NotificationUtil.updateStatusText("支付宝前台服务被销毁");
+                        NotificationUtil.stop();
                         restartByBroadcast();
+                        Log.record("支付宝前台服务被销毁");
                     }
                 });
                 Log.i(TAG, "hook service onDestroy successfully");
@@ -518,7 +515,6 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 Status.load();
                 updateDay();
                 BaseModel.initData();
-                NotificationUtil.start(service);
                 Log.record("加载完成");
                 Toast.show("芝麻粒加载成功");
             }
@@ -538,7 +534,6 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             if (force) {
                 if (context != null) {
                     stopHandler();
-                    NotificationUtil.stop(service, false);
                     BaseModel.destroyData();
                     Status.unload();
                     Statistics.unload();
