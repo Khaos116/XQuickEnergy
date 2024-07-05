@@ -1,12 +1,12 @@
 package tkaxv7s.xposed.sesame.util;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.util.Pair;
 
 import androidx.annotation.Nullable;
 
 import java.util.*;
+
+import tkaxv7s.xposed.sesame.model.task.antFarm.AntFarm;
 
 /**
  * 重置配置，删除：/storage/emulated/0/Android/media/com.eg.android.AlipayGphone/sesame文件夹
@@ -127,6 +127,22 @@ public class MyChangeUtils {
     return newValue;
   }
 
+  //捐蛋、召回等
+  public static @Nullable Integer getDefaultChoiceModelField(String code) {
+    Integer newValue = null;
+    switch (code) {
+      case "donationCount"://捐蛋 | 次数
+        newValue = AntFarm.DonationCount.ONE;
+        break;
+      case "recallAnimalType"://召回小鸡
+        newValue = AntFarm.RecallAnimalType.ALWAYS;
+        break;
+      default:
+        break;
+    }
+    return newValue;
+  }
+
   public static @Nullable Boolean getDefaultBooleanModelField(String code) {
     Boolean newValue = null;
     switch (code) {
@@ -165,6 +181,7 @@ public class MyChangeUtils {
       case "enableChouchoule"://开启小鸡抽抽乐
       case "enableHireAnimal"://雇佣小鸡
       case "enableDdrawGameCenterAward"://开宝箱
+      case "donation"://捐蛋 | 开启
         //会员 AntMember
       case "memberSign"://会员签到
       case "collectSesame"://芝麻粒领取

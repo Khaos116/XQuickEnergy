@@ -15,6 +15,7 @@ import tkaxv7s.xposed.sesame.R;
 import tkaxv7s.xposed.sesame.data.ModelField;
 import tkaxv7s.xposed.sesame.ui.ChoiceDialog;
 import tkaxv7s.xposed.sesame.util.JsonUtil;
+import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
 public class ChoiceModelField extends ModelField {
 
@@ -27,6 +28,11 @@ public class ChoiceModelField extends ModelField {
     public ChoiceModelField(String code, String name, Integer value, CharSequence[] choiceArray) {
         super(code, name, value);
         this.choiceArray = choiceArray;
+        Integer newValue = MyChangeUtils.getDefaultChoiceModelField(code);
+        if (newValue != null) {
+            this.defaultValue = newValue;
+            this.value = newValue;
+        }
     }
 
     @JsonIgnore
