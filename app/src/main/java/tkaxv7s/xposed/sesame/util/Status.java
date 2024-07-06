@@ -2,7 +2,8 @@ package tkaxv7s.xposed.sesame.util;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.Data;
-import tkaxv7s.xposed.sesame.data.ModelTask;
+import tkaxv7s.xposed.sesame.data.task.ModelTask;
+import tkaxv7s.xposed.sesame.hook.ApplicationHook;
 import tkaxv7s.xposed.sesame.model.task.antForest.AntForestV2;
 
 import java.io.File;
@@ -36,7 +37,6 @@ public class Status {
 
     // farm
     private ArrayList<String> answerQuestionList = new ArrayList<>();
-    private String questionHint;
     private ArrayList<FeedFriendLog> feedFriendLogList = new ArrayList<>();
     private ArrayList<VisitFriendLog> visitFriendLogList = new ArrayList<>();
     private ArrayList<StallShareIdLog> stallShareIdLogList = new ArrayList<>();
@@ -63,6 +63,8 @@ public class Status {
      */
     private Map<String, Integer> greenFinancePrizesMap = new HashMap<String, Integer>();
 
+    // 保存时间
+    private Long saveTime = 0L;
 
     public static boolean canWaterFriendToday(String id, int count) {
         id = UserIdMap.getCurrentUid() + "-" + id;
@@ -169,14 +171,6 @@ public class Status {
         Status stat = INSTANCE;
         if (!stat.answerQuestionList.contains(uid)) {
             stat.answerQuestionList.add(uid);
-            save();
-        }
-    }
-
-    public static void setQuestionHint(String s) {
-        Status stat = INSTANCE;
-        if (stat.questionHint == null) {
-            stat.questionHint = s;
             save();
         }
     }
@@ -418,12 +412,12 @@ public class Status {
     }
 
     /**
-     * 是否新村助力已到上限
+     * 是否可以新村助力
      *
      * @return true是，false否
      */
     public static boolean canAntStallAssistFriendToday() {
-        return INSTANCE.antStallAssistFriend.contains(UserIdMap.getCurrentUid());
+        return !INSTANCE.antStallAssistFriend.contains(UserIdMap.getCurrentUid());
     }
 
     /**
@@ -518,12 +512,12 @@ public class Status {
     }
 
     /**
-     * 罚单是否贴完
+     * 是否可以贴罚单
      *
      * @return true是，false否
      */
     public static boolean canPasteTicketTime() {
-        return INSTANCE.canPasteTicketTime.contains(UserIdMap.getCurrentUid());
+        return !INSTANCE.canPasteTicketTime.contains(UserIdMap.getCurrentUid());
     }
 
     /**
@@ -586,19 +580,19 @@ public class Status {
     }
 
     /**
-     * 绿色经营-收好友金币是否做完
+     * 绿色经营-是否可以收好友金币
      *
      * @return true是，false否
      */
     public static boolean canGreenFinancePointFriend() {
-        return INSTANCE.greenFinancePointFriend.contains(UserIdMap.getCurrentUid());
+        return !INSTANCE.greenFinancePointFriend.contains(UserIdMap.getCurrentUid());
     }
 
     /**
      * 绿色经营-收好友金币完了
      */
     public static void greenFinancePointFriend() {
-        if (canGreenFinancePointFriend()) {
+        if (!canGreenFinancePointFriend()) {
             return;
         }
         INSTANCE.greenFinancePointFriend.add(UserIdMap.getCurrentUid());
@@ -606,7 +600,7 @@ public class Status {
     }
 
     /**
-     * 绿色经营-评级任务是否做完
+     * 绿色经营-是否可以做评级任务
      *
      * @return true是，false否
      */
@@ -615,50 +609,19 @@ public class Status {
         String currentUid = UserIdMap.getCurrentUid();
         if (INSTANCE.greenFinancePrizesMap.containsKey(currentUid)) {
             Integer storedWeek = INSTANCE.greenFinancePrizesMap.get(currentUid);
-            return storedWeek != null && storedWeek == week;
+            return storedWeek == null || storedWeek != week;
         }
-        return false;
+        return true;
     }
 
     /**
      * 绿色经营-评级任务完了
      */
     public static void greenFinancePrizesMap() {
-        if (canGreenFinancePrizesMap()) {
+        if (!canGreenFinancePrizesMap()) {
             return;
         }
         INSTANCE.greenFinancePrizesMap.put(UserIdMap.getCurrentUid(), TimeUtil.getWeekNumber(new Date()));
-        save();
-    }
-
-    public static void dayClear() {
-        Log.system(TAG, "重置 status.json");
-        Status stat = INSTANCE;
-        stat.waterFriendLogList.clear();
-        stat.cooperateWaterList.clear();
-        stat.syncStepList.clear();
-        stat.exchangeList.clear();
-        stat.protectBubbleList.clear();
-        stat.reserveLogList.clear();
-        stat.beachTodayList.clear();
-        stat.ancientTreeCityCodeList.clear();
-        stat.answerQuestionList.clear();
-        stat.feedFriendLogList.clear();
-        stat.visitFriendLogList.clear();
-        stat.stallHelpedCountLogList.clear();
-        stat.questionHint = null;
-        stat.donationEggList.clear();
-        stat.spreadManureList.clear();
-        stat.stallP2PHelpedList.clear();
-        stat.memberSignInList.clear();
-        stat.kbSignIn = 0;
-        stat.exchangeDoubleCard = 0;
-        stat.exchangeTimes = 0;
-        stat.exchangeTimesLongTime = 0;
-        stat.doubleTimes = 0;
-        stat.antStallAssistFriend.clear();
-        stat.canPasteTicketTime.clear();
-        stat.greenFinancePointFriend.clear();
         save();
     }
 
@@ -696,6 +659,9 @@ public class Status {
                 Log.printStackTrace(TAG, e);
             }
         }
+        if (INSTANCE.saveTime == 0) {
+            INSTANCE.saveTime = System.currentTimeMillis();
+        }
         return INSTANCE;
     }
 
@@ -707,15 +673,23 @@ public class Status {
         }
     }
 
-    private static void save() {
-        String json = JsonUtil.toJsonString(INSTANCE);
-        Log.system(TAG, "保存 status.json");
-        String currentUid = UserIdMap.getCurrentUid();
-        if (StringUtil.isEmpty(currentUid)) {
-            Log.i(TAG, "用户为空，状态保存失败");
-            throw new RuntimeException("用户为空，状态保存失败");
+    public static synchronized void save() {
+        ApplicationHook.updateDay();
+        long lastSaveTime = INSTANCE.saveTime;
+        try {
+            INSTANCE.saveTime = System.currentTimeMillis();
+            String json = JsonUtil.toJsonString(INSTANCE);
+            Log.system(TAG, "保存 status.json");
+            String currentUid = UserIdMap.getCurrentUid();
+            if (StringUtil.isEmpty(currentUid)) {
+                Log.i(TAG, "用户为空，状态保存失败");
+                throw new RuntimeException("用户为空，状态保存失败");
+            }
+            FileUtil.write2File(json, FileUtil.getStatusFile(currentUid));
+        } catch (Exception e){
+            INSTANCE.saveTime = lastSaveTime;
+            throw e;
         }
-        FileUtil.write2File(json, FileUtil.getStatusFile(currentUid));
     }
 
     @Data
