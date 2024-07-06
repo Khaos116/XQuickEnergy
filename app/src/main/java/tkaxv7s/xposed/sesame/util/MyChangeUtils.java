@@ -75,7 +75,7 @@ public class MyChangeUtils {
     }
   }
 
-  //修改默认配置时间
+  //修改默认配置时间(当前GMT+7)
   public static List<String> getDefaultListModelField(String code) {
     List<String> newList = new ArrayList<>();
     switch (code) {
@@ -146,11 +146,67 @@ public class MyChangeUtils {
   public static @Nullable Boolean getDefaultBooleanModelField(String code) {
     Boolean newValue = null;
     switch (code) {
-      //森林 AntForestV2
+      //【关闭的配置】
+      //基础配置
+      case "debugMode"://开启抓包
+      case "batteryPerm"://为支付宝申请后台运行权限
+        //古树 AncientTree
+      case "ancientTreeOnlyWeek"://仅星期一、三、五运行保护古树
+        //森林 AntForestV2
+      case "exchangeEnergyDoubleClick"://活力值 | 兑换限时双击卡
+      case "exchangeEnergyDoubleClickLongTime"://活力值 | 兑换永久双击卡
+      case "totalCertCount"://记录证书总数
+        //合种 AntCooperate
+      case "cooperateWater"://合种浇水
+        //庄园 AntFarm
+      case "sendBackAnimal"://遣返 | 开启
+      case "useNewEggTool"://使用新蛋卡
+      case "notifyFriend"://赶鸡 | 通知好友
+        //会员 AntMember
+      case "collectSecurityFund"://芝麻粒坚持攒保障金(可开启持续做)
+      case "promiseSportsRoute"://芝麻粒坚持锻炼，走运动路线(只自动加入任务)
+      case "zcjSignIn"://招财金签到
+      case "merchantKmdk"://商户开门打卡
+        //农场 AntOrchard
+      case "batchHireAnimal"://一键捉鸡除草
+        //运动 AntSports
+      case "battleForFriends"://抢好友大战
+        //新村 AntStall
+      case "stallAutoOpen"://新村自动摆摊
+      case "stallAutoClose"://新村自动收摊
+      case "stallAutoTicket"://新村自动贴罚单
+      case "stallAutoTask"://新村自动任务
+      case "stallReceiveAward"://新村自动领奖
+      case "stallOpenType"://摊位类型(打开:摆摊列表/关闭:不摆列表)
+      case "stallDonate"://新村自动捐赠
+      case "stallInviteRegister"://邀请 | 邀请好友开通新村
+      case "stallThrowManure"://新村丢肥料
+        //绿色经营 GreenFinance
+      case "greenFinanceLsxd"://打卡 | 绿色行动
+      case "greenFinanceLscg"://打卡 | 绿色采购
+      case "greenFinanceLsbg"://打卡 | 绿色办公
+      case "greenFinanceWdxd"://打卡 | 绿色销售
+      case "greenFinanceLswl"://打卡 | 绿色物流
+      case "greenFinancePointFriend"://收取 | 好友金币
+      case "greenFinanceDonation"://捐助 | 快过期金币
+        newValue = false;
+        break;
+      //【开启的配置】
+      //基础配置
+      case "stayAwake"://保持唤醒
+      case "timeoutRestart"://超时重启
+      case "newRpc"://使用新接口
+      case "recordLog"://记录日志
+      case "showToast"://气泡提示
+      case "languageSimplifiedChinese"://只显示中文并设置时区
+      case "enableOnGoing"://开启状态栏禁删
+        //森林 AntForestV2
       case "collectEnergy"://收集能量
       case "batchRobEnergy"://一键收取
+      case "balanceNetworkDelay"://平衡网络延迟
       case "doubleCard"://双击卡 | 使用
       case "helpFriendCollect"://复活能量 | 开启
+      case "helpFriendCollectType"://复活能量 | 动作(复活:开，不复活:关)",
       case "collectProp"://收集道具
       case "collectWateringBubble"://收金球
       case "energyRain"://能量雨
@@ -171,6 +227,7 @@ public class MyChangeUtils {
       case "kitchen"://小鸡厨房
       case "useSpecialFood"://使用特殊食品
       case "harvestProduce"://收获爱心鸡蛋
+      case "donation"://捐蛋 | 开启
       case "answerQuestion"://开启答题
       case "receiveFarmTaskAward"://收取饲料奖励
       case "feedAnimal"://喂小鸡
@@ -181,7 +238,8 @@ public class MyChangeUtils {
       case "enableChouchoule"://开启小鸡抽抽乐
       case "enableHireAnimal"://雇佣小鸡
       case "enableDdrawGameCenterAward"://开宝箱
-      case "donation"://捐蛋 | 开启
+        //海洋 AntOcean
+      case "protectOcean"://保护 | 开启
         //会员 AntMember
       case "memberSign"://会员签到
       case "collectSesame"://芝麻粒领取
