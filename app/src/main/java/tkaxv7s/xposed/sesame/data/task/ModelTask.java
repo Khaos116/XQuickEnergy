@@ -23,7 +23,7 @@ public abstract class ModelTask extends Model {
 
     private final Map<String, ChildModelTask> childTaskMap = new ConcurrentHashMap<>();
 
-    private final ChildTaskExecutor childTaskExecutor;
+    private ChildTaskExecutor childTaskExecutor;
 
     @Getter
     private final Runnable mainRunnable = new Runnable() {
@@ -48,7 +48,11 @@ public abstract class ModelTask extends Model {
     };
 
     public ModelTask() {
-        this.childTaskExecutor = newTimedTaskExecutor();
+    }
+
+    @Override
+    public final void prepare() {
+        childTaskExecutor = newTimedTaskExecutor();
     }
 
     public String getId() {
@@ -89,7 +93,7 @@ public abstract class ModelTask extends Model {
                 if (value != null) {
                     return value;
                 }
-                setRealRunnable(childTask);
+                childTask.modelTask = this;
                 if (childTaskExecutor.addChildTask(childTask)) {
                     return childTask;
                 }
@@ -101,7 +105,7 @@ public abstract class ModelTask extends Model {
                 if (oldTask != null) {
                     return false;
                 }
-                setRealRunnable(childTask);
+                childTask.modelTask = this;
                 if (childTaskExecutor.addChildTask(childTask)) {
                     childTaskMap.put(childId, childTask);
                     return true;
@@ -161,7 +165,16 @@ public abstract class ModelTask extends Model {
     }
 
     public synchronized void stopTask() {
-        childTaskExecutor.clearAllChildTask();
+        for (ChildModelTask childModelTask : childTaskMap.values()) {
+            try {
+                childModelTask.cancel();
+            } catch (Exception e) {
+                Log.printStackTrace(e);
+            }
+        }
+        if (childTaskExecutor != null) {
+            childTaskExecutor.clearAllChildTask();
+        }
         childTaskMap.clear();
         MAIN_THREAD_POOL.remove(mainRunnable);
         MAIN_TASK_MAP.remove(this);
@@ -201,46 +214,6 @@ public abstract class ModelTask extends Model {
         }
     }
 
-    private void setRealRunnable(ModelTask.ChildModelTask childTask) {
-        if (childTask.getExecTime() > 0) {
-            childTask.realRunnable = () -> {
-                //String modelTaskId = getName();
-                //Log.i("任务模块:" + modelTaskId + " 添加子任务:" + id);
-                try {
-                    long delay = childTask.getExecTime() - System.currentTimeMillis();
-                    if (delay > 0) {
-                        try {
-                            Thread.sleep(delay);
-                        } catch (Exception e) {
-                            //Log.record("任务模块:" + modelTaskId + " 中断子任务:" + id);
-                            return;
-                        }
-                    }
-                    childTask.run();
-                } catch (Exception e) {
-                    Log.printStackTrace(e);
-                    //Log.record("任务模块:" + modelTaskId + " 异常子任务:" + id);
-                } finally {
-                    removeChildTask(childTask.getId());
-                    //Log.i("任务模块:" + modelTaskId + " 移除子任务:" + id);
-                }
-            };
-        } else {
-            childTask.realRunnable = () -> {
-                //Log.i("任务模块:" + modelTaskId + " 添加子任务:" + id);
-                try {
-                    childTask.run();
-                } catch (Exception e) {
-                    Log.printStackTrace(e);
-                    //Log.record("任务模块:" + getName() + " 异常子任务:" + childTask.getId());
-                } finally {
-                    removeChildTask(childTask.getId());
-                    //Log.i("任务模块:" + modelTaskId + " 移除子任务:" + id);
-                }
-            };
-        };
-    }
-
     private ChildTaskExecutor newTimedTaskExecutor() {
         ChildTaskExecutor childTaskExecutor;
         Integer timedTaskModel = BaseModel.getTimedTaskModel().getValue();
@@ -254,51 +227,59 @@ public abstract class ModelTask extends Model {
         return childTaskExecutor;
     }
 
-    @Getter
-    public class ChildModelTask implements Runnable {
+    public static class ChildModelTask implements Runnable {
 
+        @Getter
+        private ModelTask modelTask;
+
+        @Getter
         private final String id;
 
+        @Getter
         private final String group;
 
         private final Runnable runnable;
 
-        private final long execTime;
+        @Getter
+        private final Long execTime;
 
-        private Runnable realRunnable;
+        private CancelTask cancelTask;
+
+        @Getter
+        private Boolean isCancel = false;
 
         public ChildModelTask() {
             this(null, null, () -> {
-            }, 0);
+            }, 0L);
         }
 
         public ChildModelTask(String id) {
             this(id, null, () -> {
-            }, 0);
+            }, 0L);
         }
 
         public ChildModelTask(String id, String group) {
             this(id, group, () -> {
-            }, 0);
+            }, 0L);
         }
 
         protected ChildModelTask(String id, long execTime) {
             this(id, null, null, execTime);
         }
 
-        protected ChildModelTask(String id, String group, long execTime) {
-            this(id, group, null, execTime);
-        }
+        /*protected ChildModelTask(String id, String group, Long time) {
+            this(id, group, null, time);
+        }*/
 
         public ChildModelTask(String id, Runnable runnable) {
-            this(id, null, runnable, 0);
+            this(id, null, runnable, 0L);
         }
 
         public ChildModelTask(String id, String group, Runnable runnable) {
-            this(id, group, runnable, 0);
+            this(id, group, runnable, 0L);
         }
 
-        public ChildModelTask(String id, String group, Runnable runnable, long execTime) {
+        public ChildModelTask(String id, String group, Runnable runnable, Long execTime) {
             if (StringUtil.isEmpty(id)) {
                 id = toString();
             }
@@ -321,5 +302,24 @@ public abstract class ModelTask extends Model {
         public final void run() {
             runnable.run();
         }
+
+        protected void setCancelTask(CancelTask cancelTask) {
+            this.cancelTask = cancelTask;
+        }
+
+        public final void cancel() {
+            if (cancelTask != null) {
+                cancelTask.cancel();
+                isCancel = true;
+            }
+        }
+
     }
+
+    public interface CancelTask {
+
+        void cancel();
+
+    }
+
 }

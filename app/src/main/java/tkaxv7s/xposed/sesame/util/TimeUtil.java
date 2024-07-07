@@ -3,6 +3,7 @@ package tkaxv7s.xposed.sesame.util;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Constanline
@@ -12,6 +13,15 @@ public class TimeUtil {
 
     public static Boolean checkNowInTimeRange(String timeRange) {
         return checkInTimeRange(System.currentTimeMillis(), timeRange);
+    }
+
+    public static Boolean checkInTimeRange(Long timeMillis, List<String> timeRangeList) {
+        for (String timeRange : timeRangeList) {
+            if (checkInTimeRange(timeMillis, timeRange)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Boolean checkInTimeRange(Long timeMillis, String timeRange) {
@@ -188,13 +198,10 @@ public class TimeUtil {
         final long day = 24 * 60 * 60 * 1000;
         firstdTimestamp = firstdTimestamp + gmt8;
         secondTimestamp = secondTimestamp + gmt8;
-        if (firstdTimestamp / day < secondTimestamp / day) {
-            return true;
-        }
-        return false;
+        return firstdTimestamp / day < secondTimestamp / day;
     }
 
-        /**
+    /**
      * 通过时间戳比较传入的时间戳的天数是否小于当前时间戳的天数
      * @param timestamp 时间戳
      * @return boolean 如果小于当前时间戳所计算的天数，则为true，否则为false
