@@ -330,6 +330,7 @@ public class AntForestV2 extends ModelTask {
             } catch (InterruptedException ie) {
                 Log.i(TAG, "执行中断-蚂蚁森林");
             }
+            Statistics.save();
             NotificationUtil.updateLastExecText("收:" + totalCollected + " 帮:" + totalHelpCollected);
         }
     }
@@ -975,6 +976,7 @@ public class AntForestV2 extends ModelTask {
                 Log.i(TAG, "collectUserBatchEnergy err:");
                 Log.printStackTrace(TAG, e);
             } finally {
+                Statistics.save();
                 NotificationUtil.updateLastExecText("收:" + totalCollected + " 帮:" + totalHelpCollected);
                 notifyMain();
             }
@@ -1060,7 +1062,10 @@ public class AntForestV2 extends ModelTask {
                         JSONArray feeds = response.optJSONArray("feeds");
                         if (feeds != null && feeds.length() > 0) {
                             for (int i = 0; i < feeds.length(); i++) {
-                                jo = feeds.getJSONObject(i);
+                                jo = feeds.optJSONObject(i);
+                                if (jo == null) {
+                                    continue;
+                                }
                                 String feedId = jo.optString("feedId", "null");
                                 if (!"null".equals(feedId)) {
                                     jo = new JSONObject(AntForestRpcCall.produce_forest_energy(feedId));
