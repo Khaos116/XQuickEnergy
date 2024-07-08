@@ -40,11 +40,6 @@ public class MyChangeUtils {
     Boolean open = null;
     switch (code) {
       //森林 AntForestV2
-      case "dontCollectList"://不收取能量列表
-        linkedHashMap.put(MyChangeUtils.sC176, 0);
-        linkedHashMap.put(MyChangeUtils.sC158, 0);
-        open = false;
-        break;
       case "waterFriendList"://浇水 | 好友列表
         linkedHashMap.put(MyChangeUtils.sC176, 3);
         linkedHashMap.put(MyChangeUtils.sC158, 3);
