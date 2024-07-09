@@ -217,22 +217,22 @@ public class MyChangeUtils {
       case "photoGuangPan"://绿色 | 光盘行动
         //庄园 AntFarm
       case "rewardFriend"://打赏好友
-      case "receiveFarmToolReward"://收取道具奖励
-      case "recordFarmGame"://游戏改分
-      case "kitchen"://小鸡厨房
-      case "useSpecialFood"://使用特殊食品
-      case "harvestProduce"://收获爱心鸡蛋
-      case "donation"://捐蛋 | 开启
-      case "answerQuestion"://开启答题
-      case "receiveFarmTaskAward"://收取饲料奖励
-      case "feedAnimal"://喂小鸡
-      case "useAccelerateTool"://使用加速卡
-      case "feedFriendAnimalList"://喂好友小鸡列表
+      case "feedAnimal"://自动喂小鸡
       case "acceptGift"://收麦子
+      case "donation"://捐蛋 | 开启
+      case "hireAnimal"://雇佣小鸡 | 开启
+      case "useAccelerateTool"://使用加速卡
+      case "useSpecialFood"://使用特殊食品
+      case "receiveFarmTaskAward"://收取饲料奖励
+      case "receiveFarmToolReward"://收取道具奖励
+      case "harvestProduce"://收获爱心鸡蛋
+      case "kitchen"://小鸡厨房
       case "chickenDiary"://小鸡日记
       case "enableChouchoule"://开启小鸡抽抽乐
-      case "enableHireAnimal"://雇佣小鸡
+      case "listOrnaments"://小鸡每日换装
       case "enableDdrawGameCenterAward"://开宝箱
+      case "answerQuestion"://开启答题
+      case "recordFarmGame"://游戏改分
         //海洋 AntOcean
       case "protectOcean"://保护 | 开启
         //会员 AntMember
