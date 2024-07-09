@@ -78,9 +78,11 @@ public class MyChangeUtils {
         newList.add("0830-1100");
         newList.add("2300-2400");
         break;
-      case "animalSleepTime"://小鸡睡眠时间
-        newList.add("0200-0300");
-        newList.add("0400-0559");
+      case "sleepAtTime"://小鸡睡眠时间
+        newList.add("2355");
+        break;
+      case "wakeUpAtTime"://小鸡起床时间
+        newList.add("0555");
         break;
       case "doubleCardTime"://双击卡 | 使用时间
         newList.add("0600-0630");
