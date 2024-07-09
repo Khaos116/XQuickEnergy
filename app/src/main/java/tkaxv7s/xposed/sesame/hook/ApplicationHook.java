@@ -24,6 +24,7 @@ import tkaxv7s.xposed.sesame.data.RunType;
 import tkaxv7s.xposed.sesame.data.ViewAppInfo;
 import tkaxv7s.xposed.sesame.data.task.BaseTask;
 import tkaxv7s.xposed.sesame.data.task.ModelTask;
+import tkaxv7s.xposed.sesame.entity.FriendWatch;
 import tkaxv7s.xposed.sesame.entity.RpcEntity;
 import tkaxv7s.xposed.sesame.model.base.TaskCommon;
 import tkaxv7s.xposed.sesame.model.normal.base.BaseModel;
@@ -124,7 +125,6 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                 }
                                 if (!init) {
                                     if (canInit) {
-                                        UserIdMap.initUser(targetUid);
                                         new Thread(() -> {
                                             if (initHandler(true)) {
                                                 init = true;
@@ -135,7 +135,6 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                 }
                                 String currentUid = UserIdMap.getCurrentUid();
                                 if (!targetUid.equals(currentUid)) {
-                                    UserIdMap.initUser(targetUid);
                                     if (currentUid != null) {
                                         new Thread(() -> {
                                             initHandler(true);
@@ -144,6 +143,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                         }).start();
                                         return;
                                     }
+                                    UserIdMap.initUser(targetUid);
                                 }
                                 if (offline) {
                                     offline = false;
@@ -265,9 +265,9 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                 registerBroadcastReceiver(appService);
                                 dayCalendar = Calendar.getInstance();
                                 canInit = true;
-                                String targetUid = getUserId();
-                                if (targetUid != null) {
-                                    UserIdMap.initUser(targetUid);
+                                if (getUserId() != null) {
+                                    Statistics.load();
+                                    FriendWatch.load();
                                     if (initHandler(true)) {
                                         init = true;
                                     }
@@ -287,10 +287,12 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                         if (!ClassUtil.CURRENT_USING_SERVICE.equals(service.getClass().getCanonicalName())) {
                             return;
                         }
+                        Log.record("支付宝前台服务被销毁");
                         NotificationUtil.updateStatusText("支付宝前台服务被销毁");
                         destroyHandler(true);
+                        //FriendWatch.unload();
+                        //Statistics.unload();
                         restartByBroadcast();
-                        Log.record("支付宝前台服务被销毁");
                     }
                 });
                 Log.i(TAG, "hook service onDestroy successfully");
@@ -417,6 +419,13 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         destroyHandler(force);
         try {
             if (force) {
+                String userId = getUserId();
+                if (userId == null) {
+                    Log.record("用户未登录");
+                    Toast.show("用户未登录");
+                    return false;
+                }
+                UserIdMap.initUser(userId);
                 if (!PermissionUtil.checkAlarmPermissions()) {
                     Log.record("支付宝无闹钟权限");
                     mainHandler.postDelayed(() -> {
@@ -522,7 +531,6 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 }
                 NotificationUtil.start(service);
                 Model.bootAllModel(classLoader);
-                Statistics.load();
                 Status.load();
                 updateDay();
                 BaseModel.initData();
@@ -547,7 +555,6 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     stopHandler();
                     BaseModel.destroyData();
                     Status.unload();
-                    Statistics.unload();
                     NotificationUtil.stop();
                     ConfigV2.unload();
                     ModelTask.destroyAllModel();
@@ -622,6 +629,11 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         }
         try {
             Status.save(nowCalendar);
+        } catch (Exception e) {
+            Log.printStackTrace(e);
+        }
+        try {
+            FriendWatch.updateDay();
         } catch (Exception e) {
             Log.printStackTrace(e);
         }
