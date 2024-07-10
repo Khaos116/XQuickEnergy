@@ -60,6 +60,11 @@ public class MyChangeUtils {
         linkedHashMap.put(MyChangeUtils.sC158, 3);
         open = true;
         break;
+        //农场 AntOrchard
+      case "dontHireList"://除草 | 不雇佣好友列表
+        break;
+      case "dontWeedingList"://除草 | 不除草好友列表
+        break;
       default:
         break;
     }
@@ -225,7 +230,7 @@ public class MyChangeUtils {
       case "receiveForestTaskAward"://收取森林任务奖励
       case "antdodoCollect"://神奇物种开卡
       case "collectGiftBox"://领取礼盒
-      case "medicalHealthFeeds"://健康医疗能量
+      case "medicalHealthFeeds"://健康医疗
       case "sendEnergyByAction"://森林集市
       case "ecoLifeTick"://绿色 | 行动打卡
       case "ecoLifeOpen"://绿色 | 自动开通
@@ -263,7 +268,7 @@ public class MyChangeUtils {
       case "receiveCoinAsset"://收运动币
       case "donateCharityCoin"://捐运动币
       case "tiyubiz"://文体中心
-        //AI答题
+        //AI答题 AnswerAI
       case "useGeminiAI"://GeminiAI | 使用答题
         newValue = true;
         break;
