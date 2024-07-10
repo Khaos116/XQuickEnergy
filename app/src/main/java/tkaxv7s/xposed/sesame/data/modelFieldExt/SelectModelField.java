@@ -54,8 +54,12 @@ public class SelectModelField extends ModelField {
         }
     }
 
-    @JsonIgnore
-    public List<? extends IdAndName> getIdAndNameList() {
+    @Override
+    public String getType() {
+        return "SELECT";
+    }
+
+    public List<? extends IdAndName> getExpandValue() {
         return selectListFunc == null ? idAndNameList : selectListFunc.getList();
     }
 

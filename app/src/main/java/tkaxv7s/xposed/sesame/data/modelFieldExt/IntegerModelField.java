@@ -36,6 +36,11 @@ public class IntegerModelField extends ModelField {
     }
 
     @Override
+    public String getType() {
+        return "INTEGER";
+    }
+
+    @Override
     public void setValue(Object value) {
         Integer newValue;
         if (value == null) {
@@ -80,6 +85,11 @@ public class IntegerModelField extends ModelField {
         public MultiplyIntegerModelField(String code, String name, Integer value, Integer minLimit, Integer maxLimit, Integer multiple) {
             super(code, name, value, minLimit, maxLimit);
             this.multiple = multiple;
+        }
+
+        @Override
+        public String getType() {
+            return "MULTIPLY_INTEGER";
         }
 
         @Override

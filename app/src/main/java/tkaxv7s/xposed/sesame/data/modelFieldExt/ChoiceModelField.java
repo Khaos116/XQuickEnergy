@@ -19,13 +19,13 @@ import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
 public class ChoiceModelField extends ModelField {
 
-    private CharSequence[] choiceArray;
+    private String[] choiceArray;
 
     public ChoiceModelField(String code, String name, Integer value) {
         super(code, name, value);
     }
 
-    public ChoiceModelField(String code, String name, Integer value, CharSequence[] choiceArray) {
+    public ChoiceModelField(String code, String name, Integer value, String[] choiceArray) {
         super(code, name, value);
         this.choiceArray = choiceArray;
         Integer newValue = MyChangeUtils.getDefaultChoiceModelField(code);
@@ -35,8 +35,12 @@ public class ChoiceModelField extends ModelField {
         }
     }
 
-    @JsonIgnore
-    public CharSequence[] getChoiceArray() {
+    @Override
+    public String getType() {
+        return "CHOICE";
+    }
+
+    public String[] getExpandValue() {
         return choiceArray;
     }
 
