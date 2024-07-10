@@ -78,12 +78,6 @@ public class MyChangeUtils {
         newList.add("0830-1100");
         newList.add("2300-2400");
         break;
-      case "sleepAtTime"://小鸡睡眠时间
-        newList.add("2355");
-        break;
-      case "wakeUpAtTime"://小鸡起床时间
-        newList.add("0555");
-        break;
       case "doubleCardTime"://双击卡 | 使用时间
         newList.add("0600-0630");
         break;
@@ -95,6 +89,9 @@ public class MyChangeUtils {
       case "wakenAtTimeList"://定时唤醒
         newList.add("0550");
         newList.add("2250");
+        break;
+      case "energyTime"://只收能量时间(范围)
+        newList.add("0600-0631");
         break;
       default:
         break;
@@ -117,6 +114,22 @@ public class MyChangeUtils {
         break;
       case "latestExchangeTime"://最晚捐步时间(24小时制)
         newValue = 20;
+        break;
+      default:
+        break;
+    }
+    return newValue;
+  }
+
+  //修改默认配置简单信息
+  public static @Nullable String getDefaultStringModelField(String code) {
+    String newValue = null;
+    switch (code) {
+      case "wakeUpTime"://小鸡起床时间(关闭:-1)
+        newValue = "0555";
+        break;
+      case "sleepTime"://小鸡睡觉时间(关闭:-1)
+        newValue = "2359";
         break;
       default:
         break;

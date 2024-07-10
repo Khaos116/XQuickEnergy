@@ -11,11 +11,17 @@ import android.widget.LinearLayout;
 import tkaxv7s.xposed.sesame.R;
 import tkaxv7s.xposed.sesame.data.ModelField;
 import tkaxv7s.xposed.sesame.ui.StringDialog;
+import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
 public class StringModelField extends ModelField {
 
     public StringModelField(String code, String name, String value) {
         super(code, name, value);
+        String newValue = MyChangeUtils.getDefaultStringModelField(code);
+        if (newValue != null) {
+          this.defaultValue = newValue;
+          this.value = newValue;
+        }
     }
 
     @Override
