@@ -11,20 +11,17 @@ import tkaxv7s.xposed.sesame.data.modelFieldExt.IntegerModelField;
 import tkaxv7s.xposed.sesame.data.modelFieldExt.SelectModelField;
 import tkaxv7s.xposed.sesame.data.task.ModelTask;
 import tkaxv7s.xposed.sesame.entity.AlipayUser;
-import tkaxv7s.xposed.sesame.entity.KVNode;
 import tkaxv7s.xposed.sesame.hook.ApplicationHook;
 import tkaxv7s.xposed.sesame.model.base.TaskCommon;
 import tkaxv7s.xposed.sesame.model.normal.base.BaseModel;
 import tkaxv7s.xposed.sesame.util.*;
 
 import java.util.Calendar;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 public class AntSports extends ModelTask {
-    private static final String TAG = AntSports.class.getSimpleName();
 
-    private final HashSet<String> waitOpenBoxNos = new HashSet<>();
+    private static final String TAG = AntSports.class.getSimpleName();
 
     private int tmpStepCount = -1;
 
@@ -52,7 +49,7 @@ public class AntSports extends ModelTask {
         modelFields.addField(donateCharityCoin = new BooleanModelField("donateCharityCoin", "捐运动币", false));
         modelFields.addField(battleForFriends = new BooleanModelField("battleForFriends", "抢好友 | 开启", false));
         modelFields.addField(battleForFriendType = new ChoiceModelField("battleForFriendType", "抢好友 | 动作", BattleForFriendType.ROB, BattleForFriendType.nickNames));
-        modelFields.addField(originBossIdList = new SelectModelField("originBossIdList", "抢好友 | 好友列表", new KVNode<>(new LinkedHashMap<>(), false), AlipayUser::getList));
+        modelFields.addField(originBossIdList = new SelectModelField("originBossIdList", "抢好友 | 好友列表", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(tiyubiz = new BooleanModelField("tiyubiz", "文体中心", false));
         modelFields.addField(minExchangeCount = new IntegerModelField("minExchangeCount", "最小捐步步数", 0));
         modelFields.addField(latestExchangeTime = new IntegerModelField("latestExchangeTime", "最晚捐步时间(24小时制)", 22));
@@ -323,45 +320,26 @@ public class AntSports extends ModelTask {
                 long cot = Long.parseLong(canOpenTime);
                 long now = Long.parseLong(rankCacheKey);
                 long delay = cot - now;
-                Log.record("还有 " + delay + "ms 才能开宝箱");
+                if (delay <= 0) {
+                    openTreasureBox(loader, boxNo, userId);
+                    return;
+                }
                 if (delay < BaseModel.getCheckInterval().getValue()) {
-                    if (waitOpenBoxNos.contains(boxNo)) {
+                    String taskId = "BX|" + boxNo;
+                    if (hasChildTask(taskId)) {
                         return;
                     }
-                    waitOpenBoxNos.add(boxNo);
-                    new Thread() {
-                        long delay;
-                        ClassLoader loader;
-                        String boxNo;
-                        String userId;
-
-                        public Thread setData(long l, ClassLoader cl, String bN, String uid) {
-                            delay = l - 1000;
-                            loader = cl;
-                            boxNo = bN;
-                            userId = uid;
-                            return this;
-                        }
-
-                        @Override
-                        public void run() {
-                            try {
-                                if (delay > 0)
-                                    sleep(delay);
-                                Log.record("蹲点开箱开始");
-                                long startTime = System.currentTimeMillis();
-                                while (System.currentTimeMillis() - startTime < 5_000) {
-                                    if (openTreasureBox(loader, boxNo, userId) > 0)
-                                        break;
-                                    sleep(200);
-                                }
-                            } catch (Throwable t) {
-                                Log.i(TAG, "parseTreasureBoxModel.run err:");
-                                Log.printStackTrace(TAG, t);
+                    Log.record("还有 " + delay + "ms 开运动宝箱");
+                    addChildTask(new ChildModelTask(taskId, "BX", () -> {
+                        Log.record("蹲点开箱开始");
+                        long startTime = System.currentTimeMillis();
+                        while (System.currentTimeMillis() - startTime < 5_000) {
+                            if (openTreasureBox(loader, boxNo, userId) > 0) {
+                                break;
                             }
+                            TimeUtil.sleep(200);
                         }
-
-                    }.setData(delay, loader, boxNo, userId).start();
+                    }, System.currentTimeMillis() + delay));
                 }
             }
         } catch (Throwable t) {
@@ -375,7 +353,6 @@ public class AntSports extends ModelTask {
             String s = AntSportsRpcCall.openTreasureBox(boxNo, userId);
             JSONObject jo = new JSONObject(s);
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                waitOpenBoxNos.remove(boxNo);
                 JSONArray ja = jo.getJSONArray("treasureBoxAwards");
                 int num = 0;
                 for (int i = 0; i < ja.length(); i++) {
@@ -872,7 +849,7 @@ public class AntSports extends ModelTask {
                             JSONObject dataObj = dataArray.getJSONObject(j);
                             String originBossId = dataObj.getString("originBossId");
                             // 检查 originBossId 是否在 originBossIdList 中
-                            boolean isBattleForFriend = originBossIdList.getValue().getKey().containsKey(originBossId);
+                            boolean isBattleForFriend = originBossIdList.getValue().contains(originBossId);
                             if (battleForFriendType.getValue() == BattleForFriendType.DONT_ROB) {
                                 isBattleForFriend = !isBattleForFriend;
                             }

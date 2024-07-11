@@ -8,20 +8,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import lombok.Getter;
 import tkaxv7s.xposed.sesame.R;
 import tkaxv7s.xposed.sesame.data.ModelField;
 import tkaxv7s.xposed.sesame.ui.StringDialog;
 import tkaxv7s.xposed.sesame.util.Log;
+import tkaxv7s.xposed.sesame.util.StringUtil;
 import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
+@Getter
 public class IntegerModelField extends ModelField {
 
-    private Integer minLimit;
+    protected final Integer minLimit;
 
-    private Integer maxLimit;
+    protected final Integer maxLimit;
 
     public IntegerModelField(String code, String name, Integer value) {
         super(code, name, value);
+        this.minLimit = null;
+        this.maxLimit = null;
         Integer newValue = MyChangeUtils.getDefaultIntegerModelField(code);
         if (newValue != null) {
           this.defaultValue = newValue;
@@ -46,7 +51,12 @@ public class IntegerModelField extends ModelField {
         if (value == null) {
             newValue = (Integer) defaultValue;
         } else {
-            newValue = Integer.parseInt(value.toString());
+            try {
+                newValue = Integer.parseInt(value.toString());
+            } catch (Exception e) {
+                Log.printStackTrace(e);
+                newValue = (Integer) defaultValue;
+            }
         }
         if (minLimit != null) {
             newValue = Math.max(minLimit, newValue);
@@ -78,12 +88,13 @@ public class IntegerModelField extends ModelField {
         return btn;
     }
 
+    @Getter
     public static class MultiplyIntegerModelField extends IntegerModelField {
 
         private final Integer multiple;
 
         public MultiplyIntegerModelField(String code, String name, Integer value, Integer minLimit, Integer maxLimit, Integer multiple) {
-            super(code, name, value, minLimit, maxLimit);
+            super(code, name, value * multiple, minLimit * multiple, maxLimit * multiple);
             this.multiple = multiple;
         }
 
