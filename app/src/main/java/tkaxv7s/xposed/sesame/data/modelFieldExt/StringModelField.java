@@ -13,7 +13,7 @@ import tkaxv7s.xposed.sesame.data.ModelField;
 import tkaxv7s.xposed.sesame.ui.StringDialog;
 import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
-public class StringModelField extends ModelField {
+public class StringModelField extends ModelField<String> {
 
     public StringModelField(String code, String name, String value) {
         super(code, name, value);
@@ -30,16 +30,11 @@ public class StringModelField extends ModelField {
     }
 
     @Override
-    public void setValue(Object value) {
+    public void setObjectValue(Object value) {
         if (value == null) {
             value = defaultValue;
         }
         this.value = String.valueOf(value);
-    }
-
-    @Override
-    public String getValue() {
-        return (String) value;
     }
 
     @Override

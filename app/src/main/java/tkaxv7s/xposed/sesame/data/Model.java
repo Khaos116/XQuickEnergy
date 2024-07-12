@@ -53,6 +53,10 @@ public abstract class Model {
 
     public abstract String getName();
 
+    public String getIcon() {
+        return null;
+    }
+
     public abstract ModelFields getFields();
 
     public void prepare() {}

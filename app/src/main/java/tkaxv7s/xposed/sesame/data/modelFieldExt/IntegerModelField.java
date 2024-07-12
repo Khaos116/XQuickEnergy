@@ -13,11 +13,10 @@ import tkaxv7s.xposed.sesame.R;
 import tkaxv7s.xposed.sesame.data.ModelField;
 import tkaxv7s.xposed.sesame.ui.StringDialog;
 import tkaxv7s.xposed.sesame.util.Log;
-import tkaxv7s.xposed.sesame.util.StringUtil;
 import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
 @Getter
-public class IntegerModelField extends ModelField {
+public class IntegerModelField extends ModelField<Integer> {
 
     protected final Integer minLimit;
 
@@ -46,16 +45,16 @@ public class IntegerModelField extends ModelField {
     }
 
     @Override
-    public void setValue(Object value) {
+    public void setObjectValue(Object value) {
         Integer newValue;
         if (value == null) {
-            newValue = (Integer) defaultValue;
+            newValue = defaultValue;
         } else {
             try {
                 newValue = Integer.parseInt(value.toString());
             } catch (Exception e) {
                 Log.printStackTrace(e);
-                newValue = (Integer) defaultValue;
+                newValue = defaultValue;
             }
         }
         if (minLimit != null) {
@@ -65,11 +64,6 @@ public class IntegerModelField extends ModelField {
             newValue = Math.min(maxLimit, newValue);
         }
         this.value = newValue;
-    }
-
-    @Override
-    public Integer getValue() {
-        return (Integer) value;
     }
 
     @Override
@@ -106,14 +100,14 @@ public class IntegerModelField extends ModelField {
         @Override
         public void setConfigValue(String value) {
             if (value == null) {
-                setValue(null);
+                setObjectValue(null);
                 return;
             }
             try {
-                setValue(Integer.parseInt(value) * multiple);
+                setObjectValue(Integer.parseInt(value) * multiple);
             } catch (Exception e) {
                 Log.printStackTrace(e);
-                setValue(null);
+                setObjectValue(null);
             }
         }
 
