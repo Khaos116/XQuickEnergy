@@ -9,7 +9,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdk 31//Android API 30及其以上，Toast.setGravity无效
         versionCode 80
-        versionName "1.2.9X-TK"
+        versionName "1.2.9Y-TK"
     }
 
     //配置不同版本的keystore
