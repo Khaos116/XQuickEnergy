@@ -1,7 +1,5 @@
 package tkaxv7s.xposed.sesame.util;
 
-import android.util.Pair;
-
 import androidx.annotation.Nullable;
 
 import java.util.*;
@@ -35,43 +33,47 @@ public class MyChangeUtils {
   }
 
   //修改默认配置用户
-  public static @Nullable Pair<LinkedHashMap<String, Integer>, Boolean> getDefaultSelectModelField(String code) {
-    LinkedHashMap<String, Integer> linkedHashMap = new LinkedHashMap<>();
-    Boolean open = null;
+  public static @Nullable LinkedHashSet<String> getDefaultSelectModelField(String code) {
+    LinkedHashSet<String> set = new LinkedHashSet<>();
     switch (code) {
       //森林 AntForestV2
-      case "waterFriendList"://浇水 | 好友列表
-        linkedHashMap.put(MyChangeUtils.sC176, 3);
-        linkedHashMap.put(MyChangeUtils.sC158, 3);
-        open = true;
-        break;
       case "giveEnergyRainList"://赠送能量雨列表
-        linkedHashMap.put(MyChangeUtils.sC176, 0);
-        linkedHashMap.put(MyChangeUtils.sC158, 0);
-        linkedHashMap.put(MyChangeUtils.sC199, 0);
-        linkedHashMap.put(MyChangeUtils.sC84, 0);
-        linkedHashMap.put(MyChangeUtils.sC886, 0);
-        open = false;
-        break;
-      //庄园 AntFarm
-      case "feedFriendAnimalList"://喂好友小鸡列表
-      case "visitFriendList"://送麦子名单
-        linkedHashMap.put(MyChangeUtils.sC176, 3);
-        linkedHashMap.put(MyChangeUtils.sC158, 3);
-        open = true;
-        break;
-        //农场 AntOrchard
-      case "dontHireList"://除草 | 不雇佣好友列表
-        break;
       case "dontWeedingList"://除草 | 不除草好友列表
+      case "dontHireList"://除草 | 不雇佣好友列表
+        set.add(MyChangeUtils.sC176);
+        set.add(MyChangeUtils.sC158);
+        set.add(MyChangeUtils.sC199);
+        set.add(MyChangeUtils.sC84);
+        set.add(MyChangeUtils.sC886);
         break;
       default:
         break;
     }
-    if (open == null) {
+    if (!set.isEmpty()) {
       return null;
     } else {
-      return new Pair<>(linkedHashMap, open);
+      return set;
+    }
+  }
+
+  public static @Nullable LinkedHashMap<String, Integer> getDefaultSelectAndCountModelField(String code) {
+    LinkedHashMap<String, Integer> linkedHashMap = new LinkedHashMap<>();
+    switch (code) {
+      //森林 AntForestV2
+      case "waterFriendList"://浇水 | 好友列表
+        //庄园 AntFarm
+      case "feedFriendAnimalList"://喂好友小鸡列表
+      case "visitFriendList"://送麦子名单
+        linkedHashMap.put(MyChangeUtils.sC176, 3);
+        linkedHashMap.put(MyChangeUtils.sC158, 3);
+        break;
+      default:
+        break;
+    }
+    if (!linkedHashMap.isEmpty()) {
+      return null;
+    } else {
+      return linkedHashMap;
     }
   }
 
@@ -170,6 +172,7 @@ public class MyChangeUtils {
         //森林 AntForestV2
       case "exchangeEnergyDoubleClick"://活力值 | 兑换限时双击卡
       case "exchangeEnergyDoubleClickLongTime"://活力值 | 兑换永久双击卡
+      case "whackMole"://6秒拼手速
       case "totalCertCount"://记录证书总数
         //合种 AntCooperate
       case "cooperateWater"://合种浇水

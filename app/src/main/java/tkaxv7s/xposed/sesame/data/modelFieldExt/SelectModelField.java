@@ -15,8 +15,7 @@ import tkaxv7s.xposed.sesame.entity.IdAndName;
 import tkaxv7s.xposed.sesame.ui.ListDialog;
 import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 数据结构说明
@@ -37,10 +36,10 @@ public class SelectModelField extends ModelField<Set<String>> implements SelectM
     public SelectModelField(String code, String name, Set<String> value, SelectListFunc selectListFunc) {
         super(code, name, value);
         this.selectListFunc = selectListFunc;
-        Pair<LinkedHashMap<String, Integer>, Boolean> pair = MyChangeUtils.getDefaultSelectModelField(code);
-        if (pair != null) {
-            this.defaultValue = new KVNode<>(pair.first, pair.second);
-            this.value = new KVNode<>(pair.first, pair.second);
+        LinkedHashSet<String> temp = MyChangeUtils.getDefaultSelectModelField(code);
+        if (temp != null) {
+            this.defaultValue = temp;
+            this.value =temp;
         }
     }
 
