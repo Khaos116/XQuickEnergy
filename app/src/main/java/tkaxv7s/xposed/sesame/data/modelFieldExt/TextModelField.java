@@ -25,11 +25,13 @@ public class TextModelField extends ModelField<String> {
     }
 
     @Override
-    public void setObjectValue(Object value) {
-        if (value == null) {
-            value = defaultValue;
-        }
-        this.value = String.valueOf(value);
+    public String getConfigValue() {
+        return value;
+    }
+
+    @Override
+    public void setConfigValue(String configValue) {
+        value = configValue;
     }
 
     @JsonIgnore

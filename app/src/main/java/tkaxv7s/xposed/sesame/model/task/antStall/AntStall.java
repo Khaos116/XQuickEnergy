@@ -4,6 +4,7 @@ import android.util.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import tkaxv7s.xposed.sesame.data.ModelFields;
+import tkaxv7s.xposed.sesame.data.ModelGroup;
 import tkaxv7s.xposed.sesame.data.modelFieldExt.BooleanModelField;
 import tkaxv7s.xposed.sesame.data.modelFieldExt.ChoiceModelField;
 import tkaxv7s.xposed.sesame.data.modelFieldExt.IntegerModelField;
@@ -55,6 +56,11 @@ public class AntStall extends ModelTask {
         return "新村";
     }
 
+    @Override
+    public ModelGroup getGroup() {
+        return ModelGroup.STALL;
+    }
+
     private BooleanModelField stallAutoOpen;
     private ChoiceModelField stallOpenType;
     private SelectModelField stallOpenList;
@@ -72,6 +78,8 @@ public class AntStall extends ModelTask {
     private BooleanModelField stallDonate;
     private BooleanModelField stallInviteRegister;
     private BooleanModelField stallThrowManure;
+    private ChoiceModelField stallThrowManureType;
+    private SelectModelField stallThrowManureList;
     private BooleanModelField stallInviteShop;
     private ChoiceModelField stallInviteShopType;
     private SelectModelField stallInviteShopList;
@@ -96,13 +104,16 @@ public class AntStall extends ModelTask {
         modelFields.addField(stallAutoTicket = new BooleanModelField("stallAutoTicket", "贴罚单 | 开启", false));
         modelFields.addField(stallTicketType = new ChoiceModelField("stallTicketType", "贴罚单 | 动作", StallTicketType.DONT_TICKET, StallTicketType.nickNames));
         modelFields.addField(stallTicketList = new SelectModelField("stallTicketList", "贴罚单 | 好友列表", new LinkedHashSet<>(), AlipayUser::getList));
+        modelFields.addField(stallThrowManure = new BooleanModelField("stallThrowManure", "丢肥料 | 开启", false));
+        modelFields.addField(stallThrowManureType = new ChoiceModelField("stallThrowManureType", "丢肥料 | 动作", StallThrowManureType.DONT_THROW, StallThrowManureType.nickNames));
+        modelFields.addField(stallThrowManureList = new SelectModelField("stallThrowManureList", "丢肥料 | 好友列表", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(stallInviteShop = new BooleanModelField("stallInviteShop", "邀请摆摊 | 开启", false));
         modelFields.addField(stallInviteShopType = new ChoiceModelField("stallInviteShopType", "邀请摆摊 | 动作", StallInviteShopType.INVITE, StallInviteShopType.nickNames));
-        modelFields.addField(stallInviteShopList = new SelectModelField("stallInviteShopList", "邀请摆摊 | 邀请摆摊列表", new LinkedHashSet<>(), AlipayUser::getList));
+        modelFields.addField(stallInviteShopList = new SelectModelField("stallInviteShopList", "邀请摆摊 | 好友列表", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(stallAllowOpenReject = new BooleanModelField("stallAllowOpenReject", "请走小摊 | 开启", false));
         modelFields.addField(stallAllowOpenTime = new IntegerModelField("stallAllowOpenTime", "请走小摊 | 允许摆摊时长(分钟)", 121));
-        modelFields.addField(stallWhiteList = new SelectModelField("stallWhiteList", "请走小摊 | 永不请走列表(超时也不赶)", new LinkedHashSet<>(), AlipayUser::getList));
-        modelFields.addField(stallBlackList = new SelectModelField("stallBlackList", "请走小摊 | 禁止摆摊列表(不超时也赶)", new LinkedHashSet<>(), AlipayUser::getList));
+        modelFields.addField(stallWhiteList = new SelectModelField("stallWhiteList", "请走小摊 | 白名单(超时也不赶)", new LinkedHashSet<>(), AlipayUser::getList));
+        modelFields.addField(stallBlackList = new SelectModelField("stallBlackList", "请走小摊 | 黑名单(不超时也赶)", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(stallAutoTask = new BooleanModelField("stallAutoTask", "自动任务", false));
         modelFields.addField(stallReceiveAward = new BooleanModelField("stallReceiveAward", "自动领奖", false));
         modelFields.addField(stallDonate = new BooleanModelField("stallDonate", "自动捐赠", false));
@@ -110,7 +121,6 @@ public class AntStall extends ModelTask {
         modelFields.addField(stallInviteRegister = new BooleanModelField("stallInviteRegister", "邀请 | 邀请好友开通新村", false));
         modelFields.addField(stallInviteRegisterList = new SelectModelField("stallInviteRegisterList", "邀请 | 好友列表", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(assistFriendList = new SelectModelField("assistFriendList", "助力好友列表", new LinkedHashSet<>(), AlipayUser::getList));
-        modelFields.addField(stallThrowManure = new BooleanModelField("stallThrowManure", "丢肥料", false));
         return modelFields;
     }
 
@@ -125,7 +135,7 @@ public class AntStall extends ModelTask {
             String s = AntStallRpcCall.home();
             JSONObject jo = new JSONObject(s);
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                if (!jo.optBoolean("hasRegister") || jo.optBoolean("hasQuit")) {
+                if (!jo.getBoolean("hasRegister") || jo.getBoolean("hasQuit")) {
                     Log.farm("蚂蚁新村⛪请先开启蚂蚁新村");
                     return;
                 }
@@ -155,7 +165,7 @@ public class AntStall extends ModelTask {
                 }
                 if (stallAutoTask.getValue()) {
                     taskList();
-                    TimeUtil.sleep(1000);
+                    TimeUtil.sleep(500);
                     taskList();
                 }
                 if (stallDonate.getValue() && Status.canStallDonateToday()) {
@@ -223,7 +233,7 @@ public class AntStall extends ModelTask {
                     if (!isInviteShop) {
                         continue;
                     }
-                    if (friend.optBoolean("canInviteOpenShop")) {
+                    if (friend.getBoolean("canInviteOpenShop")) {
                         s = AntStallRpcCall.oneKeyInviteOpenShop(friendUserId, seatId);
                         jo = new JSONObject(s);
                         if ("SUCCESS".equals(jo.getString("resultCode"))) {
@@ -302,7 +312,7 @@ public class AntStall extends ModelTask {
                 JSONObject master = coinsMap.getJSONObject("MASTER");
                 String assetId = master.getString("assetId");
                 int settleCoin = (int) (master.getJSONObject("money").getDouble("amount"));
-                boolean fullShow = master.optBoolean("fullShow");
+                boolean fullShow = master.getBoolean("fullShow");
                 if (fullShow || settleCoin > 100) {
                     String s = AntStallRpcCall.settle(assetId, settleCoin);
                     JSONObject jo = new JSONObject(s);
@@ -344,7 +354,7 @@ public class AntStall extends ModelTask {
                                     if (stallAutoClose.getValue()) {
                                         shopClose(shopId, rentLastBill, rentLastUser);
                                     }
-                                    TimeUtil.sleep(1000L);
+                                    TimeUtil.sleep(300L);
                                     if (stallAutoOpen.getValue()) {
                                         openShop();
                                     }
@@ -401,7 +411,7 @@ public class AntStall extends ModelTask {
                 List<Seat> seats = new ArrayList<>();
                 for (int i = 0; i < friendRankList.length(); i++) {
                     JSONObject friendRank = friendRankList.getJSONObject(i);
-                    if (friendRank.optBoolean("canOpenShop")) {
+                    if (friendRank.getBoolean("canOpenShop")) {
                         String userId = friendRank.getString("userId");
                         boolean isStallOpen = stallOpenList.getValue().contains(userId);
                         if (stallOpenType.getValue() == StallOpenType.CLOSE) {
@@ -427,7 +437,6 @@ public class AntStall extends ModelTask {
     private void openShop(String seatId, String userId, Queue<String> shopIds) {
         String shopId = shopIds.peek();
         String s = AntStallRpcCall.shopOpen(seatId, userId, shopId);
-        TimeUtil.sleep(1000);
         try {
             JSONObject jo = new JSONObject(s);
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
@@ -448,16 +457,15 @@ public class AntStall extends ModelTask {
             String userId = seat.userId;
             try {
                 String s = AntStallRpcCall.friendHome(userId);
-                TimeUtil.sleep(1000);
                 JSONObject jo = new JSONObject(s);
                 if ("SUCCESS".equals(jo.optString("resultCode"))) {
                     JSONObject seatsMap = jo.getJSONObject("seatsMap");
                     JSONObject guest = seatsMap.getJSONObject("GUEST_01");
-                    if (guest.optBoolean("canOpenShop")) {
+                    if (guest.getBoolean("canOpenShop")) {
                         openShop(guest.getString("seatId"), userId, shopIds);
                     } else {
                         guest = seatsMap.getJSONObject("GUEST_02");
-                        if (guest.optBoolean("canOpenShop")) {
+                        if (guest.getBoolean("canOpenShop")) {
                             openShop(guest.getString("seatId"), userId, shopIds);
                         }
                     }
@@ -503,7 +511,7 @@ public class AntStall extends ModelTask {
                 return;
             }
             JSONObject signListModel = jo.getJSONObject("signListModel");
-            if (!signListModel.optBoolean("currentKeySigned")) {
+            if (!signListModel.getBoolean("currentKeySigned")) {
                 signToday();
             }
 
@@ -555,7 +563,7 @@ public class AntStall extends ModelTask {
                             }
                             s = AntStallRpcCall.queryCallAppSchema(sceneCode);
                             jo = new JSONObject(s);
-                            if (!jo.optBoolean("success")) {
+                            if (!jo.getBoolean("success")) {
                                 Log.i(TAG, "taskList.queryCallAppSchema err:" + jo.optString("resultDesc"));
                             }
                             TimeUtil.sleep(5000);
@@ -578,13 +586,18 @@ public class AntStall extends ModelTask {
                             }
                             TimeUtil.sleep(5000);
                             for (int j = 0; j < jsonArray.length(); j++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(j);
-                                s = AntStallRpcCall.finish(pid, jsonObject);
-                                jo = new JSONObject(s);
-                                if (!jo.optBoolean("success")) {
-                                    Log.i(TAG, "taskList.finish err:" + jo.optString("resultDesc"));
+                                try{
+                                    JSONObject jsonObject = jsonArray.getJSONObject(j);
+                                    s = AntStallRpcCall.finish(pid, jsonObject);
+                                    TimeUtil.sleep(5000);
+                                    jo = new JSONObject(s);
+                                    if (!jo.getBoolean("success")) {
+                                        Log.i(TAG, "taskList.finish err:" + jo.optString("resultDesc"));
+                                    }
+                                } catch (Throwable t) {
+                                    Log.i(TAG, "taskList for err:");
+                                    Log.printStackTrace(TAG, t);
                                 }
-                                TimeUtil.sleep(5000);
                             }
                             break;
                     }
@@ -622,7 +635,7 @@ public class AntStall extends ModelTask {
         String s = AntStallRpcCall.receiveTaskAward(taskType);
         try {
             JSONObject jo = new JSONObject(s);
-            if (jo.optBoolean("success")) {
+            if (jo.getBoolean("success")) {
                 Log.farm("蚂蚁新村⛪[领取奖励]");
             } else {
                 Log.record("receiveTaskAward err:" + " " + s);
@@ -639,7 +652,7 @@ public class AntStall extends ModelTask {
         String s = AntStallRpcCall.finishTask(taskType + "_" + System.currentTimeMillis(), taskType);
         try {
             JSONObject jo = new JSONObject(s);
-            if (jo.optBoolean("success")) {
+            if (jo.getBoolean("success")) {
                 return true;
             } else {
                 Log.record("finishTask err:" + " " + s);
@@ -696,7 +709,7 @@ public class AntStall extends ModelTask {
         try {
             String s = AntStallRpcCall.shareP2P();
             JSONObject jo = new JSONObject(s);
-            if (jo.optBoolean("success")) {
+            if (jo.getBoolean("success")) {
                 String shareId = jo.getString("shareId");
                 /* 保存shareId到Statistics */
                 Status.stallShareIdToday(UserIdMap.getCurrentUid(), shareId);
@@ -725,7 +738,7 @@ public class AntStall extends ModelTask {
                 JSONObject jsonObject = new JSONObject(str);
                 Thread.sleep(5000);
                 String name = UserIdMap.getMaskName(uid);
-                if (!jsonObject.optBoolean("success")) {
+                if (!jsonObject.getBoolean("success")) {
                     String code = jsonObject.getString("code");
                     if ("600000028".equals(code)) {
                         Log.record("新村助力🐮被助力次数上限[" + name + "]");
@@ -764,7 +777,7 @@ public class AntStall extends ModelTask {
                     if (shareId != null && Status.canStallP2PHelpToday(uid)) {
                         String s = AntStallRpcCall.achieveBeShareP2P(shareId);
                         JSONObject jo = new JSONObject(s);
-                        if (jo.optBoolean("success")) {
+                        if (jo.getBoolean("success")) {
                             Log.farm("新村助力🎈[" + UserIdMap.getMaskName(uid) + "]");
                             Status.stallHelpToday(UserIdMap.getCurrentUid(), false);
                             Status.stallBeHelpToday(uid, false);
@@ -865,7 +878,7 @@ public class AntStall extends ModelTask {
         String s = AntStallRpcCall.queryManureInfo();
         try {
             JSONObject jo = new JSONObject(s);
-            if (jo.optBoolean("success")) {
+            if (jo.getBoolean("success")) {
                 JSONObject astManureInfoVO = jo.getJSONObject("astManureInfoVO");
                 if (astManureInfoVO.optBoolean("hasManure")) {
                     int manure = astManureInfoVO.getInt("manure");
@@ -913,6 +926,14 @@ public class AntStall extends ModelTask {
                 for (int i = 0; i < astLossDynamicVOS.length(); i++) {
                     JSONObject lossDynamic = astLossDynamicVOS.getJSONObject(i);
                     if (lossDynamic.has("specialEmojiVO")) {
+                        continue;
+                    }
+                    String objectId = lossDynamic.getString("objectId");
+                    boolean isThrowManure = stallThrowManureList.getValue().contains(objectId);
+                    if (stallThrowManureType.getValue() == StallThrowManureType.DONT_THROW) {
+                        isThrowManure = !isThrowManure;
+                    }
+                    if (!isThrowManure) {
                         continue;
                     }
                     JSONObject dynamic = new JSONObject();
@@ -983,7 +1004,7 @@ public class AntStall extends ModelTask {
                     }
                     str = AntStallRpcCall.friendHome(friendId);
                     jsonObject = new JSONObject(str);
-                    if (!jsonObject.optBoolean("success")) {
+                    if (!jsonObject.getBoolean("success")) {
                         Log.i(TAG, "pasteTicket.friendHome err:" + jsonObject.optString("resultDesc"));
                         return;
                     }
@@ -1004,7 +1025,7 @@ public class AntStall extends ModelTask {
                             if (jo.length() == 0) {
                                 continue;
                             }
-                            if (jo.optBoolean("canOpenShop") || !"BUSY".equals(jo.getString("status")) || !jo.optBoolean("overTicketProtection")) {
+                            if (jo.getBoolean("canOpenShop") || !"BUSY".equals(jo.getString("status")) || !jo.getBoolean("overTicketProtection")) {
                                 continue;
                             }
                             String rentLastUser = jo.getString("rentLastUser");
@@ -1053,6 +1074,15 @@ public class AntStall extends ModelTask {
         int DONT_TICKET = 1;
 
         String[] nickNames = {"选中贴罚单", "选中不贴罚单"};
+
+    }
+
+    public interface StallThrowManureType {
+    
+        int THROW = 0;
+        int DONT_THROW = 1;
+
+        String[] nickNames = {"选中丢肥料", "选中不丢肥料"};
 
     }
 

@@ -45,13 +45,18 @@ public class IntegerModelField extends ModelField<Integer> {
     }
 
     @Override
-    public void setObjectValue(Object value) {
+    public String getConfigValue() {
+        return String.valueOf(value);
+    }
+
+    @Override
+    public void setConfigValue(String configValue) {
         Integer newValue;
-        if (value == null) {
+        if (configValue == null) {
             newValue = defaultValue;
         } else {
             try {
-                newValue = Integer.parseInt(value.toString());
+                newValue = Integer.parseInt(configValue);
             } catch (Exception e) {
                 Log.printStackTrace(e);
                 newValue = defaultValue;
@@ -88,7 +93,7 @@ public class IntegerModelField extends ModelField<Integer> {
         private final Integer multiple;
 
         public MultiplyIntegerModelField(String code, String name, Integer value, Integer minLimit, Integer maxLimit, Integer multiple) {
-            super(code, name, value * multiple, minLimit * multiple, maxLimit * multiple);
+            super(code, name, value * multiple, minLimit, maxLimit);
             this.multiple = multiple;
         }
 
@@ -98,23 +103,26 @@ public class IntegerModelField extends ModelField<Integer> {
         }
 
         @Override
-        public void setConfigValue(String value) {
-            if (value == null) {
-                setObjectValue(null);
+        public void setConfigValue(String configValue) {
+            if (configValue == null) {
+                reset();
                 return;
             }
+            super.setConfigValue(configValue);
             try {
-                setObjectValue(Integer.parseInt(value) * multiple);
+                value = value * multiple;
+                return;
             } catch (Exception e) {
                 Log.printStackTrace(e);
-                setObjectValue(null);
             }
+            reset();
         }
 
         @Override
         public String getConfigValue() {
-            return String.valueOf(getValue() / multiple);
+            return String.valueOf(value / multiple);
         }
+
     }
 
 }

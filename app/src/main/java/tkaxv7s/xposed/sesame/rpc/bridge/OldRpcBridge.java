@@ -1,4 +1,4 @@
-package tkaxv7s.xposed.sesame.rpc;
+package tkaxv7s.xposed.sesame.rpc.bridge;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -6,6 +6,7 @@ import tkaxv7s.xposed.sesame.data.RuntimeInfo;
 import tkaxv7s.xposed.sesame.entity.RpcEntity;
 import tkaxv7s.xposed.sesame.hook.ApplicationHook;
 import tkaxv7s.xposed.sesame.model.normal.base.BaseModel;
+import tkaxv7s.xposed.sesame.rpc.intervallimit.RpcIntervalLimit;
 import tkaxv7s.xposed.sesame.util.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,6 +26,10 @@ public class OldRpcBridge implements RpcBridge {
 
     private Object curH5PageImpl;
 
+    @Override
+    public RpcVersion getVersion() {
+        return RpcVersion.NEW;
+    }
 
     public void load() throws Exception {
         loader = ApplicationHook.getClassLoader();
@@ -85,6 +90,7 @@ public class OldRpcBridge implements RpcBridge {
                 count++;
                 Object resp;
                 try {
+                    RpcIntervalLimit.enterIntervalLimit(method);
                     if (rpcCallMethod.getParameterTypes().length == 12) {
                         resp = rpcCallMethod.invoke(
                                 null, method, data, "", true, null, null, false, curH5PageImpl, 0, "", false, -1);

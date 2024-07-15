@@ -18,6 +18,7 @@ import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import lombok.Getter;
+import tkaxv7s.xposed.sesame.BuildConfig;
 import tkaxv7s.xposed.sesame.data.ConfigV2;
 import tkaxv7s.xposed.sesame.data.Model;
 import tkaxv7s.xposed.sesame.data.RunType;
@@ -29,9 +30,11 @@ import tkaxv7s.xposed.sesame.entity.RpcEntity;
 import tkaxv7s.xposed.sesame.model.base.TaskCommon;
 import tkaxv7s.xposed.sesame.model.normal.base.BaseModel;
 import tkaxv7s.xposed.sesame.model.task.antMember.AntMemberRpcCall;
-import tkaxv7s.xposed.sesame.rpc.NewRpcBridge;
-import tkaxv7s.xposed.sesame.rpc.OldRpcBridge;
-import tkaxv7s.xposed.sesame.rpc.RpcBridge;
+import tkaxv7s.xposed.sesame.rpc.bridge.NewRpcBridge;
+import tkaxv7s.xposed.sesame.rpc.bridge.OldRpcBridge;
+import tkaxv7s.xposed.sesame.rpc.bridge.RpcBridge;
+import tkaxv7s.xposed.sesame.rpc.bridge.RpcVersion;
+import tkaxv7s.xposed.sesame.rpc.intervallimit.RpcIntervalLimit;
 import tkaxv7s.xposed.sesame.util.*;
 
 import java.text.SimpleDateFormat;
@@ -79,6 +82,9 @@ public class ApplicationHook implements IXposedHookLoadPackage {
 
     private static RpcBridge rpcBridge;
 
+    @Getter
+    private static RpcVersion rpcVersion;
+
     private static PowerManager.WakeLock wakeLock;
 
     private static PendingIntent alarm0Pi;
@@ -125,22 +131,18 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                 }
                                 if (!init) {
                                     if (canInit) {
-                                        mainHandler.post(() -> {
-                                            if (initHandler(true)) {
-                                                init = true;
-                                            }
-                                        });
+                                        if (initHandler(true)) {
+                                            init = true;
+                                        }
                                     }
                                     return;
                                 }
                                 String currentUid = UserIdMap.getCurrentUid();
                                 if (!targetUid.equals(currentUid)) {
                                     if (currentUid != null) {
-                                        mainHandler.post(() -> {
-                                            initHandler(true);
-                                            Log.record("用户已切换");
-                                            Toast.show("用户已切换");
-                                        });
+                                        initHandler(true);
+                                        Log.record("用户已切换");
+                                        Toast.show("用户已切换");
                                         return;
                                     }
                                     UserIdMap.initUser(targetUid);
@@ -425,7 +427,6 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     Toast.show("用户未登录");
                     return false;
                 }
-                UserIdMap.initUser(userId);
                 if (!PermissionUtil.checkAlarmPermissions()) {
                     Log.record("支付宝无闹钟权限");
                     mainHandler.postDelayed(() -> {
@@ -435,9 +436,11 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     }, 2000);
                     return false;
                 }
+                UserIdMap.initUser(userId);
                 Model.initAllModel();
+                Log.record("模块版本：" + BuildConfig.VERSION_NAME);
                 Log.record("开始加载");
-                ConfigV2.load(UserIdMap.getCurrentUid());
+                ConfigV2.load(userId);
                 if (!Model.getModel(BaseModel.class).getEnableField().getValue()) {
                     Log.record("芝麻粒已禁用");
                     Toast.show("芝麻粒已禁用");
@@ -457,6 +460,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     rpcBridge = new OldRpcBridge();
                 }
                 rpcBridge.load();
+                rpcVersion = rpcBridge.getVersion();
                 if (BaseModel.getStayAwake().getValue()) {
                     try {
                         PowerManager pm = (PowerManager) service.getSystemService(Context.POWER_SERVICE);
@@ -557,7 +561,9 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     Status.unload();
                     NotificationUtil.stop();
                     ConfigV2.unload();
+                    RpcIntervalLimit.clearIntervalLimit();
                     ModelTask.destroyAllModel();
+                    UserIdMap.unload();
                 }
                 if (rpcResponseUnhook != null) {
                     rpcResponseUnhook.unhook();
@@ -570,6 +576,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                     wakeLock = null;
                 }
                 if (rpcBridge != null) {
+                    rpcVersion = null;
                     rpcBridge.unload();
                     rpcBridge = null;
                 }
@@ -686,12 +693,20 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         return rpcBridge.requestString(method, data, relation);
     }
 
+    public static String requestString(String method, String data, String relation, Long time) {
+        return rpcBridge.requestString(method, data, relation, time);
+    }
+
     public static String requestString(String method, String data, int tryCount, int retryInterval) {
         return rpcBridge.requestString(method, data, tryCount, retryInterval);
     }
 
     public static String requestString(String method, String data, String relation, int tryCount, int retryInterval) {
         return rpcBridge.requestString(method, data, relation, tryCount, retryInterval);
+    }
+
+    public static String requestString(String method, String data, String relation, Long time, int tryCount, int retryInterval) {
+        return rpcBridge.requestString(method, data, relation, time, tryCount, retryInterval);
     }
 
     public static RpcEntity requestObject(RpcEntity rpcEntity) {
@@ -710,12 +725,20 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         return rpcBridge.requestObject(method, data, relation);
     }
 
+    public static RpcEntity requestObject(String method, String data, String relation, Long time) {
+        return rpcBridge.requestObject(method, data, relation, time);
+    }
+
     public static RpcEntity requestObject(String method, String data, int tryCount, int retryInterval) {
         return rpcBridge.requestObject(method, data, tryCount, retryInterval);
     }
 
     public static RpcEntity requestObject(String method, String data, String relation, int tryCount, int retryInterval) {
         return rpcBridge.requestObject(method, data, relation, tryCount, retryInterval);
+    }
+
+    public static RpcEntity requestObject(String method, String data, String relation, Long time, int tryCount, int retryInterval) {
+        return rpcBridge.requestObject(method, data, relation, time, tryCount, retryInterval);
     }
 
     public static void reLoginByBroadcast() {

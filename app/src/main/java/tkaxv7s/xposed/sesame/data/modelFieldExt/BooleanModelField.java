@@ -27,14 +27,6 @@ public class BooleanModelField extends ModelField<Boolean> {
     }
 
     @Override
-    public void setObjectValue(Object value) {
-        if (value == null) {
-            value = defaultValue;
-        }
-        this.value = JsonUtil.parseObject(value, Boolean.class);
-    }
-
-    @Override
     public View getView(Context context) {
         Switch sw = new Switch(context);
         sw.setText(getName());

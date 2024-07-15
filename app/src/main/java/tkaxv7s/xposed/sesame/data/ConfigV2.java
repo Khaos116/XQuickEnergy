@@ -204,7 +204,7 @@ public class ConfigV2 {
             }
         }
         INSTANCE.setInit(true);
-        Log.i(TAG, "加载配置成功");
+        Log.i(TAG, "加载配置结束");
         return INSTANCE;
     }
 
@@ -219,7 +219,7 @@ public class ConfigV2 {
     }
 
     public static String toSaveStr() {
-        return JsonUtil.toNoFormatJsonString(INSTANCE);
+        return JsonUtil.toFormatJsonString(INSTANCE);
     }
 
 }

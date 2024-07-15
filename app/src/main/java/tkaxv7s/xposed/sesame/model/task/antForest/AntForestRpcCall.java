@@ -2,6 +2,7 @@ package tkaxv7s.xposed.sesame.model.task.antForest;
 
 import tkaxv7s.xposed.sesame.entity.RpcEntity;
 import tkaxv7s.xposed.sesame.hook.ApplicationHook;
+import tkaxv7s.xposed.sesame.rpc.bridge.RpcVersion;
 import tkaxv7s.xposed.sesame.util.RandomUtil;
 import tkaxv7s.xposed.sesame.util.StringUtil;
 
@@ -10,21 +11,36 @@ import java.util.UUID;
 
 public class AntForestRpcCall {
 
-    private static final String VERSION = "20240403";
+    private static String VERSION = "";
+
+    public static void init() {
+        RpcVersion rpcVersion = ApplicationHook.getRpcVersion();
+        switch (rpcVersion) {
+            case OLD:
+                VERSION = "20230501";
+                break;
+            case NEW:
+                VERSION = "20240403";
+                break;
+            default:
+                VERSION = "";
+                break;
+        }
+    }
 
     private static String getUniqueId() {
         return String.valueOf(System.currentTimeMillis()) + RandomUtil.nextLong();
-    }
-
-    public static String fillUserRobFlag(String userIdList) {
-        return ApplicationHook.requestString("alipay.antforest.forest.h5.fillUserRobFlag",
-                "[{\"userIdList\":" + userIdList + "}]", "{\"pathList\":[\"friendRanking\"]}");
     }
 
     public static String queryEnergyRanking() {
         return ApplicationHook.requestString("alipay.antmember.forest.h5.queryEnergyRanking",
                 "[{\"periodType\":\"total\",\"rankType\":\"energyRank\",\"source\":\"chInfo_ch_appcenter__chsub_9patch\",\"version\":\""
                         + VERSION + "\"}]", "{\"pathList\":[\"friendRanking\",\"myself\",\"totalDatas\"]}");
+    }
+
+    public static String fillUserRobFlag(String userIdList) {
+        return ApplicationHook.requestString("alipay.antforest.forest.h5.fillUserRobFlag",
+                "[{\"userIdList\":" + userIdList + "}]", "{\"pathList\":[\"friendRanking\"]}");
     }
 
     public static String queryHomePage(Boolean skipWhackMole) {
@@ -40,6 +56,10 @@ public class AntForestRpcCall {
     }
 
     public static RpcEntity getCollectEnergyRpcEntity(String bizType, String userId, long bubbleId) {
+        return getCollectEnergyRpcEntity(bizType, userId, bubbleId, null);
+    }
+
+    public static RpcEntity getCollectEnergyRpcEntity(String bizType, String userId, long bubbleId, Long produceTime) {
         String args1;
         if (StringUtil.isEmpty(bizType)) {
             args1 = "[{\"bizType\":\"\",\"bubbleIds\":[" + bubbleId
@@ -49,7 +69,7 @@ public class AntForestRpcCall {
             args1 = "[{\"bizType\":\"" + bizType + "\",\"bubbleIds\":[" + bubbleId
                     + "],\"source\":\"chInfo_ch_appcenter__chsub_9patch\",\"userId\":\"" + userId + "\"}]";
         }
-        return new RpcEntity("alipay.antmember.forest.h5.collectEnergy", args1);
+        return new RpcEntity("alipay.antmember.forest.h5.collectEnergy", args1, null, produceTime);
     }
 
     public static String collectEnergy(String bizType, String userId, Long bubbleId) {

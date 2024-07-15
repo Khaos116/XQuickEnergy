@@ -32,14 +32,6 @@ public class ListModelField extends ModelField<List<String>> {
     }
 
     @Override
-    public void setObjectValue(Object value) {
-        if (value == null) {
-            value = defaultValue;
-        }
-        this.value = JsonUtil.parseObject(value, typeReference);
-    }
-
-    @Override
     public View getView(Context context) {
         Button btn = new Button(context);
         btn.setText(getName());
@@ -67,13 +59,13 @@ public class ListModelField extends ModelField<List<String>> {
         }
 
         @Override
-        public void setConfigValue(String value) {
-            if (value == null) {
-                setObjectValue(null);
+        public void setConfigValue(String configValue) {
+            if (configValue == null) {
+                reset();
                 return;
             }
             List<String> list = new ArrayList<>();
-            String[] split = value.split(",");
+            String[] split = configValue.split(",");
             if (split.length == 1) {
                 String str = split[0];
                 if (!str.isEmpty()) {
@@ -86,12 +78,12 @@ public class ListModelField extends ModelField<List<String>> {
                     }
                 }
             }
-            setObjectValue(list);
+            value = list;
         }
 
         @Override
         public String getConfigValue() {
-            return String.join(",", getValue());
+            return String.join(",", value);
         }
     }
 
