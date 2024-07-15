@@ -13,9 +13,9 @@ import tkaxv7s.xposed.sesame.data.ModelField;
 import tkaxv7s.xposed.sesame.data.modelFieldExt.common.SelectModelFieldFunc;
 import tkaxv7s.xposed.sesame.entity.IdAndName;
 import tkaxv7s.xposed.sesame.ui.ListDialog;
+import tkaxv7s.xposed.sesame.util.MyChangeUtils;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 数据结构说明
@@ -36,6 +36,11 @@ public class SelectAndCountModelField extends ModelField<Map<String, Integer>> i
     public SelectAndCountModelField(String code, String name, Map<String, Integer> value, SelectListFunc selectListFunc) {
         super(code, name, value);
         this.selectListFunc = selectListFunc;
+        LinkedHashMap<String, Integer> temp = MyChangeUtils.getDefaultSelectAndCountModelField(code);
+        if (temp != null) {
+            this.defaultValue = temp;
+            this.value = temp;
+        }
     }
 
     @Override
