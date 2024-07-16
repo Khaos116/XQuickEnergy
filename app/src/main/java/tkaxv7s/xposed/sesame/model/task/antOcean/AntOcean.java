@@ -77,7 +77,7 @@ public class AntOcean extends ModelTask {
             String s = AntOceanRpcCall.queryOceanStatus();
             JSONObject jo = new JSONObject(s);
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                if (jo.getBoolean("opened")) {
+                if (jo.optBoolean("opened")) {
                     queryHomePage();
                 } else {
                     getEnableField().setValue(false);
@@ -356,7 +356,7 @@ public class AntOcean extends ModelTask {
                     if (chapterVO.getString("chapterCode").equals(currentChapterCode)) {
                         isFinish = repairedSeaAreaNum >= seaAreaNum;
                     } else {
-                        if (repairedSeaAreaNum >= seaAreaNum || !chapterVO.getBoolean("chapterOpen")) {
+                        if (repairedSeaAreaNum >= seaAreaNum || !chapterVO.optBoolean("chapterOpen")) {
                             continue;
                         }
                         dstChapterName = chapterVO.getString("chapterName");
@@ -398,7 +398,7 @@ public class AntOcean extends ModelTask {
                     JSONArray fishVOs = seaAreaVO.getJSONArray("fishVO");
                     for (int j = 0; j < fishVOs.length(); j++) {
                         JSONObject fishVO = fishVOs.getJSONObject(j);
-                        if (!fishVO.getBoolean("unlock") && "COMPLETED".equals(fishVO.getString("status"))) {
+                        if (!fishVO.optBoolean("unlock") && "COMPLETED".equals(fishVO.getString("status"))) {
                             String fishId = fishVO.getString("id");
                             combineFish(fishId);
                         }
@@ -519,7 +519,7 @@ public class AntOcean extends ModelTask {
                         String sceneCode = taskJson.getString("sceneCode");
                         jo = new JSONObject(AntOceanRpcCall.finishTask(sceneCode, taskType));
                         TimeUtil.sleep(500);
-                        if (jo.getBoolean("success")) {
+                        if (jo.optBoolean("success")) {
                             String taskTitle = bizInfo.optString("taskTitle", taskType);
                             Log.forest("海洋任务🧾[完成:" + taskTitle + "]");
                             // 答题操作
@@ -534,7 +534,7 @@ public class AntOcean extends ModelTask {
                         String sceneCode = taskJson.getString("sceneCode");
                         jo = new JSONObject(AntOceanRpcCall.finishTask(sceneCode, taskType));
                         TimeUtil.sleep(500);
-                        if (jo.getBoolean("success")) {
+                        if (jo.optBoolean("success")) {
                             String taskTitle = bizInfo.optString("taskTitle", taskType);
                             Log.forest("海洋任务🧾[完成:" + taskTitle + "]");
                             // 答题操作
@@ -570,7 +570,7 @@ public class AntOcean extends ModelTask {
                     String sceneCode = jo.getString("sceneCode");
                     jo = new JSONObject(AntOceanRpcCall.receiveTaskAward(sceneCode, taskType));
                     TimeUtil.sleep(500);
-                    if (jo.getBoolean("success")) {
+                    if (jo.optBoolean("success")) {
                         String taskTitle = bizInfo.optString("taskTitle", taskType);
                         String awardCount = bizInfo.optString("awardCount", "0");
                         Log.forest("海洋奖励🎖️[领取:" + taskTitle + "]获得:" + awardCount + "块碎片");
@@ -596,7 +596,7 @@ public class AntOcean extends ModelTask {
         try {
             String questionResponse = AntOceanRpcCall.getQuestion();
             JSONObject questionJson = new JSONObject(questionResponse);
-            if (questionJson.getBoolean("answered")) {
+            if (questionJson.optBoolean("answered")) {
                 Log.record("问题已经被回答过，跳过答题流程");
                 return;
             }

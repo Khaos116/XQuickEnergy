@@ -83,7 +83,7 @@ public class AntMember extends ModelTask {
             }
             if (zcjSignIn.getValue() || merchantKmdk.getValue()) {
                 JSONObject jo = new JSONObject(AntMemberRpcCall.transcodeCheck());
-                if (!jo.getBoolean("success")) {
+                if (!jo.optBoolean("success")) {
                     return;
                 }
                 JSONObject data = jo.getJSONObject("data");
@@ -139,7 +139,7 @@ public class AntMember extends ModelTask {
             TimeUtil.sleep(500);
             JSONObject jo = new JSONObject(s);
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                boolean hasNextPage = jo.getBoolean("hasNextPage");
+                boolean hasNextPage = jo.optBoolean("hasNextPage");
                 JSONArray jaCertList = jo.getJSONArray("certList");
                 for (int i = 0; i < jaCertList.length(); i++) {
                     jo = jaCertList.getJSONObject(i);
@@ -172,11 +172,11 @@ public class AntMember extends ModelTask {
         try {
             String s = AntMemberRpcCall.queryActivity();
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 if ("SIGN_IN_ENABLE".equals(jo.getString("signInStatus"))) {
                     String activityNo = jo.getString("activityNo");
                     JSONObject joSignIn = new JSONObject(AntMemberRpcCall.signIn(activityNo));
-                    if (joSignIn.getBoolean("success")) {
+                    if (joSignIn.optBoolean("success")) {
                         Log.other("商家服务🕴🏻[开门打卡签到成功]");
                     } else {
                         Log.record(joSignIn.getString("errorMsg"));
@@ -196,7 +196,7 @@ public class AntMember extends ModelTask {
         try {
             for (int i = 0; i < 5; i++) {
                 JSONObject jo = new JSONObject(AntMemberRpcCall.queryActivity());
-                if (jo.getBoolean("success")) {
+                if (jo.optBoolean("success")) {
                     String activityNo = jo.getString("activityNo");
                     if (!Log.getFormatDate().replace("-", "").equals(activityNo.split("_")[2])) {
                         break;
@@ -208,7 +208,7 @@ public class AntMember extends ModelTask {
                     if ("UN_SIGN_UP".equals(jo.getString("signUpStatus"))) {
                         String activityPeriodName = jo.getString("activityPeriodName");
                         JSONObject joSignUp = new JSONObject(AntMemberRpcCall.signUp(activityNo));
-                        if (joSignUp.getBoolean("success")) {
+                        if (joSignUp.optBoolean("success")) {
                             Log.other("商家服务🕴🏻[" + activityPeriodName + "开门打卡报名]");
                             return;
                         } else {
@@ -232,11 +232,11 @@ public class AntMember extends ModelTask {
         try {
             String s = AntMemberRpcCall.zcjSignInQuery();
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONObject button = jo.getJSONObject("data").getJSONObject("button");
                 if ("UNRECEIVED".equals(button.getString("status"))) {
                     jo = new JSONObject(AntMemberRpcCall.zcjSignInExecute());
-                    if (jo.getBoolean("success")) {
+                    if (jo.optBoolean("success")) {
                         JSONObject data = jo.getJSONObject("data");
                         int todayReward = data.getInt("todayReward");
                         String widgetName = data.getString("widgetName");
@@ -258,7 +258,7 @@ public class AntMember extends ModelTask {
         try {
             boolean doubleCheck = false;
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 JSONArray taskList = jo.getJSONObject("data").getJSONArray("taskList");
                 for (int i = 0; i < taskList.length(); i++) {
                     JSONObject task = taskList.getJSONObject(i);
@@ -271,7 +271,7 @@ public class AntMember extends ModelTask {
                     if ("NEED_RECEIVE".equals(taskStatus)) {
                         if (task.has("pointBallId")) {
                             jo = new JSONObject(AntMemberRpcCall.ballReceive(task.getString("pointBallId")));
-                            if (jo.getBoolean("success")) {
+                            if (jo.optBoolean("success")) {
                                 Log.other("商家服务🕴🏻[" + title + "]#" + reward);
                             }
                         }
@@ -279,7 +279,7 @@ public class AntMember extends ModelTask {
                         if (task.has("extendLog")) {
                             JSONObject bizExtMap = task.getJSONObject("extendLog").getJSONObject("bizExtMap");
                             jo = new JSONObject(AntMemberRpcCall.taskFinish(bizExtMap.getString("bizId")));
-                            if (jo.getBoolean("success")) {
+                            if (jo.optBoolean("success")) {
                                 Log.other("商家服务🕴🏻[" + title + "]#" + reward);
                             }
                             doubleCheck = true;
@@ -343,11 +343,11 @@ public class AntMember extends ModelTask {
         try {
             String s = AntMemberRpcCall.taskReceive(taskCode);
             JSONObject jo = new JSONObject(s);
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 jo = new JSONObject(AntMemberRpcCall.actioncode(actionCode));
-                if (jo.getBoolean("success")) {
+                if (jo.optBoolean("success")) {
                     jo = new JSONObject(AntMemberRpcCall.produce(actionCode));
-                    if (jo.getBoolean("success")) {
+                    if (jo.optBoolean("success")) {
                         Log.other("完成任务🕴🏻[" + title + "]");
                     }
                 }
@@ -426,7 +426,7 @@ public class AntMember extends ModelTask {
             //模拟从生活记录->明细->任务->明细（两次，不知原因）
             String str = AntMemberRpcCall.promiseQueryHome();
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".doPromise.promiseQueryHome", jsonObject.optString("errorMsg"));
                 return;
             }
@@ -468,7 +468,7 @@ public class AntMember extends ModelTask {
                     "\"joinRule\":{\"joinRuleType\":\"DYNAMIC_DAY\",\"selectValue\":\"7\"},\"periodTargetRule\":{\"periodTargetRuleType\":\"CAL_COUNT\",\"selectValue\":\"3\"}," +
                     "\"templateId\":\"go_alipay_sports_route\"}");
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".doPromise.promiseJoin", jsonObject.optString("errorMsg"));
                 return;
             }
@@ -489,7 +489,7 @@ public class AntMember extends ModelTask {
         try {
             String str = AntMemberRpcCall.queryMultiSceneWaitToGainList();
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".securityFund.queryMultiSceneWaitToGainList", jsonObject.optString("errorMsg"));
                 return;
             }
@@ -533,7 +533,7 @@ public class AntMember extends ModelTask {
      */
     private boolean gainMyAndFamilySumInsured(JSONObject jsonObject, boolean isRepeat, String recordId) throws JSONException {
         JSONObject jo = new JSONObject(AntMemberRpcCall.gainMyAndFamilySumInsured(jsonObject));
-        if (!jo.getBoolean("success")) {
+        if (!jo.optBoolean("success")) {
             Log.i(TAG + ".gainMyAndFamilySumInsured", jo.optString("errorMsg"));
             return true;
         }
@@ -554,7 +554,7 @@ public class AntMember extends ModelTask {
      */
     private JSONObject promiseQueryDetail(String recordId) throws JSONException {
         JSONObject jo = new JSONObject(AntMemberRpcCall.promiseQueryDetail(recordId));
-        if (!jo.getBoolean("success")) {
+        if (!jo.optBoolean("success")) {
             Log.i(TAG + ".promiseQueryDetail", jo.optString("errorMsg"));
             return null;
         }
@@ -573,7 +573,7 @@ public class AntMember extends ModelTask {
             for (int j = 0; j < taskList.length(); j++) {
                 JSONObject task = taskList.getJSONObject(j);
                 int count = 1;
-                boolean hybrid = task.getBoolean("hybrid");
+                boolean hybrid = task.optBoolean("hybrid");
                 int periodCurrentCount = 0;
                 int periodTargetCount = 0;
                 if (hybrid) {
@@ -668,7 +668,7 @@ public class AntMember extends ModelTask {
         try {
             String str = AntMemberRpcCall.goldBillCollect(signInfo);
             JSONObject jsonObject = new JSONObject(str);
-            if (!jsonObject.getBoolean("success")) {
+            if (!jsonObject.optBoolean("success")) {
                 Log.i(TAG + ".goldBillCollect.goldBillCollect", jsonObject.optString("resultDesc"));
                 return;
             }
@@ -693,7 +693,7 @@ public class AntMember extends ModelTask {
             try {
                 String str = AntMemberRpcCall.querySignInBall();
                 JSONObject jsonObject = new JSONObject(str);
-                if (!jsonObject.getBoolean("success")) {
+                if (!jsonObject.optBoolean("success")) {
                     Log.i(TAG + ".signIn.querySignInBall", jsonObject.optString("resultDesc"));
                     return;
                 }
@@ -704,7 +704,7 @@ public class AntMember extends ModelTask {
                 str = AntMemberRpcCall.continueSignIn();
                 TimeUtil.sleep(300);
                 jsonObject = new JSONObject(str);
-                if (!jsonObject.getBoolean("success")) {
+                if (!jsonObject.optBoolean("success")) {
                     Log.i(TAG + ".signIn.continueSignIn", jsonObject.optString("resultDesc"));
                     return;
                 }
@@ -716,7 +716,7 @@ public class AntMember extends ModelTask {
             try {
                 String str = AntMemberRpcCall.queryPointBallList();
                 JSONObject jsonObject = new JSONObject(str);
-                if (!jsonObject.getBoolean("success")) {
+                if (!jsonObject.optBoolean("success")) {
                     Log.i(TAG + ".batchReceive.queryPointBallList", jsonObject.optString("resultDesc"));
                     return;
                 }
@@ -727,7 +727,7 @@ public class AntMember extends ModelTask {
                 str = AntMemberRpcCall.batchReceivePointBall();
                 TimeUtil.sleep(300);
                 jsonObject = new JSONObject(str);
-                if (jsonObject.getBoolean("success")) {
+                if (jsonObject.optBoolean("success")) {
                     Log.other("游戏中心🎮全部领取成功[" + JsonUtil.getValueByPath(jsonObject, "data.totalAmount") + "]乐豆");
                 } else {
                     Log.i(TAG + ".batchReceive.batchReceivePointBall", jsonObject.optString("resultDesc"));
@@ -745,7 +745,7 @@ public class AntMember extends ModelTask {
         try {
             String s = AntMemberRpcCall.queryHome();
             JSONObject jo = new JSONObject(s);
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(TAG + ".run.queryHome", jo.optString("errorMsg"));
                 return;
             }
@@ -756,7 +756,7 @@ public class AntMember extends ModelTask {
             }
             JSONObject jo2 = new JSONObject(AntMemberRpcCall.queryCreditFeedback());
             TimeUtil.sleep(300);
-            if (!jo2.getBoolean("success")) {
+            if (!jo2.optBoolean("success")) {
                 Log.i(TAG + ".collectSesame.queryCreditFeedback", jo2.optString("resultView"));
                 return;
             }
@@ -771,7 +771,7 @@ public class AntMember extends ModelTask {
                 String potentialSize = jo2.getString("potentialSize");
                 jo2 = new JSONObject(AntMemberRpcCall.collectCreditFeedback(creditFeedbackId));
                 TimeUtil.sleep(300);
-                if (!jo2.getBoolean("success")) {
+                if (!jo2.optBoolean("success")) {
                     Log.i(TAG + ".collectSesame.collectCreditFeedback", jo2.optString("resultView"));
                     continue;
                 }
