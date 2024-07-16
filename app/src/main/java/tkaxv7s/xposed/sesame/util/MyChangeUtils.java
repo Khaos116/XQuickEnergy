@@ -257,6 +257,11 @@ public class MyChangeUtils {
       case "answerQuestion"://开启答题
       case "recordFarmGame"://游戏改分
         //海洋 AntOcean
+      case "dailyOceanTask"://完成海洋任务
+      case "receiveOceanTaskAward"://领取碎片奖励
+      case "cleanOcean"://清理 | 开启
+      case "exchangeProp"://神奇海洋 | 制作万能拼图
+      case "usePropByType"://神奇海洋 | 使用万能拼图
       case "protectOcean"://保护 | 开启
         //会员 AntMember
       case "memberSign"://会员签到
