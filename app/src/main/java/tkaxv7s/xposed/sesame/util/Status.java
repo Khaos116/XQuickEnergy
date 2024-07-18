@@ -16,67 +16,98 @@ public class Status {
     public static final Status INSTANCE = new Status();
 
     // forest
-    private ArrayList<WaterFriendLog> waterFriendLogList = new ArrayList<>();
-    private ArrayList<String> cooperateWaterList = new ArrayList<>();
-    private ArrayList<String> syncStepList = new ArrayList<>();
-    private ArrayList<ReserveLog> reserveLogList = new ArrayList<>();
-    private ArrayList<BeachLog> beachLogList = new ArrayList<>();
-    private ArrayList<String> beachTodayList = new ArrayList<>();
-    private ArrayList<String> ancientTreeCityCodeList = new ArrayList<>();
-    private ArrayList<String> exchangeList = new ArrayList<>();
-    private ArrayList<String> protectBubbleList = new ArrayList<>();
+    private Map<String, Integer> waterFriendLogList = new HashMap<>();
+    private Set<String> cooperateWaterList = new HashSet<>();
+    private Map<String, Integer> reserveLogList = new HashMap<>();
+    private Set<String> ancientTreeCityCodeList = new HashSet<>();
+    private Set<String> protectBubbleList = new HashSet<>();
     private int exchangeDoubleCard = 0;
     private int exchangeTimes = 0;
     private int exchangeTimesLongTime = 0;
     private int doubleTimes = 0;
     private boolean exchangeEnergyShield = false;
-    /**
-     * 新村-罚单已贴完的用户
-     */
-    private ArrayList<String> canPasteTicketTime = new ArrayList<>();
+    private boolean exchangeCollectHistoryAnimal7Days = false;
+    private boolean exchangeCollectToFriendTimes7Days = false;
 
     // farm
-    private ArrayList<String> answerQuestionList = new ArrayList<>();
-    private ArrayList<FeedFriendLog> feedFriendLogList = new ArrayList<>();
-    private ArrayList<VisitFriendLog> visitFriendLogList = new ArrayList<>();
-    private ArrayList<StallShareIdLog> stallShareIdLogList = new ArrayList<>();
-    private ArrayList<StallHelpedCountLog> stallHelpedCountLogList = new ArrayList<>();
+    private Boolean answerQuestion = false;
+    private Map<String, Integer> feedFriendLogList = new HashMap<>();
+    private Map<String, Integer> visitFriendLogList = new HashMap<>();
     private Set<String> dailyAnswerList = new HashSet<>();
-    private ArrayList<String> donationEggList = new ArrayList<>();
-    private ArrayList<String> spreadManureList = new ArrayList<>();
-    private ArrayList<String> stallP2PHelpedList = new ArrayList<>();
+    private Set<String> donationEggList = new HashSet<>();
+    private int useAccelerateToolCount = 0;
     private Boolean canOrnament = true;
     private Boolean animalSleep = false;
+
+    // stall
+    private Map<String, Integer> stallHelpedCountLogList = new HashMap<>();
+    private Set<String> spreadManureList = new HashSet<>();
+    private Set<String> stallP2PHelpedList = new HashSet<>();
     private Boolean canStallDonate = true;
-    /**
-     * 新村助力好友，已上限的用户
-     */
-    private List<String> antStallAssistFriend = new ArrayList<>();
+
+    // sport
+    private Set<String> syncStepList = new HashSet<>();
+    private Set<String> exchangeList = new HashSet<>();
+    private boolean donateCharityCoin = false;
 
     // other
-    private ArrayList<String> memberSignInList = new ArrayList<>();
+    private Set<String> memberSignInList = new HashSet<>();
     private int kbSignIn = 0;
-    /**
-     * 绿色经营，收取好友金币已完成用户
-     */
-    private List<String> greenFinancePointFriend = new ArrayList<>();
-
-    /**
-     * 绿色经营，评级领奖已完成用户
-     */
-    private Map<String, Integer> greenFinancePrizesMap = new HashMap<String, Integer>();
 
     // 保存时间
     private Long saveTime = 0L;
 
+    /**
+     * 新村助力好友，已上限的用户
+     */
+    private Set<String> antStallAssistFriend = new HashSet<>();
+    /**
+     * 新村-罚单已贴完的用户
+     */
+    private Set<String> canPasteTicketTime = new HashSet<>();
+
+    /**
+     * 绿色经营，收取好友金币已完成用户
+     */
+    private Set<String> greenFinancePointFriend = new HashSet<>();
+
+    /**
+     * 绿色经营，评级领奖已完成用户
+     */
+    private Map<String, Integer> greenFinancePrizesMap = new HashMap<>();
+
     public static boolean canExchangeEnergyShield() {
         return !INSTANCE.exchangeEnergyShield;
     }
-    
+
     public static void exchangeEnergyShield() {
         Status stat = INSTANCE;
         if (!stat.exchangeEnergyShield) {
             stat.exchangeEnergyShield = true;
+            save();
+        }
+    }
+
+    public static boolean canExchangeCollectHistoryAnimal7Days() {
+        return !INSTANCE.exchangeCollectHistoryAnimal7Days;
+    }
+
+    public static void exchangeCollectHistoryAnimal7Days() {
+        Status stat = INSTANCE;
+        if (!stat.exchangeCollectHistoryAnimal7Days) {
+            stat.exchangeCollectHistoryAnimal7Days = true;
+            save();
+        }
+    }
+
+    public static boolean canExchangeCollectToFriendTimes7Days() {
+        return !INSTANCE.exchangeCollectToFriendTimes7Days;
+    }
+
+    public static void exchangeCollectToFriendTimes7Days() {
+        Status stat = INSTANCE;
+        if (!stat.exchangeCollectToFriendTimes7Days) {
+            stat.exchangeCollectToFriendTimes7Days = true;
             save();
         }
     }
@@ -93,75 +124,39 @@ public class Status {
         }
     }
 
-    public static boolean canWaterFriendToday(String id, int count) {
+    public static boolean canWaterFriendToday(String id, int newCount) {
         id = UserIdMap.getCurrentUid() + "-" + id;
-        Status stat = INSTANCE;
-        int index = -1;
-        for (int i = 0; i < stat.waterFriendLogList.size(); i++)
-            if (stat.waterFriendLogList.get(i).userId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0)
+        Integer count = INSTANCE.waterFriendLogList.get(id);
+        if (count == null) {
             return true;
-        WaterFriendLog wfl = stat.waterFriendLogList.get(index);
-        return wfl.waterCount < count;
+        }
+        return count < newCount;
     }
 
     public static void waterFriendToday(String id, int count) {
         id = UserIdMap.getCurrentUid() + "-" + id;
-        Status stat = INSTANCE;
-        WaterFriendLog wfl;
-        int index = -1;
-        for (int i = 0; i < stat.waterFriendLogList.size(); i++)
-            if (stat.waterFriendLogList.get(i).userId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0) {
-            wfl = new WaterFriendLog(id);
-            stat.waterFriendLogList.add(wfl);
-        } else {
-            wfl = stat.waterFriendLogList.get(index);
-        }
-        wfl.waterCount = count;
+        INSTANCE.waterFriendLogList.put(id, count);
         save();
     }
 
     public static int getReserveTimes(String id) {
-        Status stat = INSTANCE;
-        int index = -1;
-        for (int i = 0; i < stat.reserveLogList.size(); i++)
-            if (stat.reserveLogList.get(i).projectId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0)
+        Integer count = INSTANCE.reserveLogList.get(id);
+        if (count == null) {
             return 0;
-        ReserveLog rl = stat.reserveLogList.get(index);
-        return rl.applyCount;
+        }
+        return count;
     }
 
     public static boolean canReserveToday(String id, int count) {
         return getReserveTimes(id) < count;
     }
 
-    public static void reserveToday(String id, int count) {
-        Status stat = INSTANCE;
-        ReserveLog rl;
-        int index = -1;
-        for (int i = 0; i < stat.reserveLogList.size(); i++)
-            if (stat.reserveLogList.get(i).projectId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0) {
-            rl = new ReserveLog(id);
-            stat.reserveLogList.add(rl);
-        } else {
-            rl = stat.reserveLogList.get(index);
+    public static void reserveToday(String id, int newCount) {
+        Integer count = INSTANCE.reserveLogList.get(id);
+        if (count == null) {
+            count = 0;
         }
-        rl.applyCount += count;
+        INSTANCE.reserveLogList.put(id, count + newCount);
         save();
     }
 
@@ -190,201 +185,69 @@ public class Status {
         }
     }
 
-    public static boolean canAnswerQuestionToday(String uid) {
-        return !INSTANCE.answerQuestionList.contains(uid);
+    public static boolean canAnswerQuestionToday() {
+        return !INSTANCE.answerQuestion;
     }
 
-    public static void answerQuestionToday(String uid) {
+    public static void answerQuestionToday() {
         Status stat = INSTANCE;
-        if (!stat.answerQuestionList.contains(uid)) {
-            stat.answerQuestionList.add(uid);
+        if (!stat.answerQuestion) {
+            stat.answerQuestion = true;
             save();
         }
     }
 
-    public static boolean canFeedFriendToday(String id, int count) {
-        Status stat = INSTANCE;
-        int index = -1;
-        for (int i = 0; i < stat.feedFriendLogList.size(); i++)
-            if (stat.feedFriendLogList.get(i).userId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0)
+    public static boolean canFeedFriendToday(String id, int newCount) {
+        Integer count = INSTANCE.feedFriendLogList.get(id);
+        if (count == null) {
             return true;
-        FeedFriendLog ffl = stat.feedFriendLogList.get(index);
-        return ffl.feedCount < count;
+        }
+        return count < newCount;
     }
 
     public static void feedFriendToday(String id) {
-        Status stat = INSTANCE;
-        FeedFriendLog ffl;
-        int index = -1;
-        for (int i = 0; i < stat.feedFriendLogList.size(); i++)
-            if (stat.feedFriendLogList.get(i).userId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0) {
-            ffl = new FeedFriendLog(id);
-            stat.feedFriendLogList.add(ffl);
-        } else {
-            ffl = stat.feedFriendLogList.get(index);
+        Integer count = INSTANCE.feedFriendLogList.get(id);
+        if (count == null) {
+            count = 0;
         }
-        ffl.feedCount++;
+        INSTANCE.feedFriendLogList.put(id, count + 1);
         save();
     }
 
-    public static boolean canVisitFriendToday(String id, int count) {
+    public static boolean canVisitFriendToday(String id, int newCount) {
         id = UserIdMap.getCurrentUid() + "-" + id;
-        Status stat = INSTANCE;
-        int index = -1;
-        for (int i = 0; i < stat.visitFriendLogList.size(); i++)
-            if (stat.visitFriendLogList.get(i).userId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0)
+        Integer count = INSTANCE.visitFriendLogList.get(id);
+        if (count == null) {
             return true;
-        VisitFriendLog vfl = stat.visitFriendLogList.get(index);
-        return vfl.visitCount < count;
+        }
+        return count < newCount;
     }
 
-    public static void visitFriendToday(String id, int count) {
+    public static void visitFriendToday(String id, int newCount) {
         id = UserIdMap.getCurrentUid() + "-" + id;
-        Status stat = INSTANCE;
-        VisitFriendLog vfl;
-        int index = -1;
-        for (int i = 0; i < stat.visitFriendLogList.size(); i++)
-            if (stat.visitFriendLogList.get(i).userId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0) {
-            vfl = new VisitFriendLog(id);
-            stat.visitFriendLogList.add(vfl);
-        } else {
-            vfl = stat.visitFriendLogList.get(index);
-        }
-        vfl.visitCount = count;
+        INSTANCE.visitFriendLogList.put(id, newCount);
         save();
-    }
-
-    public static List<String> stallP2PUserIdList(String uid) {
-        List<String> p2pUserIdList = new ArrayList<>();
-        Status stat = INSTANCE;
-        for (int i = 0; i < stat.stallShareIdLogList.size(); i++)
-            if (!stat.stallShareIdLogList.get(i).userId.equals(uid)) {
-                p2pUserIdList.add(stat.stallShareIdLogList.get(i).userId);
-            }
-        return p2pUserIdList;
-    }
-
-    public static void stallShareIdToday(String uid, String sid) {
-        Status stat = INSTANCE;
-        StallShareIdLog ssil;
-        int index = -1;
-        for (int i = 0; i < stat.stallShareIdLogList.size(); i++)
-            if (stat.stallShareIdLogList.get(i).userId.equals(uid)) {
-                index = i;
-                break;
-            }
-        if (index < 0) {
-            ssil = new StallShareIdLog(uid, sid);
-            stat.stallShareIdLogList.add(ssil);
-        } else {
-            ssil = stat.stallShareIdLogList.get(index);
-        }
-        ssil.shareId = sid;
-        save();
-    }
-
-    public static String getStallShareId(String uid) {
-        Status stat = INSTANCE;
-        int index = -1;
-        for (int i = 0; i < stat.stallShareIdLogList.size(); i++)
-            if (stat.stallShareIdLogList.get(i).userId.equals(uid)) {
-                index = i;
-                break;
-            }
-        if (index < 0) {
-            return null;
-        } else {
-            return stat.stallShareIdLogList.get(index).shareId;
-        }
     }
 
     public static boolean canStallHelpToday(String id) {
-        Status stat = INSTANCE;
-        int index = -1;
-        for (int i = 0; i < stat.stallHelpedCountLogList.size(); i++)
-            if (stat.stallHelpedCountLogList.get(i).userId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0)
+        Integer count = INSTANCE.stallHelpedCountLogList.get(id);
+        if (count == null) {
             return true;
-        StallHelpedCountLog shcl = stat.stallHelpedCountLogList.get(index);
-        return shcl.helpedCount < 3;
+        }
+        return count < 3;
     }
 
     public static void stallHelpToday(String id, boolean limited) {
-        Status stat = INSTANCE;
-        StallHelpedCountLog shcl;
-        int index = -1;
-        for (int i = 0; i < stat.stallHelpedCountLogList.size(); i++)
-            if (stat.stallHelpedCountLogList.get(i).userId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0) {
-            shcl = new StallHelpedCountLog(id);
-            stat.stallHelpedCountLogList.add(shcl);
-        } else {
-            shcl = stat.stallHelpedCountLogList.get(index);
+        Integer count = INSTANCE.stallHelpedCountLogList.get(id);
+        if (count == null) {
+            count = 0;
         }
         if (limited) {
-            shcl.helpedCount = 3;
+            count = 3;
         } else {
-            shcl.helpedCount += 1;
+            count += 1;
         }
-        save();
-    }
-
-    public static boolean canStallBeHelpToday(String id) {
-        Status stat = INSTANCE;
-        int index = -1;
-        for (int i = 0; i < stat.stallHelpedCountLogList.size(); i++)
-            if (stat.stallHelpedCountLogList.get(i).userId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0)
-            return true;
-        StallHelpedCountLog shcl = stat.stallHelpedCountLogList.get(index);
-        return shcl.beHelpedCount < 3;
-    }
-
-    public static void stallBeHelpToday(String id, boolean limited) {
-        Status stat = INSTANCE;
-        StallHelpedCountLog shcl;
-        int index = -1;
-        for (int i = 0; i < stat.stallHelpedCountLogList.size(); i++)
-            if (stat.stallHelpedCountLogList.get(i).userId.equals(id)) {
-                index = i;
-                break;
-            }
-        if (index < 0) {
-            shcl = new StallHelpedCountLog(id);
-            stat.stallHelpedCountLogList.add(shcl);
-        } else {
-            shcl = stat.stallHelpedCountLogList.get(index);
-        }
-        if (limited) {
-            shcl.beHelpedCount = 3;
-        } else {
-            shcl.beHelpedCount += 1;
-        }
+        INSTANCE.stallHelpedCountLogList.put(id, count);
         save();
     }
 
@@ -398,6 +261,15 @@ public class Status {
             stat.memberSignInList.add(uid);
             save();
         }
+    }
+
+    public static boolean canUseAccelerateTool() {
+        return INSTANCE.useAccelerateToolCount < 8;
+    }
+
+    public static void useAccelerateTool() {
+        INSTANCE.useAccelerateToolCount += 1;
+        save();
     }
 
     public static boolean canDonationEgg(String uid) {
@@ -455,18 +327,6 @@ public class Status {
         String uid = UserIdMap.getCurrentUid();
         if (!stat.antStallAssistFriend.contains(uid)) {
             stat.antStallAssistFriend.add(uid);
-            save();
-        }
-    }
-
-    public static boolean canExchangeToday(String uid) {
-        return !INSTANCE.exchangeList.contains(uid);
-    }
-
-    public static void exchangeToday(String uid) {
-        Status stat = INSTANCE;
-        if (!stat.exchangeList.contains(uid)) {
-            stat.exchangeList.add(uid);
             save();
         }
     }
@@ -593,6 +453,18 @@ public class Status {
         save();
     }
 
+    public static boolean canDonateCharityCoin() {
+        return !INSTANCE.donateCharityCoin;
+    }
+
+    public static void donateCharityCoin() {
+        Status stat = INSTANCE;
+        if (!stat.donateCharityCoin) {
+            stat.donateCharityCoin = true;
+            save();
+        }
+    }
+
     public static boolean canSyncStepToday(String uid) {
         Status stat = INSTANCE;
         return !stat.syncStepList.contains(uid);
@@ -602,6 +474,18 @@ public class Status {
         Status stat = INSTANCE;
         if (!stat.syncStepList.contains(uid)) {
             stat.syncStepList.add(uid);
+            save();
+        }
+    }
+
+    public static boolean canExchangeToday(String uid) {
+        return !INSTANCE.exchangeList.contains(uid);
+    }
+
+    public static void exchangeToday(String uid) {
+        Status stat = INSTANCE;
+        if (!stat.exchangeList.contains(uid)) {
+            stat.exchangeList.add(uid);
             save();
         }
     }

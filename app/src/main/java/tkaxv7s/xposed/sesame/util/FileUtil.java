@@ -1,7 +1,6 @@
 package tkaxv7s.xposed.sesame.util;
 
 import android.os.Environment;
-import org.json.JSONObject;
 import tkaxv7s.xposed.sesame.hook.Toast;
 
 import java.io.*;
@@ -370,7 +369,7 @@ public class FileUtil {
         for (File file : files) {
             String name = file.getName();
             if (name.endsWith(today + ".log")) {
-                if (file.length() < 209_715_200) {
+                if (file.length() < 104_857_600) {
                     continue;
                 }
             }
@@ -379,28 +378,6 @@ public class FileUtil {
             } catch (Exception e) {
                 Log.printStackTrace(e);
             }
-        }
-    }
-
-    public static File getCertCountFile(String userId) {
-        File file = new File(CONFIG_DIRECTORY_FILE + "/" + userId, "certCount.json");
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                file.delete();
-            }
-        } else {
-            write2File(JsonUtil.toFormatJsonString(new JSONObject()), file);
-        }
-        return file;
-    }
-
-    public static void setCertCount(String userId, String dateString, int certCount) {
-        try {
-            File certCountFile = getCertCountFile(userId);
-            JSONObject jo_certCount = new JSONObject(readFromFile(certCountFile));
-            jo_certCount.put(dateString, Integer.toString(certCount));
-            write2File(JsonUtil.toFormatJsonString(jo_certCount), certCountFile);
-        } catch (Throwable ignored) {
         }
     }
 
