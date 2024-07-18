@@ -29,7 +29,8 @@ public class MyChangeUtils {
         || modelName.contains("农场")
         || modelName.contains("运动")
         || modelName.contains("会员")
-        || modelName.contains("答题");
+        || modelName.contains("答题")
+        || modelName.contains("海洋");
   }
 
   //修改默认配置用户
@@ -173,7 +174,6 @@ public class MyChangeUtils {
       case "exchangeEnergyDoubleClick"://活力值 | 兑换限时双击卡
       case "exchangeEnergyDoubleClickLongTime"://活力值 | 兑换永久双击卡
       case "whackMole"://6秒拼手速
-      case "totalCertCount"://记录证书总数
         //合种 AntCooperate
       case "cooperateWater"://合种浇水
         //庄园 AntFarm
