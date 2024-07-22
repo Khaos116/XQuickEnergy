@@ -35,7 +35,7 @@ public class AntForestV2 extends ModelTask {
 
     private static final String TAG = AntForestV2.class.getSimpleName();
 
-    private static final AverageMath offsetTimeMath = new AverageMath(10);
+    private static final AverageMath offsetTimeMath = new AverageMath(5);
 
     private static final Set<String> AntForestTaskTypeSet;
 
@@ -64,6 +64,8 @@ public class AntForestV2 extends ModelTask {
 
     private Integer advanceTimeInt;
 
+    private Integer checkIntervalInt;
+
     private FixedOrRangeIntervalLimit collectIntervalEntity;
 
     private FixedOrRangeIntervalLimit doubleCollectIntervalEntity;
@@ -71,7 +73,7 @@ public class AntForestV2 extends ModelTask {
     private volatile long doubleEndTime = 0;
     private volatile long stealthEndTime = 0;
 
-    private final AverageMath delayTimeMath = new AverageMath(10);
+    private final AverageMath delayTimeMath = new AverageMath(5);
 
     private final ObjReference<Long> collectEnergyLockLimit = new ObjReference<>(0L);
 
@@ -86,7 +88,7 @@ public class AntForestV2 extends ModelTask {
     private BooleanModelField collectWateringBubble;
     private BooleanModelField batchRobEnergy;
     private BooleanModelField balanceNetworkDelay;
-    private BooleanModelField whackMole;
+    private BooleanModelField closeWhackMole;
     private BooleanModelField collectProp;
     private StringModelField queryInterval;
     private StringModelField collectInterval;
@@ -179,7 +181,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(exchangeEnergyShield = new BooleanModelField("exchangeEnergyShield", "活力值 | 兑换能量保护罩", false));
         modelFields.addField(exchangeCollectHistoryAnimal7Days = new BooleanModelField("exchangeCollectHistoryAnimal7Days", "活力值 | 兑换物种历史卡", false));
         modelFields.addField(exchangeCollectToFriendTimes7Days = new BooleanModelField("exchangeCollectToFriendTimes7Days", "活力值 | 兑换物种好友卡", false));
-        modelFields.addField(whackMole = new BooleanModelField("whackMole", "6秒拼手速", true));
+        modelFields.addField(closeWhackMole = new BooleanModelField("closeWhackMole", "自动关闭6秒拼手速", true));
         modelFields.addField(collectProp = new BooleanModelField("collectProp", "收集道具", false));
         modelFields.addField(collectWateringBubble = new BooleanModelField("collectWateringBubble", "收金球", false));
         modelFields.addField(energyRain = new BooleanModelField("energyRain", "能量雨", false));
@@ -229,6 +231,7 @@ public class AntForestV2 extends ModelTask {
         tryCountInt = tryCount.getValue();
         retryIntervalInt = retryInterval.getValue();
         advanceTimeInt = advanceTime.getValue();
+        checkIntervalInt = BaseModel.getCheckInterval().getValue();
         dontCollectMap = dontCollectList.getValue();
         collectIntervalEntity = new FixedOrRangeIntervalLimit(collectInterval.getValue(), 50, 10000);
         doubleCollectIntervalEntity = new FixedOrRangeIntervalLimit(doubleCollectInterval.getValue(), 10, 5000);
@@ -274,11 +277,9 @@ public class AntForestV2 extends ModelTask {
             }
 
             if (!TaskCommon.IS_ENERGY_TIME && selfHomeObject != null) {
-                if (whackMole.getValue()) {
-                    String whackMoleStatus = selfHomeObject.optString("whackMoleStatus");
-                    if ("CAN_PLAY".equals(whackMoleStatus) || "CAN_INITIATIVE_PLAY".equals(whackMoleStatus) || "NEED_MORE_FRIENDS".equals(whackMoleStatus)) {
-                        whackMole();
-                    }
+                String whackMoleStatus = selfHomeObject.optString("whackMoleStatus");
+                if ("CAN_PLAY".equals(whackMoleStatus) || "CAN_INITIATIVE_PLAY".equals(whackMoleStatus) || "NEED_MORE_FRIENDS".equals(whackMoleStatus)) {
+                    whackMole();
                 }
                 boolean hasMore = false;
                 do {
@@ -554,10 +555,10 @@ public class AntForestV2 extends ModelTask {
         JSONObject userHomeObject = null;
         try {
             long start = System.currentTimeMillis();
-            userHomeObject = new JSONObject(AntForestRpcCall.queryHomePage(!whackMole.getValue()));
+            userHomeObject = new JSONObject(AntForestRpcCall.queryHomePage());
             long end = System.currentTimeMillis();
             long serverTime = userHomeObject.getLong("now");
-            int offsetTime = offsetTimeMath.nextInteger((int) ((start + end) / 2 - serverTime));
+            int offsetTime = offsetTimeMath.nextInteger((int) (start + (end - start) * 2 / 3 - serverTime));
             Log.i("服务器时间：" + serverTime + "，本地与服务器时间差：" + offsetTime);
         } catch (Throwable t) {
             Log.printStackTrace(t);
@@ -572,7 +573,7 @@ public class AntForestV2 extends ModelTask {
             userHomeObject = new JSONObject(AntForestRpcCall.queryFriendHomePage(userId));
             long end = System.currentTimeMillis();
             long serverTime = userHomeObject.getLong("now");
-            int offsetTime = offsetTimeMath.nextInteger((int) ((start + end) / 2 - serverTime));
+            int offsetTime = offsetTimeMath.nextInteger((int) (start + (end - start) * 2 / 3 - serverTime));
             Log.i("服务器时间：" + serverTime + "，本地与服务器时间差：" + offsetTime);
         } catch (Throwable t) {
             Log.printStackTrace(t);
@@ -582,9 +583,26 @@ public class AntForestV2 extends ModelTask {
 
     private JSONObject collectSelfEnergy() {
         try {
-            JSONObject userHomeObject = querySelfHome();
-            if (userHomeObject != null) {
-                return collectUserEnergy(UserIdMap.getCurrentUid(), userHomeObject);
+            JSONObject selfHomeObject = querySelfHome();
+            if (selfHomeObject != null) {
+                if (closeWhackMole.getValue()) {
+                    JSONObject propertiesObject = selfHomeObject.optJSONObject("properties");
+                    if (propertiesObject != null) {
+                        if (Objects.equals("Y", propertiesObject.optString("whackMole"))) {
+                            if (closeWhackMole()) {
+                                Log.record("6秒拼手速关闭成功");
+                            } else {
+                                Log.record("6秒拼手速关闭失败");
+                            }
+                        }
+                    }
+                }
+                String nextAction = selfHomeObject.optString("nextAction");
+                if ("WhackMole".equalsIgnoreCase(nextAction)) {
+                    Log.record("检测到6秒拼手速强制弹窗，先执行拼手速");
+                    whackMole();
+                }
+                return collectUserEnergy(UserIdMap.getCurrentUid(), selfHomeObject);
             }
         } catch (Throwable t) {
             Log.printStackTrace(t);
@@ -649,7 +667,7 @@ public class AntForestV2 extends ModelTask {
                             break;
                         case WAITING:
                             long produceTime = bubble.getLong("produceTime");
-                            if (BaseModel.getCheckInterval().getValue() > produceTime - serverTime) {
+                            if (checkIntervalInt + checkIntervalInt / 2 > produceTime - serverTime) {
                                 if (hasChildTask(AntForestV2.getBubbleTimerTid(userId, bubbleId))) {
                                     break;
                                 }
@@ -719,7 +737,7 @@ public class AntForestV2 extends ModelTask {
                         boolean collectEnergy = true;
                         if (!friendObject.optBoolean("canCollectEnergy")) {
                             long canCollectLaterTime = friendObject.getLong("canCollectLaterTime");
-                            if (canCollectLaterTime <= 0 || (canCollectLaterTime - System.currentTimeMillis() > BaseModel.getCheckInterval().getValue())) {
+                            if (canCollectLaterTime <= 0 || (canCollectLaterTime - System.currentTimeMillis() > checkIntervalInt)) {
                                 collectEnergy = false;
                             }
                         }
@@ -923,12 +941,14 @@ public class AntForestV2 extends ModelTask {
                     }
                     if (collected > 0) {
                         FriendWatch.friendWatch(userId, collected);
-                        String str = "一键收取🪂[" + UserIdMap.getMaskName(userId) + "]#" + collected + "g耗时[" + spendTime + "]ms";
+                        String str = "一键收取🪂[" + UserIdMap.getMaskName(userId) + "]#" + collected + "g";
                         if (needDouble) {
-                            str +="[双击]";
+                            Log.forest(str + "耗时[" + spendTime + "]ms[双击]");
+                            Toast.show(str + "[双击]");
+                        } else {
+                            Log.forest(str + "耗时[" + spendTime + "]ms");
+                            Toast.show(str);
                         }
-                        Log.forest(str);
-                        Toast.show(str);
                         totalCollected += collected;
                         Statistics.addData(Statistics.DataType.COLLECTED, collected);
                     } else {
@@ -946,12 +966,14 @@ public class AntForestV2 extends ModelTask {
                     collected += bubble.getInt("collectedEnergy");
                     FriendWatch.friendWatch(userId, collected);
                     if (collected > 0) {
-                        String str = "收取能量🪂[" + UserIdMap.getMaskName(userId) + "]#" + collected + "g耗时[" + spendTime + "]ms";
+                        String str = "收取能量🪂[" + UserIdMap.getMaskName(userId) + "]#" + collected + "g";
                         if (needDouble) {
-                            str +="[双击]";
+                            Log.forest(str + "耗时[" + spendTime + "]ms[双击]");
+                            Toast.show(str + "[双击]");
+                        } else {
+                            Log.forest(str + "耗时[" + spendTime + "]ms");
+                            Toast.show(str);
                         }
-                        Log.forest(str);
-                        Toast.show(str);
                         totalCollected += collected;
                         Statistics.addData(Statistics.DataType.COLLECTED, collected);
                     } else {
@@ -993,16 +1015,16 @@ public class AntForestV2 extends ModelTask {
                 notifyMain();
             }
         };
+        taskCount.incrementAndGet();
         if (joinThread) {
             runnable.run();
         } else {
             addChildTask(new ChildModelTask("CE|" + collectEnergyEntity.getUserId() + "|" + runnable.hashCode(), "CE", runnable));
-            taskCount.incrementAndGet();
         }
     }
 
     private void updateDoubleTime() throws JSONException {
-        String s = AntForestRpcCall.queryHomePage(!whackMole.getValue());
+        String s = AntForestRpcCall.queryHomePage();
         TimeUtil.sleep(100);
         JSONObject joHomePage = new JSONObject(s);
         updateDoubleTime(joHomePage);
@@ -1155,6 +1177,20 @@ public class AntForestV2 extends ModelTask {
             Log.i(TAG, "whackMole err:");
             Log.printStackTrace(TAG, t);
         }
+    }
+
+    private Boolean closeWhackMole() {
+        try {
+            JSONObject jo = new JSONObject(AntForestRpcCall.closeWhackMole());
+            if (jo.optBoolean("success")) {
+                return true;
+            } else {
+                Log.i(TAG, jo.getString("resultDesc"));
+            }
+        } catch (Throwable t) {
+            Log.printStackTrace(t);
+        }
+        return false;
     }
 
     /* 森林集市 */
@@ -2388,7 +2424,7 @@ public class AntForestV2 extends ModelTask {
             return () -> {
                 String userName = UserIdMap.getMaskName(userId);
                 int averageInteger = offsetTimeMath.getAverageInteger();
-                long readyTime = produceTime + averageInteger - advanceTimeInt - delayTimeMath.getAverageInteger() - System.currentTimeMillis() + 50;
+                long readyTime = produceTime + averageInteger - advanceTimeInt - delayTimeMath.getAverageInteger() - System.currentTimeMillis() + 80;
                 if (readyTime > 0) {
                     try {
                         Thread.sleep(readyTime);
@@ -2397,7 +2433,7 @@ public class AntForestV2 extends ModelTask {
                         return;
                     }
                 }
-                Log.record("执行蹲点收取[" + userName + "]" + "时差[" + averageInteger + "]ms");
+                Log.record("执行蹲点收取[" + userName + "]" + "时差[" + averageInteger + "]ms" + "提前[" + advanceTimeInt + "]ms");
                 collectEnergy(new CollectEnergyEntity(userId, null, AntForestRpcCall.getCollectEnergyRpcEntity(null, userId, bubbleId)), true);
             };
         }

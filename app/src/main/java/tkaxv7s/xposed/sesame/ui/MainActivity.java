@@ -11,11 +11,13 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import tkaxv7s.xposed.sesame.R;
 import tkaxv7s.xposed.sesame.data.RunType;
+import tkaxv7s.xposed.sesame.data.UIConfig;
 import tkaxv7s.xposed.sesame.data.ViewAppInfo;
 import tkaxv7s.xposed.sesame.data.modelFieldExt.common.SelectModelFieldFunc;
 import tkaxv7s.xposed.sesame.entity.FriendWatch;
@@ -56,12 +58,10 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         tvStatistics = findViewById(R.id.tv_statistics);
         ViewAppInfo.checkRunType();
-
         /*ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setIcon(R.drawable.title_logo);
         }*/
-
         updateSubTitle(ViewAppInfo.getRunType());
         viewHandler = new Handler();
         titleRunner = () -> updateSubTitle(RunType.DISABLE);
@@ -100,11 +100,16 @@ public class MainActivity extends BaseActivity {
         } else {
             registerReceiver(broadcastReceiver, intentFilter);
         }
-        new AlertDialog.Builder(this)
-                .setTitle("提示")
-                .setMessage("本APP是为了学习研究开发，免费提供，不得进行任何形式的转发、发布、传播。请于24小时内卸载本APP。如果您是购买的可能已经被骗，请联系卖家退款。")
-                .setNegativeButton("我知道了", null)
-                .create().show();
+        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        builder.setTitle("提示");
+        builder.setMessage(R.string.start_message);
+        builder.setPositiveButton("我知道了",(dialog, which) -> dialog.dismiss());
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+        Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        if (positiveButton != null) {
+            positiveButton.setTextColor(Color.parseColor("#216EEE")); // 设置按钮颜色为红色
+        }
     }
 
     @Override
@@ -145,6 +150,11 @@ public class MainActivity extends BaseActivity {
                     Log.i("view sendBroadcast status err:");
                     Log.printStackTrace(th);
                 }
+            }
+            try {
+                UIConfig.load();
+            } catch (Exception e) {
+                Log.printStackTrace(e);
             }
             try {
                 List<String> userNameList = new ArrayList<>();
@@ -214,6 +224,10 @@ public class MainActivity extends BaseActivity {
                 break;
 
             case R.id.btn_github:
+            //   欢迎自己打包 欢迎大佬pr
+            //   项目开源且公益  维护都是自愿
+            //   但是如果打包改个名拿去卖钱忽悠小白
+            //   那我只能说你妈死了 就当开源项目给你妈烧纸钱了
                 data = "https://github.com/TKaxv-7S/Sesame-TK";
                 break;
 
@@ -239,12 +253,12 @@ public class MainActivity extends BaseActivity {
                 .setChecked(state > PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
         menu.add(0, 2, 2, R.string.view_error_log_file);
         menu.add(0, 3, 3, R.string.export_error_log_file);
-        menu.add(0, 4, 4, R.string.export_runtime_log_file);
-        menu.add(0, 5, 5, R.string.export_the_statistic_file);
-        menu.add(0, 6, 6, R.string.import_the_statistic_file);
-        menu.add(0, 7, 7, R.string.view_debug);
-        menu.add(0, 8, 8, R.string.settings);
-        menu.add(0, 9, 9, R.string.view_all_log_file);
+        menu.add(0, 4, 4, R.string.view_all_log_file);
+        menu.add(0, 5, 5, R.string.export_runtime_log_file);
+        menu.add(0, 6, 6, R.string.export_the_statistic_file);
+        menu.add(0, 7, 7, R.string.import_the_statistic_file);
+        menu.add(0, 8, 8, R.string.view_debug);
+        menu.add(0, 9, 9, R.string.settings);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -276,27 +290,37 @@ public class MainActivity extends BaseActivity {
                 break;
 
             case 4:
+                String allData = "file://";
+                allData += FileUtil.getRuntimeLogFile().getAbsolutePath();
+                Intent allIt = new Intent(this, HtmlViewerActivity.class);
+                allIt.putExtra("nextLine", false);
+                allIt.putExtra("canClear", true);
+                allIt.setData(Uri.parse(allData));
+                startActivity(allIt);
+                break;
+
+            case 5:
                 File allLogFile = FileUtil.exportFile(FileUtil.getRuntimeLogFile());
                 if (allLogFile != null) {
                     Toast.makeText(this, "文件已导出到: " + allLogFile.getPath(), Toast.LENGTH_SHORT).show();
                 }
                 break;
 
-            case 5:
+            case 6:
                 File statisticsFile = FileUtil.exportFile(FileUtil.getStatisticsFile());
                 if (statisticsFile != null) {
                     Toast.makeText(this, "文件已导出到: " + statisticsFile.getPath(), Toast.LENGTH_SHORT).show();
                 }
                 break;
 
-            case 6:
+            case 7:
                 if (FileUtil.copyTo(FileUtil.getExportedStatisticsFile(), FileUtil.getStatisticsFile())) {
                     tvStatistics.setText(Statistics.getText());
                     Toast.makeText(this, "导入成功！", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
-            case 7:
+            case 8:
                 String debugData = "file://";
                 debugData += FileUtil.getDebugLogFile().getAbsolutePath();
                 Intent debugIt = new Intent(this, HtmlViewerActivity.class);
@@ -305,18 +329,8 @@ public class MainActivity extends BaseActivity {
                 startActivity(debugIt);
                 break;
 
-            case 8:
-                selectSettingUid();
-                break;
-
             case 9:
-                String allData = "file://";
-                allData += FileUtil.getRuntimeLogFile().getAbsolutePath();
-                Intent allIt = new Intent(this, HtmlViewerActivity.class);
-                allIt.putExtra("nextLine", false);
-                allIt.putExtra("canClear", true);
-                allIt.setData(Uri.parse(allData));
-                startActivity(allIt);
+                selectSettingUid();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -335,6 +349,11 @@ public class MainActivity extends BaseActivity {
         builder.setPositiveButton("返回", (dialog, which) -> dialog.dismiss());
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+        // 在 AlertDialog 显示之后获取返回按钮并设置颜色
+        Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        if (positiveButton != null) {
+            positiveButton.setTextColor(Color.parseColor("#216EEE")); // 设置按钮颜色为红色
+        }
         int length = userNameArray.length;
         if (length > 0 && length < 3) {
             new Thread(()-> {
@@ -349,7 +368,7 @@ public class MainActivity extends BaseActivity {
 
     private void goSettingActivity(int index) {
         UserEntity userEntity = userEntityArray[index];
-        Intent intent = new Intent(this, SettingsActivity.class);
+        Intent intent = new Intent(this, UIConfig.INSTANCE.getNewUI() && !"TEST".equals(ViewAppInfo.getAppVersion()) ? NewSettingsActivity.class : SettingsActivity.class);
         if (userEntity != null) {
             intent.putExtra("userId", userEntity.getUserId());
             intent.putExtra("userName", userEntity.getShowName());
