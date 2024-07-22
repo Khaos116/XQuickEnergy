@@ -157,7 +157,7 @@ public class AntOrchard extends ModelTask {
                             String taskType = spreadManureStage.getString("taskType");
                             int awardCount = spreadManureStage.getInt("awardCount");
                             JSONObject joo = new JSONObject(AntOrchardRpcCall.receiveTaskAward(sceneCode, taskType));
-                            if (joo.getBoolean("success")) {
+                            if (joo.optBoolean("success")) {
                                 Log.farm("丰收礼包🎁[肥料*" + awardCount + "]");
                             } else {
                                 Log.record(joo.getString("desc"));
@@ -168,7 +168,7 @@ public class AntOrchard extends ModelTask {
                     String taobaoData = jo.getString("taobaoData");
                     jo = new JSONObject(taobaoData);
                     JSONObject plantInfo = jo.getJSONObject("gameInfo").getJSONObject("plantInfo");
-                    boolean canExchange = plantInfo.getBoolean("canExchange");
+                    boolean canExchange = plantInfo.optBoolean("canExchange");
                     if (canExchange) {
                         Log.farm("农场果树似乎可以兑换了！");
                         return;
@@ -243,7 +243,7 @@ public class AntOrchard extends ModelTask {
             for (int i = 0; i < ja.length(); i++) {
                 jo = ja.getJSONObject(i);
                 if (jo.getString("itemId").equals(itemId)) {
-                    if (!jo.getBoolean("received")) {
+                    if (!jo.optBoolean("received")) {
                         jo = new JSONObject(AntOrchardRpcCall.drawLottery());
                         if ("100".equals(jo.getString("resultCode"))) {
                             JSONArray userEverydayGiftItems = jo.getJSONObject("lotteryPlusInfo")
@@ -291,7 +291,7 @@ public class AntOrchard extends ModelTask {
                         String taskId = jo.getString("taskId");
                         String sceneCode = jo.getString("sceneCode");
                         jo = new JSONObject(AntOrchardRpcCall.finishTask(userId, sceneCode, taskId));
-                        if (jo.getBoolean("success")) {
+                        if (jo.optBoolean("success")) {
                             Log.farm("农场任务🧾[" + title + "]");
                         } else {
                             Log.record(jo.getString("desc"));
@@ -312,7 +312,7 @@ public class AntOrchard extends ModelTask {
     private void orchardSign(JSONObject signTaskInfo) {
         try {
             JSONObject currentSignItem = signTaskInfo.getJSONObject("currentSignItem");
-            if (!currentSignItem.getBoolean("signed")) {
+            if (!currentSignItem.optBoolean("signed")) {
                 JSONObject joSign = new JSONObject(AntOrchardRpcCall.orchardSign());
                 if ("100".equals(joSign.getString("resultCode"))) {
                     int awardCount = joSign.getJSONObject("signTaskInfo").getJSONObject("currentSignItem")
@@ -470,7 +470,7 @@ public class AntOrchard extends ModelTask {
                 JSONObject jsonObject = new JSONObject(str);
                 Thread.sleep(5000);
                 String name = UserIdMap.getMaskName(uid);
-                if (!jsonObject.getBoolean("success")) {
+                if (!jsonObject.optBoolean("success")) {
                     String code = jsonObject.getString("code");
                     if ("600000027".equals(code)) {
                         Log.record("农场助力💪今日助力他人次数上限");

@@ -790,13 +790,13 @@ public class AntMember extends ModelTask {
     private void beanSignIn() {
         try {
             JSONObject jo = new JSONObject(AntMemberRpcCall.querySignInProcess("AP16242232", "INS_BLUE_BEAN_SIGN"));
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(jo.toString());
                 return;
             }
-            if (jo.getJSONObject("result").getBoolean("canPush")) {
+            if (jo.getJSONObject("result").optBoolean("canPush")) {
                 jo = new JSONObject(AntMemberRpcCall.signInTrigger("AP16242232", "INS_BLUE_BEAN_SIGN"));
-                if (jo.getBoolean("success")) {
+                if (jo.optBoolean("success")) {
                     String prizeName = jo.getJSONObject("result").getJSONArray("prizeSendOrderDTOList").getJSONObject(0)
                             .getString("prizeName");
                     Log.record("安心豆🫘[" + prizeName + "]");
@@ -814,13 +814,13 @@ public class AntMember extends ModelTask {
     private void beanExchangeBubbleBoost() {
         try {
             JSONObject jo = new JSONObject(AntMemberRpcCall.queryUserAccountInfo("INS_BLUE_BEAN"));
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(jo.toString());
                 return;
             }
             int userCurrentPoint = jo.getJSONObject("result").getInt("userCurrentPoint");
             jo = new JSONObject(AntMemberRpcCall.beanExchangeDetail("IT20230214000700069722"));
-            if (!jo.getBoolean("success")) {
+            if (!jo.optBoolean("success")) {
                 Log.i(jo.toString());
                 return;
             }
@@ -829,11 +829,11 @@ public class AntMember extends ModelTask {
             String itemName = jo.getString("itemName");
             jo = jo.getJSONObject("itemExchangeConsultDTO");
             int realConsumePointAmount = jo.getInt("realConsumePointAmount");
-            if (!jo.getBoolean("canExchange") || realConsumePointAmount > userCurrentPoint) {
+            if (!jo.optBoolean("canExchange") || realConsumePointAmount > userCurrentPoint) {
                 return;
             }
             jo = new JSONObject(AntMemberRpcCall.beanExchange(itemId, realConsumePointAmount));
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 Log.record("安心豆🫘[兑换:" + itemName + "]");
             } else {
                 Log.i(jo.toString());

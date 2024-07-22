@@ -2188,7 +2188,7 @@ public class AntFarm extends ModelTask {
     private void letsGetChickenFeedTogether() {
         try {
             JSONObject jo = new JSONObject(AntFarmRpcCall.letsGetChickenFeedTogether());
-            if (jo.getBoolean("success")) {
+            if (jo.optBoolean("success")) {
                 String bizTraceId = jo.getString("bizTraceId");
                 JSONArray p2pCanInvitePersonDetailList = jo.getJSONArray("p2pCanInvitePersonDetailList");
 
@@ -2232,7 +2232,7 @@ public class AntFarm extends ModelTask {
                         if (getFeedSet.contains(userId)) {
                             // 调用邀请方法
                             jo = new JSONObject(AntFarmRpcCall.giftOfFeed(bizTraceId, userId));
-                            if (jo.getBoolean("success")) {
+                            if (jo.optBoolean("success")) {
                                 Log.record("一起拿小鸡饲料🥡 [送饲料：" + UserIdMap.getMaskName(userId) + "]");
                             } else {
                                 Log.record("邀请失败：" + jo);
@@ -2250,7 +2250,7 @@ public class AntFarm extends ModelTask {
                         String userId = userIdList.get(randomIndex);
                         // 调用邀请方法
                         jo = new JSONObject(AntFarmRpcCall.giftOfFeed(bizTraceId, userId));
-                        if (jo.getBoolean("success")) {
+                        if (jo.optBoolean("success")) {
                             Log.record("一起拿小鸡饲料🥡 [送饲料：" + UserIdMap.getMaskName(userId) + "]");
                         } else {
                             Log.record("邀请失败：" + jo);
