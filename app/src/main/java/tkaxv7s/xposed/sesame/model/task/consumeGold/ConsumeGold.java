@@ -173,7 +173,7 @@ public class ConsumeGold extends ModelTask {
             String s = ConsumeGoldRpcCall.signinCalendar();
             JSONObject jo = new JSONObject(s);
             if (jo.optBoolean("success")) {
-                boolean signed = jo.optBoolean("isSignInToday");
+                boolean signed = jo.getBoolean("isSignInToday");
                 if (!signed) {
                     jo = new JSONObject(ConsumeGoldRpcCall.openBoxAward());
                     if (jo.optBoolean("success")) {

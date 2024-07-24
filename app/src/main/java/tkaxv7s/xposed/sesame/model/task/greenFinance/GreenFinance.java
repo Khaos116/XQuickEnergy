@@ -74,7 +74,7 @@ public class GreenFinance extends ModelTask {
                 return;
             }
             JSONObject result = jo.getJSONObject("result");
-            if (!result.optBoolean("greenFinanceSigned")) {
+            if (!result.getBoolean("greenFinanceSigned")) {
                 Log.other("绿色经营📊未开通");
                 return;
             }
@@ -152,7 +152,7 @@ public class GreenFinance extends ModelTask {
                 return;
             }
             JSONObject result = jo.getJSONObject("result");
-            if (result.optBoolean("isTodaySignin")) {
+            if (result.getBoolean("isTodaySignin")) {
                 return;
             }
             s = GreenFinanceRpcCall.signInTrigger(sceneId);
@@ -215,12 +215,12 @@ public class GreenFinance extends ModelTask {
                     continue;
                 }
                 str = GreenFinanceRpcCall.submitTick(type, jsonObject.getString("behaviorCode"));
-                TimeUtil.sleep(1000);
+                TimeUtil.sleep(1500);
                 JSONObject object = new JSONObject(str);
                 if (!object.optBoolean("success")
                         || !String.valueOf(true).equals(JsonUtil.getValueByPath(object, "result.result"))) {
-                    Log.i(TAG + ".doTick.submitTick", object.optString("resultDesc"));
-                    continue;
+                    Log.other("绿色经营📊[" + jsonObject.getString("title") + "]打卡失败");
+                    break;
                 }
                 Log.other("绿色经营📊[" + jsonObject.getString("title") + "]打卡成功");
 //                Thread.sleep(executeIntervalInt);
@@ -359,14 +359,14 @@ public class GreenFinance extends ModelTask {
             while (true) {
                 try {
                     String str = GreenFinanceRpcCall.queryRankingList(n);
-                    TimeUtil.sleep(1000);
+                    TimeUtil.sleep(1500);
                     JSONObject jsonObject = new JSONObject(str);
                     if (!jsonObject.optBoolean("success")) {
-                        Log.i(TAG + ".batchStealFriend.queryRankingList", jsonObject.optString("resultDesc"));
-                        continue;
+                        Log.other("绿色经营🙋，好友金币巡查失败");
+                        break;
                     }
                     JSONObject result = jsonObject.getJSONObject("result");
-                    if (result.optBoolean("lastPage")) {
+                    if (result.getBoolean("lastPage")) {
                         Log.other("绿色经营🙋，好友金币巡查完成");
                         Status.greenFinancePointFriend();
                         return;
@@ -375,7 +375,7 @@ public class GreenFinance extends ModelTask {
                     JSONArray list = result.getJSONArray("rankingList");
                     for (int i = 0; i < list.length(); i++) {
                         JSONObject object = list.getJSONObject(i);
-                        if (!object.optBoolean("collectFlag")) {
+                        if (!object.getBoolean("collectFlag")) {
                             continue;
                         }
                         String friendId = object.optString("uid");
@@ -396,7 +396,7 @@ public class GreenFinance extends ModelTask {
                         JSONArray jsonArray = new JSONArray();
                         for (int j = 0; j < points.length(); j++) {
                             jsonObject = points.getJSONObject(j);
-                            if (!jsonObject.optBoolean("collectFlag")) {
+                            if (!jsonObject.getBoolean("collectFlag")) {
                                 jsonArray.put(jsonObject.getString("bsnId"));
                             }
                         }

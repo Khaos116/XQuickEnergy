@@ -135,7 +135,7 @@ public class AntStall extends ModelTask {
             String s = AntStallRpcCall.home();
             JSONObject jo = new JSONObject(s);
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                if (!jo.optBoolean("hasRegister") || jo.optBoolean("hasQuit")) {
+                if (!jo.getBoolean("hasRegister") || jo.getBoolean("hasQuit")) {
                     Log.farm("蚂蚁新村⛪请先开启蚂蚁新村");
                     return;
                 }
@@ -231,7 +231,7 @@ public class AntStall extends ModelTask {
                     if (!isInviteShop) {
                         continue;
                     }
-                    if (friend.optBoolean("canInviteOpenShop")) {
+                    if (friend.getBoolean("canInviteOpenShop")) {
                         s = AntStallRpcCall.oneKeyInviteOpenShop(friendUserId, seatId);
                         jo = new JSONObject(s);
                         if ("SUCCESS".equals(jo.getString("resultCode"))) {
@@ -313,7 +313,7 @@ public class AntStall extends ModelTask {
                 JSONObject master = coinsMap.getJSONObject("MASTER");
                 String assetId = master.getString("assetId");
                 int settleCoin = (int) (master.getJSONObject("money").getDouble("amount"));
-                boolean fullShow = master.optBoolean("fullShow");
+                boolean fullShow = master.getBoolean("fullShow");
                 if (fullShow || settleCoin > 100) {
                     String s = AntStallRpcCall.settle(assetId, settleCoin);
                     JSONObject jo = new JSONObject(s);
@@ -412,7 +412,7 @@ public class AntStall extends ModelTask {
                 List<Seat> seats = new ArrayList<>();
                 for (int i = 0; i < friendRankList.length(); i++) {
                     JSONObject friendRank = friendRankList.getJSONObject(i);
-                    if (friendRank.optBoolean("canOpenShop")) {
+                    if (friendRank.getBoolean("canOpenShop")) {
                         String userId = friendRank.getString("userId");
                         boolean isStallOpen = stallOpenList.getValue().contains(userId);
                         if (stallOpenType.getValue() == StallOpenType.CLOSE) {
@@ -435,14 +435,12 @@ public class AntStall extends ModelTask {
         }
     }
 
-    private void openShop(String seatId, String userId, Queue<String> shopIds) {
-        String shopId = shopIds.peek();
+    private void openShop(String seatId, String userId, String shopId) {
         String s = AntStallRpcCall.shopOpen(seatId, userId, shopId);
         try {
             JSONObject jo = new JSONObject(s);
-            if ("SUCCESS".equals(jo.getString("resultCode"))) {
+            if ("SUCCESS".equals(jo.optString("resultCode"))) {
                 Log.farm("蚂蚁新村⛪在[" + UserIdMap.getMaskName(userId) + "]家摆摊");
-                shopIds.poll();
             }
         } catch (Throwable t) {
             Log.i(TAG, "openShop err:");
@@ -452,9 +450,11 @@ public class AntStall extends ModelTask {
 
     private void friendHomeOpen(List<Seat> seats, Queue<String> shopIds) {
         Collections.sort(seats, (e1, e2) -> e2.hot - e1.hot);
-        int idx = 0;
-        while (seats.size() > idx && !shopIds.isEmpty()) {
-            Seat seat = seats.get(idx);
+        for (Seat seat : seats) {
+            String shopId = shopIds.poll();
+            if (shopId == null) {
+                return;
+            }
             String userId = seat.userId;
             try {
                 String s = AntStallRpcCall.friendHome(userId);
@@ -462,12 +462,12 @@ public class AntStall extends ModelTask {
                 if ("SUCCESS".equals(jo.optString("resultCode"))) {
                     JSONObject seatsMap = jo.getJSONObject("seatsMap");
                     JSONObject guest = seatsMap.getJSONObject("GUEST_01");
-                    if (guest.optBoolean("canOpenShop")) {
-                        openShop(guest.getString("seatId"), userId, shopIds);
+                    if (guest.getBoolean("canOpenShop")) {
+                        openShop(guest.getString("seatId"), userId, shopId);
                     } else {
                         guest = seatsMap.getJSONObject("GUEST_02");
-                        if (guest.optBoolean("canOpenShop")) {
-                            openShop(guest.getString("seatId"), userId, shopIds);
+                        if (guest.getBoolean("canOpenShop")) {
+                            openShop(guest.getString("seatId"), userId, shopId);
                         }
                     }
                 } else {
@@ -477,7 +477,6 @@ public class AntStall extends ModelTask {
             } catch (Throwable t) {
                 Log.printStackTrace(TAG, t);
             }
-            idx++;
         }
     }
 
@@ -512,7 +511,7 @@ public class AntStall extends ModelTask {
                 return;
             }
             JSONObject signListModel = jo.getJSONObject("signListModel");
-            if (!signListModel.optBoolean("currentKeySigned")) {
+            if (!signListModel.getBoolean("currentKeySigned")) {
                 signToday();
             }
 
@@ -1000,7 +999,7 @@ public class AntStall extends ModelTask {
                             if (jo.length() == 0) {
                                 continue;
                             }
-                            if (jo.optBoolean("canOpenShop") || !"BUSY".equals(jo.getString("status")) || !jo.optBoolean("overTicketProtection")) {
+                            if (jo.getBoolean("canOpenShop") || !"BUSY".equals(jo.getString("status")) || !jo.getBoolean("overTicketProtection")) {
                                 continue;
                             }
                             String rentLastUser = jo.getString("rentLastUser");
@@ -1053,7 +1052,7 @@ public class AntStall extends ModelTask {
     }
 
     public interface StallThrowManureType {
-    
+
         int THROW = 0;
         int DONT_THROW = 1;
 

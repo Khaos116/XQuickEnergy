@@ -93,8 +93,8 @@ public class OmegakoiTown extends ModelTask {
                 JSONArray tasks = result.getJSONArray("tasks");
                 for (int i = 0; i < tasks.length(); i++) {
                     jo = tasks.getJSONObject(i);
-                    boolean done = jo.optBoolean("done");
-                    boolean hasRewarded = jo.optBoolean("hasRewarded");
+                    boolean done = jo.getBoolean("done");
+                    boolean hasRewarded = jo.getBoolean("hasRewarded");
                     if (done && !hasRewarded) {
                         JSONObject task = jo.getJSONObject("task");
                         String name = task.getString("name");
@@ -129,7 +129,7 @@ public class OmegakoiTown extends ModelTask {
             String s = OmegakoiTownRpcCall.getSignInStatus();
             JSONObject jo = new JSONObject(s);
             if (jo.optBoolean("success")) {
-                boolean signed = jo.getJSONObject("result").optBoolean("signed");
+                boolean signed = jo.getJSONObject("result").getBoolean("signed");
                 if (!signed) {
                     jo = new JSONObject(OmegakoiTownRpcCall.signIn());
                     JSONObject diffItem = jo.getJSONObject("result").getJSONArray("diffItems").getJSONObject(0);
