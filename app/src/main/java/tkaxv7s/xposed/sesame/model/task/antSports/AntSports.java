@@ -228,7 +228,7 @@ public class AntSports extends ModelTask {
             JSONObject jo = new JSONObject(AntSportsRpcCall.sportsCheck_in());
             if (jo.optBoolean("success")) {
                 JSONObject data = jo.getJSONObject("data");
-                if(!data.getBoolean("signed")){
+                if(!data.optBoolean("signed")){
                     JSONObject subscribeConfig;
                     if (data.has("subscribeConfig")) {
                         subscribeConfig = data.getJSONObject("subscribeConfig");
