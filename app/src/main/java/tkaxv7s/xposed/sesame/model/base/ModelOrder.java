@@ -23,20 +23,20 @@ import java.util.List;
 public class ModelOrder {
 
     private static final Class<Model>[] array = new Class[]{
-            BaseModel.class
-            , AntForestV2.class
-            , AntFarm.class
-            , AntStall.class
-            , AntOrchard.class
-            , Reserve.class
-            , AntDodo.class
-            , AntOcean.class
-            , AntCooperate.class
-            , AncientTree.class
-            , AntSports.class
-            , AntMember.class
-            , GreenFinance.class
-            , AnswerAI.class
+            BaseModel.class//基础配置模块
+            , AntForestV2.class//蚂蚁森林V2
+            , AntFarm.class//庄园
+            //, AntStall.class//新村
+            , AntOrchard.class//农场
+            //, Reserve.class//保护地
+            , AntDodo.class//神奇物种
+            , AntOcean.class//海洋
+            //, AntCooperate.class//合种
+            //, AncientTree.class//古树
+            , AntSports.class//运动
+            , AntMember.class//会员
+            //, GreenFinance.class//绿色经营
+            , AnswerAI.class//AI答题
     };
 
     private static final List<Class<Model>> readOnlyClazzList = Collections.unmodifiableList(Arrays.asList(array));
