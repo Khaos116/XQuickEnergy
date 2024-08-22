@@ -2,8 +2,6 @@
   const/4 v1, 0x6
   sput v1, Ls2/o; -> a:I
   
-2.📁io.github.lazyimmortal.sesame -> 📁model -> 📁task -> 📁antFarm -> 📄AntFarm -> 173行 -> const-string v1, "YEB_PURCHASE" -> 下面添加：
-  const-string v1, "HEART_DONATION_ADVANCED_FOOD_V2"
-  invoke-interface {v0, v1}, Ljava/util/List; -> add(Ljava/lang/Object;)Z
-  
-3.📁io.github.lazyimmortal.sesame -> 📁ui -> 📄MainActivity -> 735行 -> invoke-virtual {p1}, Landroid/app/Dialog;->show()V -> (注释掉这行)前面添加#
+2.📁io.github.lazyimmortal.sesame -> 📁model -> 📁task -> 📁antFarm -> 📄AntFarm -> 268行 -> const-string v1, "SLEEP" -> 改为：const-string v1, "HEART_DONATION_ADVANCED_FOOD_V2"
+
+3.📁io.github.lazyimmortal.sesame -> 📁ui -> 📄MainActivity -> 735行 -> invoke-virtual {p1}, Landroid/app/Dialog;->show()V -> 注释掉这行[前面添加#]
