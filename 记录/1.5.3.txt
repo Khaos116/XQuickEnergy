@@ -1,0 +1,18 @@
+1.搜索：.class public Lio/github/lazyimmortal/sesame/model/task/antForest/AntForestV2;
+  在13501行下面添加：const/16 v1,0x8
+2.搜索：PermissionUtil.java
+  注释掉第76行
+3.搜索：.class public Lio/github/lazyimmortal/sesame/model/task/antFarm/AntFarm;
+  将第268行的SLEEP改为HEART_DONATION_ADVANCED_FOOD_V2
+4.搜索：.class public Lio/github/lazyimmortal/sesame/ui/MainActivity;
+  注释掉第735行
+5.搜索：SesameValidator.java
+  ①注释掉包含Ls2/e;->e(Ljava/io/File;)Ljava/lang/Boolean;的行【有三行，分别是199行、213行、226行】
+  ②修改b的默认值：将925行的const/4 v1, 0x0改为const/16 v1, 0x8
+  ③去掉b--：注释掉1003行、1005行、1007行
+  ④动态修改b的值：
+      1103行 -> :goto_3c -> 下面添加：
+        const/16 p0, 0x1
+      1111行 -> monitor-exit v0 -> 下面添加：
+        const/16 v1, 0x8
+        sput v1, Ls2/o;->b:I
