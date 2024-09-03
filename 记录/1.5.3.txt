@@ -8,7 +8,9 @@
   注释掉第735行
 5.搜索：.class public Ls2/e;
   注释掉第121行
-6.搜索：SesameValidator.java
+6.搜索：innerAction
+  将1312行的DONATION改为XXXXX
+7.搜索：SesameValidator.java
   ①注释掉包含Ls2/e;->e(Ljava/io/File;)Ljava/lang/Boolean;的行【有三行，分别是199行、213行、226行】
   ②修改b的默认值：将925行的const/4 v1, 0x0改为const/16 v1, 0x8
   ③去掉b--：注释掉1003行、1005行、1007行
