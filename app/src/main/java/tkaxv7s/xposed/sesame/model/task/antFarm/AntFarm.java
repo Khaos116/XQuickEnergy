@@ -1868,7 +1868,7 @@ public class AntFarm extends ModelTask {
                             if (chouchouleReceiveFarmTaskAward(taskId)) {
                                 doubleCheck = true;
                             }
-                        } else if ("TODO".equals(taskStatus) && !Objects.equals(jo.optString("innerAction"), "DONATION")) {
+                        } else if ("TODO".equals(taskStatus) && !Objects.equals(jo.optString("innerAction"), "XXXXX")) {
                             if (chouchouleDoFarmTask(taskId, title, rightsTimesLimit - rightsTimes)) {
                                 doubleCheck = true;
                             }
