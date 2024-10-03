@@ -1,6 +1,8 @@
+######  https://github.com/github/gitignore  ######
 # Built application files
 *.apk
 *.ap_
+*.aab
 
 # Files for the ART/Dalvik VM
 *.dex
@@ -12,11 +14,11 @@
 bin/
 gen/
 out/
+release/
 
 # Gradle files
 .gradle/
 build/
-release/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -35,17 +37,28 @@ captures/
 
 # IntelliJ
 *.iml
-.idea/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+# Android Studio 3 in .gitignore file.
+.idea/caches
+.idea/modules.xml
+# Comment next line if keeping position of elements in Navigation Editor is relevant for you
+.idea/navEditor.xml
 
 # Keystore files
-# Uncomment the following line if you do not want to check your keystore files in.
+# Uncomment the following lines if you do not want to check your keystore files in.
 #*.jks
+#*.keystore
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
 
 # Google Services (e.g. APIs or Firebase)
-google-services.json
+# google-services.json
 
 # Freeline
 freeline.py
@@ -59,5 +72,16 @@ fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
 
-Xposed-Modules-Repo/
-plugin/
+# Version control
+vcs.xml
+
+# lint
+lint/intermediates/
+lint/generated/
+lint/outputs/
+lint/tmp/
+# lint/reports/
+######################################################
+class_files.txt
+.cxx/
+.idea/
