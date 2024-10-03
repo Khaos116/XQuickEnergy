@@ -64,6 +64,12 @@ android {
         abortOnError false
         disable 'LintCheckName' // 替换LintCheckName为具体的Lint检查名称
     }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['lib']
+        }
+    }
 }
 
 dependencies {

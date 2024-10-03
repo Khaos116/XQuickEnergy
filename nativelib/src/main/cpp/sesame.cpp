@@ -20,7 +20,7 @@ Java_io_github_lazyimmortal_sesame_util_AESUtil_decryptData(JNIEnv *env, jclass 
 //private static native String show(Context context);
 extern "C" JNIEXPORT jstring JNICALL
 Java_io_github_lazyimmortal_sesame_util_SesameValidator_show(JNIEnv *env, jclass cls, jobject context) {
-    return env->NewStringUTF("真刀人");
+    return env->NewStringUTF("芝麻开门:阿里巴巴");
 }
 
 //public static native boolean runBefore();
@@ -48,7 +48,7 @@ Java_io_github_lazyimmortal_sesame_model_task_antFarm_AntFarm_checkInnerAction(J
     if (cStr == NULL) {
         return;
     }
-    __android_log_print(ANDROID_LOG_INFO, "真刀人", "InnerAction: %s", cStr);
+    __android_log_print(ANDROID_LOG_INFO, "懒真人", "InnerAction: %s", cStr);
     env->ReleaseStringUTFChars(str, cStr);
 }
 
