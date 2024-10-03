@@ -14,7 +14,7 @@ public class SesameValidator {
   public static native boolean runBefore();
 
   public void test(Context context) {
-    Log.e("真刀人", "show=" + show(context));
-    Log.e("真刀人", "runBefore=" + runBefore());
+    Log.e("懒真人", "show=" + show(context));
+    Log.e("懒真人", "runBefore=" + runBefore());
   }
 }

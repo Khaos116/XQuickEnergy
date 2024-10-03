@@ -12,7 +12,7 @@ public class AESUtil {
   public static native String decryptData(String str);
 
   public void test() {
-    Log.e("真刀人", "encryptData=" + encryptData("加密参数"));
-    Log.e("真刀人", "decryptData=" + decryptData("解密参数"));
+    Log.e("懒真人", "encryptData=" + encryptData("加密参数"));
+    Log.e("懒真人", "decryptData=" + decryptData("解密参数"));
   }
 }

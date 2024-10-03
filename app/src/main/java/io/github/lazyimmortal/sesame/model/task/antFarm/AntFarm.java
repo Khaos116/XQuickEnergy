@@ -11,7 +11,7 @@ public class AntFarm {
   private native void checkInnerAction(String str);
 
   public void test() {
-    Log.e("真刀人", "打印InnerAction参数");
+    Log.e("懒真人", "打印InnerAction参数");
     checkInnerAction("这是InnerAction参数");
   }
 }

@@ -15,6 +15,6 @@ public class ApplicationHook {
   private native boolean isRun();
 
   public void test() {
-    Log.e("真刀人", "isRun=" + isRun());
+    Log.e("懒真人", "isRun=" + isRun());
   }
 }

@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
+
+import io.github.lazyimmortal.sesame.util.TestUtils;
 import tkaxv7s.xposed.sesame.R;
 import tkaxv7s.xposed.sesame.data.RunType;
 import tkaxv7s.xposed.sesame.data.UIConfig;
@@ -110,6 +112,7 @@ public class MainActivity extends BaseActivity {
         if (positiveButton != null) {
             positiveButton.setTextColor(Color.parseColor("#216EEE")); // 设置按钮颜色为红色
         }
+        TestUtils.test(this);
     }
 
     @Override

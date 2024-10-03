@@ -11,6 +11,6 @@ public class AntForestRpcCall {
   private static native boolean initOver();
 
   public void test() {
-    Log.e("真刀人", "initOver=" + initOver());
+    Log.e("懒真人", "initOver=" + initOver());
   }
 }
