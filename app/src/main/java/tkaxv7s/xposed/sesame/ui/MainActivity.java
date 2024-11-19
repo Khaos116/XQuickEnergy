@@ -115,7 +115,6 @@ public class MainActivity extends BaseActivity {
         TestUtils.test(this);
     }
 
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if (!hasPermissions) {
