@@ -110,7 +110,7 @@ public class MainActivity extends BaseActivity {
         builder.setMessage(R.string.start_message);
         builder.setPositiveButton("我知道了",(dialog, which) -> dialog.dismiss());
         AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        //alertDialog.show();
         Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
         if (positiveButton != null) {
             positiveButton.setTextColor(Color.parseColor("#216EEE")); // 设置按钮颜色为红色

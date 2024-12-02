@@ -494,7 +494,7 @@ public class AntFarm extends ModelTask {
                 return false;
             }
             JSONObject sleepNotifyInfo = jo.getJSONObject("sleepNotifyInfo");
-            if (!sleepNotifyInfo.optBoolean("canSleep", false)) {
+            if (!sleepNotifyInfo.optBoolean("canSleepXXX", false)) {
                 Log.farm("小鸡无需睡觉🛌");
                 return false;
             }
