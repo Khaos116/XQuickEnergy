@@ -470,10 +470,13 @@ public class AntForestV2 extends ModelTask {
                     }
                     if (count > 0) {
                         Log.record("执行超时-蚂蚁森林");
+                        Log.other("执行超时-蚂蚁森林");
                     } else if (count == 0) {
                         Log.record("执行结束-蚂蚁森林");
+                        Log.other("执行结束-蚂蚁森林");
                     } else {
                         Log.record("执行完成-蚂蚁森林");
+                        Log.other("执行完成-蚂蚁森林");
                     }
                 }
             } catch (InterruptedException ie) {
