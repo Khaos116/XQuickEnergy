@@ -1,5 +1,18 @@
 apply plugin: 'com.android.application'
 
+//添加日志打印调用
+//1
+//Log.other("加载配置: " + userName);
+//2
+//Log.other("应用版本：" + alipayVersion.getVersionString());
+//Log.other("模块版本：" + modelVersion);
+//Log.other("开始执行");
+//Log.other("开始加载");
+//Log.other("加载完成");
+//3
+//Log.other("执行超时-蚂蚁森林");
+//Log.other("执行结束-蚂蚁森林");
+//Log.other("执行完成-蚂蚁森林");
 android {
     def buildTime = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("Asia/Shanghai"))
 
