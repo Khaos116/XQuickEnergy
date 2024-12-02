@@ -6,6 +6,7 @@ apply plugin: 'com.android.application'
 //2
 //Log.other("应用版本：" + alipayVersion.getVersionString());
 //Log.other("模块版本：" + modelVersion);
+//Log.other("编译时间：" + BuildConfig.BUILD_TIME);
 //Log.other("开始执行");
 //Log.other("开始加载");
 //Log.other("加载完成");
