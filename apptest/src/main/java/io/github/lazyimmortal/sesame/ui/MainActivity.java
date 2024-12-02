@@ -14,7 +14,6 @@ import io.github.lazyimmortal.sesame.R;
 import io.github.lazyimmortal.sesame.util.LibraryUtil;
 
 /**
- * Author:XX
  * Date:2024/12/2
  * Time:15:50
  */

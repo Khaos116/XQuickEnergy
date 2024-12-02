@@ -1,7 +1,6 @@
 package io.github.lazyimmortal.sesame.hook;
 
 /**
- * Author:XX
  * Date:2024/12/2
  * Time:15:57
  */

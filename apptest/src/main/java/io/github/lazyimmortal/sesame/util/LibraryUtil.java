@@ -3,7 +3,6 @@ package io.github.lazyimmortal.sesame.util;
 import org.json.JSONObject;
 
 /**
- * Author:XX
  * Date:2024/12/2
  * Time:15:44
  */
