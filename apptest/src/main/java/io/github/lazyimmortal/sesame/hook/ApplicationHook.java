@@ -10,7 +10,7 @@ public class ApplicationHook {
   //庄园任务列表com.alipay.antfarm.listFarmTask
   private final static String responseFarm = "{\"memo\":\"SUCCESS\",\"awardCount\":\"90\"}";
   //{"memo":"SUCCESS","awardCount":"90"}
-  private final static String responseChouChouLe = "{\"success\":false}";
+  private final static String responseChouChouLe = "{\"success\":true}";
   //{"success":false}
 
   public static String requestString(String method, String data) {

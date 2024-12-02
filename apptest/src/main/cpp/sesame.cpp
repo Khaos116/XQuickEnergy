@@ -7,6 +7,60 @@
 #define LogI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LogE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
+//封装打印方法
+// 声明一个全局变量来存储 JNI 环境
+static JNIEnv *g_env = nullptr;
+
+// 初始化 JNI 环境
+void initJNI(JNIEnv *env) {
+    if (!g_env) {
+        g_env = env;
+    }
+}
+
+// 封装打印函数，支持格式化
+extern "C" void logMessage(const char *format, ...) {
+    if (!g_env) {
+        LogE("需要先调用initJNI");
+        return;
+    }
+
+    // 创建一个可变参数列表
+    va_list args;
+    va_start(args, format);
+
+    // 创建一个缓冲区，存储格式化后的日志消息
+    char buffer[256];  // 您可以根据需要调整大小
+    vsnprintf(buffer, sizeof(buffer), format, args);
+
+    va_end(args);
+
+    // 获取 Log 类的引用
+    jclass logClass = g_env->FindClass("io/github/lazyimmortal/sesame/util/Log");
+    if (logClass == nullptr) {
+        LogE("没有发现Log类");
+        return;
+    }
+
+    // 获取 Log 类中的 static 方法 'other' 的方法ID
+    jmethodID logMethod = g_env->GetStaticMethodID(logClass, "other", "(Ljava/lang/String;)V");
+    if (logMethod == nullptr) {
+        LogE("没有发现Log.other方法");
+        g_env->DeleteLocalRef(logClass);
+        return;
+    }
+
+    // 创建一个 Java 字符串作为参数
+    jstring jMessage = g_env->NewStringUTF(buffer);
+
+    // 调用 Java 的 Log.other 方法
+    g_env->CallStaticVoidMethod(logClass, logMethod, jMessage);
+
+    // 释放局部引用
+    g_env->DeleteLocalRef(logClass);
+    g_env->DeleteLocalRef(jMessage);
+}
+
 //static 调用 jclass cls
 //非static 调用 jobject obj
 
@@ -31,6 +85,7 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryCheckFarmTaskStatus(J
 //private static native boolean libraryDoFarmTask(JSONObject task);
 extern "C" JNIEXPORT jboolean JNICALL
 Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmTask(JNIEnv *env, jclass cls, jobject json) {
+    initJNI(env);
     // 获取 ApplicationHook 类的引用
     jclass appHookClass = env->FindClass("io/github/lazyimmortal/sesame/hook/ApplicationHook");
     if (appHookClass == nullptr) {
@@ -256,6 +311,7 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmTask(JNIEnv *en
                     // 检查 memo 的值
                     bool isSuccess = strcmp(memoStr, "SUCCESS") == 0;
                     LogE("庄园任务【%s】执行结果【%s】", titleStr, isSuccess ? "Success" : "Fail");
+                    logMessage("SO庄园任务【%s】执行结果【%s】", titleStr, isSuccess ? "Success" : "Fail");
                     jstring awardCountName = env->NewStringUTF("awardCount");
                     jstring jdvT = env->NewStringUTF("");
                     // 调用 optString 方法获取 awardCount
@@ -265,6 +321,7 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmTask(JNIEnv *en
                     if (awardCount != nullptr) {
                         const char *awardCountStr = env->GetStringUTFChars(awardCount, nullptr);
                         LogI("庄园任务🧾[%s]#获得饲料%sg", titleStr, awardCountStr);
+                        logMessage("SO庄园任务🧾[%s]#获得饲料%sg", titleStr, awardCountStr);
                         env->ReleaseStringUTFChars(awardCount, awardCountStr);
                     }
                     // 释放资源
@@ -340,6 +397,7 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmTask(JNIEnv *en
  */
 extern "C" JNIEXPORT jboolean JNICALL
 Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmDrawTimesTask(JNIEnv *env, jclass cls, jobject json) {
+    initJNI(env);
     // 获取 ApplicationHook 类的引用
     jclass appHookClass = env->FindClass("io/github/lazyimmortal/sesame/hook/ApplicationHook");
     if (appHookClass == nullptr) {
@@ -397,6 +455,7 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmDrawTimesTask(J
     int loopCount = rightsTimesLimit - rightsTimes;
     if (loopCount <= 0) {
         LogE("抽抽乐任务【%s】没有执行次数了", titleStr);
+        logMessage("SO抽抽乐任务【%s】没有执行次数了", titleStr);
         env->ReleaseStringUTFChars(title, titleStr);
         env->ReleaseStringUTFChars(taskId, taskIdStr);
         env->DeleteLocalRef(appHookClass);
@@ -467,8 +526,10 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmDrawTimesTask(J
         env->DeleteLocalRef(jsonObject);
         env->DeleteLocalRef(successKey);
         LogE("抽抽乐任务【第%d次】【%s】执行结果【%s】", i, titleStr, success ? "Success" : "Fail");
+        logMessage("SO抽抽乐任务【第%d次】【%s】执行结果【%s】", i, titleStr, success ? "Success" : "Fail");
         if (success) {
             LogI("庄园小鸡🧾️[完成【第%d次】:抽抽乐->%s]", i, titleStr);
+            logMessage("SO庄园小鸡🧾️[完成【第%d次】:抽抽乐->%s]", i, titleStr);
             env->ReleaseStringUTFChars(title, titleStr);
             env->ReleaseStringUTFChars(taskId, taskIdStr);
             env->DeleteLocalRef(appHookClass);
