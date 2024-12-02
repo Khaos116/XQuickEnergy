@@ -63,3 +63,22 @@ extern "C" JNIEXPORT jstring JNICALL
 Java_io_github_lazyimmortal_sesame_model_task_antFarm_AntFarmRpcCall_getBizKeyByFarm(JNIEnv *env, jclass cls, jstring str) {
     return str;
 }
+
+
+//private static native boolean libraryCheckFarmTaskStatus(JSONObject task);
+extern "C" JNIEXPORT jboolean JNICALL
+Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryCheckFarmTaskStatus(JNIEnv *env, jclass cls, jobject json) {
+    return JNI_TRUE;
+}
+
+//private static native boolean libraryDoFarmTask(JSONObject task);
+extern "C" JNIEXPORT jboolean JNICALL
+Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmTask(JNIEnv *env, jclass cls, jobject json) {
+    return JNI_TRUE;
+}
+
+//private static native boolean libraryDoFarmDrawTimesTask(JSONObject task);
+extern "C" JNIEXPORT jboolean JNICALL
+Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmDrawTimesTask(JNIEnv *env, jclass cls, jobject json) {
+    return JNI_TRUE;
+}
