@@ -1,5 +1,7 @@
 package io.github.lazyimmortal.sesame.model.task.antFarm;
 
+import android.text.TextUtils;
+
 import lombok.Getter;
 
 import org.json.JSONArray;
@@ -500,9 +502,9 @@ public class AntFarm extends ModelTask {
             }
             String groupId = null;
             if (family.getValue()) {
-                groupId = jo.getString("groupId");
+                groupId = MyUtils.antFarmGroupIdMaybeEmpty(jo);
             }
-            if (groupId == null) {
+            if (TextUtils.isEmpty(groupId)) {
                 return animalSleep();
             }
             return familySleep(groupId);
@@ -2201,36 +2203,36 @@ public class AntFarm extends ModelTask {
             if (jo == null) {
                 return;
             }
-            String groupId = jo.getString("groupId");
-            int familyAwardNum = jo.getInt("familyAwardNum");
-            boolean familySignTips = jo.getBoolean("familySignTips");
+            String groupId = MyUtils.antFarmGroupIdMaybeEmpty(jo);
+            int familyAwardNum = jo.optInt("familyAwardNum");
+            boolean familySignTips = jo.optBoolean("familySignTips");
 
-            JSONArray familyInteractActions = jo.getJSONArray("familyInteractActions");
+            JSONArray familyInteractActions = jo.optJSONArray("familyInteractActions");
 
-            JSONArray familyAnimals = jo.getJSONArray("animals");
+            JSONArray familyAnimals = jo.optJSONArray("animals");
             JSONArray friendUserIds = new JSONArray();
-            for (int i = 0; i < familyAnimals.length(); i++) {
+            if(familyAnimals!=null)for (int i = 0; i < familyAnimals.length(); i++) {
                 jo = familyAnimals.getJSONObject(i);
-                String animalId = jo.getString("animalId");
-                friendUserIds.put(jo.getString("userId"));
+                String animalId = jo.optString("animalId");
+                friendUserIds.put(jo.optString("userId"));
                 if (animalId.equals(ownerAnimal.animalId)) {
                     continue;
                 }
-                String farmId = jo.getString("farmId");
-                String userId = jo.getString("userId");
+                String farmId = jo.optString("farmId");
+                String userId = jo.optString("userId");
                 JSONObject animalStatusVO = jo.getJSONObject("animalStatusVO");
-                String animalFeedStatus = animalStatusVO.getString("animalFeedStatus");
-                String animalInteractStatus = animalStatusVO.getString("animalInteractStatus");
+                String animalFeedStatus = animalStatusVO.optString("animalFeedStatus");
+                String animalInteractStatus = animalStatusVO.optString("animalInteractStatus");
                 if (AnimalInteractStatus.HOME.name().equals(animalInteractStatus)
                         && AnimalFeedStatus.HUNGRY.name().equals(animalFeedStatus)) {
-                    if (familyOptions.getValue().contains("familyFeed")) {
+                    if (familyOptions.getValue().contains("familyFeed") && !TextUtils.isEmpty(groupId)) {
                         familyFeedFriendAnimal(groupId, farmId, userId);
                     }
                 }
             }
 
             boolean canEatTogether = true;
-            for (int i = 0; i < familyInteractActions.length(); i++) {
+            if(familyInteractActions!=null)for (int i = 0; i < familyInteractActions.length(); i++) {
                 jo = familyInteractActions.getJSONObject(i);
                 if ("EatTogether".equals(jo.optString("familyInteractType"))) {
                     canEatTogether = false;
@@ -2240,7 +2242,7 @@ public class AntFarm extends ModelTask {
             if (familySignTips && familyOptions.getValue().contains("familySign")) {
                 familySign();
             }
-            if (canEatTogether && familyOptions.getValue().contains("familyEatTogether")) {
+            if (canEatTogether && familyOptions.getValue().contains("familyEatTogether") && !TextUtils.isEmpty(groupId)) {
                 familyEatTogether(groupId, friendUserIds);
             }
             if (familyAwardNum > 0 && familyOptions.getValue().contains("familyAwardList")) {
