@@ -11,8 +11,8 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 31
-        versionCode 1110
-        versionName "v1.6.0.3"
+        versionCode 1111
+        versionName "v1.6.0.3fix"
 
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
     }
