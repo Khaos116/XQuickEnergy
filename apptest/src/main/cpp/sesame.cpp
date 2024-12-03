@@ -523,7 +523,7 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmDrawTimesTask(J
         }
         sleep(1);//sleep的单位是秒
     }
-    LogE("抽抽乐任务【%s】总次数[%d],成功次数[%d]", titleStr, loopCount, sucCount);
+    LogI("抽抽乐任务【%s】总次数[%d],成功次数[%d]", titleStr, loopCount, sucCount);
     // 释放资源
     env->ReleaseStringUTFChars(title, titleStr);
     env->ReleaseStringUTFChars(taskId, taskIdStr);
