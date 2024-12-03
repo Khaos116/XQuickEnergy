@@ -39,4 +39,14 @@ public class MyUtils {
   public static String antFarmGroupIdMaybeEmpty(JSONObject jo) {
     return jo.optString("groupId");
   }
+
+  //处理可能为空
+  public static long antForestV2NowMaybeNull(JSONObject jo) {
+    long time = jo.optLong("now");
+    if (time == 0) {
+      return System.currentTimeMillis();
+    } else {
+      return time;
+    }
+  }
 }
