@@ -7,10 +7,6 @@ import androidx.annotation.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import io.github.lazyimmortal.sesame.entity.UserEntity;
-import io.github.lazyimmortal.sesame.hook.ApplicationHook;
-import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
-
 /**
  * Date:2024/12/3
  * Time:9:09
@@ -26,16 +22,11 @@ public class MyUtils {
   //打印用户切换
   public static void recordUserName(@Nullable String uid) {
     if (TextUtils.isEmpty(uid)) return;
-    UserEntity user = UserIdMap.get(uid);
-    if (user != null) {
+    io.github.lazyimmortal.sesame.entity.UserEntity user = io.github.lazyimmortal.sesame.util.idMap.UserIdMap.get(uid);
+    if (user != null && !TextUtils.isEmpty(user.getNickName())) {
       Log.record("加载用户:" + user.getNickName());
     } else {
-      String userName = ApplicationHook.getUserName();
-      if (TextUtils.isEmpty(userName)) {
-        Log.record("加载用户昵称:" + userName);
-      } else {
-        Log.record("加载用户ID:" + uid);
-      }
+      Log.record("加载用户ID:" + uid);
     }
   }
 
@@ -68,34 +59,4 @@ public class MyUtils {
       return time;
     }
   }
-
-  //放到ApplicationHook
-  //private static Object queryAllCombinedAccount() {
-  //  try {
-  //    return XposedHelpers.callMethod(getServiceObject(XposedHelpers.findClass("com.alipay.mobile.personalbase.service.SocialSdkContactService", classLoader).getName()), "queryAllCombinedAccount", 1, false);
-  //  } catch (Throwable th) {
-  //    Log.i(TAG, "getUserObject err");
-  //    Log.printStackTrace(TAG, th);
-  //  }
-  //  return null;
-  //}
-  //
-  //public static String getUserName() {
-  //  Object object = queryAllCombinedAccount();
-  //  if (object instanceof List<?>) {
-  //    List<?> list = ((List<?>) object);
-  //    if (!list.isEmpty()) {
-  //      Object first = list.get(0);//com.alipay.mobile.personalbase.model.MobileRecordAccount
-  //      try {
-  //        if (first != null) {
-  //          return (String) XposedHelpers.getObjectField(first, "nickName");
-  //        }
-  //      } catch (Throwable th) {
-  //        Log.i(TAG, "getUserName err");
-  //        Log.printStackTrace(TAG, th);
-  //      }
-  //    }
-  //  }
-  //  return null;
-  //}
 }
