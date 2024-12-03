@@ -139,10 +139,10 @@ public class AESUtil {
         return stringBuilder.toString();
     }
 
-    public static String loadDecryptHtmlData(Context context) {
-        String htmlData = readAssetFile(context, "file:///android_asset/web/js/index.js");
-        return "<!DOCTYPE html><html lang=\"en\"><script>" + decryptData(htmlData) + "</script></html>";
-    }
+    //public static String loadDecryptHtmlData(Context context) {
+    //    String htmlData = readAssetFile(context, "file:///android_asset/web/js/index.js");
+    //    return "<!DOCTYPE html><html lang=\"en\"><script>" + decryptData(htmlData) + "</script></html>";
+    //}
 
 //    public static void main(String[] args) {
 //        try {

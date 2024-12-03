@@ -133,8 +133,11 @@ public class NewSettingsActivity extends BaseActivity {
             WebView.setWebContentsDebuggingEnabled(true);
         }
         webView.addJavascriptInterface(new WebViewCallback(), "HOOK");
-        String htmlData = AESUtil.loadDecryptHtmlData(context);
-        webView.loadDataWithBaseURL("file:///android_asset/web/", htmlData, "text/html", "UTF-8", null);
+        final boolean closeNewUi = MyUtils.closeNewSetting;
+        //String htmlData = AESUtil.loadDecryptHtmlData(context);
+        String htmlData = "<!DOCTYPE html><html lang=\"en\"><script>" + "已关闭新UI设置" + "</script></html>";
+        webView.loadDataWithBaseURL(null, htmlData, "text/html", "utf-8", null);
+        //webView.loadDataWithBaseURL("file:///android_asset/web/", htmlData, "text/html", "UTF-8", null);
 //        webView.loadUrl("file:///android_asset/web/index.html");
 //        webView.loadUrl("http://192.168.31.32:5500/app/src/main/assets/web/index.html");
         webView.requestFocus();
@@ -371,7 +374,7 @@ public class NewSettingsActivity extends BaseActivity {
                 ListDialog.show(this, "单向好友列表", AlipayUser.getList(user -> user.getFriendStatus() != 1), SelectModelFieldFunc.newMapInstance(), false, ListDialog.ListType.SHOW);
                 break;
             case 5:
-                AppConfig.INSTANCE.setNewUI(false);
+                //AppConfig.INSTANCE.setNewUI(false);
                 if (AppConfig.save()) {
                     Intent intent = new Intent(this, SettingsActivity.class);
                     intent.putExtra("userId", userId);

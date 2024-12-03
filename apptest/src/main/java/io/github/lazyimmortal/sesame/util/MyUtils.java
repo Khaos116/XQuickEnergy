@@ -21,6 +21,8 @@ public class MyUtils {
   private static SharedPreferences mSP = null;
   //修改参数，不让小鸡自动睡觉
   public static final String NO_SLEEP = "canSleepXXX";
+  //关闭H5的新设置页面
+  public static final boolean closeNewSetting = true;
 
   //是否显示首页弹窗
   public static boolean showHomeDialog() {

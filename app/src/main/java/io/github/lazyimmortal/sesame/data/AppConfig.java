@@ -5,10 +5,9 @@ import android.app.Application;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import io.github.lazyimmortal.sesame.util.*;
 import lombok.Data;
-import io.github.lazyimmortal.sesame.util.FileUtil;
-import io.github.lazyimmortal.sesame.util.JsonUtil;
-import io.github.lazyimmortal.sesame.util.Log;
 
 import java.io.File;
 
@@ -24,7 +23,8 @@ public class AppConfig {
     @JsonIgnore
     private boolean init;
 
-    private Boolean newUI = true;
+    final boolean closeNewUi = MyUtils.closeNewSetting;
+    //private Boolean newUI = true;
 
     private static File getExternalFilesDir() {
         try {

@@ -168,9 +168,8 @@ public class SettingsActivity extends BaseActivity {
         menu.add(0, 2, 2, "导入配置");
         menu.add(0, 3, 3, "删除配置");
         menu.add(0, 4, 4, "单向好友");
-        if (!"TEST".equals(ViewAppInfo.getAppVersion())) {
-            menu.add(0, 5, 5, "切换至新UI");
-        }
+        final boolean closeNewUi = MyUtils.closeNewSetting;
+        //menu.add(0, 5, 5, "切换至新UI");
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -217,9 +216,10 @@ public class SettingsActivity extends BaseActivity {
                 ListDialog.show(this, "单向好友列表", AlipayUser.getList(user -> user.getFriendStatus() != 1), SelectModelFieldFunc.newMapInstance(), false, ListDialog.ListType.SHOW);
                 break;
             case 5:
-                AppConfig.INSTANCE.setNewUI(true);
+                final boolean closeNewUi = MyUtils.closeNewSetting;
+                //AppConfig.INSTANCE.setNewUI(true);
                 if (AppConfig.save()) {
-                    Intent intent = new Intent(this, NewSettingsActivity.class);
+                    Intent intent = new Intent(this, SettingsActivity.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("userName", userName);
                     finish();
