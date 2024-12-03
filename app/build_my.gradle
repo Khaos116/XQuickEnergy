@@ -15,6 +15,8 @@ android {
         versionName "v1.6.0.3fix"
 
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
+        //resConfigs "zh-rCN", "zh-rTW", "zh-rHK", "en-rUS", "en-rGB"
+        resConfigs "en-rGB" //保留中文和英文资源(如果随便写一种没有的语言，则只会打默认的文字资源到APK)
     }
     ext {
         applicationName = "Sesame"
@@ -59,11 +61,11 @@ android {
         }
         release {
             debuggable false
-            minifyEnabled false   //开启混淆
-            zipAlignEnabled false  //压缩优化
-            shrinkResources false  //移除无用资源
+            minifyEnabled true   //开启混淆
+            zipAlignEnabled true  //压缩优化
+            shrinkResources true  //移除无用资源
             signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../proguard/my-proguard-rules.pro'
         }
     }
     buildToolsVersion '30.0.2'
