@@ -2,6 +2,7 @@
 #include <android/log.h>
 #include <set>
 #include <string>
+#include <unistd.h>
 
 #define LOG_TAG "懒真人"
 #define LogI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
@@ -520,6 +521,7 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmDrawTimesTask(J
         } else {
             logMessage("SO抽抽乐小鸡【第%d次】【%s】执行【失败】", i, titleStr);
         }
+        sleep(1);//sleep的单位是秒
     }
     LogE("抽抽乐任务【%s】总次数[%d],成功次数[%d]", titleStr, loopCount, sucCount);
     // 释放资源
