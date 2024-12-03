@@ -168,7 +168,6 @@ public class ConfigV2 {
                 }
             }
             Log.record("加载配置: " + userName);
-            Log.other("加载配置: " + userName);
             if (configV2File.exists()) {
                 String json = FileUtil.readFromFile(configV2File);
                 JsonUtil.copyMapper().readerForUpdating(INSTANCE).readValue(json);

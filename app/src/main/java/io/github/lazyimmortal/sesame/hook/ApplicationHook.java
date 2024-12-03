@@ -189,11 +189,8 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                         }
                                         Log.record("应用版本：" + alipayVersion.getVersionString());
                                         Log.record("模块版本：" + modelVersion);
+                                        Log.record("编译时间：" + BuildConfig.BUILD_TIME);
                                         Log.record("开始执行");
-                                        Log.other("应用版本：" + alipayVersion.getVersionString());
-                                        Log.other("模块版本：" + modelVersion);
-                                        Log.other("编译时间：" + BuildConfig.BUILD_TIME);
-                                        Log.other("开始执行");
                                         try {
                                             int checkInterval = BaseModel.getCheckInterval().getValue();
                                             if (lastExecTime + 2000 > System.currentTimeMillis()) {
@@ -203,6 +200,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                             }
                                             updateDay();
                                             String targetUid = getUserId();
+                                            MyUtils.recordUserName(targetUid);
                                             String currentUid = UserIdMap.getCurrentUid();
                                             if (targetUid == null || currentUid == null) {
                                                 Log.record("用户为空，放弃执行");
@@ -441,7 +439,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 Model.initAllModel();
                 Log.record("模块版本：" + modelVersion);
                 Log.record("开始加载");
-                Log.other("开始加载");
+                MyUtils.recordUserName(userId);
                 ConfigV2.load(userId);
                 if (!Model.getModel(BaseModel.class).getEnableField().getValue()) {
                     Log.record("芝麻粒已禁用");
@@ -542,7 +540,6 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 updateDay();
                 BaseModel.initData();
                 Log.record("加载完成");
-                Log.other("加载完成");
                 Toast.show("芝麻粒加载成功");
             }
             offline = false;
