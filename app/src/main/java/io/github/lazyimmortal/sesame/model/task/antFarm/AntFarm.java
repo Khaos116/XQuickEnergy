@@ -1860,8 +1860,9 @@ public class AntFarm extends ModelTask {
                         continue;
                     }
                     TimeUtil.sleep(3000);
+                } else {
+                    TimeUtil.sleep(2000);
                 }
-                TimeUtil.sleep(2000);
                 String taskId = jo.getString("taskId");
                 String title = jo.getString("title");
                 receiveFarmDrawTimesTaskAward(taskId, title);
