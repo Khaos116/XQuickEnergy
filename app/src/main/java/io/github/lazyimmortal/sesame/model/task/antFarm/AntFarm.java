@@ -1266,9 +1266,9 @@ public class AntFarm extends ModelTask {
                     continue;
                 }
                 jo = jo.getJSONObject("farmVO").getJSONObject("subFarmVO");
-                String friendFarmId = jo.getString("farmId");
-                JSONArray jaAnimals = jo.getJSONArray("animals");
-                for (int j = 0; j < jaAnimals.length(); j++) {
+                String friendFarmId = jo.optString("farmId");
+                JSONArray jaAnimals = MyUtils.antFarmAnimalsMaybeNull(jo);
+                if (jaAnimals != null) for (int j = 0; j < jaAnimals.length(); j++) {
                     jo = jaAnimals.getJSONObject(j);
                     String masterFarmId = jo.getString("masterFarmId");
                     if (masterFarmId.equals(friendFarmId)) {
