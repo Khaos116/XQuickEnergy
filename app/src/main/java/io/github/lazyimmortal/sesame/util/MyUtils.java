@@ -21,4 +21,9 @@ public class MyUtils {
       Log.record("加载用户:" + user.getNickName());
     }
   }
+
+  //首页显示全部，菜单显示其他
+  public static boolean showHomeAllLog() {
+    return true;
+  }
 }
