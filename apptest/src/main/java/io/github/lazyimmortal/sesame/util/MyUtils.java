@@ -1,5 +1,7 @@
 package io.github.lazyimmortal.sesame.util;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
@@ -14,7 +16,10 @@ import java.util.HashMap;
  * Time:9:09
  */
 public class MyUtils {
+  //用户id、昵称对应表
   public static final HashMap<String, String> mUidMap = new HashMap<>();
+  private static SharedPreferences mSP = null;
+  //修改参数，不让小鸡自动睡觉
   public static final String NO_SLEEP = "canSleepXXX";
 
   //是否显示首页弹窗
@@ -23,13 +28,22 @@ public class MyUtils {
   }
 
   //打印用户切换
-  public static void recordUserName(@Nullable String uid) {
+  public static void recordUserName(@Nullable Context context, @Nullable String uid) {
+    if (context == null) return;
     if (TextUtils.isEmpty(uid)) return;
     String name = mUidMap.get(uid);
+    if (mSP == null) mSP = context.getSharedPreferences("XQE_UID", Context.MODE_PRIVATE);
     if (!TextUtils.isEmpty(name)) {
+      mSP.edit().putString(uid, name).apply();//保存以便下次访问
       Log.record("加载用户:" + name);
     } else {
-      Log.record("加载用户ID:" + uid);
+      String spName = mSP.getString(uid, "");
+      if (TextUtils.isEmpty(spName)) {
+        Log.record("加载用户ID:" + uid);
+      } else {
+        mUidMap.put(uid, spName);
+        Log.record("加载用户:" + spName);
+      }
     }
   }
 

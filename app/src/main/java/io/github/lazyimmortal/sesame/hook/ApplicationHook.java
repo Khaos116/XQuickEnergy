@@ -200,7 +200,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                             }
                                             updateDay();
                                             String targetUid = getUserId();
-                                            MyUtils.recordUserName(targetUid);
+                                            MyUtils.recordUserName(service, targetUid);
                                             String currentUid = UserIdMap.getCurrentUid();
                                             if (targetUid == null || currentUid == null) {
                                                 Log.record("用户为空，放弃执行");
@@ -439,7 +439,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 Model.initAllModel();
                 Log.record("模块版本：" + modelVersion);
                 Log.record("开始加载");
-                MyUtils.recordUserName(userId);
+                MyUtils.recordUserName(service, userId);
                 ConfigV2.load(userId);
                 if (!Model.getModel(BaseModel.class).getEnableField().getValue()) {
                     Log.record("芝麻粒已禁用");
