@@ -587,7 +587,12 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 if (rpcBridge != null) {
                     rpcVersion = null;
                     rpcBridge.unload();
-                    rpcBridge = null;
+                    //rpcBridge = null;
+                    if (BaseModel.getNewRpc().getValue()) {
+                        rpcBridge = new NewRpcBridge();
+                    } else {
+                        rpcBridge = new OldRpcBridge();
+                    }
                 }
             } else {
                 ModelTask.stopAllTask();
