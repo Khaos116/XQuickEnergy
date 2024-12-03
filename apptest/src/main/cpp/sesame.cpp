@@ -494,19 +494,7 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmDrawTimesTask(J
         // 调用 requestString 方法
         auto result = (jstring) env->CallStaticObjectMethod(appHookClass, requestStringMethod, method, requestData);
         if (result == nullptr) {
-            LogE("抽抽乐响应值为空");
-            env->DeleteLocalRef(appHookClass);
-            env->DeleteLocalRef(jsonOBC);
-            env->DeleteLocalRef(titleKey);
-            env->DeleteLocalRef(taskIdKey);
-            env->DeleteLocalRef(rightsTimesKey);
-            env->DeleteLocalRef(rightsTimesLimitKey);
-            env->ReleaseStringUTFChars(title, titleStr);
-            env->ReleaseStringUTFChars(taskId, taskIdStr);
-            env->DeleteLocalRef(method);
-            env->DeleteLocalRef(requestData);
-            env->DeleteLocalRef(result);
-            return JNI_FALSE;
+            continue;
         }
         const char *resultStr = env->GetStringUTFChars(result, nullptr);
         // 将 C 字符串转换为 Java 字符串
@@ -521,8 +509,6 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmDrawTimesTask(J
         jmethodID optBooleanMethod = env->GetMethodID(jsonClass, "optBoolean", "(Ljava/lang/String;Z)Z");
         jstring successKey = env->NewStringUTF("success");
         jboolean success = env->CallBooleanMethod(jsonObject, optBooleanMethod, successKey, JNI_FALSE);
-
-
         // 清理局部引用
         env->DeleteLocalRef(jsonClass);
         env->DeleteLocalRef(jsonObject);
@@ -530,22 +516,12 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmDrawTimesTask(J
         if (success) {
             LogI("抽抽乐任务【第%d次】🧾️[完成:抽抽乐->%s]", i, titleStr);
             logMessage("SO抽抽乐小鸡【第%d次】🧾️[完成:抽抽乐->%s]", i, titleStr);
-            env->ReleaseStringUTFChars(title, titleStr);
-            env->ReleaseStringUTFChars(taskId, taskIdStr);
-            env->DeleteLocalRef(appHookClass);
-            env->DeleteLocalRef(jsonOBC);
-            env->DeleteLocalRef(titleKey);
-            env->DeleteLocalRef(taskIdKey);
-            env->DeleteLocalRef(rightsTimesKey);
-            env->DeleteLocalRef(rightsTimesLimitKey);
-            env->DeleteLocalRef(method);
-            env->DeleteLocalRef(requestData);
-            return JNI_TRUE;
+            sucCount++;
         } else {
             logMessage("SO抽抽乐小鸡【第%d次】【%s】执行【失败】", i, titleStr);
         }
     }
-    LogE("抽抽乐任务【%s】默认失败", titleStr);
+    LogE("抽抽乐任务【%s】总次数[%d],成功次数[%d]", titleStr, loopCount, sucCount);
     // 释放资源
     env->ReleaseStringUTFChars(title, titleStr);
     env->ReleaseStringUTFChars(taskId, taskIdStr);
@@ -557,5 +533,5 @@ Java_io_github_lazyimmortal_sesame_util_LibraryUtil_libraryDoFarmDrawTimesTask(J
     env->DeleteLocalRef(rightsTimesLimitKey);
     env->DeleteLocalRef(method);
     env->DeleteLocalRef(requestData);
-    return JNI_FALSE;
+    return (sucCount == loopCount) ? JNI_TRUE : JNI_FALSE;
 }
