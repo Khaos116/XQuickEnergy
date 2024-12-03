@@ -1,23 +1,7 @@
+//file:noinspection GrDeprecatedAPIUsage
 apply plugin: 'com.android.application'
 
-//修改内容
-//1
-//Log.other("加载配置: " + userName);
-//2
-//Log.other("应用版本：" + alipayVersion.getVersionString());
-//Log.other("模块版本：" + modelVersion);
-//Log.other("编译时间：" + BuildConfig.BUILD_TIME);
-//Log.other("开始执行");
-//Log.other("开始加载");
-//Log.other("加载完成");
-//3
-//Log.other("执行超时-蚂蚁森林");
-//Log.other("执行结束-蚂蚁森林");
-//Log.other("执行完成-蚂蚁森林");
-//4
-//alertDialog.show();
-//5
-//optBoolean("canSleep"->optBoolean("canSleepXXX"
+//修改内容在MyUtils
 android {
     def buildTime = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("Asia/Shanghai"))
 
@@ -104,13 +88,19 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:28.0.0'
     compileOnly 'de.robv.android.xposed:api:82'
+    //noinspection AnnotationProcessorOnCompilePath,GradleDependency
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
+    //noinspection GradleDependency
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
+    //noinspection GradleDependency
     implementation 'com.elvishew:xlog:1.11.0'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 
+    //noinspection GradleDependency
     normalImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.1'
+    //noinspection GradleDependency
     normalImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.1'
+    //noinspection GradleDependency
     normalImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.17.1'
 }
 
