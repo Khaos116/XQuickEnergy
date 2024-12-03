@@ -798,6 +798,35 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         return null;
     }
 
+    private static Object queryAllCombinedAccount() {
+        try {
+            return XposedHelpers.callMethod(getServiceObject(XposedHelpers.findClass("com.alipay.mobile.personalbase.service.SocialSdkContactService", classLoader).getName()), "queryAllCombinedAccount", 1, false);
+        } catch (Throwable th) {
+            Log.i(TAG, "getUserObject err");
+            Log.printStackTrace(TAG, th);
+        }
+        return null;
+    }
+
+    public static String getUserName() {
+        Object object = queryAllCombinedAccount();
+        if (object instanceof List<?>) {
+            List<?> list = ((List<?>) object);
+            if (!list.isEmpty()) {
+                Object first = list.get(0);//com.alipay.mobile.personalbase.model.MobileRecordAccount
+                try {
+                    if (first != null) {
+                        return (String) XposedHelpers.getObjectField(first, "nickName");
+                    }
+                } catch (Throwable th) {
+                    Log.i(TAG, "getUserName err");
+                    Log.printStackTrace(TAG, th);
+                }
+            }
+        }
+        return null;
+    }
+
     public static String getUserId() {
         try {
             Object userObject = getUserObject();
