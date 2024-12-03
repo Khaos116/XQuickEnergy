@@ -1,5 +1,7 @@
 package io.github.lazyimmortal.sesame.model.task.antMember;
 
+import android.text.TextUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -371,6 +373,9 @@ public class AntMember extends ModelTask {
                 } else {
                     bizParam = targetBusinessArray[1];
                     bizSubType = targetBusinessArray[0];
+                }
+                if (!MyUtils.antMemberUnsSupportBizSubType(bizSubType)) {
+                    continue;
                 }
                 jo = new JSONObject(AntMemberRpcCall.executeTask(bizParam, bizSubType));
                 TimeUtil.sleep(300);

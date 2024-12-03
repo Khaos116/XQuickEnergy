@@ -78,4 +78,10 @@ public class MyUtils {
       return time;
     }
   }
+
+  //发现有不支持的BizSubType
+  public static boolean antMemberUnsSupportBizSubType(String subType) {
+    if (TextUtils.isEmpty(subType)) return false;
+    return !TextUtils.equals(subType, "ngfe_tag__ptr3o4eriu");
+  }
 }
