@@ -16,6 +16,13 @@ import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
  * Time:9:09
  */
 public class MyUtils {
+  public static final String NO_SLEEP = "canSleepXXX";
+
+  //是否显示首页弹窗
+  public static boolean showHomeDialog() {
+    return false;
+  }
+
   //打印用户切换
   public static void recordUserName(@Nullable String uid) {
     if (TextUtils.isEmpty(uid)) return;
@@ -25,7 +32,7 @@ public class MyUtils {
     }
   }
 
-  //首页显示全部，菜单显示其他
+  //首页显示全部记录，菜单显示其他记录
   public static boolean showHomeAllLog() {
     return true;
   }
