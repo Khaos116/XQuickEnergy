@@ -184,8 +184,8 @@ public class AntSports extends ModelTask {
                 return;
             }
             jo = jo.getJSONObject("data");
-            JSONArray taskList = jo.getJSONArray("taskList");
-            for (int i = 0; i < taskList.length(); i++) {
+            JSONArray taskList = jo.optJSONArray("taskList");
+            if (taskList != null) for (int i = 0; i < taskList.length(); i++) {
                 jo = taskList.getJSONObject(i);
 
                 String taskStatus = jo.getString("taskStatus");
