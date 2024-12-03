@@ -70,6 +70,11 @@ public class MyUtils {
   }
 
   //处理可能为空
+  public static @Nullable JSONObject antFarmSleepNotifyInfoMaybeNull(JSONObject jo) {
+    return jo.optJSONObject("sleepNotifyInfo");
+  }
+
+  //处理可能为空
   public static long antForestV2NowMaybeNull(JSONObject jo) {
     long time = jo.optLong("now");
     if (time == 0) {

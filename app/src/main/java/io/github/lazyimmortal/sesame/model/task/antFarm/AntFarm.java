@@ -480,7 +480,8 @@ public class AntFarm extends ModelTask {
             if (!MessageUtil.checkMemo(TAG, jo)) {
                 return false;
             }
-            jo = jo.getJSONObject("sleepNotifyInfo");
+            jo = MyUtils.antFarmSleepNotifyInfoMaybeNull(jo);
+            if (jo == null) return true;
             return jo.optBoolean("hasSleepToday", false);
         } catch (Throwable t) {
             Log.i(TAG, "hasSleepToday err:");
