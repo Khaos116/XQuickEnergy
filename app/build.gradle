@@ -96,7 +96,7 @@ dependencies {
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
     //noinspection GradleDependency
     implementation 'com.elvishew:xlog:1.11.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'//AI答题
 
     //noinspection GradleDependency
     compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.5'
