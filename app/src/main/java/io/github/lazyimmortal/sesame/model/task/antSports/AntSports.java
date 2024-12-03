@@ -751,8 +751,8 @@ public class AntSports extends ModelTask {
             if (!MessageUtil.checkResultCode(TAG, jo)) {
                 return false;
             }
-            JSONArray userExchangeRecords = jo.getJSONArray("userExchangeRecords");
-            if (userExchangeRecords.length() == 0) {
+            JSONArray userExchangeRecords =MyUtils.antSportUserExchangeRecordsMaybeNull(jo);
+            if (userExchangeRecords==null||userExchangeRecords.length() == 0) {
                 return true;
             }
             jo = userExchangeRecords.getJSONObject(0);

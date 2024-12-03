@@ -50,6 +50,11 @@ public class MyUtils {
   }
 
   //处理可能为空
+  public static @Nullable JSONArray antSportUserExchangeRecordsMaybeNull(JSONObject jo) {
+    return jo.optJSONArray("userExchangeRecords");
+  }
+
+  //处理可能为空
   public static String antFarmGroupIdMaybeEmpty(JSONObject jo) {
     return jo.optString("groupId");
   }
