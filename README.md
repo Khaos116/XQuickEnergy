@@ -7,6 +7,6 @@
 [![Telegram](https://img.shields.io/badge/蚂蚁森林交流群-nul?labelColor=%23f7f7f7&label=Telegram&logo=Telegram&color=brightgreen)](https://t.me/mysl_group)
 
 ### 本仓库仅记录使用
-### 新版本可前往一下链接
+### 新版本可前往以下链接：
 ##### [@Fansirsqi](https://github.com/Fansirsqi) 维护的 [Sesame](https://github.com/Fansirsqi/Sesame-TK)
 ##### [@lazy-immortal](https://github.com/lazy-immortal) 维护的 [Sesame](https://github.com/lazy-immortal/Sesame)
