@@ -1,0 +1,67 @@
+[![Version 1.0.0 Downloads](https://img.shields.io/badge/Downloads-100-brightgreen?labelColor=fff&logo=github)](https://github.com/Khaos116/XQuickEnergy/releases/tag/v1.0.0)
+
+================================labelColor引用值================================
+1. 预定义颜色
+Shields.io 提供了一些预定义的颜色名称，常见的有：
+brightgreen
+green
+yellowgreen
+yellow
+orange
+red
+blue
+lightgrey
+grey
+black
+white
+2. HEX 颜色代码
+你也可以使用 HEX 颜色代码来指定颜色，例如：
+#FF5733（橙色）
+#4285F4（蓝色）
+#34A853（绿色）
+================================logo引用值================================
+1. GitHub (github)
+用途: GitHub 是一个流行的代码托管平台，广泛用于版本控制和协作开发。
+特点: 支持 Git 仓库，提供问题追踪、代码审查和项目管理功能。
+2. npm (npm)
+用途: npm 是 Node.js 的包管理工具，允许开发者安装、共享和管理 JavaScript 代码包。
+特点: 拥有庞大的公共包库，支持版本控制和依赖管理。
+3. Docker (docker)
+用途: Docker 是一个开源平台，用于开发、交付和运行应用程序，利用容器技术。
+特点: 提供轻量级的虚拟化，便于在不同环境中一致地运行应用。
+4. Travis CI (travis)
+用途: Travis CI 是一个持续集成服务，用于自动化测试和部署代码。
+特点: 与 GitHub 集成良好，支持多种编程语言。
+5. CircleCI (circleci)
+用途: CircleCI 是另一种持续集成和持续交付平台，支持快速构建和测试代码。
+特点: 提供灵活的配置选项和强大的并行构建能力。
+6. AppVeyor (appveyor)
+用途: AppVeyor 是一个专注于 Windows 平台的持续集成服务。
+特点: 支持 .NET 和其他 Windows 应用的构建和测试。
+7. Azure DevOps (azuredevops)
+用途: Azure DevOps 是微软提供的开发工具套件，支持规划、开发、交付和监控应用。
+特点: 包括 Azure Pipelines、Repos、Boards 等功能，适用于多种开发流程。
+8. Bitbucket (bitbucket)
+用途: Bitbucket 是一个代码托管平台，支持 Git 和 Mercurial。
+特点: 提供代码审查和持续集成功能，适合团队协作。
+9. Jenkins (jenkins)
+用途: Jenkins 是一个开源的自动化服务器，主要用于持续集成和持续交付。
+特点: 拥有丰富的插件生态，支持多种构建和部署任务。
+10. CodeClimate (codeclimate)
+用途: CodeClimate 是一个代码质量分析工具，帮助开发者保持代码的健康。
+特点: 提供代码覆盖率、复杂度分析等功能。
+11. CodeSandbox (codesandbox)
+用途: CodeSandbox 是一个在线代码编辑器，专注于前端开发。
+特点: 支持实时协作，快速创建和分享项目。
+12. Slack (slack)
+用途: Slack 是一个团队协作工具，支持即时消息和文件共享。
+特点: 集成多种开发工具，适合团队沟通和协作。
+13. Heroku (heroku)
+用途: Heroku 是一个平台即服务（PaaS），用于快速部署和管理应用程序。
+特点: 支持多种编程语言，提供简单的应用部署流程。
+14. Firebase (firebase)
+用途: Firebase 是 Google 提供的移动和 Web 应用开发平台。
+特点: 提供实时数据库、身份验证、托管等服务，适合快速开发应用。
+
+15.还可以使用自定义log
+![My Custom Badge](https://img.shields.io/badge/Downloads-100-brightgreen?labelColor=fff&logo=https://example.com/my-logo.png)
