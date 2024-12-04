@@ -64,3 +64,4 @@ fastlane/test_output
 Xposed-Modules-Repo/
 plugin/
 demo/*
+.cxx/
