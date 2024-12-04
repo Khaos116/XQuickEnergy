@@ -733,8 +733,12 @@ public class AntFarm extends ModelTask {
                     }
                 }
                 if (isFull) {
-                    Log.record("领取道具[" + toolType.nickName() + "]#已满，暂不领取");
-                    continue;
+                    if (toolType.equals(ToolType.NEWEGGTOOL)) {
+                        useFarmTool(ownerFarmId, ToolType.NEWEGGTOOL);
+                    } else {
+                        Log.record("领取道具[" + toolType.nickName() + "]#已满，暂不领取");
+                        continue;
+                    }
                 }
                 int awardCount = bizInfo.getInt("awardCount");
                 String taskType = joItem.getString("taskType");
