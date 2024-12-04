@@ -1,10 +1,10 @@
 # Sesame-TK
 
-[![License](https://img.shields.io/github/license/Khaos116/XQuickEnergy?labelColor=white&label=License&logo=gnuprivacyguard)](https://github.com/Khaos116/XQuickEnergy/blob/main_tk/LICENSE)
-[![Latest Release](https://img.shields.io/github/release/Khaos116/XQuickEnergy?labelColor=black&label=Releases&logo=gitlfs)](../../releases)
-![Downloads](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/v1.6.0.3fix/total.svg?color=blue&labelColor=lightgrey)(https://github.com/Khaos116/XQuickEnergy/releases/tag/v1.3.5-TK)
-[![All Releases Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/total?labelColor=orange&label=总下载&logo=circleci)](../../releases)
-[![Telegram](https://img.shields.io/badge/蚂蚁森林交流群-nul?&logo=Telegram&label=Telegram&labelColor=white&link=https://t.me/mysl_group)](https://t.me/mysl_group)
+[![License](https://img.shields.io/github/license/Khaos116/XQuickEnergy?labelColor=white&label=License&logo=gnuprivacyguard&color=orange)](https://github.com/Khaos116/XQuickEnergy/blob/main_tk/LICENSE)
+[![Latest Release](https://img.shields.io/github/release/Khaos116/XQuickEnergy?labelColor=green&label=最新版&logo=gitlfs&color=blue)](../../releases)
+![Downloads](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/v1.6.0.3fix/total.svg?labelColor=green&label=最新版&color=yellow)
+[![All Releases Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/total?labelColor=orange&label=总下载&logo=circleci&color=brightgreen)](../../releases)
+[![Telegram](https://img.shields.io/badge/蚂蚁森林交流群-nul?labelColor=white&label=Telegram&logo=Telegram&link=https://t.me/mysl_group)](https://t.me/mysl_group)
 
 # 本仓库已存档，新版本可前往由 [@Fansirsqi](https://github.com/Fansirsqi) 维护的 [Sesame](https://github.com/Fansirsqi/Sesame-TK) 更新
 
