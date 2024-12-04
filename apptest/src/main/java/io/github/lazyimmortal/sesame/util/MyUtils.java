@@ -65,8 +65,19 @@ public class MyUtils {
   }
 
   //处理可能为空
+
+  public static @Nullable JSONArray antFarmAnimalsMaybeNull(JSONObject jo) {
+    return jo.optJSONArray("animals");
+  }
+
+  //处理可能为空
   public static String antFarmGroupIdMaybeEmpty(JSONObject jo) {
     return jo.optString("groupId");
+  }
+
+  //处理可能为空
+  public static @Nullable JSONObject antFarmSleepNotifyInfoMaybeNull(JSONObject jo) {
+    return jo.optJSONObject("sleepNotifyInfo");
   }
 
   //处理可能为空
@@ -77,5 +88,11 @@ public class MyUtils {
     } else {
       return time;
     }
+  }
+
+  //发现有不支持的BizSubType
+  public static boolean antMemberUnsSupportBizSubType(String subType) {
+    if (TextUtils.isEmpty(subType)) return false;
+    return !TextUtils.equals(subType, "ngfe_tag__ptr3o4eriu");
   }
 }
