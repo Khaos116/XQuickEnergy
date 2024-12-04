@@ -1088,6 +1088,7 @@ public class AntFarm extends ModelTask {
                 isDoTask = doAnswerTask();
             } else {
                 isDoTask = LibraryUtil.doFarmTask(task);
+                return isDoTask;//防止重复打印
             }
             if (isDoTask) {
                 Log.farm("饲料任务🧾完成[" + title + "]");
