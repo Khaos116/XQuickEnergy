@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/github/license/Khaos116/XQuickEnergy?labelColor=white&label=License&logo=gnuprivacyguard&color=orange)](https://github.com/Khaos116/XQuickEnergy/blob/main_tk/LICENSE)
 [![最新版](https://img.shields.io/github/release/Khaos116/XQuickEnergy?labelColor=white&label=最新版&logo=gitlfs&color=red)](../../releases)
-[![v1.6.0.3fix下载](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/v1.6.0.3fix/total.svg?labelColor=#800080&label=v1.6.0.3fix下载&logo=github&color=black)](https://github.com/Khaos116/XQuickEnergy/releases/tag/v1.6.0.3fix)
+[![v1.6.0.3fix下载](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/v1.6.0.3fix/total.svg?labelColor=%23800080&label=v1.6.0.3fix下载&logo=github&color=black)](https://github.com/Khaos116/XQuickEnergy/releases/tag/v1.6.0.3fix)
 [![全部下载](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/total?labelColor=blue&label=总下载&logo=circleci&color=green)](../../releases)
 [![Telegram](https://img.shields.io/badge/蚂蚁森林交流群-nul?labelColor=white&label=Telegram&logo=Telegram&color=brightgreen)](https://t.me/mysl_group)
 
@@ -14,7 +14,6 @@
 ## 不要使用任何未开放源代码的修改版！
 
 ## 自北京时间2024年7月15日开始，开源协议已变更，该项目禁止用于任何商业用途，并禁止二次修改后闭源发布
-
 # 从v1.3.0-TK版本开始使用新UI
 
 ## 感谢 [@wh-990624](https://github.com/wh-990624) 重构并开发新UI
