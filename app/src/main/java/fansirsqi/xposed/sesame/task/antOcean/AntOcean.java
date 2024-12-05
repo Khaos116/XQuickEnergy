@@ -38,20 +38,29 @@ public class AntOcean extends ModelTask {
         return ModelGroup.FOREST;
     }
 
+    /**每日海洋任务*/
     private BooleanModelField dailyOceanTask;
+    /**领取碎片奖励*/
     private BooleanModelField receiveOceanTaskAward;
+    /**清理 | 开启*/
     private BooleanModelField cleanOcean;
+    /**清理 | 动作*/
     private ChoiceModelField cleanOceanType;
+    /**清理 | 好友列表*/
     private SelectModelField cleanOceanList;
+    /**神奇海洋 | 制作万能拼图*/
     private BooleanModelField exchangeProp;
+    /**神奇海洋 | 使用万能拼图*/
     private BooleanModelField usePropByType;
+    /**保护 | 开启*/
     private BooleanModelField protectOcean;
+    /**保护 | 海洋列表*/
     private SelectAndCountModelField protectOceanList;
 
     @Override
     public ModelFields getFields() {
         ModelFields modelFields = new ModelFields();
-        modelFields.addField(dailyOceanTask = new BooleanModelField("dailyOceanTask", "完成海洋任务", false));
+        modelFields.addField(dailyOceanTask = new BooleanModelField("dailyOceanTask", "每日海洋任务", false));
         modelFields.addField(receiveOceanTaskAward = new BooleanModelField("receiveOceanTaskAward", "领取碎片奖励", false));
         modelFields.addField(cleanOcean = new BooleanModelField("cleanOcean", "清理 | 开启", false));
         modelFields.addField(cleanOceanType = new ChoiceModelField("cleanOceanType", "清理 | 动作", CleanOceanType.DONT_CLEAN, CleanOceanType.nickNames));
@@ -620,7 +629,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    // 潘多拉海洋任务领取
+    /**潘多拉海洋任务领取*/
     private static void doOceanPDLTask() {
         try {
             String homeResponse = AntOceanRpcCall.PDLqueryReplicaHome();
@@ -644,7 +653,7 @@ public class AntOcean extends ModelTask {
                         JSONObject receiveTaskJson = new JSONObject(receiveTaskResponse);
                         int code = receiveTaskJson.getInt("code");
                         if (code == 100000000) {
-                            LogUtil.forest("海洋奖励🎖️[领取:" + taskTitle + "]获得潘多拉能量x" + awardCount);
+                            LogUtil.forest("海洋奖励🌊[领取:" + taskTitle + "]获得潘多拉能量x" + awardCount);
                         } else {
                             if (receiveTaskJson.has("message")) {
                                 LogUtil.record("领取任务奖励失败: " + receiveTaskJson.getString("message"));

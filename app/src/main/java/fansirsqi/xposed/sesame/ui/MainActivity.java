@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import fansirsqi.xposed.sesame.R;
 import fansirsqi.xposed.sesame.data.RunType;
 import fansirsqi.xposed.sesame.data.UIConfig;
@@ -53,16 +54,31 @@ public class MainActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     ToastUtil.init(this); // 初始化全局 Context
     setContentView(R.layout.activity_main);
+    View mainImage = findViewById(R.id.main_image);
     tvStatistics = findViewById(R.id.tv_statistics);
     TextView buildVersion = findViewById(R.id.bulid_version);
     TextView buildTarget = findViewById(R.id.bulid_target);
     TextView oneWord = findViewById(R.id.one_word);
     // 获取并设置一言句子
-
     ViewAppInfo.checkRunType();
     updateSubTitle(ViewAppInfo.getRunType());
     viewHandler = new Handler();
     titleRunner = () -> updateSubTitle(RunType.DISABLE);
+    if (mainImage != null) {
+      mainImage.setOnLongClickListener(
+          v -> {
+            // 当视图被长按时执行的操作
+            if (v.getId() == R.id.main_image) {
+              String data = "file://" + FileUtil.getDebugLogFile().getAbsolutePath();
+              Intent it = new Intent(MainActivity.this, HtmlViewerActivity.class);
+              it.setData(Uri.parse(data));
+              startActivity(it);
+              return true; // 表示事件已处理
+            }
+            return false; // 如果不是目标视图，返回false
+          });
+    }
+
     BroadcastReceiver broadcastReceiver =
         new BroadcastReceiver() {
           @Override
@@ -91,6 +107,7 @@ public class MainActivity extends BaseActivity {
                           }
                         });
                     Toast.makeText(context, "芝麻粒状态加载正常👌", Toast.LENGTH_SHORT).show();
+//                    NotificationUtil.sendNewNotification(context.getApplicationContext(), "⚠️已触发请求频繁", "请手动进入支付宝查看详情，正常请忽略😛", 9527);
                     TimeUtil.sleep(5000); // 别急，等一会儿再说
                     isClick = false;
                   }
@@ -223,7 +240,7 @@ public class MainActivity extends BaseActivity {
 
   @SuppressLint("NonConstantResourceId")
   public void onClick(View v) {
-    if (v.getId() == R.id.btn_test) {
+    if (v.getId() == R.id.main_image) {
       try {
         sendBroadcast(new Intent("com.eg.android.AlipayGphone.sesame.status"));
         isClick = true;
@@ -380,7 +397,7 @@ public class MainActivity extends BaseActivity {
     if (length > 0 && length < 3) {
       new Thread(
               () -> {
-                TimeUtil.sleep(800);
+                TimeUtil.sleep(100);
                 if (!selected.get()) {
                   goSettingActivity(length - 1);
 
@@ -405,7 +422,7 @@ public class MainActivity extends BaseActivity {
   private void goSettingActivity(int index) {
     UserEntity userEntity = userEntityArray[index];
 
-    Class<?> targetActivity = UIConfig.INSTANCE.getNewUI()  ? NewSettingsActivity.class : SettingsActivity.class; // 调整为由UIConfig决定启动哪个Activity,暂时不启用新UI，配置森林无法保存，
+    Class<?> targetActivity = UIConfig.INSTANCE.getNewUI() ? NewSettingsActivity.class : SettingsActivity.class; // 调整为由UIConfig决定启动哪个Activity,暂时不启用新UI，配置森林无法保存，
     // targetActivity：使用 UIConfig 和 ViewAppInfo 中的信息判断启动 NewSettingsActivity 还是 SettingsActivity，简化条件判断。
     // intent.putExtra：userEntity 不为空时，设置用户的 userId 和 userName；若为空，则仅传递 userName。
 
@@ -426,13 +443,13 @@ public class MainActivity extends BaseActivity {
     setBaseTitle(ViewAppInfo.getAppTitle() + "[" + runType.getName() + "]");
     switch (runType) {
       case DISABLE:
-        setBaseTitleTextColor(getResources().getColor(R.color.textColorRed));
+        setBaseTitleTextColor(ContextCompat.getColor(this, R.color.textColorRed));
         break;
       case MODEL:
-        setBaseTitleTextColor(getResources().getColor(R.color.textColorPrimary));
+        setBaseTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
         break;
       case PACKAGE:
-        setBaseTitleTextColor(getResources().getColor(R.color.textColorPrimary));
+        setBaseTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
         break;
     }
   }

@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,14 +33,19 @@ public class HtmlViewerActivity extends BaseActivity {
   private Uri uri;
   private Boolean canClear;
 
+  @SuppressLint("ObsoleteSdkInt")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     LanguageUtil.setLocale(this);
     setContentView(R.layout.activity_html_viewer);
-      setBaseSubtitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
-
-      // 初始化 WebView 和进度条
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+    setBaseSubtitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
+    }else{
+    setBaseSubtitleTextColor(getResources().getColor(R.color.textColorPrimary));
+    }
+    // 设置标题栏
+    // 初始化 WebView 和进度条
     mWebView = findViewById(R.id.mwv_webview);
     progressBar = findViewById(R.id.pgb_webview);
 

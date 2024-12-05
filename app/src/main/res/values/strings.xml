@@ -2,7 +2,15 @@
 <resources>
     <string name="app_name" translatable="false">Sesame</string>
     <string name="start_check_energy">Start check energy</string>
-    <string name="start_message">This APP was developed for learning and research. <b>It is free and open source. It is forbidden to be used for any commercial purpose. </b>Please uninstall this APP within 24 hours. If you have obtained it by purchase, please contact the seller for a refund or report the seller on the platform.</string>
+    <string name="start_message"><![CDATA[
+This APP is developed for learning and research,
+<b>
+<font color="#FF0000">Free and open source,
+It is prohibited to use it for any commercial purpose, and it is prohibited to release it in closed source after secondary modification.
+Please uninstall this APP within 24 hours. </font>
+</b>
+If you purchased it, please contact the seller for a refund or report the seller on the platform.
+]]></string>
     <color name="color_alpha">#00000000</color>
     <color name="color_btn_down">#F0F0F0</color>
 

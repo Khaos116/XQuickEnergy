@@ -656,14 +656,24 @@ public class ApplicationHook implements IXposedHookLoadPackage {
     mainTask.startTask(false);
   }
 
+  /**
+   * 安排主任务在指定的延迟时间后执行，并更新通知中的下次执行时间。
+   *
+   * @param delayMillis 延迟执行的毫秒数
+   */
   static void execDelayedHandler(long delayMillis) {
+    // 使用主线程的Handler在指定延迟后执行一个Runnable任务，该任务启动主任务
     mainHandler.postDelayed(() -> mainTask.startTask(false), delayMillis);
+
     try {
+      // 更新通知中的下次执行时间文本，显示为当前时间加上延迟时间
       NotificationUtil.updateNextExecText(System.currentTimeMillis() + delayMillis);
     } catch (Exception e) {
+      // 如果更新通知文本时发生异常，捕获异常并打印堆栈跟踪
       LogUtil.printStackTrace(e);
     }
   }
+
 
   private static void stopHandler() {
     mainTask.stopTask();

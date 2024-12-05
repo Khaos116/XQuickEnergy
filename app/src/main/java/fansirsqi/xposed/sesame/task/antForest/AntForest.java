@@ -604,7 +604,6 @@ public class AntForest extends ModelTask {
         String taskName = task.get(2); // 标记名称
         // 调用 queryTaskListV2 方法并解析返回结果
         String queryResult = AntForestRpcCall.queryTaskListV2(queryParam);
-        LogUtil.runtime("【青春特权】森林道具：" + taskName + "查询结果：" + queryResult);
         JSONObject getTaskStatusObject = new JSONObject(queryResult);
         // 获取任务信息列表
         JSONArray taskInfoList = getTaskStatusObject.getJSONArray("forestTasksNew").getJSONObject(0).getJSONArray("taskInfoList");

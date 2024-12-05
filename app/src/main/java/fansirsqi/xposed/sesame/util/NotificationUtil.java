@@ -13,8 +13,7 @@ import lombok.Getter;
 
 public class NotificationUtil {
   @SuppressLint("StaticFieldLeak")
-  private static Context context;
-
+  public static Context context;
   private static final int NOTIFICATION_ID = 99;
   private static final String CHANNEL_ID = "fansirsqi.xposed.sesame.ANTFOREST_NOTIFY_CHANNEL";
   private static NotificationManager mNotifyManager;
@@ -24,6 +23,7 @@ public class NotificationUtil {
   private static String titleText = "";
   private static String contentText = "";
 
+  @SuppressLint("ObsoleteSdkInt")//抑制SdkInt警告
   public static void start(Context context) {
     try {
       NotificationUtil.context = context;
@@ -35,13 +35,14 @@ public class NotificationUtil {
       it.setData(Uri.parse("alipays://platformapi/startapp?appId="));
       PendingIntent pi = PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "芝麻粒能量提醒", NotificationManager.IMPORTANCE_LOW);
+        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "🔔 芝麻粒能量提醒", NotificationManager.IMPORTANCE_LOW);
         notificationChannel.enableLights(false);
         notificationChannel.enableVibration(false);
         notificationChannel.setShowBadge(false);
         mNotifyManager.createNotificationChannel(notificationChannel);
         builder = new Notification.Builder(context, CHANNEL_ID);
       } else {
+        //安卓8.0以下
         builder = new Notification.Builder(context).setPriority(Notification.PRIORITY_LOW);
       }
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) builder.setCategory(Notification.CATEGORY_NAVIGATION);
@@ -94,9 +95,11 @@ public class NotificationUtil {
   public static void updateStatusText(String status) {
     try {
       long forestPauseTime = RuntimeInfo.getInstance().getLong(RuntimeInfo.RuntimeInfoKey.ForestPauseTime);
+
       if (forestPauseTime > System.currentTimeMillis()) {
         status = "\uD83D\uDE08 触发异常，等待至" + TimeUtil.getCommonDate(forestPauseTime) + "恢复运行";
       }
+
       titleText = status;
       lastNoticeTime = System.currentTimeMillis();
       sendText();
@@ -151,4 +154,38 @@ public class NotificationUtil {
       LogUtil.printStackTrace(e);
     }
   }
+
+
+  @SuppressLint("ObsoleteSdkInt")
+  public static void sendNewNotification(Context context, String title, String content, int newNotificationId) {
+    try {
+      NotificationManager notifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+      // 创建新的 Notification.Builder
+      Notification.Builder newBuilder;
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID,"🔔 芝麻粒其他提醒",NotificationManager.IMPORTANCE_HIGH);
+        notifyManager.createNotificationChannel(notificationChannel);
+        newBuilder = new Notification.Builder(context, CHANNEL_ID);
+      } else {
+        newBuilder = new Notification.Builder(context);
+      }
+
+      // 配置新通知的样式
+      newBuilder
+              .setSmallIcon(android.R.drawable.sym_def_app_icon)
+              .setContentTitle(title)
+              .setContentText(content)
+              .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), android.R.drawable.sym_def_app_icon))
+              .setAutoCancel(true)
+              .setPriority(Notification.PRIORITY_HIGH);
+
+      // 发送新通知
+      Notification newNotification = newBuilder.build();
+      notifyManager.notify(newNotificationId, newNotification);
+    } catch (Exception e) {
+      LogUtil.printStackTrace(e);
+    }
+  }
+
 }

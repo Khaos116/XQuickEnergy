@@ -72,21 +72,35 @@ public class AntFarm extends ModelTask {
         return ModelGroup.FARM;
     }
 
+    /** 小鸡睡觉时间 */
     private StringModelField sleepTime;
+    /** 小鸡睡觉时长 */
     private IntegerModelField sleepMinutes;
+    /** 自动喂鸡 */
     private BooleanModelField feedAnimal;
+    /**打赏好友*/
     private BooleanModelField rewardFriend;
+    /**遣返小鸡*/
     private BooleanModelField sendBackAnimal;
+    /** 遣返方式 */
     private ChoiceModelField sendBackAnimalWay;
+    /** 遣返动作 */
     private ChoiceModelField sendBackAnimalType;
+    /** 遣返好友列表 */
     private SelectModelField sendBackAnimalList;
+    /** 召回小鸡 */
     private ChoiceModelField recallAnimalType;
+    /** s收取道具奖励 */
     private BooleanModelField receiveFarmToolReward;
+    /** 游戏改分 */
     private BooleanModelField recordFarmGame;
+    /** 小鸡游戏时间*/
     private ListModelField.ListJoinCommaToStringModelField farmGameTime;
+    /** 小鸡厨房 */
     private BooleanModelField kitchen;
+    /** 使用特殊食品 */
     private BooleanModelField useSpecialFood;
-    private BooleanModelField useNewEggTool;
+    private BooleanModelField useNewEggCard;
     private BooleanModelField harvestProduce;
     private BooleanModelField donation;
     private ChoiceModelField donationCount;
@@ -142,7 +156,7 @@ public class AntFarm extends ModelTask {
         modelFields.addField(useAccelerateToolContinue = new BooleanModelField("useAccelerateToolContinue", "加速卡 | 连续使用", false));
         modelFields.addField(useAccelerateToolWhenMaxEmotion = new BooleanModelField("useAccelerateToolWhenMaxEmotion", "加速卡 | 仅在满状态时使用", false));
         modelFields.addField(useSpecialFood = new BooleanModelField("useSpecialFood", "使用特殊食品", false));
-        modelFields.addField(useNewEggTool = new BooleanModelField("useNewEggTool", "使用新蛋卡", false));
+        modelFields.addField(useNewEggCard = new BooleanModelField("useNewEggCard", "使用新蛋卡", false));
         modelFields.addField(receiveFarmTaskAward = new BooleanModelField("receiveFarmTaskAward", "收取饲料奖励", false));
         modelFields.addField(receiveFarmToolReward = new BooleanModelField("receiveFarmToolReward", "收取道具奖励", false));
         modelFields.addField(harvestProduce = new BooleanModelField("harvestProduce", "收获爱心鸡蛋", false));
@@ -276,7 +290,7 @@ public class AntFarm extends ModelTask {
                 queryChickenDiaryList();
             }
 
-            if (useNewEggTool.getValue()) {
+            if (useNewEggCard.getValue()) {
                 useFarmTool(ownerFarmId, ToolType.NEWEGGTOOL);
                 syncAnimalStatus(ownerFarmId);
             }
@@ -307,14 +321,7 @@ public class AntFarm extends ModelTask {
                         needReload = true;
                     }
                 }
-                // if (AnimalBuff.ACCELERATING.name().equals(ownerAnimal.animalBuff)) {
-                //     LogUtil.record("小鸡在加速吃饭");
-                // } else if (useAccelerateTool.getValue() && !AnimalFeedStatus.HUNGRY.name().equals(ownerAnimal.animalFeedStatus)) {
-                //     // 加速卡
-                //     if (useFarmTool(ownerFarmId, ToolType.ACCELERATETOOL)) {
-                //         needReload = true;
-                //     }
-                // }
+
                 if (useAccelerateTool.getValue() && !AnimalFeedStatus.HUNGRY.name().equals(ownerAnimal.animalFeedStatus)) {
                     if (useAccelerateTool()) {
                         needReload = true;
@@ -776,7 +783,7 @@ public class AntFarm extends ModelTask {
             String memo = jo.getString("memo");
             if ("SUCCESS".equals(memo)) {
                 JSONArray jaActivityInfos = jo.getJSONArray("activityInfos");
-                String activityId = null, activityName = null;
+                String activityId = null, activityName;
                 boolean isDonation = false;
                 for (int i = 0; i < jaActivityInfos.length(); i++) {
                     jo = jaActivityInfos.getJSONObject(i);
@@ -1187,7 +1194,7 @@ public class AntFarm extends ModelTask {
                 consumeSpeed = animal.consumeSpeed;
             }
             allFoodHaveEatten += animal.foodHaveEatten;
-            allFoodHaveEatten += animal.consumeSpeed * (nowTime - animal.startEatTime / 1000);
+            allFoodHaveEatten += animal.consumeSpeed * (nowTime - (double) animal.startEatTime / 1000);
         }
         // consumeSpeed: g/s
         // AccelerateTool: -1h = -60m = -3600s

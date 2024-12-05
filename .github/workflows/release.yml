@@ -103,6 +103,15 @@ jobs:
           checksums_file_name: CHECKSUMS-Sesame-Compatible-${{ github.event.release.tag_name || github.ref_name }}.%algo%
 
 
+#      - name: Upload All Files to Source Release
+#        uses: softprops/action-gh-release@v2
+#        with:
+#          files: |
+#            ${{ steps.sign_normal_apk.outputs.signedFile }}
+#            ${{ steps.sign_compatible_apk.outputs.signedFile }}
+#          discussion_category_name: Announcements
+#          make_latest: true
+
         # 同步 Release 到目标仓库
       - name: Sync Release to Target Repository
         uses: softprops/action-gh-release@v2
@@ -114,10 +123,9 @@ jobs:
             ${{ steps.sign_compatible_apk.outputs.signedFile }}
           token: ${{ secrets.TARGET_REPO_PAT }} # 使用具有写入目标仓库权限的PAT
           tag_name: ${{ github.ref_name }}
-          release_name: ${{ github.ref_name }}
           draft: false #指示此版本是否为草稿
-          prerelease: false #是否为预发行
-          append_body: ${{ steps.pre_release.outputs.IS_PRERELEASE }} #是否为预发行，同步原仓库属性 #是否将源仓库 Release 内容附加到此版本
+          prerelease: ${{ steps.pre_release.outputs.IS_PRERELEASE }} #是否为预发行，同步原仓库属性 #是否将源仓库 Release 内容附加到此版本
+          append_body: false
           make_latest: true #是否将此版本设为最新版本
           body: | #传达此版本中显著变化的文本
             本 Release 同步自源仓库 [Sesame-TK](https://github.com/${{ github.repository }})

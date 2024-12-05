@@ -1,9 +1,12 @@
 package fansirsqi.xposed.sesame.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
 import android.text.Editable;
+import android.text.Html;
 import android.text.InputType;
 import android.widget.Button;
 import android.widget.EditText;
@@ -165,24 +168,38 @@ public class StringDialog {
      *
      * @param c              上下文对象。
      * @param title          对话框标题。
-     * @param msg            对话框消息。
+     * @param msg            对话框消息，支持 HTML 格式。
      * @param positiveButton 自定义的确认按钮文本。
      */
+    @SuppressLint("ObsoleteSdkInt")
     public static void showAlertDialog(Context c, String title, String msg, String positiveButton) {
+        // 解析 HTML 格式消息
+        CharSequence parsedMsg;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            parsedMsg = Html.fromHtml(msg, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            parsedMsg = Html.fromHtml(msg);
+        }
+        // 创建 AlertDialog
         AlertDialog alertDialog = new AlertDialog.Builder(c)
-                .setTitle(title)
-                .setMessage(msg)
-                .setPositiveButton(positiveButton, (dialog, which) -> dialog.dismiss())
+                .setTitle(title) // 设置标题
+                .setMessage(parsedMsg) // 设置消息内容
+                .setPositiveButton(positiveButton, (dialog, which) -> dialog.dismiss()) // 设置按钮
                 .create();
 
         alertDialog.show();
 
-        // 获取按钮并设置颜色
+        // 设置确认按钮颜色
         Button button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
         if (button != null) {
-            button.setTextColor(c.getResources().getColor(R.color.button));
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                button.setTextColor(ContextCompat.getColor(c, R.color.button)); // 自定义按钮颜色
+            } else {
+                button.setTextColor(c.getResources().getColor(R.color.button)); // 自定义按钮颜色
+            }
         }
     }
+
 
     /**
      * 显示选择对话框，允许选择一个项目。
