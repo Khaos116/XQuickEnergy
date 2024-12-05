@@ -9,8 +9,23 @@ android {
     defaultConfig {
         applicationId "io.github.lazyimmortal.sesame"
         minSdk 21
-        //noinspection ExpiredTargetSdkVersion
-        targetSdk 31
+        //https://developer.android.com/guide/topics/manifest/uses-sdk-element?hl=zh-cn#ApiLevels
+        //Android版本号 Target SDK 版本
+        //Android4.1        16
+        //Android4.4        19
+        //Android5.0        21
+        //Android6.0        23
+        //Android7.0        24
+        //Android8.0        26
+        //Android9.0        28
+        //Android10.0       29
+        //Android11.0       30
+        //Android12.0       31
+        //Android13.0       33
+        //Android14.0       34
+        //Android15.0       35
+        //noinspection OldTargetApi,ExpiredTargetSdkVersion
+        targetSdk 34
         versionCode 1111
         versionName "v1.6.0.3fix"
 
