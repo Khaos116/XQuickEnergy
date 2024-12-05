@@ -18,6 +18,7 @@ import io.github.lazyimmortal.sesame.hook.ApplicationHook;
  * Time:9:09
  */
 public class MyUtils {
+  //庄园任务
   private final static List<String> bizKeyList = Arrays.asList(
       "ADD_GONGGE_NEW",
       "USER_STARVE_PUSH",
@@ -59,8 +60,6 @@ public class MyUtils {
   private static SharedPreferences mSP = null;
   //修改参数，不让小鸡自动睡觉
   public static final String NO_SLEEP = "canSleepXXX";
-  //关闭H5的新设置页面
-  public static final boolean closeNewSetting = true;
 
   //是否显示首页弹窗
   public static boolean showHomeDialog() {
@@ -109,11 +108,6 @@ public class MyUtils {
   }
 
   //处理可能为空
-  public static String antFarmGroupIdMaybeEmpty(JSONObject jo) {
-    return jo.optString("groupId");
-  }
-
-  //处理可能为空
   public static @Nullable JSONObject antFarmSleepNotifyInfoMaybeNull(JSONObject jo) {
     return jo.optJSONObject("sleepNotifyInfo");
   }
@@ -134,14 +128,17 @@ public class MyUtils {
     return !TextUtils.equals(subType, "ngfe_tag__ptr3o4eriu");
   }
 
+  //加密
   public static String encryptData(String data) {
     return data;
   }
 
+  //解密
   public static String decryptData(String data) {
     return data;
   }
 
+  //去除SO调用
   public static boolean libraryCheckFarmTaskStatus(JSONObject task) {
     return true;
   }
@@ -149,6 +146,7 @@ public class MyUtils {
   /**
    * @noinspection CallToPrintStackTrace
    */
+  //去除SO调用
   //https://github.com/Fansirsqi/Sesame-TK/blob/main/app/src/main/java/fansirsqi/xposed/sesame/task/antFarm/AntFarm.java
   //private void doFarmDailyTask()
   public static boolean libraryDoFarmTask(JSONObject jo) {
@@ -173,6 +171,7 @@ public class MyUtils {
     return false;
   }
 
+  //去除SO调用
   //https://github.com/Fansirsqi/Sesame-TK/blob/main/app/src/main/java/fansirsqi/xposed/sesame/task/antFarm/AntFarm.java
   //private void chouchoule()
   public static boolean libraryDoFarmDrawTimesTask(JSONObject job) {
@@ -202,6 +201,7 @@ public class MyUtils {
   private static final String VERSION = "1.8.2302070202.46";
 
   //https://github.com/Fansirsqi/Sesame-TK/blob/main/app/src/main/java/fansirsqi/xposed/sesame/task/antFarm/AntFarmRpcCall.java
+  //农场任务
   private static String doFarmTask(String bizKey) {
     return ApplicationHook.requestString("com.alipay.antfarm.doFarmTask",
         "[{\"bizKey\":\"" + bizKey
@@ -210,6 +210,7 @@ public class MyUtils {
   }
 
   //https://github.com/Fansirsqi/Sesame-TK/blob/main/app/src/main/java/fansirsqi/xposed/sesame/task/antFarm/AntFarmRpcCall.java
+  //抽抽乐任务
   private static String chouchouleDoFarmTask(String bizKey) {
     return ApplicationHook.requestString("com.alipay.antfarm.doFarmTask",
         "[{\"bizKey\":\"" + bizKey + "\",\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"chouchoule\",\"taskSceneCode\":\"ANTFARM_DRAW_TIMES_TASK\"}]");

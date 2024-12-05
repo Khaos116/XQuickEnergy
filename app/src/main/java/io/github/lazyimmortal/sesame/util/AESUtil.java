@@ -88,24 +88,29 @@ public class AESUtil {
 
     //public static native String encryptData(String data);//CHANGE BY KT
     private static String encryptData(String data, String key, String iv) {
-        String result = null;
-        try {
-            result = encrypt(data, stringToKey(key), iv);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return result;
+        return MyUtils.encryptData(data);//CHANGE BY KT
+        //String result = null;
+        //try {
+        //    result = encrypt(data, stringToKey(key), iv);
+        //} catch (Exception e) {
+        //    throw new RuntimeException(e);
+        //}
+        //return result;
     }
 
     //public static native String decryptData(String data);//CHANGE BY KT
+    private static String decryptData(String data) {
+        return MyUtils.decryptData(data);//CHANGE BY K
+    }
     private static String decryptData(String data, String key, String iv) {
-        String result = null;
-        try {
-            result = decrypt(data, stringToKey(key), iv);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return result;
+        return MyUtils.decryptData(data);//CHANGE BY KT
+        //String result = null;
+        //try {
+        //    result = decrypt(data, stringToKey(key), iv);
+        //} catch (Exception e) {
+        //    throw new RuntimeException(e);
+        //}
+        //return result;
     }
 
     public static String readAssetFile(Context context, String filePath) {
@@ -141,7 +146,7 @@ public class AESUtil {
 
     public static String loadDecryptHtmlData(Context context) {
         String htmlData = readAssetFile(context, "file:///android_asset/web/js/index.js");
-        return "<!DOCTYPE html><html lang=\"en\"><script>" + MyUtils.decryptData(htmlData) + "</script></html>";//CHANGE BY KT
+        return "<!DOCTYPE html><html lang=\"en\"><script>" + decryptData(htmlData) + "</script></html>";//CHANGE BY KT
     }
 
 //    public static void main(String[] args) {
