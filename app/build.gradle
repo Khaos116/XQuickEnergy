@@ -1,10 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    def version = project.getProperties().get("version")
-    if (version == null || "unspecified".equalsIgnoreCase(version)) {
-        version = "TEST"
-    }
+    def version = "1.6.0.6fix"
 
     compileSdk 34
     defaultConfig {
@@ -12,7 +9,7 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 31
-        versionCode 80
+        versionCode 1130
         versionName version
     }
     ext {
