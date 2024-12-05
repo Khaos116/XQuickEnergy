@@ -4,9 +4,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 import io.github.lazyimmortal.sesame.data.TokenConfig;
 import io.github.lazyimmortal.sesame.hook.Toast;
+import io.github.lazyimmortal.sesame.model.task.antDodo.AntDodo;
+import io.github.lazyimmortal.sesame.model.task.antDodo.AntDodoRpcCall;
+import io.github.lazyimmortal.sesame.model.task.antForest.AntForestV2;
 import io.github.lazyimmortal.sesame.model.task.antSports.AntSportsRpcCall;
 import io.github.lazyimmortal.sesame.model.task.protectEcology.ProtectTreeRpcCall;
 import io.github.lazyimmortal.sesame.util.Log;
@@ -34,6 +38,9 @@ public class ExtendHandle {
                 break;
             case "getUnlockTreeItems":
                 getUnlockTreeItems();
+                break;
+            case "collectHistoryAnimal":
+                collectHistoryAnimal();
                 break;
             case "setCustomWalkPathId":
                 setCustomWalkPathId(data);
@@ -188,6 +195,92 @@ public class ExtendHandle {
         } catch (Throwable t) {
             Log.i(TAG, "getUnlockTreeItems err:");
             Log.printStackTrace(TAG, t);
+        }
+    }
+
+    // 检查是否需要收集历史物种
+    private static Boolean canCollectHistoryAnimal() {
+        // 图鉴合成状态 合成 可以合成 不能合成
+        // medalGenerationStatus: GENERATED CAN_GENERATE CAN_NOT_GENERATE
+        try {
+            boolean hasMore;
+            int pageStart = 0;
+            do {
+                JSONObject jo = new JSONObject(AntDodoRpcCall.queryBookList(9, pageStart));
+                if (!MessageUtil.checkResultCode(TAG, jo)) {
+                    break;
+                }
+                jo = jo.getJSONObject("data");
+                hasMore = jo.getBoolean("hasMore");
+                pageStart += 9;
+                JSONArray bookForUserList = jo.getJSONArray("bookForUserList");
+                for (int i = 0; i < bookForUserList.length(); i++) {
+                    if (i == 0 && pageStart == 9) {
+                        // 忽略当前专辑
+                        continue;
+                    }
+                    jo = bookForUserList.getJSONObject(i);
+                    if (!AntDodo.MedalGenerationStatus.CAN_NOT_GENERATE.name().equals(
+                            jo.optString("medalGenerationStatus"))) {
+                        continue;
+                    }
+                    return true;
+                }
+            } while (hasMore);}
+        catch (Throwable t) {
+            Log.i(TAG, "collectHistoryAnimal err:");
+            Log.printStackTrace(TAG, t);
+        }
+        return false;
+    }
+
+    private static void usePropCollectHistoryAnimal() {
+        try {
+            JSONObject jo = new JSONObject(AntDodoRpcCall.propList());
+            if (!MessageUtil.checkResultCode(TAG, jo)) {
+                return;
+            }
+            JSONArray propList = jo.getJSONObject("data").optJSONArray("propList");
+            if (propList == null) {
+                return;
+            }
+            for (int i = 0; i < propList.length(); i++) {
+                JSONObject prop = propList.getJSONObject(i);
+                String propType = prop.getString("propType");
+                if (!Objects.equals("COLLECT_HISTORY_ANIMAL_7_DAYS", propType)) {
+                    continue;
+                }
+                JSONArray propIdList = prop.getJSONArray("propIdList");
+                String propId = propIdList.getString(0);
+                String propName = prop.getJSONObject("propConfig").getString("propName");
+                jo = new JSONObject(AntDodoRpcCall.consumeProp(propId, propType));
+                if (!MessageUtil.checkResultCode(TAG, jo)) {
+                    return;
+                }
+                JSONObject useResult = jo.getJSONObject("data").getJSONObject("useResult");
+                JSONObject animal = useResult.getJSONObject("animal");
+                String animalInfo = AntDodo.getAnimalInfo(animal);
+                Log.forest("使用道具🎭[" + propName + "]" + animalInfo);
+                Toast.show("已收集历史物种，请在森林日志查看结果！");
+                if (prop.optInt("holdsNum", 1) > 1) {
+                    TimeUtil.sleep(1000L);
+                    usePropCollectHistoryAnimal();
+                    return;
+                }
+            }
+        } catch (Throwable th) {
+            Log.i(TAG, "usePropCollectHistoryAnimal err:");
+            Log.printStackTrace(TAG, th);
+        }
+    }
+
+    private static void collectHistoryAnimal() {
+        if (!canCollectHistoryAnimal()) {
+            Toast.show("没有需要收集的历史物种！");
+            return;
+        }
+        if (AntForestV2.exchangeBenefit("SP20230518000022", "SK20230518000062", "神奇物种抽历史卡机会")) {
+            usePropCollectHistoryAnimal();
         }
     }
 

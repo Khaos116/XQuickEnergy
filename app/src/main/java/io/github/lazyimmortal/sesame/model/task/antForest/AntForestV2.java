@@ -2443,10 +2443,7 @@ public class AntForestV2 extends ModelTask {
                 }
             }
             String spuId = sku.getString("spuId");
-            if (exchangeBenefit(spuId, skuId)) {
-                Status.vitalityExchangeBenefitToday(skuId);
-                int exchangedCount = Status.getVitalityExchangeBenefitCountToday(skuId);
-                Log.forest("活力兑换🎐[" + skuName + "]#第" + exchangedCount + "次");
+            if (exchangeBenefit(spuId, skuId, skuName)) {
                 return true;
             }
             getSkuInfoBySpuId(spuId);
@@ -2457,7 +2454,22 @@ public class AntForestV2 extends ModelTask {
         return false;
     }
 
-    private Boolean exchangeBenefit(String spuId, String skuId) {
+    public static Boolean exchangeBenefit(String spuId, String skuId, String skuName) {
+        try {
+            if (exchangeBenefit(spuId, skuId)) {
+                Status.vitalityExchangeBenefitToday(skuId);
+                int exchangedCount = Status.getVitalityExchangeBenefitCountToday(skuId);
+                Log.forest("活力兑换🎐[" + skuName + "]#第" + exchangedCount + "次");
+                return true;
+            }
+        } catch (Throwable th) {
+            Log.i(TAG, "exchangeBenefit err:");
+            Log.printStackTrace(TAG, th);
+        }
+        return false;
+    }
+
+    private static Boolean exchangeBenefit(String spuId, String skuId) {
         try {
             JSONObject jo = new JSONObject(AntForestRpcCall.exchangeBenefit(spuId, skuId));
             return MessageUtil.checkResultCode(TAG, jo);

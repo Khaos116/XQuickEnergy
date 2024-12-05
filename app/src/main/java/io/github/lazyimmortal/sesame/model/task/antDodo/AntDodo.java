@@ -523,7 +523,7 @@ public class AntDodo extends ModelTask {
         }
     }
 
-    private String getAnimalInfo(JSONObject animal) {
+    public static String getAnimalInfo(JSONObject animal) {
         if (animal == null) {
             return "";
         }
