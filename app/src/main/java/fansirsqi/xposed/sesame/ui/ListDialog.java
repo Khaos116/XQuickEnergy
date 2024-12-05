@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.graphics.Color;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -22,7 +21,7 @@ import fansirsqi.xposed.sesame.model.SelectModelFieldFunc;
 import fansirsqi.xposed.sesame.entity.AreaCode;
 import fansirsqi.xposed.sesame.entity.CooperateUser;
 import fansirsqi.xposed.sesame.entity.IdAndName;
-import fansirsqi.xposed.sesame.util.CooperationIdMapUtil;
+import fansirsqi.xposed.sesame.util.Maps.CooperateMap;
 
 import java.util.List;
 
@@ -243,7 +242,7 @@ public class ListDialog {
                                     .setTitle("删除 " + curIdAndName.name)
                                     .setPositiveButton(c.getString(R.string.ok), (dialog, which) -> {
                                         if (which == DialogInterface.BUTTON_POSITIVE) {
-                                            CooperationIdMapUtil.remove(curIdAndName.id);
+                                            CooperateMap.remove(curIdAndName.id);
                                             selectModelFieldFunc.remove(curIdAndName.id);
                                             ListAdapter.get(c).exitFind();
                                         }

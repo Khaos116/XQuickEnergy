@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import fansirsqi.xposed.sesame.model.ModelGroup;
 import fansirsqi.xposed.sesame.task.AnswerAI.AnswerAI;
 import fansirsqi.xposed.sesame.util.JsonUtil;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import fansirsqi.xposed.sesame.util.StringUtil;
 
 /**
@@ -44,17 +44,17 @@ public class ReadingDada {
                 s = ReadingDadaRpcCall.submitAnswer(activityId, outBizId, jo.getString("questionId"), answer);
                 jo = new JSONObject(s);
                 if ("200".equals(jo.getString("resultCode"))) {
-                    LogUtil.record("答题完成");
+                    Log.record("答题完成");
                     return true;
                 } else {
-                    LogUtil.record("答题失败");
+                    Log.record("答题失败");
                 }
             } else {
-                LogUtil.record("获取问题失败");
+                Log.record("获取问题失败");
             }
         } catch (Throwable e) {
-            LogUtil.runtime(TAG, "answerQuestion err:");
-            LogUtil.printStackTrace(TAG, e);
+            Log.runtime(TAG, "answerQuestion err:");
+            Log.printStackTrace(TAG, e);
         }
         return false;
     }

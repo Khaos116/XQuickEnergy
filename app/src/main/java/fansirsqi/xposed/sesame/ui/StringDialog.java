@@ -16,7 +16,7 @@ import androidx.core.content.ContextCompat;
 
 import fansirsqi.xposed.sesame.R;
 import fansirsqi.xposed.sesame.model.ModelField;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 
 /**
  * 字符串对话框工具类。
@@ -90,7 +90,7 @@ public class StringDialog {
                                     }
                                     modelField.setConfigValue(textString);
                                 } catch (Throwable e) {
-                                    LogUtil.printStackTrace(e);
+                                    Log.printStackTrace(e);
                                 }
                             }
                         }.setData(c))

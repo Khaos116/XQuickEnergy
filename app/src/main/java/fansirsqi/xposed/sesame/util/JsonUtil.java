@@ -367,7 +367,7 @@ public class JsonUtil {
             try {
                 list.add(jsonArray.getString(i)); // 添加字符串到列表
             } catch (Exception e) {
-                LogUtil.printStackTrace(e); // 打印异常栈
+                Log.printStackTrace(e); // 打印异常栈
                 list.add(""); // 异常时添加空字符串
             }
         }

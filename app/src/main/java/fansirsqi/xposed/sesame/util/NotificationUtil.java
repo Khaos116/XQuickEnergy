@@ -62,7 +62,7 @@ public class NotificationUtil {
         mNotifyManager.notify(NOTIFICATION_ID, mNotification);
       }
     } catch (Exception e) {
-      LogUtil.printStackTrace(e);
+      Log.printStackTrace(e);
     }
   }
 
@@ -83,7 +83,7 @@ public class NotificationUtil {
       }
       mNotifyManager = null;
     } catch (Exception e) {
-      LogUtil.printStackTrace(e);
+      Log.printStackTrace(e);
     }
   }
 
@@ -104,7 +104,7 @@ public class NotificationUtil {
       lastNoticeTime = System.currentTimeMillis();
       sendText();
     } catch (Exception e) {
-      LogUtil.printStackTrace(e);
+      Log.printStackTrace(e);
     }
   }
 
@@ -118,7 +118,7 @@ public class NotificationUtil {
       titleText = nextExecTime > 0 ? "⏰ 下次施工时间 " + TimeUtil.getTimeStr(nextExecTime) : "";
       sendText();
     } catch (Exception e) {
-      LogUtil.printStackTrace(e);
+      Log.printStackTrace(e);
     }
   }
 
@@ -133,7 +133,7 @@ public class NotificationUtil {
       lastNoticeTime = System.currentTimeMillis();
       sendText();
     } catch (Exception e) {
-      LogUtil.printStackTrace(e);
+      Log.printStackTrace(e);
     }
   }
 
@@ -151,7 +151,7 @@ public class NotificationUtil {
       }
       mNotifyManager.notify(NOTIFICATION_ID, builder.build());
     } catch (Exception e) {
-      LogUtil.printStackTrace(e);
+      Log.printStackTrace(e);
     }
   }
 
@@ -184,7 +184,7 @@ public class NotificationUtil {
       Notification newNotification = newBuilder.build();
       notifyManager.notify(newNotificationId, newNotification);
     } catch (Exception e) {
-      LogUtil.printStackTrace(e);
+      Log.printStackTrace(e);
     }
   }
 

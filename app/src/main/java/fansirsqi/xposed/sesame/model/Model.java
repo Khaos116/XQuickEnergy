@@ -2,7 +2,7 @@ package fansirsqi.xposed.sesame.model;
 
 import android.os.Build;
 
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import lombok.Getter;
 import fansirsqi.xposed.sesame.model.modelFieldExt.BooleanModelField;
 import fansirsqi.xposed.sesame.task.ModelTask;
@@ -223,7 +223,7 @@ public abstract class Model {
                     Objects.requireNonNull(groupModelConfigMap.get(group)).put(modelCode, modelConfig);
                 }
             } catch (IllegalAccessException | InstantiationException e) {
-                LogUtil.printStackTrace(e);
+                Log.printStackTrace(e);
             }
         }
     }
@@ -241,7 +241,7 @@ public abstract class Model {
                     model.boot(classLoader);
                 }
             } catch (Exception e) {
-                LogUtil.printStackTrace(e);
+                Log.printStackTrace(e);
             }
         }
     }
@@ -259,7 +259,7 @@ public abstract class Model {
                     }
                     model.destroy();
                 } catch (Exception e) {
-                    LogUtil.printStackTrace(e);
+                    Log.printStackTrace(e);
                 }
                 modelArray[i] = null;
             }

@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import fansirsqi.xposed.sesame.BuildConfig;
 import fansirsqi.xposed.sesame.R;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -54,7 +54,7 @@ public final class ViewAppInfo {
       try {
         appVersion =BuildConfig.VERSION_NAME.replace(BuildConfig.BUILD_TIME.replace(":", "."), BuildConfig.BUILD_NUMBER)+ " 📦" ;
       } catch (Exception e) {
-        LogUtil.printStackTrace(e);
+        Log.printStackTrace(e);
       }
     }
   }

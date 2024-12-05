@@ -31,19 +31,19 @@ public class ReserveIdMapUtil {
     public synchronized static void load() {
         idMap.clear();
         try {
-            String body = FileUtil.readFromFile(FileUtil.getReserveIdMapFile());
+            String body = Files.readFromFile(Files.getReserveIdMapFile());
             if (!body.isEmpty()) {
                 Map<String, String> newMap = JsonUtil.parseObject(body, new TypeReference<Map<String, String>>() {
                 });
                 idMap.putAll(newMap);
             }
         } catch (Exception e) {
-            LogUtil.printStackTrace(e);
+            Log.printStackTrace(e);
         }
     }
 
     public synchronized static boolean save() {
-        return FileUtil.write2File(JsonUtil.toJsonString(idMap), FileUtil.getReserveIdMapFile());
+        return Files.write2File(JsonUtil.toJsonString(idMap), Files.getReserveIdMapFile());
     }
 
     public synchronized static void clear() {

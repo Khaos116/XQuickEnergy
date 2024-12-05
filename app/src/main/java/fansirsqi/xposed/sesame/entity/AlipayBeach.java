@@ -1,6 +1,6 @@
 package fansirsqi.xposed.sesame.entity;
 
-import fansirsqi.xposed.sesame.util.BeachIdMapUtil;
+import fansirsqi.xposed.sesame.util.Maps.BeachMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +25,7 @@ public class AlipayBeach extends IdAndName {
     }
 
     /**
-     * 获取包含所有海滩的列表，首次调用时从 BeachIdMapUtil 初始化。
+     * 获取包含所有海滩的列表，首次调用时从 BeachMap 初始化。
      * 使用双重检查锁定机制实现懒加载以提高性能。
      * @return 包含所有 AlipayBeach 对象的不可变列表
      */
@@ -34,7 +34,7 @@ public class AlipayBeach extends IdAndName {
             synchronized (AlipayBeach.class) {
                 if (list == null) {
                     List<AlipayBeach> tempList = new ArrayList<>();
-                    for (Map.Entry<String, String> entry : BeachIdMapUtil.getMap().entrySet()) {
+                    for (Map.Entry<String, String> entry : BeachMap.getMap().entrySet()) {
                         tempList.add(new AlipayBeach(entry.getKey(), entry.getValue()));
                     }
                     list = Collections.unmodifiableList(tempList);

@@ -9,9 +9,9 @@ import fansirsqi.xposed.sesame.model.modelFieldExt.SelectModelField;
 import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.entity.AreaCode;
 import fansirsqi.xposed.sesame.task.TaskCommon;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import fansirsqi.xposed.sesame.util.StatusUtil;
-import fansirsqi.xposed.sesame.util.TimeUtil;
+import fansirsqi.xposed.sesame.util.ThreadUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -59,11 +59,11 @@ public class AncientTree extends ModelTask {
     @Override
     public void run() {
         try {
-            LogUtil.record("开始检测古树保护");
+            Log.record("开始检测古树保护");
             ancientTree(ancientTreeCityCodeList.getValue());
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "start.run err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "start.run err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 
@@ -76,8 +76,8 @@ public class AncientTree extends ModelTask {
                 Thread.sleep(1000L);
             }
         } catch (Throwable th) {
-            LogUtil.runtime(TAG, "ancientTree err:");
-            LogUtil.printStackTrace(TAG, th);
+            Log.runtime(TAG, "ancientTree err:");
+            Log.printStackTrace(TAG, th);
         }
     }
 
@@ -98,13 +98,13 @@ public class AncientTree extends ModelTask {
                     JSONObject districtInfo = districtBriefInfo.getJSONObject("districtInfo");
                     String districtCode = districtInfo.getString("districtCode");
                     districtDetail(districtCode);
-                    TimeUtil.sleep(1000L);
+                    ThreadUtil.sleep(1000L);
                 }
                 StatusUtil.ancientTreeToday(cityCode);
             }
         } catch (Throwable th) {
-            LogUtil.runtime(TAG, "ancientTreeProtect err:");
-            LogUtil.printStackTrace(TAG, th);
+            Log.runtime(TAG, "ancientTreeProtect err:");
+            Log.printStackTrace(TAG, th);
         }
     }
 
@@ -146,26 +146,26 @@ public class AncientTree extends ModelTask {
                             cityCode = ancientTreeInfo.getString("cityCode");
                             if (currentEnergy < protectExpense)
                                 break;
-                            TimeUtil.sleep(200);
+                            ThreadUtil.sleep(200);
                             jo = new JSONObject(AncientTreeRpcCall.protect(activityId, projectId, cityCode));
                             if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                                LogUtil.forest("保护古树🎐[" + cityName + "-" + districtName
+                                Log.forest("保护古树🎐[" + cityName + "-" + districtName
                                         + "]#" + age + "年" + name + ",消耗能量" + protectExpense + "g");
                             } else {
-                                LogUtil.record(jo.getString("resultDesc"));
-                                LogUtil.runtime(jo.toString());
+                                Log.record(jo.getString("resultDesc"));
+                                Log.runtime(jo.toString());
                             }
                         }
                     } else {
-                        LogUtil.record(jo.getString("resultDesc"));
-                        LogUtil.runtime(ancientTreeDetail.toString());
+                        Log.record(jo.getString("resultDesc"));
+                        Log.runtime(ancientTreeDetail.toString());
                     }
-                    TimeUtil.sleep(500L);
+                    ThreadUtil.sleep(500L);
                 }
             }
         } catch (Throwable th) {
-            LogUtil.runtime(TAG, "districtDetail err:");
-            LogUtil.printStackTrace(TAG, th);
+            Log.runtime(TAG, "districtDetail err:");
+            Log.printStackTrace(TAG, th);
         }
     }
 }

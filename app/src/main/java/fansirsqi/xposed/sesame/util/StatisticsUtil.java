@@ -3,8 +3,7 @@ package fansirsqi.xposed.sesame.util;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.Data;
 
-import java.io.File;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 @Data
 public class StatisticsUtil {
@@ -104,32 +103,32 @@ public class StatisticsUtil {
      * @return 统计实例
      */
     public static synchronized StatisticsUtil load() {
-        File statisticsFile = FileUtil.getStatisticsFile();
+        java.io.File statisticsFile = Files.getStatisticsFile();
         try {
             if (statisticsFile.exists()) {
-                String json = FileUtil.readFromFile(statisticsFile);
+                String json = Files.readFromFile(statisticsFile);
                 JsonUtil.copyMapper().readerForUpdating(INSTANCE).readValue(json);
                 String formatted = JsonUtil.toFormatJsonString(INSTANCE);
                 if (formatted != null && !formatted.equals(json)) {
-                    LogUtil.runtime(TAG, "重新格式化 statistics.json");
-                    LogUtil.system(TAG, "重新格式化 statistics.json");
-                    FileUtil.write2File(formatted, statisticsFile);
+                    Log.runtime(TAG, "重新格式化 statistics.json");
+                    Log.system(TAG, "重新格式化 statistics.json");
+                    Files.write2File(formatted, statisticsFile);
                 }
             } else {
                 JsonUtil.copyMapper().updateValue(INSTANCE, new StatisticsUtil());
-                LogUtil.runtime(TAG, "初始化 statistics.json");
-                LogUtil.system(TAG, "初始化 statistics.json");
-                FileUtil.write2File(JsonUtil.toFormatJsonString(INSTANCE), statisticsFile);
+                Log.runtime(TAG, "初始化 statistics.json");
+                Log.system(TAG, "初始化 statistics.json");
+                Files.write2File(JsonUtil.toFormatJsonString(INSTANCE), statisticsFile);
             }
         } catch (Throwable t) {
-            LogUtil.printStackTrace(TAG, t);
-            LogUtil.runtime(TAG, "统计文件格式有误，已重置统计文件");
-            LogUtil.system(TAG, "统计文件格式有误，已重置统计文件");
+            Log.printStackTrace(TAG, t);
+            Log.runtime(TAG, "统计文件格式有误，已重置统计文件");
+            Log.system(TAG, "统计文件格式有误，已重置统计文件");
             try {
                 JsonUtil.copyMapper().updateValue(INSTANCE, new StatisticsUtil());
-                FileUtil.write2File(JsonUtil.toFormatJsonString(INSTANCE), FileUtil.getStatisticsFile());
+                Files.write2File(JsonUtil.toFormatJsonString(INSTANCE), Files.getStatisticsFile());
             } catch (JsonMappingException e) {
-                LogUtil.printStackTrace(TAG, e);
+                Log.printStackTrace(TAG, e);
             }
         }
         return INSTANCE;
@@ -142,7 +141,7 @@ public class StatisticsUtil {
         try {
             JsonUtil.copyMapper().updateValue(INSTANCE, new StatisticsUtil());
         } catch (JsonMappingException e) {
-            LogUtil.printStackTrace(TAG, e);
+            Log.printStackTrace(TAG, e);
         }
     }
 
@@ -150,45 +149,49 @@ public class StatisticsUtil {
      * 保存统计数据
      */
     public static synchronized void save() {
-        save(Calendar.getInstance());
+        save(LocalDate.now());
     }
 
     /**
      * 保存统计数据并更新日期
-     * @param nowCalendar 当前日期
+     *
+     * @param nowDate 当前日期
      */
-    public static synchronized void save(Calendar nowCalendar) {
-        if (updateDay(nowCalendar)) {
-            LogUtil.system(TAG, "重置 statistics.json");
+    public static synchronized void save(LocalDate nowDate) {
+        if (updateDay(nowDate)) {
+            Log.system(TAG, "重置 statistics.json");
         } else {
-            LogUtil.system(TAG, "保存 statistics.json");
+            Log.system(TAG, "保存 statistics.json");
         }
-        FileUtil.write2File(JsonUtil.toFormatJsonString(INSTANCE), FileUtil.getStatisticsFile());
+        Files.write2File(JsonUtil.toFormatJsonString(INSTANCE), Files.getStatisticsFile());
     }
 
     /**
      * 更新日期并重置统计数据
-     * @param nowCalendar 当前日期
+     *
+     * @param nowDate 当前日期
      * @return 如果日期已更改，返回 true；否则返回 false
      */
-    public static Boolean updateDay(Calendar nowCalendar) {
-        int ye = nowCalendar.get(Calendar.YEAR);
-        int mo = nowCalendar.get(Calendar.MONTH) + 1;
-        int da = nowCalendar.get(Calendar.DAY_OF_MONTH);
-        if (ye != INSTANCE.year.time) {
-            INSTANCE.year.reset(ye);
-            INSTANCE.month.reset(mo);
-            INSTANCE.day.reset(da);
-        } else if (mo != INSTANCE.month.time) {
-            INSTANCE.month.reset(mo);
-            INSTANCE.day.reset(da);
-        } else if (da != INSTANCE.day.time) {
-            INSTANCE.day.reset(da);
+    public static Boolean updateDay(LocalDate nowDate) {
+        int currentYear = nowDate.getYear();
+        int currentMonth = nowDate.getMonthValue();
+        int currentDay = nowDate.getDayOfMonth();
+
+        if (currentYear != INSTANCE.year.time) {
+            INSTANCE.year.reset(currentYear);
+            INSTANCE.month.reset(currentMonth);
+            INSTANCE.day.reset(currentDay);
+        } else if (currentMonth != INSTANCE.month.time) {
+            INSTANCE.month.reset(currentMonth);
+            INSTANCE.day.reset(currentDay);
+        } else if (currentDay != INSTANCE.day.time) {
+            INSTANCE.day.reset(currentDay);
         } else {
             return false;
         }
         return true;
     }
+
 
     @Data
     public static class TimeStatistics {

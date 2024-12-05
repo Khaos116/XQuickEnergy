@@ -11,7 +11,7 @@ import android.widget.TextView;
 import fansirsqi.xposed.sesame.R;
 import fansirsqi.xposed.sesame.model.SelectModelFieldFunc;
 import fansirsqi.xposed.sesame.entity.IdAndName;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 
 import java.util.*;
 
@@ -104,8 +104,8 @@ public class ListAdapter extends BaseAdapter {
                 return contains1 ? -1 : 1;
             });
         } catch (Exception e) {
-            LogUtil.runtime("ListAdapter error");
-            LogUtil.printStackTrace(e);
+            Log.runtime("ListAdapter error");
+            Log.printStackTrace(e);
         }
     }
 

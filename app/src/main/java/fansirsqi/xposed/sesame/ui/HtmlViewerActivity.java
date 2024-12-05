@@ -18,11 +18,10 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
-import java.io.File;
 import fansirsqi.xposed.sesame.R;
-import fansirsqi.xposed.sesame.util.FileUtil;
+import fansirsqi.xposed.sesame.util.Files;
 import fansirsqi.xposed.sesame.util.LanguageUtil;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import fansirsqi.xposed.sesame.util.ToastUtil;
 
 public class HtmlViewerActivity extends BaseActivity {
@@ -171,22 +170,22 @@ public class HtmlViewerActivity extends BaseActivity {
     try {
       if (uri != null) {
         String path = uri.getPath();
-        LogUtil.runtime(TAG, "URI path: " + path);
+        Log.runtime(TAG, "URI path: " + path);
         if (path != null) {
-          File exportFile = FileUtil.exportFile(new File(path));
+          java.io.File exportFile = Files.exportFile(new java.io.File(path));
           if (exportFile != null && exportFile.exists()) {
             ToastUtil.showToast(this, getString(R.string.file_exported) + exportFile.getPath());
           } else {
-            LogUtil.runtime(TAG, "导出失败，exportFile 对象为 null 或不存在！");
+            Log.runtime(TAG, "导出失败，exportFile 对象为 null 或不存在！");
           }
         } else {
-          LogUtil.runtime(TAG, "路径为 null！");
+          Log.runtime(TAG, "路径为 null！");
         }
       } else {
-        LogUtil.runtime(TAG, "URI 为 null！");
+        Log.runtime(TAG, "URI 为 null！");
       }
     } catch (Exception e) {
-      LogUtil.printStackTrace(TAG, e);
+      Log.printStackTrace(TAG, e);
     }
   }
 
@@ -196,15 +195,15 @@ public class HtmlViewerActivity extends BaseActivity {
       if (uri != null) {
         String path = uri.getPath();
         if (path != null) {
-          File file = new File(path);
-          if (FileUtil.clearFile(file)) {
+          java.io.File file = new java.io.File(path);
+          if (Files.clearFile(file)) {
             ToastUtil.makeText(this, "文件已清空", Toast.LENGTH_SHORT).show();
             mWebView.reload();
           }
         }
       }
     } catch (Exception e) {
-      LogUtil.printStackTrace(TAG, e);
+      Log.printStackTrace(TAG, e);
     }
   }
 
@@ -222,6 +221,7 @@ public class HtmlViewerActivity extends BaseActivity {
       }
     }
   }
+
 
   /** 复制当前 WebView 的 URL 到剪贴板 */
   private void copyUrlToClipboard() {

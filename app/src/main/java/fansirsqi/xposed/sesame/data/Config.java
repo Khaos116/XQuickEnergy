@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import fansirsqi.xposed.sesame.model.ModelConfig;
 import fansirsqi.xposed.sesame.model.ModelField;
 import fansirsqi.xposed.sesame.model.ModelFields;
+import fansirsqi.xposed.sesame.util.Maps.UserMap;
 import lombok.Data;
 import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.entity.UserEntity;
 import fansirsqi.xposed.sesame.util.*;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,7 +66,7 @@ public class Config {
                             }
                         }
                     } catch (Exception e) {
-                        LogUtil.printStackTrace(e);
+                        Log.printStackTrace(e);
                     }
                     newModelFields.addField(configModelField);
                 }
@@ -113,16 +113,16 @@ public class Config {
      */
     public static Boolean isModify(String userId) {
         String json = null;
-        File configV2File;
+        java.io.File configV2File;
 
         if (StringUtil.isEmpty(userId)) {
-            configV2File = FileUtil.getDefaultConfigV2File();
+            configV2File = Files.getDefaultConfigV2File();
         } else {
-            configV2File = FileUtil.getConfigV2File(userId);
+            configV2File = Files.getConfigV2File(userId);
         }
 
         if (configV2File.exists()) {
-            json = FileUtil.readFromFile(configV2File);
+            json = Files.readFromFile(configV2File);
         }
 
         if (json != null) {
@@ -150,12 +150,12 @@ public class Config {
 
         if (StringUtil.isEmpty(userId)) {
             userId = "默认";
-            success = FileUtil.setDefaultConfigV2File(json);
+            success = Files.setDefaultConfigV2File(json);
         } else {
-            success = FileUtil.setConfigV2File(userId, json);
+            success = Files.setConfigV2File(userId, json);
         }
 
-        LogUtil.record("保存配置: " + userId);
+        Log.record("保存配置: " + userId);
         return success;
     }
 
@@ -166,66 +166,66 @@ public class Config {
      * @return 加载后的 Config 实例
      */
     public static synchronized Config load(String userId) {
-        LogUtil.runtime(TAG, "开始加载配置");
+        Log.runtime(TAG, "开始加载配置");
         String userName = "";
-        File configV2File = null;
+        java.io.File configV2File = null;
         try {
             if (StringUtil.isEmpty(userId)) {
-                configV2File = FileUtil.getDefaultConfigV2File();
+                configV2File = Files.getDefaultConfigV2File();
                 userName = "默认";
             } else {
-                configV2File = FileUtil.getConfigV2File(userId);
-                UserEntity userEntity = UserIdMapUtil.get(userId);
+                configV2File = Files.getConfigV2File(userId);
+                UserEntity userEntity = UserMap.get(userId);
                 if (userEntity == null) {
                     userName = userId;
                 } else {
                     userName = userEntity.getShowName();
                 }
             }
-            LogUtil.record("加载配置: " + userName);
+            Log.record("加载配置: " + userName);
 
             // 如果配置文件存在，加载内容
             if (configV2File.exists()) {
-                String json = FileUtil.readFromFile(configV2File);
+                String json = Files.readFromFile(configV2File);
                 JsonUtil.copyMapper().readerForUpdating(INSTANCE).readValue(json);
                 String formatted = toSaveStr();
 
                 if (formatted != null && !formatted.equals(json)) {
-                    LogUtil.runtime(TAG, "格式化配置: " + userName);
-                    LogUtil.system(TAG, "格式化配置: " + userName);
-                    FileUtil.write2File(formatted, configV2File);
+                    Log.runtime(TAG, "格式化配置: " + userName);
+                    Log.system(TAG, "格式化配置: " + userName);
+                    Files.write2File(formatted, configV2File);
                 }
             } else {
                 // 如果配置文件不存在，复制默认配置或初始化
-                File defaultConfigV2File = FileUtil.getDefaultConfigV2File();
+                java.io.File defaultConfigV2File = Files.getDefaultConfigV2File();
                 if (defaultConfigV2File.exists()) {
-                    String json = FileUtil.readFromFile(defaultConfigV2File);
+                    String json = Files.readFromFile(defaultConfigV2File);
                     JsonUtil.copyMapper().readerForUpdating(INSTANCE).readValue(json);
-                    LogUtil.runtime(TAG, "复制新配置: " + userName);
-                    LogUtil.system(TAG, "复制新配置: " + userName);
-                    FileUtil.write2File(json, configV2File);
+                    Log.runtime(TAG, "复制新配置: " + userName);
+                    Log.system(TAG, "复制新配置: " + userName);
+                    Files.write2File(json, configV2File);
                 } else {
                     unload();
-                    LogUtil.runtime(TAG, "初始新配置: " + userName);
-                    LogUtil.system(TAG, "初始新配置: " + userName);
-                    FileUtil.write2File(toSaveStr(), configV2File);
+                    Log.runtime(TAG, "初始新配置: " + userName);
+                    Log.system(TAG, "初始新配置: " + userName);
+                    Files.write2File(toSaveStr(), configV2File);
                 }
             }
         } catch (Throwable t) {
-            LogUtil.printStackTrace(TAG, t);
-            LogUtil.runtime(TAG, "重置配置: " + userName);
-            LogUtil.system(TAG, "重置配置: " + userName);
+            Log.printStackTrace(TAG, t);
+            Log.runtime(TAG, "重置配置: " + userName);
+            Log.system(TAG, "重置配置: " + userName);
             try {
                 unload();
                 if (configV2File != null) {
-                    FileUtil.write2File(toSaveStr(), configV2File);
+                    Files.write2File(toSaveStr(), configV2File);
                 }
             } catch (Exception e) {
-                LogUtil.printStackTrace(TAG, t);
+                Log.printStackTrace(TAG, t);
             }
         }
         INSTANCE.setInit(true);
-        LogUtil.runtime(TAG, "加载配置结束");
+        Log.runtime(TAG, "加载配置结束");
         return INSTANCE;
     }
 

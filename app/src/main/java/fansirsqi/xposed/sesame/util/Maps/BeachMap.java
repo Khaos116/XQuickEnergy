@@ -1,4 +1,4 @@
-package fansirsqi.xposed.sesame.util;
+package fansirsqi.xposed.sesame.util.Maps;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,12 +7,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import fansirsqi.xposed.sesame.util.Files;
+import fansirsqi.xposed.sesame.util.Log;
+
 /**
- * 合作ID映射工具类。
+ * 沙滩ID映射工具类。
  * 提供了一个线程安全的ID映射，支持添加、删除、加载和保存ID映射。
- * 用于存储和检索与合作相关的ID映射信息。
  */
-public class CooperationIdMapUtil {
+public class BeachMap {
 
     /**
      * 存储ID映射的并发HashMap。
@@ -30,6 +32,15 @@ public class CooperationIdMapUtil {
      */
     public static Map<String, String> getMap() {
         return readOnlyIdMap;
+    }
+
+    /**
+     * 根据键获取值。
+     * @param key 键。
+     * @return 键对应的值，如果不存在则返回null。
+     */
+    public static String get(String key) {
+        return idMap.get(key);
     }
 
     /**
@@ -51,36 +62,41 @@ public class CooperationIdMapUtil {
 
     /**
      * 从文件加载ID映射。
-     * @param userId 用户ID，用于确定文件名。
      */
-    public static synchronized void load(String userId) {
+    public static synchronized void load() {
         idMap.clear();
         try {
-            String body = FileUtil.readFromFile(FileUtil.getCooperationIdMapFile(userId));
+            String body = Files.readFromFile(Files.getBeachIdMapFile());
             if (!body.isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 Map<String, String> newMap = objectMapper.readValue(body, new TypeReference<Map<String, String>>() {});
                 idMap.putAll(newMap);
             }
         } catch (Exception e) {
-            LogUtil.printStackTrace(e);
+            Log.printStackTrace(e);
         }
     }
 
     /**
      * 将ID映射保存到文件。
-     * @param userId 用户ID，用于确定文件名。
      * @return 如果保存成功返回true，否则返回false。
      */
-    public static synchronized boolean save(String userId) {
+    public static synchronized boolean save() {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String json = objectMapper.writeValueAsString(idMap);
-            return FileUtil.write2File(json, FileUtil.getCooperationIdMapFile(userId));
+            return Files.write2File(json, Files.getBeachIdMapFile());
         } catch (Exception e) {
-            LogUtil.printStackTrace(e);
+            Log.printStackTrace(e);
             return false;
         }
+    }
+
+    /**
+     * 清除ID映射。
+     */
+    public static synchronized void clear() {
+        idMap.clear();
     }
 
 }

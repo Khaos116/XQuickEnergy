@@ -63,7 +63,7 @@ public class PermissionUtil {
         activity.requestPermissions(PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
       }
     } catch (Exception e) {
-      LogUtil.printStackTrace(TAG, e);
+      Log.printStackTrace(TAG, e);
     }
     return false;
   }
@@ -103,7 +103,7 @@ public class PermissionUtil {
         startActivitySafely(context, appIntent, Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
       }
     } catch (Exception e) {
-      LogUtil.printStackTrace(TAG, e);
+      Log.printStackTrace(TAG, e);
     }
     return false;
   }
@@ -156,7 +156,7 @@ public class PermissionUtil {
         }
       }
     } catch (Exception e) {
-      LogUtil.printStackTrace(TAG, e);
+      Log.printStackTrace(TAG, e);
     }
     return false;
   }

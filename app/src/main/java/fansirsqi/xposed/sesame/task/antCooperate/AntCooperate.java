@@ -10,6 +10,8 @@ import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.entity.CooperateUser;
 import fansirsqi.xposed.sesame.task.TaskCommon;
 import fansirsqi.xposed.sesame.util.*;
+import fansirsqi.xposed.sesame.util.Maps.CooperateMap;
+import fansirsqi.xposed.sesame.util.Maps.UserMap;
 
 import java.util.LinkedHashMap;
 
@@ -65,15 +67,15 @@ public class AntCooperate extends ModelTask {
                         }
                         String name = jo.getString("name");
                         int waterDayLimit = jo.getInt("waterDayLimit");
-                        CooperationIdMapUtil.add(cooperationId, name);
-                        if (!StatusUtil.canCooperateWaterToday(UserIdMapUtil.getCurrentUid(), cooperationId)) {
+                        CooperateMap.add(cooperationId, name);
+                        if (!StatusUtil.canCooperateWaterToday(UserMap.getCurrentUid(), cooperationId)) {
                             continue;
                         }
                         Integer num = cooperateWaterList.getValue().get(cooperationId);
                         if (num != null) {
                             Integer limitNum = cooperateWaterTotalLimitList.getValue().get(cooperationId);
                             if (limitNum != null) {
-                                num = calculatedWaterNum(UserIdMapUtil.getCurrentUid(), cooperationId, num, limitNum);
+                                num = calculatedWaterNum(UserMap.getCurrentUid(), cooperationId, num, limitNum);
                             }
                             if (num > waterDayLimit) {
                                 num = waterDayLimit;
@@ -82,19 +84,19 @@ public class AntCooperate extends ModelTask {
                                 num = userCurrentEnergy;
                             }
                             if (num > 0) {
-                                cooperateWater(UserIdMapUtil.getCurrentUid(), cooperationId, num, name);
+                                cooperateWater(UserMap.getCurrentUid(), cooperationId, num, name);
                             }
                         }
                     }
                 } else {
-                    LogUtil.runtime(TAG, jo.getString("resultDesc"));
+                    Log.runtime(TAG, jo.getString("resultDesc"));
                 }
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "start.run err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "start.run err:");
+            Log.printStackTrace(TAG, t);
         }
-        CooperationIdMapUtil.save(UserIdMapUtil.getCurrentUid());
+        CooperateMap.save(UserMap.getCurrentUid());
     }
 
     private static void cooperateWater(String uid, String coopId, int count, String name) {
@@ -102,16 +104,16 @@ public class AntCooperate extends ModelTask {
             String s = AntCooperateRpcCall.cooperateWater(uid, coopId, count);
             JSONObject jo = new JSONObject(s);
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                LogUtil.forest("合种浇水🚿[" + name + "]" + jo.getString("barrageText"));
-                StatusUtil.cooperateWaterToday(UserIdMapUtil.getCurrentUid(), coopId);
+                Log.forest("合种浇水🚿[" + name + "]" + jo.getString("barrageText"));
+                StatusUtil.cooperateWaterToday(UserMap.getCurrentUid(), coopId);
             } else {
-                LogUtil.runtime(TAG, jo.getString("resultDesc"));
+                Log.runtime(TAG, jo.getString("resultDesc"));
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "cooperateWater err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "cooperateWater err:");
+            Log.printStackTrace(TAG, t);
         } finally {
-            TimeUtil.sleep(500);
+            ThreadUtil.sleep(500);
         }
     }
 
@@ -134,8 +136,8 @@ public class AntCooperate extends ModelTask {
                 }
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "calculatedWaterNum err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "calculatedWaterNum err:");
+            Log.printStackTrace(TAG, t);
         } finally {
             return num;
         }

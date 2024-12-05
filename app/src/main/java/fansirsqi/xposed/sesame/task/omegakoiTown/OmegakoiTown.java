@@ -7,7 +7,7 @@ import fansirsqi.xposed.sesame.model.ModelGroup;
 import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.data.RuntimeInfo;
 import fansirsqi.xposed.sesame.task.TaskCommon;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 
 public class OmegakoiTown extends ModelTask {
     private static final String TAG = OmegakoiTown.class.getSimpleName();
@@ -79,8 +79,8 @@ public class OmegakoiTown extends ModelTask {
             getSignInStatus();
             houseProduct();
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "start.run err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "start.run err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 
@@ -107,20 +107,20 @@ public class OmegakoiTown extends ModelTask {
                             RewardType rewardType = RewardType.valueOf(itemId);
                             jo = new JSONObject(OmegakoiTownRpcCall.triggerTaskReward(taskId));
                             if (jo.optBoolean("success")) {
-                                LogUtil.other("小镇任务🌇[" + name + "]#" + amount + "[" + rewardType.rewardName() + "]");
+                                Log.other("小镇任务🌇[" + name + "]#" + amount + "[" + rewardType.rewardName() + "]");
                             }
                         } catch (Throwable th) {
-                            LogUtil.runtime(TAG, "spec RewardType:" + itemId + ";未知的类型");
+                            Log.runtime(TAG, "spec RewardType:" + itemId + ";未知的类型");
                         }
                     }
                 }
             } else {
-                LogUtil.record(jo.getString("resultDesc"));
-                LogUtil.runtime(s);
+                Log.record(jo.getString("resultDesc"));
+                Log.runtime(s);
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "getUserTasks err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "getUserTasks err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 
@@ -136,12 +136,12 @@ public class OmegakoiTown extends ModelTask {
                     int amount = diffItem.getInt("amount");
                     String itemId = diffItem.getString("itemId");
                     RewardType rewardType = RewardType.valueOf(itemId);
-                    LogUtil.other("小镇签到[" + rewardType.rewardName() + "]#" + amount);
+                    Log.other("小镇签到[" + rewardType.rewardName() + "]#" + amount);
                 }
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "getSignInStatus err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "getSignInStatus err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 
@@ -170,18 +170,18 @@ public class OmegakoiTown extends ModelTask {
                             String itemId = jo.getJSONObject("result").getJSONArray("rewards").getJSONObject(0)
                                     .getString("itemId");
                             RewardType rewardType = RewardType.valueOf(itemId);
-                            LogUtil.other("小镇收金🌇[" + houseType.houseName() + "]#" + String.format("%.2f", amount)
+                            Log.other("小镇收金🌇[" + houseType.houseName() + "]#" + String.format("%.2f", amount)
                                     + rewardType.rewardName());
                         }
                     }
                 }
             } else {
-                LogUtil.record(jo.getString("resultDesc"));
-                LogUtil.runtime(s);
+                Log.record(jo.getString("resultDesc"));
+                Log.runtime(s);
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "getUserTasks err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "getUserTasks err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 

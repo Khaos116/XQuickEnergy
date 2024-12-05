@@ -1,7 +1,7 @@
 package fansirsqi.xposed.sesame.task;
 
 import android.os.Build;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import fansirsqi.xposed.sesame.util.ThreadUtil;
 
 import java.util.Map;
@@ -44,7 +44,7 @@ public class ProgramChildTaskExecutor implements ChildTaskExecutor {
                     }
                     childTask.run(); // 执行子任务
                 } catch (Exception e) {
-                    LogUtil.printStackTrace(e);
+                    Log.printStackTrace(e);
                 } finally {
                     childTask.getModelTask().removeChildTask(childTask.getId()); // 移除已完成的子任务
                 }
@@ -54,7 +54,7 @@ public class ProgramChildTaskExecutor implements ChildTaskExecutor {
                 try {
                     childTask.run(); // 执行子任务
                 } catch (Exception e) {
-                    LogUtil.printStackTrace(e);
+                    Log.printStackTrace(e);
                 } finally {
                     childTask.getModelTask().removeChildTask(childTask.getId()); // 移除已完成的子任务
                 }

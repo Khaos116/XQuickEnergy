@@ -5,7 +5,7 @@ import fansirsqi.xposed.sesame.model.ModelFields;
 import fansirsqi.xposed.sesame.model.ModelGroup;
 import fansirsqi.xposed.sesame.model.modelFieldExt.BooleanModelField;
 import fansirsqi.xposed.sesame.model.modelFieldExt.StringModelField;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class AnswerAI extends Model {
         try {
             return answerAIInterface.getAnswer(text);
         } catch (Throwable t) {
-            LogUtil.printStackTrace(TAG, t);
+            Log.printStackTrace(TAG, t);
         }
         return "";
     }
@@ -70,7 +70,7 @@ public class AnswerAI extends Model {
         try {
             return answerAIInterface.getAnswer(text, answerList);
         } catch (Throwable t) {
-            LogUtil.printStackTrace(TAG, t);
+            Log.printStackTrace(TAG, t);
         }
         return "";
     }

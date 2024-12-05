@@ -3,6 +3,7 @@ package fansirsqi.xposed.sesame.entity;
 import org.json.JSONException;
 import org.json.JSONObject;
 import fansirsqi.xposed.sesame.util.*;
+import fansirsqi.xposed.sesame.util.Maps.UserMap;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,15 +68,15 @@ public class FriendWatch extends IdAndName {
             JSONObject joSingle = joFriendWatch.optJSONObject(id);
             if (joSingle == null) {
                 joSingle = new JSONObject();
-                joSingle.put("name", UserIdMapUtil.getMaskName(id));
+                joSingle.put("name", UserMap.getMaskName(id));
                 joSingle.put("allGet", 0);
-                joSingle.put("startTime", TimeUtil.getDateStr());
+                joSingle.put("startTime", TimeUtil.getFormatDate());
                 joFriendWatch.put(id, joSingle);
             }
             joSingle.put("weekGet", joSingle.optInt("weekGet", 0) + collectedEnergy);
         } catch (Throwable th) {
-            LogUtil.runtime(TAG, "friendWatch err:");
-            LogUtil.printStackTrace(TAG, th);
+            Log.runtime(TAG, "friendWatch err:");
+            Log.printStackTrace(TAG, th);
         }
     }
 
@@ -84,10 +85,10 @@ public class FriendWatch extends IdAndName {
      */
     public static synchronized void save() {
         try {
-            FileUtil.write2File(joFriendWatch.toString(), FileUtil.getFriendWatchFile());
+            Files.write2File(joFriendWatch.toString(), Files.getFriendWatchFile());
         } catch (Exception e) {
-            LogUtil.runtime(TAG, "friendWatch save err:");
-            LogUtil.printStackTrace(TAG, e);
+            Log.runtime(TAG, "friendWatch save err:");
+            Log.printStackTrace(TAG, e);
         }
     }
 
@@ -95,11 +96,11 @@ public class FriendWatch extends IdAndName {
      * 更新每日统计数据，如果需要更新周数据则进行重置。
      */
     public static void updateDay() {
-        if (!needUpdateAll(FileUtil.getFriendWatchFile().lastModified())) {
+        if (!needUpdateAll(Files.getFriendWatchFile().lastModified())) {
             return;
         }
         try {
-            String dateStr = TimeUtil.getDateStr();
+            String dateStr = TimeUtil.getFormatDate();
             Iterator<String> ids = joFriendWatch.keys();
             while (ids.hasNext()) {
                 String id = ids.next();
@@ -112,8 +113,8 @@ public class FriendWatch extends IdAndName {
             }
             save();
         } catch (Throwable th) {
-            LogUtil.runtime(TAG, "friendWatch updateDay err:");
-            LogUtil.printStackTrace(TAG, th);
+            Log.runtime(TAG, "friendWatch updateDay err:");
+            Log.printStackTrace(TAG, th);
         }
     }
 
@@ -124,11 +125,11 @@ public class FriendWatch extends IdAndName {
      */
     public static synchronized Boolean load() {
         try {
-            String strFriendWatch = FileUtil.readFromFile(FileUtil.getFriendWatchFile());
+            String strFriendWatch = Files.readFromFile(Files.getFriendWatchFile());
             joFriendWatch = strFriendWatch.isEmpty() ? new JSONObject() : new JSONObject(strFriendWatch);
             return true;
         } catch (JSONException e) {
-            LogUtil.printStackTrace(e);
+            Log.printStackTrace(e);
             joFriendWatch = new JSONObject();
         }
         return false;
@@ -166,7 +167,7 @@ public class FriendWatch extends IdAndName {
     public static List<FriendWatch> getList() {
         ArrayList<FriendWatch> list = new ArrayList<>();
         try {
-            String strFriendWatch = FileUtil.readFromFile(FileUtil.getFriendWatchFile());
+            String strFriendWatch = Files.readFromFile(Files.getFriendWatchFile());
             JSONObject joFriendWatch = strFriendWatch.isEmpty() ? new JSONObject() : new JSONObject(strFriendWatch);
 
             Iterator<String> ids = joFriendWatch.keys();
@@ -186,8 +187,8 @@ public class FriendWatch extends IdAndName {
                 list.add(friendWatch);
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "FriendWatch getList err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "FriendWatch getList err:");
+            Log.printStackTrace(TAG, t);
         }
         return list;
     }

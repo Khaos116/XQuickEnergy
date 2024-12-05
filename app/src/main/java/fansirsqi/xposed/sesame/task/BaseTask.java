@@ -2,7 +2,7 @@ package fansirsqi.xposed.sesame.task;
 
 import android.os.Build;
 
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import lombok.Getter;
 import fansirsqi.xposed.sesame.util.ThreadUtil;
 
@@ -163,7 +163,7 @@ public abstract class BaseTask {
                 }
             }
         } catch (Exception e) {
-            LogUtil.printStackTrace(e);
+            Log.printStackTrace(e);
         }
     }
 

@@ -328,7 +328,7 @@ public class HanziToPinyin {
             token.target = pinyin.toString();
             return token;
         } catch (Throwable th) {
-            LogUtil.record("字符'" + character + "'转换失败");
+            Log.record("字符'" + character + "'转换失败");
             throw th;
         }
     }
@@ -395,7 +395,7 @@ public class HanziToPinyin {
             return tokens;
 
         } catch (Throwable th) {
-            LogUtil.record("字符串\"" + input + "\"转换失败");
+            Log.record("字符串\"" + input + "\"转换失败");
             throw th;
         }
     }

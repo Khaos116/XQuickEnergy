@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import fansirsqi.xposed.sesame.R;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 
 /**
  * 扩展功能页面
@@ -57,7 +57,7 @@ public class ExtendActivity extends BaseActivity {
         intent.putExtra("data", "");
         intent.putExtra("type", type);
         sendBroadcast(intent); // 发送广播
-        LogUtil.debug("发送广播：" + type);
+        Log.debug("发送广播：" + type);
     }
 
     /**

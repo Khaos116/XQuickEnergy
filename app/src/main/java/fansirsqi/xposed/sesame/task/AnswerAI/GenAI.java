@@ -1,6 +1,6 @@
 package fansirsqi.xposed.sesame.task.AnswerAI;
 
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import okhttp3.*;
 import org.json.JSONObject;
 
@@ -74,8 +74,8 @@ public class GenAI implements AnswerAIInterface {
 
             String jsonResponse = response.body().string();
             if (!response.isSuccessful()) {
-                LogUtil.other("Gemini请求失败");
-                LogUtil.runtime("Gemini接口异常：" + jsonResponse);
+                Log.other("Gemini请求失败");
+                Log.runtime("Gemini接口异常：" + jsonResponse);
                 return result; // 可能的API Key错误
             }
 
@@ -83,7 +83,7 @@ public class GenAI implements AnswerAIInterface {
             JSONObject jsonObject = new JSONObject(jsonResponse);
             result = getValueByPath(jsonObject, "candidates.[0].content.parts.[0].text");
         } catch (Throwable t) {
-            LogUtil.printStackTrace(TAG, t);
+            Log.printStackTrace(TAG, t);
         }
         return result;
     }
@@ -106,7 +106,7 @@ public class GenAI implements AnswerAIInterface {
         // 发送请求并获取AI回答结果
         String answerResult = getAnswer(title + "\n" + answerStr);
         if (answerResult != null && !answerResult.isEmpty()) {
-            LogUtil.record("AI🧠回答：" + answerResult);
+            Log.record("AI🧠回答：" + answerResult);
 
             // 查找并返回与候选答案匹配的项
             for (String answer : answerList) {

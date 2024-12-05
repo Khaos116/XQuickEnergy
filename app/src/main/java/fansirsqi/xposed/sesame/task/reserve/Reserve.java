@@ -8,7 +8,7 @@ import fansirsqi.xposed.sesame.model.modelFieldExt.SelectAndCountModelField;
 import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.entity.AlipayReserve;
 import fansirsqi.xposed.sesame.task.TaskCommon;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import fansirsqi.xposed.sesame.util.RandomUtil;
 import fansirsqi.xposed.sesame.util.StatusUtil;
 
@@ -44,11 +44,11 @@ public class Reserve extends ModelTask {
 
     public void run() {
         try {
-            LogUtil.record("开始检测保护地");
+            Log.record("开始检测保护地");
             animalReserve();
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "start.run err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "start.run err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 
@@ -87,11 +87,11 @@ public class Reserve extends ModelTask {
                     }
                 }
             } else {
-                LogUtil.runtime(TAG, jo.getString("resultDesc"));
+                Log.runtime(TAG, jo.getString("resultDesc"));
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "animalReserve err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "animalReserve err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 
@@ -107,20 +107,20 @@ public class Reserve extends ModelTask {
                     if (currentEnergy >= jo.getInt("energy")) {
                         return true;
                     } else {
-                        LogUtil.forest("领保护地🏕️[" + jo.getString("projectName") + "]#能量不足停止申请");
+                        Log.forest("领保护地🏕️[" + jo.getString("projectName") + "]#能量不足停止申请");
                         return false;
                     }
                 } else {
-                    LogUtil.forest("领保护地🏕️[" + jo.getString("projectName") + "]#似乎没有了");
+                    Log.forest("领保护地🏕️[" + jo.getString("projectName") + "]#似乎没有了");
                     return false;
                 }
             } else {
-                LogUtil.record(jo.getString("resultDesc"));
-                LogUtil.runtime(s);
+                Log.record(jo.getString("resultDesc"));
+                Log.runtime(s);
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "queryTreeForExchange err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "queryTreeForExchange err:");
+            Log.printStackTrace(TAG, t);
         }
         return false;
     }
@@ -141,12 +141,12 @@ public class Reserve extends ModelTask {
                     appliedTimes = StatusUtil.getReserveTimes(projectId) + 1;
                     String str = "领保护地🏕️[" + itemName + "]#第" + appliedTimes + "次"
                             + (vitalityAmount > 0 ? "-活力值+" + vitalityAmount : "");
-                    LogUtil.forest(str);
+                    Log.forest(str);
                     StatusUtil.reserveToday(projectId, 1);
                 } else {
-                    LogUtil.record(jo.getString("resultDesc"));
-                    LogUtil.runtime(jo.toString());
-                    LogUtil.forest("领保护地🏕️[" + itemName + "]#发生未知错误，停止申请");
+                    Log.record(jo.getString("resultDesc"));
+                    Log.runtime(jo.toString());
+                    Log.forest("领保护地🏕️[" + itemName + "]#发生未知错误，停止申请");
                     // StatisticsUtil.reserveToday(projectId, count);
                     break;
                 }
@@ -162,8 +162,8 @@ public class Reserve extends ModelTask {
                     break;
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "exchangeTree err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "exchangeTree err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 

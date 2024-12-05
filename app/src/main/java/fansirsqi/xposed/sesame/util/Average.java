@@ -1,7 +1,7 @@
 package fansirsqi.xposed.sesame.util;
 
 /**平均值计算工具类*/
-public class AverageMathUtil {
+public class Average {
 
     /** 使用一个循环队列来存储固定数量的数值*/
     private final CircularFifoQueue<Integer> queue;
@@ -13,7 +13,7 @@ public class AverageMathUtil {
     private double average;
 
     /** 构造函数，初始化队列大小，初始总和和平均值*/
-    public AverageMathUtil(int size) {
+    public Average(int size) {
         this.queue = new CircularFifoQueue<>(size); // 创建一个固定大小的循环队列
         this.sum = 0.0; // 初始化总和为 0
         this.average = 0.0; // 初始化平均值为 0

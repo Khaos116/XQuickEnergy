@@ -1,7 +1,6 @@
 package fansirsqi.xposed.sesame.model.modelFieldExt;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,7 @@ import android.widget.LinearLayout;
 
 import androidx.core.content.ContextCompat;
 
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import lombok.Getter;
 import fansirsqi.xposed.sesame.R;
 import fansirsqi.xposed.sesame.model.ModelField;
@@ -93,7 +92,7 @@ public class IntegerModelField extends ModelField<Integer> {
                 // 尝试将配置值转换为整数
                 newValue = Integer.parseInt(configValue);
             } catch (Exception e) {
-                LogUtil.printStackTrace(e);  // 异常处理，打印栈追踪
+                Log.printStackTrace(e);  // 异常处理，打印栈追踪
                 newValue = defaultValue;  // 如果转换失败，使用默认值
             }
         }
@@ -195,7 +194,7 @@ public class IntegerModelField extends ModelField<Integer> {
                 value = value * multiple;  // 使用乘数调整字段值
                 return;
             } catch (Exception e) {
-                LogUtil.printStackTrace(e);  // 异常处理
+                Log.printStackTrace(e);  // 异常处理
             }
             reset();  // 如果出现异常，重置字段
         }

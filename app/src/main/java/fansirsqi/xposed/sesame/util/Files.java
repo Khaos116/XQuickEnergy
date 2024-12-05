@@ -1,15 +1,24 @@
 package fansirsqi.xposed.sesame.util;
 
 import android.os.Environment;
-import java.io.*;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
 
-public class FileUtil {
-  private static final String TAG = FileUtil.class.getSimpleName();
+public class Files {
+  private static final String TAG = Files.class.getSimpleName();
 
   /** 配置文件夹名称 */
   public static final String CONFIG_DIRECTORY_NAME = "sesame";
@@ -200,9 +209,9 @@ public class FileUtil {
       statisticsFile.delete();
     }
     if (statisticsFile.exists()) {
-      LogUtil.runtime(TAG, "[statistics]读:" + statisticsFile.canRead() + ";写:" + statisticsFile.canWrite());
+      Log.runtime(TAG, "[statistics]读:" + statisticsFile.canRead() + ";写:" + statisticsFile.canWrite());
     } else {
-      LogUtil.runtime(TAG, "statisticsFile.json文件不存在");
+      Log.runtime(TAG, "statisticsFile.json文件不存在");
     }
     return statisticsFile;
   }
@@ -231,6 +240,11 @@ public class FileUtil {
     return file;
   }
 
+  /**
+   * 获取导出的统计文件，到下载目录
+   *
+   * @return 导出的统计文件
+   */
   public static File getExportedStatisticsFile() {
     String storageDirStr = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + CONFIG_DIRECTORY_NAME;
     File storageDir = new File(storageDirStr);
@@ -253,7 +267,7 @@ public class FileUtil {
   }
 
   public static File getWuaFile() {
-    File wuaFile = null;
+    File wuaFile;
       wuaFile = new File(MAIN_DIRECTORY, "wua.list");
       return wuaFile;
   }
@@ -272,7 +286,7 @@ public class FileUtil {
     if (exportFile.exists() && exportFile.isDirectory()) {
       exportFile.delete();
     }
-    if (FileUtil.copyTo(file, exportFile)) {
+    if (Files.copyTo(file, exportFile)) {
       return exportFile;
     }
     return null;
@@ -284,7 +298,7 @@ public class FileUtil {
    * @return 城市代码文件
    */
   public static File getCityCodeFile() {
-    File cityCodeFile = null;
+    File cityCodeFile;
       cityCodeFile = new File(MAIN_DIRECTORY, "cityCode.json");
       if (cityCodeFile.exists() && cityCodeFile.isDirectory()) {
         cityCodeFile.delete();
@@ -299,7 +313,7 @@ public class FileUtil {
    * @return 日志文件的File对象
    */
   private static File ensureLogFile(String logFileName) {
-    File logFile = new File(FileUtil.LOG_DIRECTORY, logFileName);
+    File logFile = new File(Files.LOG_DIRECTORY, logFileName);
     if (logFile.exists() && logFile.isDirectory()) {
       logFile.delete();
     }
@@ -314,83 +328,73 @@ public class FileUtil {
   }
 
   public static File getRuntimeLogFile() {
-    return ensureLogFile(LogUtil.getLogFileName("runtime"));
+    return ensureLogFile(Log.getLogFileName("runtime"));
   }
 
   public static File getRecordLogFile() {
-    return ensureLogFile(LogUtil.getLogFileName("record"));
+    return ensureLogFile(Log.getLogFileName("record"));
   }
 
   public static File getSystemLogFile() {
-    return ensureLogFile(LogUtil.getLogFileName("system"));
+    return ensureLogFile(Log.getLogFileName("system"));
   }
 
   public static File getDebugLogFile() {
-    return ensureLogFile(LogUtil.getLogFileName("debug"));
+    return ensureLogFile(Log.getLogFileName("debug"));
   }
 
   public static File getCaptureLogFile() {
-    return ensureLogFile(LogUtil.getLogFileName("capture"));
+    return ensureLogFile(Log.getLogFileName("capture"));
   }
 
   public static File getForestLogFile() {
-    return ensureLogFile(LogUtil.getLogFileName("forest"));
+    return ensureLogFile(Log.getLogFileName("forest"));
   }
 
   public static File getFarmLogFile() {
-    return ensureLogFile(LogUtil.getLogFileName("farm"));
+    return ensureLogFile(Log.getLogFileName("farm"));
   }
 
   public static File getOtherLogFile() {
-    return ensureLogFile(LogUtil.getLogFileName("other"));
+    return ensureLogFile(Log.getLogFileName("other"));
   }
 
   public static File getErrorLogFile() {
-    return ensureLogFile(LogUtil.getLogFileName("error"));
+    return ensureLogFile(Log.getLogFileName("error"));
   }
 
   public static void clearLog() {
     // 检查日志目录是否存在，如果不存在或者不是一个目录，则直接返回
-    if (!LOG_DIRECTORY.isDirectory()) {
-      return;
-    }
-    // 获取当前日期的格式化字符串
-    SimpleDateFormat sdf = LogUtil.DATE_FORMAT_THREAD_LOCAL.get();
-    if (sdf == null) {
-      sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    }
-    String today = sdf.format(new Date());
-    // 获取昨天日期的格式化字符串
-    String yesterday = sdf.format(new Date(System.currentTimeMillis() - 60 * 60 * 1000 * 24));
-    // 遍历日志目录下的所有文件，删除符合条件的文件
+    if (!LOG_DIRECTORY.isDirectory())return;
+    String today = TimeUtil.getFormatDate();
+    String yesterday = TimeUtil.getFormatDate(-1, "yyyy-MM-dd");
     // 获取日志目录下的所有文件
     File[] files = LOG_DIRECTORY.listFiles();
-    if (files == null) {
-      return;
-    }
-    // 遍历文件，根据条件进行清理
+    if (files == null)return;
     for (File file : files) {
       String name = file.getName();
       if (name.endsWith(today + ".log") && file.length() < 31457280) { // 调整文件大小至30M重置
         continue;
       }
-      // 尝试删除文件，忽略可能出现的SecurityException
       try {
         if (name.contains(yesterday)) { // 删除昨天的日志文件
           if (!file.delete()) {
-            // 如果删除失败，可以在这里记录日志或者进行其他处理
             ToastUtil.showToast("Failed to delete log file: " + file.getName());
           }
         } else {
-          // 重命名文件用以记录
           // 获取当前时间的格式化字符串(不再自动删除日志,而是记录日志文件名)
-          SimpleDateFormat nsdf = new SimpleDateFormat("yyyy-MM-dd.HH.mm.ss", Locale.getDefault());
-          String now = nsdf.format(new Date());
-          file.renameTo(new File(file.getParent(), name.replace(".log", "-" + now + ".log.bak")));
+          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd.HH.mm.ss", Locale.getDefault());
+          String now = LocalDateTime.now().format(formatter);
+          File newFile = new File(file.getParent(), name.replace(".log", "-" + now + ".log.bak"));
+          if (file.renameTo(newFile)) {
+            Log.runtime(TAG, "👌 日志文件备份成功：" + file.getName() + " -> " + newFile.getName());
+          } else {
+            Log.runtime(TAG, "🥀 日志文件备份失败：" + file.getName() + " -> " + newFile.getName());
+          }
         }
       } catch (SecurityException se) {
         // 记录安全异常，不应该抛出
-        LogUtil.printStackTrace(se);
+        Log.printStackTrace(se);
       }
     }
   }
@@ -405,7 +409,7 @@ public class FileUtil {
       if (c != null) c.close(); // 关闭流
     } catch (Throwable t) {
       // 捕获并打印关闭流时的异常
-      LogUtil.printStackTrace(TAG, t);
+      Log.printStackTrace(TAG, t);
     }
   }
 
@@ -439,7 +443,7 @@ public class FileUtil {
       }
     } catch (Throwable t) {
       // 捕获并记录异常
-      LogUtil.printStackTrace(TAG, t);
+      Log.printStackTrace(TAG, t);
     } finally {
       // 关闭文件流
       close(fr);
@@ -481,7 +485,7 @@ public class FileUtil {
       success = true;
     } catch (Throwable t) {
       // 捕获并记录异常
-      LogUtil.printStackTrace(TAG, t);
+      Log.printStackTrace(TAG, t);
     } finally {
       // 关闭文件流
       close(fw);
@@ -513,7 +517,7 @@ public class FileUtil {
       success = true;
     } catch (Throwable t) {
       // 捕获并记录异常
-      LogUtil.printStackTrace(TAG, t);
+      Log.printStackTrace(TAG, t);
     } finally {
       // 关闭文件流
       close(fw);
@@ -531,15 +535,15 @@ public class FileUtil {
   public static boolean copyTo(File source, File dest) {
     // 使用 try-with-resources 来自动管理 FileInputStream 和 FileOutputStream 以及 FileChannel 的关闭
     try (FileInputStream fileInputStream = new FileInputStream(source);
-        FileOutputStream fileOutputStream = new FileOutputStream(createFile(dest));
-        FileChannel inputChannel = fileInputStream.getChannel();
-        FileChannel outputChannel = fileOutputStream.getChannel()) {
+         FileOutputStream fileOutputStream = new FileOutputStream(createFile(dest));
+         FileChannel inputChannel = fileInputStream.getChannel();
+         FileChannel outputChannel = fileOutputStream.getChannel()) {
       // 将源文件的内容传输到目标文件
       outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
       return true; // 复制成功
     } catch (IOException e) {
       // 捕获并打印文件操作中的异常
-      LogUtil.printStackTrace(e);
+      Log.printStackTrace(e);
     }
     return false; // 复制失败
   }
@@ -564,7 +568,7 @@ public class FileUtil {
       return true; // 成功拷贝数据
     } catch (IOException e) {
       // 捕获 IO 异常并打印堆栈信息
-      LogUtil.printStackTrace(e);
+      Log.printStackTrace(e);
     } finally {
       // 关闭输入流和输出流
       closeStream(source);
@@ -584,7 +588,7 @@ public class FileUtil {
         stream.close(); // 关闭流
       } catch (Exception e) {
         // 捕获并打印关闭流时的异常
-        LogUtil.printStackTrace(e);
+        Log.printStackTrace(e);
       }
     }
   }
@@ -617,7 +621,7 @@ public class FileUtil {
         if (!file.createNewFile()) return null;
       } catch (Exception e) {
         // 捕获异常并打印堆栈信息
-        LogUtil.printStackTrace(e);
+        Log.printStackTrace(e);
         return null;
       }
     }
@@ -637,7 +641,7 @@ public class FileUtil {
           return null;
         }
       } catch (Exception e) {
-        LogUtil.printStackTrace(e);
+        Log.printStackTrace(e);
         return null;
       }
     }
@@ -662,7 +666,7 @@ public class FileUtil {
         return true; // 返回清空成功
       } catch (IOException e) {
         // 发生 IO 异常时打印堆栈信息
-        LogUtil.printStackTrace(e);
+        Log.printStackTrace(e);
       } finally {
         // 确保 FileWriter 在操作完成后关闭，防止资源泄露
         try {
@@ -671,7 +675,7 @@ public class FileUtil {
           }
         } catch (IOException e) {
           // 如果关闭流时发生异常，打印堆栈信息
-          LogUtil.printStackTrace(e);
+          Log.printStackTrace(e);
         }
       }
     }

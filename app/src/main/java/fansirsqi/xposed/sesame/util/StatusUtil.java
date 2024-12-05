@@ -1,11 +1,15 @@
 package fansirsqi.xposed.sesame.util;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import fansirsqi.xposed.sesame.util.Maps.UserMap;
 import lombok.Data;
 import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.task.antForest.AntForest;
 
-import java.io.File;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Data
@@ -128,7 +132,7 @@ public class StatusUtil {
     }
 
     public static boolean canWaterFriendToday(String id, int newCount) {
-        id = UserIdMapUtil.getCurrentUid() + "-" + id;
+        id = UserMap.getCurrentUid() + "-" + id;
         Integer count = INSTANCE.waterFriendLogList.get(id);
         if (count == null) {
             return true;
@@ -137,7 +141,7 @@ public class StatusUtil {
     }
 
     public static void waterFriendToday(String id, int count) {
-        id = UserIdMapUtil.getCurrentUid() + "-" + id;
+        id = UserMap.getCurrentUid() + "-" + id;
         INSTANCE.waterFriendLogList.put(id, count);
         save();
     }
@@ -218,7 +222,7 @@ public class StatusUtil {
     }
 
     public static boolean canVisitFriendToday(String id, int newCount) {
-        id = UserIdMapUtil.getCurrentUid() + "-" + id;
+        id = UserMap.getCurrentUid() + "-" + id;
         Integer count = INSTANCE.visitFriendLogList.get(id);
         if (count == null) {
             return true;
@@ -227,7 +231,7 @@ public class StatusUtil {
     }
 
     public static void visitFriendToday(String id, int newCount) {
-        id = UserIdMapUtil.getCurrentUid() + "-" + id;
+        id = UserMap.getCurrentUid() + "-" + id;
         INSTANCE.visitFriendLogList.put(id, newCount);
         save();
     }
@@ -300,12 +304,12 @@ public class StatusUtil {
     }
 
     public static boolean canStallP2PHelpToday(String uid) {
-        uid = UserIdMapUtil.getCurrentUid() + "-" + uid;
+        uid = UserMap.getCurrentUid() + "-" + uid;
         return !INSTANCE.stallP2PHelpedList.contains(uid);
     }
 
     public static void stallP2PHelpeToday(String uid) {
-        uid = UserIdMapUtil.getCurrentUid() + "-" + uid;
+        uid = UserMap.getCurrentUid() + "-" + uid;
         StatusUtil stat = INSTANCE;
         if (!stat.stallP2PHelpedList.contains(uid)) {
             stat.stallP2PHelpedList.add(uid);
@@ -319,7 +323,7 @@ public class StatusUtil {
      * @return true是，false否
      */
     public static boolean canAntStallAssistFriendToday() {
-        return !INSTANCE.antStallAssistFriend.contains(UserIdMapUtil.getCurrentUid());
+        return !INSTANCE.antStallAssistFriend.contains(UserMap.getCurrentUid());
     }
 
     /**
@@ -327,7 +331,7 @@ public class StatusUtil {
      */
     public static void antStallAssistFriendToday() {
         StatusUtil stat = INSTANCE;
-        String uid = UserIdMapUtil.getCurrentUid();
+        String uid = UserMap.getCurrentUid();
         if (!stat.antStallAssistFriend.contains(uid)) {
             stat.antStallAssistFriend.add(uid);
             save();
@@ -336,12 +340,12 @@ public class StatusUtil {
 
     // 农场助力
     public static boolean canAntOrchardAssistFriendToday() {
-        return !INSTANCE.antOrchardAssistFriend.contains(UserIdMapUtil.getCurrentUid());
+        return !INSTANCE.antOrchardAssistFriend.contains(UserMap.getCurrentUid());
     }
 
     public static void antOrchardAssistFriendToday() {
         StatusUtil stat = INSTANCE;
-        String uid = UserIdMapUtil.getCurrentUid();
+        String uid = UserMap.getCurrentUid();
         if (!stat.antOrchardAssistFriend.contains(uid)) {
             stat.antOrchardAssistFriend.add(uid);
             save();
@@ -421,17 +425,17 @@ public class StatusUtil {
      * @return true是，false否
      */
     public static boolean canPasteTicketTime() {
-        return !INSTANCE.canPasteTicketTime.contains(UserIdMapUtil.getCurrentUid());
+        return !INSTANCE.canPasteTicketTime.contains(UserMap.getCurrentUid());
     }
 
     /**
      * 罚单贴完了
      */
     public static void pasteTicketTime() {
-        if (INSTANCE.canPasteTicketTime.contains(UserIdMapUtil.getCurrentUid())) {
+        if (INSTANCE.canPasteTicketTime.contains(UserMap.getCurrentUid())) {
             return;
         }
-        INSTANCE.canPasteTicketTime.add(UserIdMapUtil.getCurrentUid());
+        INSTANCE.canPasteTicketTime.add(UserMap.getCurrentUid());
         save();
     }
 
@@ -449,8 +453,7 @@ public class StatusUtil {
     }
 
     public static boolean canKbSignInToday() {
-        StatusUtil stat = INSTANCE;
-        return stat.kbSignIn < StatisticsUtil.INSTANCE.getDay().time;
+        return INSTANCE.kbSignIn < StatisticsUtil.INSTANCE.getDay().time;
     }
 
     public static void KbSignInToday() {
@@ -483,8 +486,7 @@ public class StatusUtil {
     }
 
     public static boolean canSyncStepToday(String uid) {
-        StatusUtil stat = INSTANCE;
-        return !stat.syncStepList.contains(uid);
+        return !INSTANCE.syncStepList.contains(uid);
     }
 
     public static void SyncStepToday(String uid) {
@@ -513,17 +515,17 @@ public class StatusUtil {
      * @return true是，false否
      */
     public static boolean canGreenFinancePointFriend() {
-        return !INSTANCE.greenFinancePointFriend.contains(UserIdMapUtil.getCurrentUid());
+        return INSTANCE.greenFinancePointFriend.contains(UserMap.getCurrentUid());
     }
 
     /**
      * 绿色经营-收好友金币完了
      */
     public static void greenFinancePointFriend() {
-        if (!canGreenFinancePointFriend()) {
+        if (canGreenFinancePointFriend()) {
             return;
         }
-        INSTANCE.greenFinancePointFriend.add(UserIdMapUtil.getCurrentUid());
+        INSTANCE.greenFinancePointFriend.add(UserMap.getCurrentUid());
         save();
     }
 
@@ -533,58 +535,61 @@ public class StatusUtil {
      * @return true是，false否
      */
     public static boolean canGreenFinancePrizesMap() {
-        int week = TimeUtil.getWeekNumber(new Date());
-        String currentUid = UserIdMapUtil.getCurrentUid();
+        LocalDate currentDate = LocalDate.now();
+        int week = TimeUtil.getWeekNumber(currentDate);
+        String currentUid = UserMap.getCurrentUid();
         if (INSTANCE.greenFinancePrizesMap.containsKey(currentUid)) {
             Integer storedWeek = INSTANCE.greenFinancePrizesMap.get(currentUid);
-            return storedWeek == null || storedWeek != week;
+            return storedWeek != null && storedWeek == week;
         }
-        return true;
+        return false;
     }
 
     /**
      * 绿色经营-评级任务完了
      */
     public static void greenFinancePrizesMap() {
-        if (!canGreenFinancePrizesMap()) {
+        if (canGreenFinancePrizesMap()) {
             return;
         }
-        INSTANCE.greenFinancePrizesMap.put(UserIdMapUtil.getCurrentUid(), TimeUtil.getWeekNumber(new Date()));
+        // 获取当前的日期
+        LocalDate currentDate = LocalDate.now();
+        INSTANCE.greenFinancePrizesMap.put(UserMap.getCurrentUid(), TimeUtil.getWeekNumber(currentDate));
         save();
     }
 
     public static synchronized StatusUtil load() {
-        String currentUid = UserIdMapUtil.getCurrentUid();
+        String currentUid = UserMap.getCurrentUid();
         try {
             if (StringUtil.isEmpty(currentUid)) {
-                LogUtil.runtime(TAG, "用户为空，状态加载失败");
+                Log.runtime(TAG, "用户为空，状态加载失败");
                 throw new RuntimeException("用户为空，状态加载失败");
             }
-            File statusFile = FileUtil.getStatusFile(currentUid);
+            java.io.File statusFile = Files.getStatusFile(currentUid);
             if (statusFile.exists()) {
-                String json = FileUtil.readFromFile(statusFile);
+                String json = Files.readFromFile(statusFile);
                 JsonUtil.copyMapper().readerForUpdating(INSTANCE).readValue(json);
                 String formatted = JsonUtil.toFormatJsonString(INSTANCE);
                 if (formatted != null && !formatted.equals(json)) {
-                    LogUtil.runtime(TAG, "重新格式化 status.json");
-                    LogUtil.system(TAG, "重新格式化 status.json");
-                    FileUtil.write2File(formatted, FileUtil.getStatusFile(currentUid));
+                    Log.runtime(TAG, "重新格式化 status.json");
+                    Log.system(TAG, "重新格式化 status.json");
+                    Files.write2File(formatted, Files.getStatusFile(currentUid));
                 }
             } else {
                 JsonUtil.copyMapper().updateValue(INSTANCE, new StatusUtil());
-                LogUtil.runtime(TAG, "初始化 status.json");
-                LogUtil.system(TAG, "初始化 status.json");
-                FileUtil.write2File(JsonUtil.toFormatJsonString(INSTANCE), FileUtil.getStatusFile(currentUid));
+                Log.runtime(TAG, "初始化 status.json");
+                Log.system(TAG, "初始化 status.json");
+                Files.write2File(JsonUtil.toFormatJsonString(INSTANCE), Files.getStatusFile(currentUid));
             }
         } catch (Throwable t) {
-            LogUtil.printStackTrace(TAG, t);
-            LogUtil.runtime(TAG, "状态文件格式有误，已重置");
-            LogUtil.system(TAG, "状态文件格式有误，已重置");
+            Log.printStackTrace(TAG, t);
+            Log.runtime(TAG, "状态文件格式有误，已重置");
+            Log.system(TAG, "状态文件格式有误，已重置");
             try {
                 JsonUtil.copyMapper().updateValue(INSTANCE, new StatusUtil());
-                FileUtil.write2File(JsonUtil.toFormatJsonString(INSTANCE), FileUtil.getStatusFile(currentUid));
+                Files.write2File(JsonUtil.toFormatJsonString(INSTANCE), Files.getStatusFile(currentUid));
             } catch (JsonMappingException e) {
-                LogUtil.printStackTrace(TAG, e);
+                Log.printStackTrace(TAG, e);
             }
         }
         if (INSTANCE.saveTime == 0) {
@@ -597,37 +602,38 @@ public class StatusUtil {
         try {
             JsonUtil.copyMapper().updateValue(INSTANCE, new StatusUtil());
         } catch (JsonMappingException e) {
-            LogUtil.printStackTrace(TAG, e);
+            Log.printStackTrace(TAG, e);
         }
     }
 
     public static synchronized void save() {
-        save(Calendar.getInstance());
+        save(LocalDateTime.now());
     }
 
-    public static synchronized void save(Calendar nowCalendar) {
-        String currentUid = UserIdMapUtil.getCurrentUid();
+    public static synchronized void save(LocalDateTime nowDateTime) {
+        String currentUid = UserMap.getCurrentUid();
         if (StringUtil.isEmpty(currentUid)) {
-            LogUtil.record("用户为空，状态保存失败");
+            Log.record("用户为空，状态保存失败");
             throw new RuntimeException("用户为空，状态保存失败");
         }
-        if (updateDay(nowCalendar)) {
-            LogUtil.system(TAG, "重置 statistics.json");
+        if (updateDay(nowDateTime)) {
+            Log.system(TAG, "重置 statistics.json");
         } else {
-            LogUtil.system(TAG, "保存 status.json");
+            Log.system(TAG, "保存 status.json");
         }
         long lastSaveTime = INSTANCE.saveTime;
         try {
             INSTANCE.saveTime = System.currentTimeMillis();
-            FileUtil.write2File(JsonUtil.toFormatJsonString(INSTANCE), FileUtil.getStatusFile(currentUid));
-        } catch (Exception e){
+            Files.write2File(JsonUtil.toFormatJsonString(INSTANCE), Files.getStatusFile(currentUid));
+        } catch (Exception e) {
             INSTANCE.saveTime = lastSaveTime;
             throw e;
         }
     }
 
-    public static Boolean updateDay(Calendar nowCalendar) {
-        if (TimeUtil.isLessThanSecondOfDays(INSTANCE.saveTime, nowCalendar.getTimeInMillis())) {
+    public static Boolean updateDay(LocalDateTime nowDateTime) {
+        long nowMillis = nowDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        if (TimeUtil.isLessThanSecondOfDays(INSTANCE.saveTime, nowMillis)) {
             StatusUtil.unload();
             return true;
         } else {

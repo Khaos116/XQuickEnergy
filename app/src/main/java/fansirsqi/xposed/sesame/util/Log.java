@@ -8,14 +8,14 @@ import com.elvishew.xlog.printer.file.FilePrinter;
 import com.elvishew.xlog.printer.file.backup.NeverBackupStrategy;
 import com.elvishew.xlog.printer.file.clean.NeverCleanStrategy;
 import com.elvishew.xlog.printer.file.naming.FileNameGenerator;
-import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import fansirsqi.xposed.sesame.model.BaseModel;
 
 /** 日志工具类，负责初始化和管理各种类型的日志记录器，并提供日志输出方法。 */
-public class LogUtil {
+public class Log {
 
   // 日志初始化，设置日志等级
   static {
@@ -37,12 +37,12 @@ public class LogUtil {
    *
    * @param tag 日志标签
    * @param pattern 日志输出的模式
-   * @return Logger 实例
+   * @return Loger 实例
    */
   private static Logger createLogger(String tag, String pattern) {
     return XLog.tag(tag)
             .printers(
-                    new FilePrinter.Builder(FileUtil.LOG_DIRECTORY.getPath())
+                    new FilePrinter.Builder(Files.LOG_DIRECTORY.getPath())
                             .fileNameGenerator(new CustomDateFileNameGenerator(tag))
                             .backupStrategy(new NeverBackupStrategy())
                             .cleanStrategy(new NeverCleanStrategy())
@@ -192,25 +192,10 @@ public class LogUtil {
    * @return 带日期的日志文件名
    */
   public static String getLogFileName(String logName) {
-    SimpleDateFormat sdf = DATE_FORMAT_THREAD_LOCAL.get();
     // 增加非空检查
+    String sdf = TimeUtil.getFormatDate();
     if (sdf != null) {
-      return logName + "." + sdf.format(new Date()) + ".log";
-    } else {
-      throw new IllegalStateException("Date format not initialized properly");
-    }
-  }
-
-  /**
-   * 获取当前格式化的日期时间字符串。
-   *
-   * @return 格式化后的日期时间字符串
-   */
-  public static String getFormatDateTime() {
-    SimpleDateFormat simpleDateFormat = DATE_TIME_FORMAT_THREAD_LOCAL.get();
-    // 增加非空检查
-    if (simpleDateFormat != null) {
-      return simpleDateFormat.format(new Date());
+      return logName + "." + sdf + ".log";
     } else {
       throw new IllegalStateException("Date format not initialized properly");
     }
@@ -222,7 +207,7 @@ public class LogUtil {
    * @return 格式化后的日期字符串
    */
   public static String getFormatDate() {
-    return getFormatDateTime().split(" ")[0];
+    return TimeUtil.getFormatDateTime().split(" ")[0];
   }
 
   /**
@@ -231,29 +216,10 @@ public class LogUtil {
    * @return 格式化后的时间字符串
    */
   public static String getFormatTime() {
-    return getFormatDateTime().split(" ")[1];
+    return TimeUtil.getFormatDateTime().split(" ")[1];
   }
 
-  /**
-   * 将日期字符串转换为时间戳。
-   *
-   * @param timers 日期字符串
-   * @return 对应的时间戳
-   */
-  public static long timeToStamp(String timers) {
-    Date d = new Date();
-    try {
-      SimpleDateFormat simpleDateFormat = OTHER_DATE_TIME_FORMAT_THREAD_LOCAL.get();
-      if (simpleDateFormat != null) {
-        Date newD = simpleDateFormat.parse(timers);
-        if (newD != null) {
-          d = newD;
-        }
-      }
-    } catch (ParseException ignored) {
-    }
-    return d.getTime();
-  }
+
 
   /** 自定义日志文件名生成器。 */
   public static class CustomDateFileNameGenerator implements FileNameGenerator {

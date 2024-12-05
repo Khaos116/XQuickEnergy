@@ -49,7 +49,7 @@ public class FansirsqiUtil {
             String hitokoto = "忘形雨笠烟蓑，知心牧唱樵歌。\n明月清风共我，闲人三个，从他今古消磨。";
             String from = "天净沙·渔父";
             String formattedSentence = String.format("%s\n\n                    -----Re: %s", hitokoto, from);
-            LogUtil.printStackTrace(e);
+            Log.printStackTrace(e);
             callback.onFailure(formattedSentence); // 调用回调返回失败信息
           }
         });

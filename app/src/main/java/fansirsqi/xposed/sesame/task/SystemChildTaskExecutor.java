@@ -3,7 +3,7 @@ package fansirsqi.xposed.sesame.task;
 import android.os.Build;
 import android.os.Handler;
 import fansirsqi.xposed.sesame.hook.ApplicationHook;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import fansirsqi.xposed.sesame.util.ThreadUtil;
 
 import java.util.Map;
@@ -64,7 +64,7 @@ public class SystemChildTaskExecutor implements ChildTaskExecutor {
                         }
                         childTask.run(); // 执行子任务
                     } catch (Exception e) {
-                        LogUtil.printStackTrace(e);
+                        Log.printStackTrace(e);
                     } finally {
                         childTask.getModelTask().removeChildTask(childTask.getId()); // 完成后移除子任务
                     }
@@ -89,7 +89,7 @@ public class SystemChildTaskExecutor implements ChildTaskExecutor {
                 try {
                     childTask.run(); // 执行子任务
                 } catch (Exception e) {
-                    LogUtil.printStackTrace(e);
+                    Log.printStackTrace(e);
                 } finally {
                     childTask.getModelTask().removeChildTask(childTask.getId()); // 完成后移除子任务
                 }

@@ -27,8 +27,10 @@ import fansirsqi.xposed.sesame.ui.dto.ModelFieldInfoDto;
 import fansirsqi.xposed.sesame.ui.dto.ModelFieldShowDto;
 import fansirsqi.xposed.sesame.ui.dto.ModelGroupDto;
 import fansirsqi.xposed.sesame.util.*;
+import fansirsqi.xposed.sesame.util.Maps.BeachMap;
+import fansirsqi.xposed.sesame.util.Maps.CooperateMap;
+import fansirsqi.xposed.sesame.util.Maps.UserMap;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,11 +75,11 @@ public class NewSettingsActivity extends BaseActivity {
             debug = intent.getBooleanExtra("debug", debug);
         }
         Model.initAllModel();
-        UserIdMapUtil.setCurrentUserId(userId);
-        UserIdMapUtil.load(userId);
-        CooperationIdMapUtil.load(userId);
+        UserMap.setCurrentUserId(userId);
+        UserMap.load(userId);
+        CooperateMap.load(userId);
         ReserveIdMapUtil.load();
-        BeachIdMapUtil.load();
+        BeachMap.load();
         Config.load(userId);
         LanguageUtil.setLocale(this);
         setContentView(R.layout.activity_new_settings);
@@ -245,7 +247,7 @@ public class NewSettingsActivity extends BaseActivity {
                     }
                     return "SUCCESS";
                 } catch (Exception e) {
-                    LogUtil.printStackTrace(e);
+                    Log.printStackTrace(e);
                 }
             }
             return "FAILED";
@@ -273,14 +275,14 @@ public class NewSettingsActivity extends BaseActivity {
                         return "SUCCESS";
                     }
                 } catch (Exception e) {
-                    LogUtil.printStackTrace(e);
+                    Log.printStackTrace(e);
                 }
             }
             return "FAILED";
         }
         @JavascriptInterface
         public void Log(String log) {
-            LogUtil.record("设置："+ log);
+            Log.record("设置："+ log);
         }
     }
 
@@ -315,13 +317,13 @@ public class NewSettingsActivity extends BaseActivity {
                         .setTitle("警告")
                         .setMessage("确认删除该配置？")
                         .setPositiveButton(R.string.ok, (dialog, id) -> {
-                            File userConfigDirectoryFile;
+                            java.io.File userConfigDirectoryFile;
                             if (StringUtil.isEmpty(userId)) {
-                                userConfigDirectoryFile = FileUtil.getDefaultConfigV2File();
+                                userConfigDirectoryFile = Files.getDefaultConfigV2File();
                             } else {
-                                userConfigDirectoryFile = FileUtil.getUserConfigDirectory(userId);
+                                userConfigDirectoryFile = Files.getUserConfigDirectory(userId);
                             }
-                            if (FileUtil.delFile(userConfigDirectoryFile)) {
+                            if (Files.delFile(userConfigDirectoryFile)) {
                                 Toast.makeText(this, "配置删除成功", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(this, "配置删除失败", Toast.LENGTH_SHORT).show();
@@ -361,20 +363,20 @@ public class NewSettingsActivity extends BaseActivity {
             Uri uri = data.getData();
             if (uri != null) {
                 try {
-                    File configV2File;
+                    java.io.File configV2File;
                     if (StringUtil.isEmpty(userId)) {
-                        configV2File = FileUtil.getDefaultConfigV2File();
+                        configV2File = Files.getDefaultConfigV2File();
                     } else {
-                        configV2File = FileUtil.getConfigV2File(userId);
+                        configV2File = Files.getConfigV2File(userId);
                     }
                     FileInputStream inputStream = new FileInputStream(configV2File);
-                    if (FileUtil.streamTo(inputStream, getContentResolver().openOutputStream(data.getData()))) {
+                    if (Files.streamTo(inputStream, getContentResolver().openOutputStream(data.getData()))) {
                         Toast.makeText(this, "导出成功！", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(this, "导出失败！", Toast.LENGTH_SHORT).show();
                     }
                 } catch (IOException e) {
-                    LogUtil.printStackTrace(e);
+                    Log.printStackTrace(e);
                     Toast.makeText(this, "导出失败！", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -382,14 +384,14 @@ public class NewSettingsActivity extends BaseActivity {
             Uri uri = data.getData();
             if (uri != null) {
                 try {
-                    File configV2File;
+                    java.io.File configV2File;
                     if (StringUtil.isEmpty(userId)) {
-                        configV2File = FileUtil.getDefaultConfigV2File();
+                        configV2File = Files.getDefaultConfigV2File();
                     } else {
-                        configV2File = FileUtil.getConfigV2File(userId);
+                        configV2File = Files.getConfigV2File(userId);
                     }
                     FileOutputStream outputStream = new FileOutputStream(configV2File);
-                    if (FileUtil.streamTo(Objects.requireNonNull(getContentResolver().openInputStream(data.getData())), outputStream)) {
+                    if (Files.streamTo(Objects.requireNonNull(getContentResolver().openInputStream(data.getData())), outputStream)) {
                         Toast.makeText(this, "导入成功！", Toast.LENGTH_SHORT).show();
                         if (!StringUtil.isEmpty(userId)) {
                             try {
@@ -397,7 +399,7 @@ public class NewSettingsActivity extends BaseActivity {
                                 intent.putExtra("userId", userId);
                                 sendBroadcast(intent);
                             } catch (Throwable th) {
-                                LogUtil.printStackTrace(th);
+                                Log.printStackTrace(th);
                             }
                         }
                         Intent intent = getIntent();
@@ -407,7 +409,7 @@ public class NewSettingsActivity extends BaseActivity {
                         Toast.makeText(this, "导入失败！", Toast.LENGTH_SHORT).show();
                     }
                 } catch (IOException e) {
-                    LogUtil.printStackTrace(e);
+                    Log.printStackTrace(e);
                     Toast.makeText(this, "导入失败！", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -423,13 +425,13 @@ public class NewSettingsActivity extends BaseActivity {
                     intent.putExtra("userId", userId);
                     sendBroadcast(intent);
                 } catch (Throwable th) {
-                    LogUtil.printStackTrace(th);
+                    Log.printStackTrace(th);
                 }
             }
         }
         if (!StringUtil.isEmpty(userId)) {
-            UserIdMapUtil.save(userId);
-            CooperationIdMapUtil.save(userId);
+            UserMap.save(userId);
+            CooperateMap.save(userId);
         }
     }
 

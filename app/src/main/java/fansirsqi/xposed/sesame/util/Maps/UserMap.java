@@ -1,7 +1,10 @@
-package fansirsqi.xposed.sesame.util;
+package fansirsqi.xposed.sesame.util.Maps;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.robv.android.xposed.XposedHelpers;
+import fansirsqi.xposed.sesame.util.Files;
+import fansirsqi.xposed.sesame.util.JsonUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import lombok.Getter;
 import fansirsqi.xposed.sesame.entity.UserEntity;
 import fansirsqi.xposed.sesame.hook.ApplicationHook;
@@ -17,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *  通过该类可以高效地加载、存储和操作用户信息，
  *  同时提供线程安全的访问机制。
  */
-public class UserIdMapUtil {
+public class UserMap {
 
     // 存储用户信息的线程安全映射
     private static final Map<String, UserEntity> userMap = new ConcurrentHashMap<>();
@@ -72,12 +75,12 @@ public class UserIdMapUtil {
                 // 获取类加载器
                 loader = ApplicationHook.getClassLoader();
             } catch (Exception e) {
-                LogUtil.runtime("Error getting classloader");
+                Log.runtime("Error getting classloader");
                 return;
             }
             try {
                 // 卸载现有数据
-                UserIdMapUtil.unload();
+                UserMap.unload();
                 String selfId = ApplicationHook.getUserId();
 
                 // 反射加载类
@@ -115,20 +118,20 @@ public class UserIdMapUtil {
                             if (Objects.equals(selfId, userId)) {
                                 selfEntity = userEntity;
                             }
-                            UserIdMapUtil.add(userEntity);
+                            UserMap.add(userEntity);
                         } catch (Throwable t) {
-                            LogUtil.runtime("addUserObject err:");
-                            LogUtil.printStackTrace(t);
+                            Log.runtime("addUserObject err:");
+                            Log.printStackTrace(t);
                         }
                     }
 
                     // 保存当前用户信息
-                    UserIdMapUtil.saveSelf(selfEntity);
+                    UserMap.saveSelf(selfEntity);
                 }
-                UserIdMapUtil.save(selfId);
+                UserMap.save(selfId);
             } catch (Throwable t) {
-                LogUtil.runtime("checkUnknownId.run err:");
-                LogUtil.printStackTrace(t);
+                Log.runtime("checkUnknownId.run err:");
+                Log.printStackTrace(t);
             }
         });
     }
@@ -211,7 +214,7 @@ public class UserIdMapUtil {
     public synchronized static void load(String userId) {
         userMap.clear();
         try {
-            String body = FileUtil.readFromFile(FileUtil.getFriendIdMapFile(userId));
+            String body = Files.readFromFile(Files.getFriendIdMapFile(userId));
             if (!body.isEmpty()) {
                 Map<String, UserEntity.UserDto> dtoMap = JsonUtil.parseObject(body, new TypeReference<Map<String, UserEntity.UserDto>>() {});
                 for (UserEntity.UserDto dto : dtoMap.values()) {
@@ -219,7 +222,7 @@ public class UserIdMapUtil {
                 }
             }
         } catch (Exception e) {
-            LogUtil.printStackTrace(e);
+            Log.printStackTrace(e);
         }
     }
 
@@ -238,7 +241,7 @@ public class UserIdMapUtil {
      * @return 保存结果
      */
     public synchronized static boolean save(String userId) {
-        return FileUtil.write2File(JsonUtil.toJsonString(userMap), FileUtil.getFriendIdMapFile(userId));
+        return Files.write2File(JsonUtil.toJsonString(userMap), Files.getFriendIdMapFile(userId));
     }
 
     /**
@@ -249,13 +252,13 @@ public class UserIdMapUtil {
     public synchronized static void loadSelf(String userId) {
         userMap.clear();
         try {
-            String body = FileUtil.readFromFile(FileUtil.getSelfIdFile(userId));
+            String body = Files.readFromFile(Files.getSelfIdFile(userId));
             if (!body.isEmpty()) {
                 UserEntity.UserDto dto = JsonUtil.parseObject(body, new TypeReference<UserEntity.UserDto>() {});
                 userMap.put(dto.getUserId(), dto.toEntity());
             }
         } catch (Exception e) {
-            LogUtil.printStackTrace(e);
+            Log.printStackTrace(e);
         }
     }
 
@@ -266,7 +269,7 @@ public class UserIdMapUtil {
      * @return 保存结果
      */
     public synchronized static boolean saveSelf(UserEntity userEntity) {
-        return FileUtil.write2File(JsonUtil.toJsonString(userEntity), FileUtil.getSelfIdFile(userEntity.getUserId()));
+        return Files.write2File(JsonUtil.toJsonString(userEntity), Files.getSelfIdFile(userEntity.getUserId()));
     }
 
 }

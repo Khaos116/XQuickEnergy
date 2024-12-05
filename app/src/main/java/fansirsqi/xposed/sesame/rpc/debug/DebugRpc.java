@@ -1,16 +1,10 @@
 package fansirsqi.xposed.sesame.rpc.debug;
 
 import fansirsqi.xposed.sesame.hook.ApplicationHook;
-import fansirsqi.xposed.sesame.task.antDodo.AntDodoRpcCall;
-import fansirsqi.xposed.sesame.task.antForest.AntForestRpcCall;
-import fansirsqi.xposed.sesame.task.antOrchard.AntOrchardRpcCall;
 import fansirsqi.xposed.sesame.task.reserve.ReserveRpcCall;
-import fansirsqi.xposed.sesame.util.LogUtil;
-import fansirsqi.xposed.sesame.util.TimeUtil;
-import fansirsqi.xposed.sesame.util.UserIdMapUtil;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import fansirsqi.xposed.sesame.util.Log;
+import fansirsqi.xposed.sesame.util.ThreadUtil;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +34,7 @@ public class DebugRpc {
         switch (testType) {
           case "Rpc":
             String s = test(broadcastFun, broadcastData);
-            LogUtil.forest("收到测试消息:\n方法:" + broadcastFun + "\n数据:" + broadcastData + "\n结果:" + s);
+            Log.forest("收到测试消息:\n方法:" + broadcastFun + "\n数据:" + broadcastData + "\n结果:" + s);
             break;
           case "getNewTreeItems": // 获取新树上苗🌱信息
             getNewTreeItems();
@@ -53,7 +47,7 @@ public class DebugRpc {
             walkGrid();
             break;
           default:
-            LogUtil.forest("未知的测试类型: " + testType);
+            Log.forest("未知的测试类型: " + testType);
             break;
         }
       }
@@ -88,11 +82,11 @@ public class DebugRpc {
           queryTreeForExchange(projectId);
         }
       } else {
-        LogUtil.runtime(TAG, jo.getString("resultDesc"));
+        Log.runtime(TAG, jo.getString("resultDesc"));
       }
     } catch (Throwable t) {
-      LogUtil.runtime(TAG, "getTreeItems err:");
-      LogUtil.printStackTrace(TAG, t);
+      Log.runtime(TAG, "getTreeItems err:");
+      Log.printStackTrace(TAG, t);
     }
   }
 
@@ -125,20 +119,20 @@ public class DebugRpc {
           tips = "可以合种-合种类型：" + coexchangeTypeIdList;
         }
         // 记录查询结果
-        LogUtil.debug("新树上苗🌱[" + region + "-" + treeName + "]#" + currentBudget + "株-" + tips);
+        Log.debug("新树上苗🌱[" + region + "-" + treeName + "]#" + currentBudget + "株-" + tips);
       } else {
         // 如果RPC调用失败，记录错误描述和项目ID
         // 注意：这里应该记录projectId而不是s（响应字符串）
-        LogUtil.debug(jo.getString("resultDesc") + " projectId: " + projectId);
+        Log.debug(jo.getString("resultDesc") + " projectId: " + projectId);
       }
     } catch (JSONException e) {
       // 处理JSON解析异常
-      LogUtil.runtime(TAG, "JSON解析错误:");
-      LogUtil.printStackTrace(TAG, e);
+      Log.runtime(TAG, "JSON解析错误:");
+      Log.printStackTrace(TAG, e);
     } catch (Throwable t) {
       // 处理其他可能的异常
-      LogUtil.runtime(TAG, "查询树木交换信息过程中发生错误:");
-      LogUtil.printStackTrace(TAG, t);
+      Log.runtime(TAG, "查询树木交换信息过程中发生错误:");
+      Log.printStackTrace(TAG, t);
     }
   }
 
@@ -171,20 +165,20 @@ public class DebugRpc {
           getTreeCurrentBudget(projectId, itemName);
 
           // 在查询每个项目后暂停100毫秒
-          TimeUtil.sleep(100);
+          ThreadUtil.sleep(100);
         }
       } else {
         // 如果RPC调用失败，记录错误描述
-        LogUtil.runtime(TAG, jo.getString("resultDesc"));
+        Log.runtime(TAG, jo.getString("resultDesc"));
       }
     } catch (JSONException e) {
       // 处理JSON解析异常
-      LogUtil.runtime(TAG, "JSON解析错误:");
-      LogUtil.printStackTrace(TAG, e);
+      Log.runtime(TAG, "JSON解析错误:");
+      Log.printStackTrace(TAG, e);
     } catch (Throwable t) {
       // 处理其他可能的异常
-      LogUtil.runtime(TAG, "获取树木项目列表过程中发生错误:");
-      LogUtil.printStackTrace(TAG, t);
+      Log.runtime(TAG, "获取树木项目列表过程中发生错误:");
+      Log.printStackTrace(TAG, t);
     }
   }
 
@@ -210,19 +204,19 @@ public class DebugRpc {
         // 获取区域信息
         String region = exchangeableTree.getString("region");
         // 记录树木查询结果
-        LogUtil.debug("树苗查询🌱[" + region + "-" + treeName + "]#剩余:" + currentBudget);
+        Log.debug("树苗查询🌱[" + region + "-" + treeName + "]#剩余:" + currentBudget);
       } else {
         // 如果RPC调用失败，记录错误描述和项目ID
-        LogUtil.debug(jo.getString("resultDesc") + " projectId: " + projectId);
+        Log.debug(jo.getString("resultDesc") + " projectId: " + projectId);
       }
     } catch (JSONException e) {
       // 处理JSON解析异常
-      LogUtil.runtime(TAG, "JSON解析错误:");
-      LogUtil.printStackTrace(TAG, e);
+      Log.runtime(TAG, "JSON解析错误:");
+      Log.printStackTrace(TAG, e);
     } catch (Throwable t) {
       // 处理其他可能的异常
-      LogUtil.runtime(TAG, "查询树木交换信息过程中发生错误:");
-      LogUtil.printStackTrace(TAG, t);
+      Log.runtime(TAG, "查询树木交换信息过程中发生错误:");
+      Log.printStackTrace(TAG, t);
     }
   }
 
@@ -268,7 +262,7 @@ public class DebugRpc {
                   jo = new JSONObject(DebugRpcCall.queryAdFinished(adBizNo, "NEVERLAND_DOUBLE_AWARD_AD"));
                   // 检查查询结果是否成功
                   if (jo.getBoolean("success")) {
-                    LogUtil.farm("完成双倍奖励🎁");
+                    Log.farm("完成双倍奖励🎁");
                   }
                 }
               }
@@ -286,20 +280,20 @@ public class DebugRpc {
         }
       } else {
         // 如果RPC调用失败，记录错误信息
-        LogUtil.debug(jo.getString("errorMsg") + s);
+        Log.debug(jo.getString("errorMsg") + s);
       }
     } catch (JSONException e) {
       // 处理JSON解析异常
-      LogUtil.runtime(TAG, "JSON解析错误:");
-      LogUtil.printStackTrace(TAG, e);
+      Log.runtime(TAG, "JSON解析错误:");
+      Log.printStackTrace(TAG, e);
     } catch (InterruptedException e) {
       // 处理线程中断异常
-      LogUtil.runtime(TAG, "线程中断错误:");
-      LogUtil.printStackTrace(TAG, e);
+      Log.runtime(TAG, "线程中断错误:");
+      Log.printStackTrace(TAG, e);
     } catch (Throwable t) {
       // 处理其他可能的异常
-      LogUtil.runtime(TAG, "行走网格过程中发生错误:");
-      LogUtil.printStackTrace(TAG, t);
+      Log.runtime(TAG, "行走网格过程中发生错误:");
+      Log.printStackTrace(TAG, t);
     }
   }
 

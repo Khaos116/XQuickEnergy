@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import fansirsqi.xposed.sesame.hook.ApplicationHook;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
 import fansirsqi.xposed.sesame.util.RandomUtil;
 
 import java.util.Set;
@@ -229,7 +229,7 @@ public class AntOceanRpcCall {
                         "[{\"assetsDetails\":" + jsonArray + ",\"propCode\":\"UNIVERSAL_PIECE\",\"propType\":\"UNIVERSAL_PIECE\",\"source\":\"chInfo_ch_appcenter__chsub_9patch\",\"uniqueId\":\"" + getUniqueId() + "\"}]");
             }
         } catch (JSONException e) {
-            LogUtil.printStackTrace(e);
+            Log.printStackTrace(e);
         }
         return null;
     }

@@ -11,9 +11,10 @@ import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.entity.AlipayUser;
 import fansirsqi.xposed.sesame.task.TaskCommon;
 import fansirsqi.xposed.sesame.task.antFarm.AntFarm.TaskStatus;
-import fansirsqi.xposed.sesame.util.LogUtil;
+import fansirsqi.xposed.sesame.util.Log;
+import fansirsqi.xposed.sesame.util.Maps.UserMap;
+import fansirsqi.xposed.sesame.util.ThreadUtil;
 import fansirsqi.xposed.sesame.util.TimeUtil;
-import fansirsqi.xposed.sesame.util.UserIdMapUtil;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -70,8 +71,8 @@ public class AntDodo extends ModelTask {
                 collectToFriend();
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "start.run err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "start.run err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 
@@ -80,13 +81,13 @@ public class AntDodo extends ModelTask {
      */
     private boolean lastDay(String endDate) {
         long timeStemp = System.currentTimeMillis();
-        long endTimeStemp = LogUtil.timeToStamp(endDate);
+        long endTimeStemp = TimeUtil.timeToStamp(endDate);
         return timeStemp < endTimeStemp && (endTimeStemp - timeStemp) < 86400000L;
     }
 
     public boolean in8Days(String endDate) {
         long timeStemp = System.currentTimeMillis();
-        long endTimeStemp = LogUtil.timeToStamp(endDate);
+        long endTimeStemp = TimeUtil.timeToStamp(endDate);
         return timeStemp < endTimeStemp && (endTimeStemp - timeStemp) < 691200000L;
     }
 
@@ -96,16 +97,16 @@ public class AntDodo extends ModelTask {
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
                 JSONObject data = jo.getJSONObject("data");
                 if (data.getBoolean("collect")) {
-                    LogUtil.record("神奇物种卡片今日收集完成！");
+                    Log.record("神奇物种卡片今日收集完成！");
                 } else {
                     collectAnimalCard();
                 }
             } else {
-                LogUtil.runtime(TAG, jo.getString("resultDesc"));
+                Log.runtime(TAG, jo.getString("resultDesc"));
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "AntDodo Collect err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "AntDodo Collect err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 
@@ -139,10 +140,10 @@ public class AntDodo extends ModelTask {
                             JSONObject animal = data.getJSONObject("animal");
                             String ecosystem = animal.getString("ecosystem");
                             String name = animal.getString("name");
-                            LogUtil.forest("神奇物种🦕[" + ecosystem + "]#" + name);
+                            Log.forest("神奇物种🦕[" + ecosystem + "]#" + name);
                             if (!set.isEmpty()) {
                                 for (String userId : set) {
-                                    if (!UserIdMapUtil.getCurrentUid().equals(userId)) {
+                                    if (!UserMap.getCurrentUid().equals(userId)) {
                                         int fantasticStarQuantity = animal.optInt("fantasticStarQuantity", 0);
                                         if (fantasticStarQuantity == 3) {
                                             sendCard(animal, userId);
@@ -152,24 +153,24 @@ public class AntDodo extends ModelTask {
                                 }
                             }
                         } else {
-                            LogUtil.runtime(TAG, jo.getString("resultDesc"));
+                            Log.runtime(TAG, jo.getString("resultDesc"));
                         }
                     }
                 }
                 if (!set.isEmpty()) {
                     for (String userId : set) {
-                        if (!UserIdMapUtil.getCurrentUid().equals(userId)) {
+                        if (!UserMap.getCurrentUid().equals(userId)) {
                             sendAntDodoCard(bookId, userId);
                             break;
                         }
                     }
                 }
             } else {
-                LogUtil.runtime(TAG, jo.getString("resultDesc"));
+                Log.runtime(TAG, jo.getString("resultDesc"));
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "AntDodo CollectAnimalCard err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "AntDodo CollectAnimalCard err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 
@@ -210,11 +211,11 @@ public class AntDodo extends ModelTask {
                                 JSONObject joAward = new JSONObject(
                                         AntDodoRpcCall.receiveTaskAward(sceneCode, taskType)); // 领取奖励请求
                                 if (joAward.optBoolean("success")) {
-                                    LogUtil.forest("任务奖励🎖️[" + taskTitle + "]#" + awardCount + "个");
+                                    Log.forest("任务奖励🎖️[" + taskTitle + "]#" + awardCount + "个");
                                 } else {
-                                    LogUtil.record("领取失败，" + response); // 记录领取失败信息
+                                    Log.record("领取失败，" + response); // 记录领取失败信息
                                 }
-                                LogUtil.runtime(joAward.toString()); // 打印奖励响应
+                                Log.runtime(joAward.toString()); // 打印奖励响应
                             }
                             // 如果任务待完成，处理特定类型的任务
                             else if (TaskStatus.TODO.name().equals(taskStatus)) {
@@ -223,24 +224,24 @@ public class AntDodo extends ModelTask {
                                     JSONObject joFinishTask = new JSONObject(
                                             AntDodoRpcCall.finishTask(sceneCode, taskType)); // 完成任务请求
                                     if (joFinishTask.optBoolean("success")) {
-                                        LogUtil.forest("物种任务🧾️[" + taskTitle + "]");
+                                        Log.forest("物种任务🧾️[" + taskTitle + "]");
                                         continue th; // 成功完成任务，返回外层循环
                                     } else {
-                                        LogUtil.record("完成任务失败，" + taskTitle); // 记录完成任务失败信息
+                                        Log.record("完成任务失败，" + taskTitle); // 记录完成任务失败信息
                                     }
                                 }
                             }
                         }
                     }
                 } else {
-                    LogUtil.record(jsonResponse.getString("resultDesc")); // 记录失败描述
-                    LogUtil.runtime(response); // 打印响应内容
+                    Log.record(jsonResponse.getString("resultDesc")); // 记录失败描述
+                    Log.runtime(response); // 打印响应内容
                 }
                 break; // 退出循环
             } while (true);
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "AntDodo ReceiveTaskAward 错误:");
-            LogUtil.printStackTrace(TAG, t); // 打印异常栈
+            Log.runtime(TAG, "AntDodo ReceiveTaskAward 错误:");
+            Log.printStackTrace(TAG, t); // 打印异常栈
         }
     }
 
@@ -268,10 +269,10 @@ public class AntDodo extends ModelTask {
                         String propName = prop.getJSONObject("propConfig").getString("propName");
                         int holdsNum = prop.optInt("holdsNum", 0);
                         jo = new JSONObject(AntDodoRpcCall.consumeProp(propId, propType));
-                        TimeUtil.sleep(300);
+                        ThreadUtil.sleep(300);
                         if (!"SUCCESS".equals(jo.getString("resultCode"))) {
-                            LogUtil.record(jo.getString("resultDesc"));
-                            LogUtil.runtime(jo.toString());
+                            Log.record(jo.getString("resultDesc"));
+                            Log.runtime(jo.toString());
                             continue;
                         }
                         if ("COLLECT_TIMES_7_DAYS".equals(propType)) {
@@ -279,10 +280,10 @@ public class AntDodo extends ModelTask {
                             JSONObject animal = useResult.getJSONObject("animal");
                             String ecosystem = animal.getString("ecosystem");
                             String name = animal.getString("name");
-                            LogUtil.forest("使用道具🎭[" + propName + "]#" + ecosystem + "-" + name);
+                            Log.forest("使用道具🎭[" + propName + "]#" + ecosystem + "-" + name);
                             Set<String> map = sendFriendCard.getValue();
                             for (String userId : map) {
-                                if (!UserIdMapUtil.getCurrentUid().equals(userId)) {
+                                if (!UserMap.getCurrentUid().equals(userId)) {
                                     int fantasticStarQuantity = animal.optInt("fantasticStarQuantity", 0);
                                     if (fantasticStarQuantity == 3) {
                                         sendCard(animal, userId);
@@ -291,7 +292,7 @@ public class AntDodo extends ModelTask {
                                 }
                             }
                         } else {
-                            LogUtil.forest("使用道具🎭[" + propName + "]");
+                            Log.forest("使用道具🎭[" + propName + "]");
                         }
                         if (holdsNum > 1) {
                             continue th;
@@ -301,8 +302,8 @@ public class AntDodo extends ModelTask {
                 break;
             } while (true);
         } catch (Throwable th) {
-            LogUtil.runtime(TAG, "AntDodo PropList err:");
-            LogUtil.printStackTrace(TAG, th);
+            Log.runtime(TAG, "AntDodo PropList err:");
+            Log.printStackTrace(TAG, th);
         }
     }
 
@@ -345,13 +346,13 @@ public class AntDodo extends ModelTask {
                     JSONObject animal = animalForUser.getJSONObject("animal");
                     for (int j = 0; j < count; j++) {
                         sendCard(animal, targetUser);
-                        TimeUtil.sleep(500L);
+                        ThreadUtil.sleep(500L);
                     }
                 }
             }
         } catch (Throwable th) {
-            LogUtil.runtime(TAG, "AntDodo SendAntDodoCard err:");
-            LogUtil.printStackTrace(TAG, th);
+            Log.runtime(TAG, "AntDodo SendAntDodoCard err:");
+            Log.printStackTrace(TAG, th);
         }
     }
 
@@ -362,13 +363,13 @@ public class AntDodo extends ModelTask {
             String name = animal.getString("name");
             JSONObject jo = new JSONObject(AntDodoRpcCall.social(animalId, targetUser));
             if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                LogUtil.forest("赠送卡片🦕[" + UserIdMapUtil.getMaskName(targetUser) + "]#" + ecosystem + "-" + name);
+                Log.forest("赠送卡片🦕[" + UserMap.getMaskName(targetUser) + "]#" + ecosystem + "-" + name);
             } else {
-                LogUtil.runtime(TAG, jo.getString("resultDesc"));
+                Log.runtime(TAG, jo.getString("resultDesc"));
             }
         } catch (Throwable th) {
-            LogUtil.runtime(TAG, "AntDodo SendCard err:");
-            LogUtil.printStackTrace(TAG, th);
+            Log.runtime(TAG, "AntDodo SendCard err:");
+            Log.printStackTrace(TAG, th);
         }
     }
 
@@ -407,20 +408,20 @@ public class AntDodo extends ModelTask {
                     if ("SUCCESS".equals(jo.getString("resultCode"))) {
                         String ecosystem = jo.getJSONObject("data").getJSONObject("animal").getString("ecosystem");
                         String name = jo.getJSONObject("data").getJSONObject("animal").getString("name");
-                        String userName = UserIdMapUtil.getMaskName(useId);
-                        LogUtil.forest("神奇物种🦕帮好友[" + userName + "]抽卡[" + ecosystem + "]#" + name);
+                        String userName = UserMap.getMaskName(useId);
+                        Log.forest("神奇物种🦕帮好友[" + userName + "]抽卡[" + ecosystem + "]#" + name);
                         count--;
                     } else {
-                        LogUtil.runtime(TAG, jo.getString("resultDesc"));
+                        Log.runtime(TAG, jo.getString("resultDesc"));
                     }
                 }
 
             } else {
-                LogUtil.runtime(TAG, jo.getString("resultDesc"));
+                Log.runtime(TAG, jo.getString("resultDesc"));
             }
         } catch (Throwable t) {
-            LogUtil.runtime(TAG, "AntDodo CollectHelpFriend err:");
-            LogUtil.printStackTrace(TAG, t);
+            Log.runtime(TAG, "AntDodo CollectHelpFriend err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 

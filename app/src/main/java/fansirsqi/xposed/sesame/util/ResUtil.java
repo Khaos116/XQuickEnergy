@@ -11,7 +11,7 @@ public class ResUtil {
         try {
             return new JSONObject(str).toString();
         } catch (JSONException e) {
-            LogUtil.printStackTrace(TAG, e);
+            Log.printStackTrace(TAG, e);
             return null;
         }
     }
@@ -35,7 +35,7 @@ public class ResUtil {
             Object resCode = jo.opt("resultCode");
             if (resCode == null) {
                 // 如果resultCode不存在，记录日志并返回false
-                LogUtil.record(TAG + "checkResCode err: resultCode不存在");
+                Log.record(TAG + "checkResCode err: resultCode不存在");
                 return false;
             }
 
@@ -59,11 +59,11 @@ public class ResUtil {
             }
 
             // 如果resultCode类型既不是整数也不是字符串，记录日志并返回false
-            LogUtil.record(TAG + "checkResCode Type fail: " + jo.toString());
+            Log.record(TAG + "checkResCode Type fail: " + jo.toString());
             return false;
         } catch (Throwable t) {
             // 捕获并记录异常信息
-            LogUtil.runtime(TAG, "checkResCode error: " + t.getMessage());
+            Log.runtime(TAG, "checkResCode error: " + t.getMessage());
         }
         // 如果发生异常，返回false
         return false;
@@ -71,11 +71,11 @@ public class ResUtil {
 
     private static void recordError(String TAG, JSONObject jo, String key, String prefix) throws JSONException {
         if (jo.has(key)) {
-            LogUtil.record(TAG + prefix + ": " + jo.getString(key));
+            Log.record(TAG + prefix + ": " + jo.getString(key));
         } else if (jo.has("resultView")) {
-            LogUtil.record(TAG + prefix + ": " + jo.getString("resultView"));
+            Log.record(TAG + prefix + ": " + jo.getString("resultView"));
         } else {
-            LogUtil.record(TAG + prefix + ": " + jo.toString());
+            Log.record(TAG + prefix + ": " + jo.toString());
         }
     }
 }
