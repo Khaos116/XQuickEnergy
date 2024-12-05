@@ -1,0 +1,163 @@
+//file:noinspection GrDeprecatedAPIUsage
+apply plugin: 'com.android.application'
+
+//修改内容在MyUtils
+android {
+    def buildTime = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("Asia/Shanghai"))
+
+    compileSdk 34
+    defaultConfig {
+        applicationId "io.github.lazyimmortal.sesame"
+        minSdk 21
+        //https://developer.android.com/guide/topics/manifest/uses-sdk-element?hl=zh-cn#ApiLevels
+        //Android版本号 Target SDK 版本
+        //Android4.1        16
+        //Android4.4        19
+        //Android5.0        21
+        //Android6.0        23
+        //Android7.0        24
+        //Android8.0        26
+        //Android9.0        28
+        //Android10.0       29
+        //Android11.0       30
+        //Android12.0       31
+        //Android13.0       33
+        //Android14.0       34
+        //Android15.0       35
+        //noinspection EditedTargetSdkVersion,OldTargetApi
+        targetSdk 34
+        versionCode 1130
+        versionName "v1.6.0.6fix"
+
+        buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
+        //resConfigs "zh-rCN", "zh-rTW", "zh-rHK", "en-rUS", "en-rGB"
+        resConfigs "en-rGB" //保留中文和英文资源(如果随便写一种没有的语言，则只会打默认的文字资源到APK)
+    }
+    ext {
+        applicationName = "Sesame"
+        applicationType = "Compatible"
+    }
+    flavorDimensions.add("default")
+    productFlavors {
+        compatible {
+            dimension "default"
+            ext.applicationType = "compatible"
+        }
+    }
+    //配置不同版本的keystore
+    signingConfigs {
+        debug {
+            storeFile file("../com_ab.jks")
+            storePassword "com_cc"
+            keyAlias "com_cc"
+            keyPassword "com_cc"
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+        release {
+            storeFile file("../com_ab.jks")
+            storePassword "com_cc"
+            keyAlias "com_cc"
+            keyPassword "com_cc"
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+    //正式和测试配置
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false   //不开启混淆
+            zipAlignEnabled false  //不优化压缩
+            shrinkResources false  //不移除无用资源
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+        }
+        release {
+            debuggable false
+            minifyEnabled true   //开启混淆
+            zipAlignEnabled true  //压缩优化
+            shrinkResources true  //移除无用资源
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../proguard/my-proguard-rules.pro'
+        }
+    }
+    buildToolsVersion '30.0.2'
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                if (variant.buildType.name == 'release') {
+                    output.outputFileName = "${applicationName}-${variant.productFlavors[0].ext.applicationType}-${defaultConfig.versionName}.apk"
+                }
+            }
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['lib']
+        }
+    }
+}
+
+dependencies {
+    //noinspection GradleCompatible
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    compileOnly 'de.robv.android.xposed:api:82'
+    //noinspection AnnotationProcessorOnCompilePath,GradleDependency
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
+    //noinspection GradleDependency
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
+    //noinspection GradleDependency
+    implementation 'com.elvishew:xlog:1.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'//AI答题
+
+    //noinspection GradleDependency
+    compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.5'
+    //noinspection GradleDependency
+    compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.5'
+    //noinspection GradleDependency
+    compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.5'
+}
+
+//打包处理
+android.applicationVariants.configureEach { variant ->
+    variant.outputs.configureEach { output ->
+        //正式版还是测试版
+        String typeName = buildType.name
+        typeName = typeName.substring(0, 1).toUpperCase() + typeName.substring(1).toLowerCase()
+        //版本号
+        String versionName = getVersionName()
+        //应用名称
+        String appName = "XQE"
+        //打包APK完成后的重命名和拷贝
+        assemble.doLast {
+            //编译完成的时间
+            String buildEndTime = "${new Date().format("yyyyMMdd_HHmm")}"
+            String apkFileName = "${appName}_${typeName}_${versionName}_${buildEndTime}.apk"
+            println "assemble编译结束=$apkFileName"
+            //把正式版拷贝到项目APK目录
+            if (typeName == "Release") {
+                //创建APK目录(APK+渠道名称)
+                File apkDir = new File("${getProjectDir().getParentFile().getPath()}/APK/${typeName}")
+                if (!apkDir.exists()) apkDir.mkdirs()
+                project.copy {
+                    from("${output.outputFile}")
+                    into("${apkDir.path}")
+                    rename("${output.outputFile.name}", "${apkFileName}")
+                }
+            } else {
+                //默认运行生成的apk
+                File apkDirDebug = new File("${getProjectDir().getParentFile().getPath()}/APK/Debug")
+                if (apkDirDebug.exists()) apkDirDebug.deleteDir()
+                apkDirDebug.mkdirs()
+                project.copy {
+                    from("${output.outputFile}")
+                    into("${apkDirDebug.path}")
+                    rename("${output.outputFile.name}", "${apkFileName}")
+                }
+            }
+        }
+    }
+}
