@@ -86,7 +86,7 @@ public class AESUtil {
         return new String(decrypted, CHARSET);
     }
 
-    public static native String encryptData(String data);
+    //public static native String encryptData(String data);//CHANGE BY KT
     private static String encryptData(String data, String key, String iv) {
         String result = null;
         try {
@@ -97,7 +97,7 @@ public class AESUtil {
         return result;
     }
 
-    public static native String decryptData(String data);
+    //public static native String decryptData(String data);//CHANGE BY KT
     private static String decryptData(String data, String key, String iv) {
         String result = null;
         try {
@@ -141,7 +141,7 @@ public class AESUtil {
 
     public static String loadDecryptHtmlData(Context context) {
         String htmlData = readAssetFile(context, "file:///android_asset/web/js/index.js");
-        return "<!DOCTYPE html><html lang=\"en\"><script>" + decryptData(htmlData) + "</script></html>";
+        return "<!DOCTYPE html><html lang=\"en\"><script>" + MyUtils.decryptData(htmlData) + "</script></html>";//CHANGE BY KT
     }
 
 //    public static void main(String[] args) {

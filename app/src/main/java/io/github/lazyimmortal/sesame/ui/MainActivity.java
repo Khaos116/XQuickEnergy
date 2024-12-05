@@ -106,11 +106,13 @@ public class MainActivity extends BaseActivity {
         builder.setMessage(R.string.start_message);
         builder.setPositiveButton("我知道了",(dialog, which) -> dialog.dismiss());
         AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        if(MyUtils.showHomeDialog()) alertDialog.show();//CHANGE BY KT
         Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
         if (positiveButton != null) {
             positiveButton.setTextColor(Color.parseColor("#216EEE")); // 设置按钮颜色为红色
         }
+        Button btn = findViewById(R.id.btn_other_log);//CHANGE BY KT
+        btn.setText(MyUtils.showHomeAllLog() ? R.string.view_record : R.string.other_log);//首页这显示全部
     }
 
     @Override
@@ -221,7 +223,17 @@ public class MainActivity extends BaseActivity {
                 break;
 
             case R.id.btn_other_log:
-                data += FileUtil.getOtherLogFile().getAbsolutePath();
+                if (MyUtils.showHomeAllLog()) {//首页这显示全部 //CHANGE BY KT
+                    String recordData = "file://";
+                    recordData += FileUtil.getRecordLogFile().getAbsolutePath();
+                    Intent recordIt = new Intent(this, HtmlViewerActivity.class);
+                    recordIt.setData(Uri.parse(recordData));
+                    recordIt.putExtra("canClear", true);
+                    startActivity(recordIt);
+                    return;
+                } else {
+                    data += FileUtil.getOtherLogFile().getAbsolutePath();
+                }
                 break;
 
             case R.id.btn_github:
@@ -259,7 +271,7 @@ public class MainActivity extends BaseActivity {
         menu.add(0, 6, 6, R.string.export_the_statistic_file);
         menu.add(0, 7, 7, R.string.import_the_statistic_file);
         menu.add(0, 8, 8, R.string.view_debug);
-        menu.add(0, 9, 9, R.string.view_record);
+        menu.add(0, 9, 9, MyUtils.showHomeAllLog() ? R.string.other_log : R.string.view_record);//菜单这显示其他 //CHANGE BY KT
         menu.add(0, 10, 10, R.string.extend);
         menu.add(0, 11, 11, R.string.settings);
         return super.onCreateOptionsMenu(menu);
@@ -333,12 +345,20 @@ public class MainActivity extends BaseActivity {
                 break;
 
             case 9:
-                String recordData = "file://";
-                recordData += FileUtil.getRecordLogFile().getAbsolutePath();
-                Intent recordIt = new Intent(this, HtmlViewerActivity.class);
-                recordIt.setData(Uri.parse(recordData));
-                recordIt.putExtra("canClear", true);
-                startActivity(recordIt);
+                if (MyUtils.showHomeAllLog()) {//菜单这显示其他 //CHANGE BY KT
+                    String data = "file://";
+                    data += FileUtil.getOtherLogFile().getAbsolutePath();
+                    Intent it = new Intent(this, HtmlViewerActivity.class);
+                    it.setData(Uri.parse(data));
+                    startActivity(it);
+                } else {
+                    String recordData = "file://";
+                    recordData += FileUtil.getRecordLogFile().getAbsolutePath();
+                    Intent recordIt = new Intent(this, HtmlViewerActivity.class);
+                    recordIt.setData(Uri.parse(recordData));
+                    recordIt.putExtra("canClear", true);
+                    startActivity(recordIt);
+                }
                 break;
 
             case 10:
@@ -385,8 +405,8 @@ public class MainActivity extends BaseActivity {
 
     private void goSettingActivity(int index) {
         UserEntity userEntity = userEntityArray[index];
-        boolean isNewUI = AppConfig.INSTANCE.getNewUI() && !"TEST".equals(ViewAppInfo.getAppVersion()) && LibraryUtil.loadLibrary("sesame");
-        Intent intent = new Intent(this, isNewUI ? NewSettingsActivity.class : SettingsActivity.class);
+        //CHANGE BY KT
+        Intent intent = new Intent(this, SettingsActivity.class);
         if (userEntity != null) {
             intent.putExtra("userId", userEntity.getUserId());
             intent.putExtra("userName", userEntity.getShowName());

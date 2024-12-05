@@ -32,18 +32,18 @@ public class LibraryUtil {
 
 
     // native code
-    private static native boolean libraryCheckFarmTaskStatus(JSONObject task);
+    //private static native boolean libraryCheckFarmTaskStatus(JSONObject task);//CHANGE BY KT
     public static Boolean checkFarmTaskStatus(JSONObject task) {
-        return libraryCheckFarmTaskStatus(task); // 注释此行，重写实现
+        return MyUtils.libraryCheckFarmTaskStatus(task); // 注释此行，重写实现
     }
 
-    private static native boolean libraryDoFarmTask(JSONObject task);
+    //private static native boolean libraryDoFarmTask(JSONObject task);//CHANGE BY KT
     public static Boolean doFarmTask(JSONObject task) {
-        return libraryDoFarmTask(task);
+        return MyUtils.libraryDoFarmTask(task);
     }
 
-    private static native boolean libraryDoFarmDrawTimesTask(JSONObject task);
+    //private static native boolean libraryDoFarmDrawTimesTask(JSONObject task);//CHANGE BY KT
     public static Boolean doFarmDrawTimesTask(JSONObject task) {
-        return libraryDoFarmDrawTimesTask(task);
+        return MyUtils.libraryDoFarmDrawTimesTask(task);
     }
 }

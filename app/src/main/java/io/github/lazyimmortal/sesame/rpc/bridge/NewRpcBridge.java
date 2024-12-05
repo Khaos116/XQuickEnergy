@@ -126,6 +126,7 @@ public class NewRpcBridge implements RpcBridge {
                 count++;
                 try {
                     RpcIntervalLimit.enterIntervalLimit(method);
+                    if (newRpcCallMethod == null) return null;//CHANGE BY KT
                     newRpcCallMethod.invoke(
                             newRpcInstance, method, false, false, "json", parseObjectMethod.invoke(null, "{\"__apiCallStartTime\":" + System.currentTimeMillis() + ",\"apiCallLink\":\"XRiverNotFound\",\"execEngine\":\"XRiver\",\"operationType\":\"" + method + "\",\"requestData\":" + data + (relation == null ? "" : ",\"relationLocal\":" + relation) + "}"), "", null, true, false, 0, false, "", null, null, null, Proxy.newProxyInstance(loader, bridgeCallbackClazzArray, new InvocationHandler() {
                                 @Override

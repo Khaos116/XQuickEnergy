@@ -2,46 +2,30 @@ package io.github.lazyimmortal.sesame.hook;
 
 import android.annotation.SuppressLint;
 import android.app.*;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Build;
-import android.os.Handler;
-import android.os.PowerManager;
-import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XC_MethodReplacement;
-import de.robv.android.xposed.XposedHelpers;
-import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import lombok.Getter;
-import io.github.lazyimmortal.sesame.BuildConfig;
-import io.github.lazyimmortal.sesame.data.ConfigV2;
-import io.github.lazyimmortal.sesame.data.Model;
-import io.github.lazyimmortal.sesame.data.RunType;
-import io.github.lazyimmortal.sesame.data.TokenConfig;
-import io.github.lazyimmortal.sesame.data.ViewAppInfo;
-import io.github.lazyimmortal.sesame.data.task.BaseTask;
-import io.github.lazyimmortal.sesame.data.task.ModelTask;
-import io.github.lazyimmortal.sesame.entity.AlipayVersion;
-import io.github.lazyimmortal.sesame.entity.FriendWatch;
-import io.github.lazyimmortal.sesame.entity.RpcEntity;
-import io.github.lazyimmortal.sesame.model.base.TaskCommon;
-import io.github.lazyimmortal.sesame.model.extend.TestRpc;
-import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
-import io.github.lazyimmortal.sesame.model.task.antMember.AntMemberRpcCall;
-import io.github.lazyimmortal.sesame.rpc.bridge.NewRpcBridge;
-import io.github.lazyimmortal.sesame.rpc.bridge.OldRpcBridge;
-import io.github.lazyimmortal.sesame.rpc.bridge.RpcBridge;
-import io.github.lazyimmortal.sesame.rpc.bridge.RpcVersion;
-import io.github.lazyimmortal.sesame.rpc.intervallimit.RpcIntervalLimit;
-import io.github.lazyimmortal.sesame.util.*;
-import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
+import android.content.*;
+import android.os.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import de.robv.android.xposed.*;
+import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import io.github.lazyimmortal.sesame.BuildConfig;
+import io.github.lazyimmortal.sesame.data.*;
+import io.github.lazyimmortal.sesame.data.task.BaseTask;
+import io.github.lazyimmortal.sesame.data.task.ModelTask;
+import io.github.lazyimmortal.sesame.entity.*;
+import io.github.lazyimmortal.sesame.model.base.TaskCommon;
+import io.github.lazyimmortal.sesame.model.extend.TestRpc;
+import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
+import io.github.lazyimmortal.sesame.model.task.antMember.AntMemberRpcCall;
+import io.github.lazyimmortal.sesame.rpc.bridge.*;
+import io.github.lazyimmortal.sesame.rpc.intervallimit.RpcIntervalLimit;
+import io.github.lazyimmortal.sesame.util.*;
+import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
+import lombok.Getter;
 
 public class ApplicationHook implements IXposedHookLoadPackage {
 
@@ -191,7 +175,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                 }
                                 Log.i(TAG, "Service onCreate");
                                 context = appService.getApplicationContext();
-                                System.load(LibraryUtil.getLibSesamePath(context));
+                                //System.load(LibraryUtil.getLibSesamePath(context));//CHANGE BY KT
                                 service = appService;
                                 mainHandler = new Handler();
                                 mainTask = BaseTask.newInstance("MAIN_TASK", new Runnable() {
@@ -205,6 +189,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                         }
                                         Log.record("应用版本：" + alipayVersion.getVersionString());
                                         Log.record("模块版本：" + modelVersion);
+                                        Log.record("编译时间：" + BuildConfig.BUILD_TIME);//CHANGE BY KT
                                         Log.record("开始执行");
                                         try {
                                             int checkInterval = BaseModel.getCheckInterval().getValue();
@@ -215,6 +200,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                             }
                                             updateDay();
                                             String targetUid = getUserId();
+                                            MyUtils.recordUserName(service, targetUid);//CHANGE BY KT
                                             String currentUid = UserIdMap.getCurrentUid();
                                             if (targetUid == null || currentUid == null) {
                                                 Log.record("用户为空，放弃执行");
@@ -453,6 +439,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 Model.initAllModel();
                 Log.record("模块版本：" + modelVersion);
                 Log.record("开始加载");
+                MyUtils.recordUserName(service, userId);//CHANGE BY KT
                 ConfigV2.load(userId);
                 if (!Model.getModel(BaseModel.class).getEnableField().getValue()) {
                     Log.record("芝麻粒已禁用");
