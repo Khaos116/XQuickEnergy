@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity {
             positiveButton.setTextColor(Color.parseColor("#216EEE")); // 设置按钮颜色为红色
         }
         Button btn = findViewById(R.id.btn_other_log);//CHANGE BY KT
-        btn.setText(MyUtils.showHomeAllLog() ? R.string.view_record : R.string.other_log);//首页这显示全部
+        btn.setText(MyUtils.showHomeAllLog() ? R.string.view_record_file : R.string.other_log);//首页这显示全部
     }
 
     @Override
@@ -275,7 +275,7 @@ public class MainActivity extends BaseActivity {
         menu.add(0, 6, 6, R.string.export_the_statistic_file);
         menu.add(0, 7, 7, R.string.import_the_statistic_file);
         menu.add(0, 8, 8, R.string.view_debug_file);
-        menu.add(0, 9, 9, MyUtils.showHomeAllLog() ? R.string.other_log : R.string.view_record);//菜单这显示其他 //CHANGE BY KT
+        menu.add(0, 9, 9, MyUtils.showHomeAllLog() ? R.string.other_log : R.string.view_record_file);//菜单这显示其他 //CHANGE BY KT
         menu.add(0, 10, 10, R.string.extend_options);
         menu.add(0, 11, 11, R.string.settings);
         return super.onCreateOptionsMenu(menu);
