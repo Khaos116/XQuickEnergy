@@ -15,4 +15,9 @@
     <style name="MenuTheme">
         <item name="android:textColorSecondary">@color/textColorPrimary</item>
     </style>
+
+    <style name="ToolbarTitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">14sp</item>
+        <item name="android:text">芝麻粒</item>
+    </style>
 </resources>
