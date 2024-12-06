@@ -1,24 +1,63 @@
-
 buildscript {
-    repositories {
-        maven { url 'https://maven.aliyun.com/repository/public/' }
-        maven { url 'https://maven.aliyun.com/repository/google/'}
-        maven { url 'https://maven.aliyun.com/repository/jcenter/'}
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0'
-    }
+  repositories {
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    maven { url 'https://maven.aliyun.com/repository/google/' }
+    maven { url 'https://maven.aliyun.com/repository/jcenter/' }
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:7.0.0'
+  }
 }
 
 allprojects {
-    repositories {
-        maven { url 'https://maven.aliyun.com/repository/public/' }
-        maven { url 'https://maven.aliyun.com/repository/google/'}
-        maven { url 'https://maven.aliyun.com/repository/jcenter/'}
-        mavenCentral()
-    }
+  repositories {
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    maven { url 'https://maven.aliyun.com/repository/google/' }
+    maven { url 'https://maven.aliyun.com/repository/jcenter/' }
+    mavenCentral()
+  }
 }
 
 tasks.register('clean', Delete) {
-    delete rootProject.buildDir
+  delete rootProject.buildDir
+}
+
+//监听任务
+gradle.taskGraph.whenReady { graph ->
+  def allTask = graph.getAllTasks()
+  allTask.each { task ->
+    def name = task.name.toLowerCase()
+    if (name.contains("debugandroidtest")) {
+      task.enabled = false
+    }
+  }
+  List<String> names = new ArrayList<>()
+  def addTasks = allTask.findAll { task ->
+    def name = task.name.toLowerCase()
+    boolean add = name.startsWith("assemble") && !name.endsWith("test")
+    if (add) System.err.println("开始Gradle任务：${task.name}")
+    if (add && !names.contains(task.name)) names.add(task.name)
+    add
+  }
+  addTasks.each { task ->
+    task.doLast {
+      System.err.println("已完成Gradle任务：${task.name}")
+      names.remove(task.name)
+      if (names.isEmpty()) killJavaAfterFinish()
+    }
+  }
+}
+
+//释放内存
+static void killJavaAfterFinish() {
+  System.err.println("Gradle任务已全部完成，5秒后释放java进程，${new Date().format("yyyy-MM-dd HH:mm:ss")}")
+  new Thread() {
+    @Override
+    void run() {
+      sleep(5_000)
+      System.err.println("开始执行释放java占用任务")
+      String cmd = "taskkill /f /t /im java.exe"
+      cmd.execute().text.trim()
+    }
+  }.start()
 }
