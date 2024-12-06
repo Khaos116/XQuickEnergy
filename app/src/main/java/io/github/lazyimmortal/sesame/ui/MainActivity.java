@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
+
+import io.github.lazyimmortal.sesame.BuildConfig;
 import io.github.lazyimmortal.sesame.R;
 import io.github.lazyimmortal.sesame.data.AppConfig;
 import io.github.lazyimmortal.sesame.data.RunType;
@@ -64,6 +66,7 @@ public class MainActivity extends BaseActivity {
             supportActionBar.setIcon(R.drawable.title_logo);
         }*/
         updateSubTitle(ViewAppInfo.getRunType());
+        setBaseSubtitle("编译时间:" + BuildConfig.BUILD_TIME);
         viewHandler = new Handler();
         titleRunner = () -> updateSubTitle(RunType.DISABLE);
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
