@@ -108,6 +108,15 @@ public class MyUtils {
     return true;
   }
 
+  //APP名称后缀
+  public static String getAppTitleExt(@Nullable Context context) {
+    if (context == null) return "";
+    if (context.getPackageName().startsWith("kt")) {
+      return "Lazy";
+    }
+    return "";
+  }
+
   /**
    * @noinspection CallToPrintStackTrace
    */

@@ -7,7 +7,7 @@ android {
 
     compileSdk 34
     defaultConfig {
-        applicationId "io.github.lazyimmortal.sesame"
+        applicationId "kt.lazy.sesame"
         minSdk 21
         //https://developer.android.com/guide/topics/manifest/uses-sdk-element?hl=zh-cn#ApiLevels
         //Android版本号 Target SDK 版本
