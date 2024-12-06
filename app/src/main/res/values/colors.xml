@@ -13,7 +13,7 @@
     <color name="dashboard_item_3">#E64000</color>
     <color name="dashboard_item_4">#F6B900</color>
 
-    <color name="colorPrimary">#216EEE</color>
+    <color name="colorPrimary">@android:color/holo_blue_light</color>
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="navigationBarColor">#AA000000</color>
     <color name="color_alpha">#00000000</color>
