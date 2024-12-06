@@ -66,7 +66,8 @@ public class MainActivity extends BaseActivity {
             supportActionBar.setIcon(R.drawable.title_logo);
         }*/
         updateSubTitle(ViewAppInfo.getRunType());
-        setBaseSubtitle("编译时间:" + BuildConfig.BUILD_TIME);
+        setBaseSubtitle("编译时间: " + BuildConfig.BUILD_TIME);
+        setBaseSubtitleTextColor(Color.parseColor("#5351FC"));
         viewHandler = new Handler();
         titleRunner = () -> updateSubTitle(RunType.DISABLE);
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {

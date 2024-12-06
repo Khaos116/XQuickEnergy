@@ -22,7 +22,7 @@
     </style>
 
     <style name="Toolbar.SubTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textColor">@android:color/holo_green_dark</item>
     </style>
 </resources>

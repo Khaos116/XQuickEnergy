@@ -12,6 +12,6 @@
   app:subtitleTextAppearance="@style/Toolbar.SubTitleText"
   app:titleTextAppearance="@style/Toolbar.TitleText"
   tools:subtitle="副标题显示内容"
-  tools:subtitleTextColor="@android:color/white"
+  tools:subtitleTextColor="#5351FC"
   tools:title="标题显示内容"
   tools:titleTextColor="#333333" />
