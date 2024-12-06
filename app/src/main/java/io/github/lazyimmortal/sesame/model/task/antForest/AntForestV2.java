@@ -18,6 +18,7 @@ import io.github.lazyimmortal.sesame.entity.*;
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.hook.Toast;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
+import io.github.lazyimmortal.sesame.model.extend.ExtendHandle;
 import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
 import io.github.lazyimmortal.sesame.model.task.antFarm.AntFarm.TaskStatus;
 import io.github.lazyimmortal.sesame.rpc.intervallimit.FixedOrRangeIntervalLimit;
@@ -125,6 +126,9 @@ public class AntForestV2 extends ModelTask {
     private BooleanModelField doubleCardOnlyLimitTime;
     private BooleanModelField stealthCard;
     private BooleanModelField stealthCardConstant;
+    private ChoiceModelField bubbleBoostType;
+    private ListModelField.ListJoinCommaToStringModelField bubbleBoostTime;
+    private ChoiceModelField energyShieldType;
     private ChoiceModelField helpFriendCollectType;
     private SelectModelField helpFriendCollectList;
     private IntegerModelField returnWater33;
@@ -142,6 +146,7 @@ public class AntForestV2 extends ModelTask {
     private BooleanModelField greenLife;
     private BooleanModelField combineAnimalPiece;
     private BooleanModelField consumeAnimalProp;
+    private BooleanModelField sequenceAnimalProp;
     private SelectModelField whoYouWantToGiveTo;
     private BooleanModelField ecoLife;
     private SelectModelField ecoLifeOptions;
@@ -186,6 +191,11 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(doubleCardOnlyLimitTime = new BooleanModelField("doubleCardOnlyLimitTime", "双击卡 | 仅使用限时双击卡", false));
         modelFields.addField(stealthCard = new BooleanModelField("stealthCard", "隐身卡 | 使用", false));
         modelFields.addField(stealthCardConstant = new BooleanModelField("stealthCardConstant", "隐身卡 | 限时隐身永动机", false));
+        if (ExtendHandle.handleAlphaRequest("forestExtendOptions", "useMoreProp", "boost|shield")) {
+            modelFields.addField(bubbleBoostType = new ChoiceModelField("bubbleBoostType", "加速器 | 定时使用", UsePropType.CLOSE, UsePropType.nickNames));
+            modelFields.addField(bubbleBoostTime = new ListModelField.ListJoinCommaToStringModelField("bubbleBoostTime", "加速器 | 定时使用时间", ListUtil.newArrayList("0630")));
+            modelFields.addField(energyShieldType = new ChoiceModelField("energyShieldType", "保护罩 | 接力使用", UsePropType.CLOSE, UsePropType.nickNames));
+        }
         modelFields.addField(returnWater10 = new IntegerModelField("returnWater10", "返水 | 10克需收能量(关闭:0)", 0));
         modelFields.addField(returnWater18 = new IntegerModelField("returnWater18", "返水 | 18克需收能量(关闭:0)", 0));
         modelFields.addField(returnWater33 = new IntegerModelField("returnWater33", "返水 | 33克需收能量(关闭:0)", 0));
@@ -204,6 +214,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(userPatrol = new BooleanModelField("userPatrol", "保护地巡护", false));
         modelFields.addField(combineAnimalPiece = new BooleanModelField("combineAnimalPiece", "合成动物碎片", false));
         modelFields.addField(consumeAnimalProp = new BooleanModelField("consumeAnimalProp", "派遣动物伙伴", false));
+        modelFields.addField(sequenceAnimalProp = new BooleanModelField("sequenceAnimalProp", "动物伙伴顺序", false));
         modelFields.addField(receiveForestTaskAward = new BooleanModelField("receiveForestTaskAward", "森林任务", false));
         modelFields.addField(collectGiftBox = new BooleanModelField("collectGiftBox", "领取礼盒", false));
         modelFields.addField(medicalHealth = new BooleanModelField("medicalHealth", "医疗健康", false));
@@ -464,6 +475,7 @@ public class AntForestV2 extends ModelTask {
                         }
                     }
                 }
+                forestExtend();
                 if (vitalityExchangeBenefit.getValue()) {
                     vitalityExchangeBenefit();
                 }
@@ -1215,7 +1227,8 @@ public class AntForestV2 extends ModelTask {
             Log.printStackTrace(TAG, t);
         }
     }
-     private static void sendEnergyByAction(String sourceType) {
+
+    private static void sendEnergyByAction(String sourceType) {
         try {
             JSONObject jo = new JSONObject(GreenLifeRpcCall.consultForSendEnergyByAction(sourceType));
             if (!MessageUtil.checkSuccess(TAG, jo)) {
@@ -1368,6 +1381,17 @@ public class AntForestV2 extends ModelTask {
         if (waterEnergy >= 18)
             return 40;
         return 39;
+    }
+
+    private void forestExtend() {
+        if (ExtendHandle.handleAlphaRequest("forestExtend", "useMoreProp", "boost|shield")) {
+            if (bubbleBoostType.getValue() != UsePropType.CLOSE) {
+                ExtendHandle.handleAlphaRequest("boost", bubbleBoostType.getConfigValue(), bubbleBoostTime.getConfigValue());
+            }
+            if (energyShieldType.getValue() != UsePropType.CLOSE) {
+                ExtendHandle.handleAlphaRequest("shield", energyShieldType.getConfigValue(), String.valueOf(usingProps.get(PropGroup.shield.name())));
+            }
+        }
     }
 
     // skuId, sku
@@ -1962,7 +1986,8 @@ public class AntForestV2 extends ModelTask {
 
     private void queryUserPatrol() {
         try {
-            th:do {
+            th:
+            do {
                 JSONObject jo = new JSONObject(AntForestRpcCall.queryUserPatrol());
                 TimeUtil.sleep(500);
                 if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -2082,6 +2107,9 @@ public class AntForestV2 extends ModelTask {
                         .getInt("holdsNum")) {
                     animalProp = jo;
                 }
+            }
+            if (sequenceAnimalProp.getValue()) {
+                animalProp = animalProps.getJSONObject(0);
             }
             consumeAnimalProp(animalProp);
         } catch (Throwable t) {
@@ -2412,6 +2440,7 @@ public class AntForestV2 extends ModelTask {
             Log.printStackTrace(TAG, th);
         }
     }
+
     /*
      * 兑换活力值商品
      * sku
@@ -2720,5 +2749,14 @@ public class AntForestV2 extends ModelTask {
 
         String[] nickNames = {"不复活能量", "复活已选好友", "复活未选好友"};
 
+    }
+
+    public interface UsePropType {
+
+        int CLOSE = 0;
+        int ALL = 1;
+        int ONLY_LIMIT_TIME = 2;
+
+        String[] nickNames = {"关闭", "所有道具", "限时道具"};
     }
 }
