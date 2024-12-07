@@ -47,8 +47,8 @@ jobs:
           TAGS=$(git ls-remote --tags origin)
           echo "${TAGS}"  # 打印所有远程标签
           
-          # 获取最新的已发布标签
-          REMOTE_TAG=$(echo "${TAGS}" | awk '{print \$2}' | sed 's/refs\/tags\///' | sort -V | tail -n 1 || echo "未找到远程标签")
+          # 使用 cut 提取最新的已发布标签
+          REMOTE_TAG=$(echo "${TAGS}" | cut -f2 | sed 's/refs\/tags\///' | sort -V | tail -n 1 || echo "未找到远程标签")
           echo "已发布的最新版本标签 (main_tk): ${REMOTE_TAG}"  # 打印已发布的最新版本标签
           
           if [[ "${REMOTE_TAG}" == "${{ env.VERSION }}" ]]; then
