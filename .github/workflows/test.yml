@@ -115,7 +115,7 @@ jobs:
         run: |
           java -version
 
-      # 检查 Gradle 是否已安装
+            # 检查 Gradle 是否已安装
       - name: 检查 Gradle 是否已安装
         id: check_gradle
         run: |
@@ -132,7 +132,7 @@ jobs:
         if: env.gradle_installed == 'false'
         uses: actions/cache@v3
         with:
-          path: ~/.gradle
+          path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -149,3 +149,4 @@ jobs:
         if: env.should_build == 'true'
         run: |
           gradle -v
+
