@@ -48,8 +48,9 @@ jobs:
         id: get_commit_logs
         run: |
           echo "获取从 ${RELEASE_TAG} 到 ${TAGS} 之间的提交日志"
-          # 获取 RELESE_TAG 和 TAGS 之间的提交日志
-          COMMIT_LOGS=$(git log --oneline ${RELEASE_TAG}..${TAGS})
+          # 获取 RELEASE_TAG 和 TAGS 之间的提交日志
+          COMMIT_LOGS=$(git log --oneline "${RELEASE_TAG}".."${TAGS}" --no-merges)
           echo "提交日志:"
           echo "${COMMIT_LOGS}"
           echo "COMMIT_LOGS=${COMMIT_LOGS}" >> $GITHUB_ENV  # 将提交日志存储到环境变量中
+      
