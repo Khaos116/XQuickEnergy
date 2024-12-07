@@ -46,11 +46,16 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y openjdk-11-jdk
-          wget https://services.gradle.org/distributions/gradle-7.6-bin.zip
+          wget 
           unzip gradle-7.6-bin.zip
           sudo mv gradle-7.6 /opt/gradle
           sudo ln -s /opt/gradle/bin/gradle /usr/local/bin/gradle
           gradle -v
+
+      - name: 添加执行权限到 gradlew
+        if: env.should_build == 'true'
+        run: |
+          chmod +x ./gradlew  # 给 gradlew 文件添加执行权限
 
       - name: 打包 myLazyNoSo 分支 (Gradle)
         if: env.should_build == 'true'
