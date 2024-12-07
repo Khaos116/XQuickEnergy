@@ -45,11 +45,11 @@ jobs:
         if: env.should_build == 'true'
         id: get_changelog
         run: |
-          # 获取两个标签之间的提交日志
-          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"%s" | sed 's/^/* /')  # 以 * 开头
-          echo "更新日志:"
-          echo "${CHANGELOG}"
-          echo "CHANGELOG=${CHANGELOG}" >> $GITHUB_ENV  # 设置环境变量
+          # 获取两个标签之间的提交日志，并将换行符转换为空格
+          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"%s" | tr '\n' ' ')
+          echo "更新日志: $CHANGELOG"
+          echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV  # 将日志存储为单行
+      
 
       - name: 安装 JDK 11
         if: env.should_build == 'true'
