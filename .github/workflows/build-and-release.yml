@@ -41,15 +41,28 @@ jobs:
             echo "should_build=false" >> $GITHUB_ENV
           fi
 
-      - name: 安装 Gradle 和 JDK
+      - name: 安装 JDK 11
         if: env.should_build == 'true'
         run: |
           sudo apt update
           sudo apt install -y openjdk-11-jdk
-          wget 
+
+      - name: 验证 JDK 安装
+        if: env.should_build == 'true'
+        run: |
+          java -version
+
+      - name: 下载并安装 Gradle
+        if: env.should_build == 'true'
+        run: |
+          wget https://services.gradle.org/distributions/gradle-7.6-bin.zip
           unzip gradle-7.6-bin.zip
           sudo mv gradle-7.6 /opt/gradle
           sudo ln -s /opt/gradle/bin/gradle /usr/local/bin/gradle
+
+      - name: 验证 Gradle 安装
+        if: env.should_build == 'true'
+        run: |
           gradle -v
 
       - name: 添加执行权限到 gradlew
