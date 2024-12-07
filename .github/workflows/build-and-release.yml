@@ -24,23 +24,23 @@ jobs:
         uses: actions/setup-java@v3  # 使用 v3 版本
         with:
           java-version: '11'  # 设置 Java 版本
-          distribution: 'adopt'  # 指定 JDK 发行版，可以选择 'adopt', 'zulu', 'temurin' 等
-
-      - name: 设置 Gradle
-        uses: gradle/wrapper-validation-action@v1
-        with:
-          gradle-wrapper-version: '7.5'  # 确保使用合适的 Gradle 版本
+          distribution: 'adopt'  # 指定 JDK 发行版
 
       - name: 提取版本标签
         id: version
         run: |
           TAG=$(git describe --tags --abbrev=0 || echo "未找到标签")
+          echo "当前最新版本标签: ${TAG}"  # 打印当前最新版本标签
           echo "版本标签=${TAG}" >> $GITHUB_ENV  # 提取最新的版本标签
 
-      - name: 检查是否已发布最新版本
+      - name: 检查已发布的最新版本
         id: check_release
         run: |
-          if git ls-remote --tags origin | grep -q "refs/tags/${TAG}"; then
+          # 获取远程标签
+          REMOTE_TAG=$(git ls-remote --tags origin | awk -F/ '{print \$3}' | sort -V | tail -n 1)
+          echo "已发布的最新版本标签: ${REMOTE_TAG}"  # 打印已发布的最新版本标签
+          
+          if git ls-remote --tags origin | grep -q "refs/tags/${{ env.VERSION }}"; then
             echo "已发布最新版本 ${TAG}，跳过打包和发布。"
             echo "skip=true" >> $GITHUB_ENV  # 设置跳过标志
           else
