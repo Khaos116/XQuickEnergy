@@ -30,8 +30,8 @@ jobs:
       - name: 提取当前分支最新版本标签 (myLazyNoSo)
         id: version
         run: |
-          # 从 myLazyNoSo 分支提取最新标签，使用版本号排序
-          TAG=$(git tag | grep '^v[0-9]' | sort -V | tail -n 1 || echo "未找到标签")
+          # 获取所有标签，按照版本号排序，避免字母顺序影响
+          TAG=$(git tag | grep -E '^v[0-9]+(\.[0-9]+)+[a-zA-Z0-9-]*$' | sort -V | tail -n 1 || echo "未找到标签")
           echo "当前最新版本标签 (myLazyNoSo): ${TAG}"  # 打印当前最新版本标签
           echo "VERSION=${TAG}" >> $GITHUB_ENV  # 提取最新的版本标签
 
