@@ -28,7 +28,7 @@ jobs:
       - name: 比较版本标签
         run: |
           if [[ $(echo -e "$RELEASE_TAG\n$TAGS" | sort -V | head -n 1) == "$RELEASE_TAG" ]]; then
-            echo "版本相同: 发布版本标签和 myLazyNoSo 分支标签相同，无需发版"
+            echo "版本相同: 发布版本标签 (${RELEASE_TAG}) 和 myLazyNoSo 分支标签 (${TAGS}) 相同，无需发版"
           else
-            echo "版本不同: 发布版本标签和 myLazyNoSo 分支标签不同，需要发版"
+            echo "版本不同: 发布版本标签 (${RELEASE_TAG}) 和 myLazyNoSo 分支标签 (${TAGS}) 不同，需要发版"
           fi
