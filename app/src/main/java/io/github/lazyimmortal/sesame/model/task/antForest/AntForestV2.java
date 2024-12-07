@@ -145,8 +145,7 @@ public class AntForestV2 extends ModelTask {
     private BooleanModelField medicalHealth;
     private BooleanModelField greenLife;
     private BooleanModelField combineAnimalPiece;
-    private BooleanModelField consumeAnimalProp;
-    private BooleanModelField sequenceAnimalProp;
+    private ChoiceModelField consumeAnimalPropType;
     private SelectModelField whoYouWantToGiveTo;
     private BooleanModelField ecoLife;
     private SelectModelField ecoLifeOptions;
@@ -191,7 +190,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(doubleCardOnlyLimitTime = new BooleanModelField("doubleCardOnlyLimitTime", "双击卡 | 仅使用限时双击卡", false));
         modelFields.addField(stealthCard = new BooleanModelField("stealthCard", "隐身卡 | 使用", false));
         modelFields.addField(stealthCardConstant = new BooleanModelField("stealthCardConstant", "隐身卡 | 限时隐身永动机", false));
-        if (ExtendHandle.handleAlphaRequest("forestExtendOptions", "useMoreProp", "boost|shield")) {
+        if (ExtendHandle.handleAlphaRequest("enableDeveloperMode")) {
             modelFields.addField(bubbleBoostType = new ChoiceModelField("bubbleBoostType", "加速器 | 定时使用", UsePropType.CLOSE, UsePropType.nickNames));
             modelFields.addField(bubbleBoostTime = new ListModelField.ListJoinCommaToStringModelField("bubbleBoostTime", "加速器 | 定时使用时间", ListUtil.newArrayList("0630")));
             modelFields.addField(energyShieldType = new ChoiceModelField("energyShieldType", "保护罩 | 接力使用", UsePropType.CLOSE, UsePropType.nickNames));
@@ -213,8 +212,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(giveEnergyRainList = new SelectModelField("giveEnergyRainList", "赠送能量雨好友列表", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(userPatrol = new BooleanModelField("userPatrol", "保护地巡护", false));
         modelFields.addField(combineAnimalPiece = new BooleanModelField("combineAnimalPiece", "合成动物碎片", false));
-        modelFields.addField(consumeAnimalProp = new BooleanModelField("consumeAnimalProp", "派遣动物伙伴", false));
-        modelFields.addField(sequenceAnimalProp = new BooleanModelField("sequenceAnimalProp", "动物伙伴顺序", false));
+        modelFields.addField(consumeAnimalPropType = new ChoiceModelField("consumeAnimalPropType", "派遣动物伙伴", ConsumeAnimalPropType.NONE, ConsumeAnimalPropType.nickNames));
         modelFields.addField(receiveForestTaskAward = new BooleanModelField("receiveForestTaskAward", "森林任务", false));
         modelFields.addField(collectGiftBox = new BooleanModelField("collectGiftBox", "领取礼盒", false));
         modelFields.addField(medicalHealth = new BooleanModelField("medicalHealth", "医疗健康", false));
@@ -446,7 +444,7 @@ public class AntForestV2 extends ModelTask {
                 if (combineAnimalPiece.getValue()) {
                     queryAnimalAndPiece();
                 }
-                if (consumeAnimalProp.getValue()) {
+                if (consumeAnimalPropType.getValue() != ConsumeAnimalPropType.NONE) {
                     if (!canConsumeAnimalProp) {
                         Log.record("已经有动物伙伴在巡护森林");
                     } else {
@@ -1384,7 +1382,7 @@ public class AntForestV2 extends ModelTask {
     }
 
     private void forestExtend() {
-        if (ExtendHandle.handleAlphaRequest("forestExtend", "useMoreProp", "boost|shield")) {
+        if (ExtendHandle.handleAlphaRequest("enableDeveloperMode", "forest", "boost|shield")) {
             if (bubbleBoostType.getValue() != UsePropType.CLOSE) {
                 ExtendHandle.handleAlphaRequest("boost", bubbleBoostType.getConfigValue(), bubbleBoostTime.getConfigValue());
             }
@@ -2102,14 +2100,14 @@ public class AntForestV2 extends ModelTask {
             JSONObject animalProp = null;
             for (int i = 0; i < animalProps.length(); i++) {
                 jo = animalProps.getJSONObject(i);
-                if (animalProp == null
-                        || jo.getJSONObject("main").getInt("holdsNum") > animalProp.getJSONObject("main")
-                        .getInt("holdsNum")) {
+                if (i == 0) {
+                    animalProp = jo;
+                    if (consumeAnimalPropType.getValue() == ConsumeAnimalPropType.SEQUENCE && animalProp.has("main") && animalProp.getJSONObject("main").getInt("holdsNum") > 0) {
+                        break;
+                    }
+                } else if (jo.getJSONObject("main").getInt("holdsNum") > animalProp.getJSONObject("main").getInt("holdsNum")) {
                     animalProp = jo;
                 }
-            }
-            if (sequenceAnimalProp.getValue()) {
-                animalProp = animalProps.getJSONObject(0);
             }
             consumeAnimalProp(animalProp);
         } catch (Throwable t) {
@@ -2164,35 +2162,6 @@ public class AntForestV2 extends ModelTask {
             Log.i(TAG, "queryAnimalAndPiece err:");
             Log.printStackTrace(TAG, t);
         }
-    }
-
-    // 旧版 派遣动物
-    private boolean AnimalConsumeProp(int animalId) {
-        try {
-            JSONObject jo = new JSONObject(AntForestRpcCall.queryAnimalAndPiece(animalId));
-            if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                JSONArray animalProps = jo.getJSONArray("animalProps");
-                jo = animalProps.getJSONObject(0);
-                String name = jo.getJSONObject("animal").getString("name");
-                JSONObject main = jo.getJSONObject("main");
-                String propGroup = main.getString("propGroup");
-                String propType = main.getString("propType");
-                String propId = main.getJSONArray("propIdList").getString(0);
-                jo = new JSONObject(AntForestRpcCall.AnimalConsumeProp(propGroup, propId, propType));
-                if ("SUCCESS".equals(jo.getString("resultCode"))) {
-                    Log.forest("巡护派遣🐆[" + name + "]");
-                    return true;
-                } else {
-                    Log.i(TAG, jo.getString("resultDesc"));
-                }
-            } else {
-                Log.i(TAG, jo.getString("resultDesc"));
-            }
-        } catch (Throwable t) {
-            Log.i(TAG, "queryAnimalAndPiece err:");
-            Log.printStackTrace(TAG, t);
-        }
-        return false;
     }
 
     private void combineAnimalPiece(int animalId) {
@@ -2749,6 +2718,15 @@ public class AntForestV2 extends ModelTask {
 
         String[] nickNames = {"不复活能量", "复活已选好友", "复活未选好友"};
 
+    }
+
+    public interface ConsumeAnimalPropType {
+
+        int NONE = 0;
+        int SEQUENCE = 1;
+        int QUANTITY = 2;
+
+        String[] nickNames = {"不派遣动物", "按默认顺序派遣", "按最大数量派遣"};
     }
 
     public interface UsePropType {
