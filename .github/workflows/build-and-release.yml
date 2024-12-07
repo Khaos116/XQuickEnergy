@@ -1,101 +1,15 @@
-name: Build APK
+name: Get Latest Release Tag
 
 on:
-  workflow_dispatch:  # 允许手动触发工作流
+  workflow_dispatch:  # 手动触发工作流
 
 jobs:
-  build:
+  get_latest_release:
     runs-on: ubuntu-latest
+
     steps:
-      - name: 设置 SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-      - name: 检出代码 (myLazyNoSo 分支)
-        uses: actions/checkout@v3
-        with:
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}  # 使用 SSH 密钥进行认证
-          ref: myLazyNoSo  # 指定要检出的分支
-          fetch-depth: 0  # 拉取所有标签和完整历史
-
-      - name: 获取所有标签
-        run: git fetch --tags  # 确保获取所有标签
-
-      - name: 提取当前分支最新版本标签 (myLazyNoSo)
-        id: version
-        run: |
-          TAG=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | head -n 1 || echo "未找到标签")
-          echo "当前最新版本标签 (myLazyNoSo): ${TAG}"  # 打印当前最新版本标签
-          echo "VERSION=${TAG}" >> $GITHUB_ENV  # 提取最新的版本标签
-
       - name: 获取最新发布版本标签
-        id: latest_release
         run: |
           RESPONSE=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest")
-          RELEASE_TAG=$(echo "${RESPONSE}" | jq -r .tag_name || echo "未找到发布版本")
-          echo "最新发布版本标签: ${RELEASE_TAG}"
-          echo "LATEST_RELEASE=${RELEASE_TAG}" >> $GITHUB_ENV  # 保存最新发布版本标签
-
-      - name: 检查版本是否发布
-        id: check_release
-        run: |
-          echo "VERSION=${VERSION}"  # 打印 VERSION
-          echo "LATEST_RELEASE=${LATEST_RELEASE}"  # 打印 LATEST_RELEASE
-          if [[ "${VERSION}" == "${LATEST_RELEASE}" ]]; then
-            echo "已发布最新版本 ${LATEST_RELEASE}，跳过打包和发布。"
-            echo "skip=true" >> $GITHUB_ENV  # 设置跳过标志
-          else
-            echo "未发布版本 ${LATEST_RELEASE}，将继续打包。"
-            echo "skip=false" >> $GITHUB_ENV  # 设置继续标志
-          fi  # 确保有 fi
-
-      - name: 打包 APK
-        if: env.skip == 'false'  # 仅在未发布时执行
-        run: ./gradlew assembleCompatibleRelease  # 运行打包命令，确保生成 compatibleRelease 版本
-
-      - name: 重命名 APK 文件
-        if: env.skip == 'false'  # 仅在未发布时执行
-        run: |
-          APK_FILE=$(find ./app/build/outputs/apk/compatible/release -name "*.apk" | head -n 1)  # 查找生成的 APK 文件
-          NEW_NAME="XQE_lazy_${{ env.VERSION }}.apk"
-          mv "$APK_FILE" "$NEW_NAME"  # 重命名 APK 文件为 XQE_lazy_xxx.apk
-          echo "APK 文件已重命名为 $NEW_NAME"
-
-      - name: 上传 APK 文件
-        if: env.skip == 'false'  # 仅在未发布时执行
-        uses: actions/upload-artifact@v3  # 更新为 v3
-        with:
-          name: apk
-          path: ./XQE_lazy_${{ env.VERSION }}.apk  # 上传重命名后的 APK 文件
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: 检出代码 (myLazyNoSo 分支)
-        uses: actions/checkout@v3  # 更新为 v3
-        with:
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}  # 使用 SSH 密钥进行认证
-          ref: myLazyNoSo  # 指定要检出的分支
-          fetch-depth: 0  # 拉取所有标签和完整历史
-
-      - name: 创建变更日志
-        id: changelog
-        run: |
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ || echo "未找到前一个标签")
-          CHANGELOG=$(git log ${PREV_TAG}..${{ env.VERSION }} --pretty=format:"* %s" || echo "无变更记录")
-          echo "变更日志=${CHANGELOG}" >> $GITHUB_ENV  # 将变更日志保存到环境变量
-
-      - name: 创建 GitHub 发布
-        if: env.skip == 'false'  # 仅在未发布时执行
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.VERSION }}  # 使用版本标签作为发布的标签
-          name: "标题为XQE_lazy_${{ env.VERSION }}版"  # 设置发布标题
-          body: ${{ env.CHANGELOG }}  # 使用变更日志作为发布说明
-          files: ./XQE_lazy_${{ env.VERSION }}.apk  # 将 APK 文件作为发布的附件上传
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 自动使用 GitHub 提供的 token 进行认证
+          RELEASE_TAG=$(echo "${RESPONSE}" | jq -r .tag_name)
+          echo "最新发布的版本标签: ${RELEASE_TAG}"
