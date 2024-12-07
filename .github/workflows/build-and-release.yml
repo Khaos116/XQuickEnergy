@@ -53,7 +53,7 @@ jobs:
           INDEX=1
 
           # 遍历每条日志
-          while read -r entry; do
+          while IFS= read -r entry; do
             # 检查日志是否包含中文
             if [[ "$entry" =~ [\u4e00-\u9fa5] ]]; then
               # 去除 * 字符
