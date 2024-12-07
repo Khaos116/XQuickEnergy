@@ -41,6 +41,32 @@ jobs:
             echo "should_build=false" >> $GITHUB_ENV
           fi
 
+#      - name: 获取更新日志
+#        if: env.should_build == 'true'
+#        id: get_changelog
+#        run: |
+#          # 获取两个标签之间的提交日志
+#          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"%s")
+#
+#          # 处理更新日志
+#          PROCESSED_CHANGELOG=""
+#          INDEX=1
+#
+#          # 遍历每条日志
+#          while IFS= read -r entry; do
+#            # 检查日志是否包含中文
+#            if [[ "$entry" =~ [\u4e00-\u9fa5] ]]; then
+#              # 去除 * 字符
+#              entry=$(echo "$entry" | sed 's/\*//g')
+#              PROCESSED_CHANGELOG+="$INDEX. $entry\n"
+#              INDEX=$((INDEX + 1))
+#            fi
+#          done <<< "$CHANGELOG"
+#
+#          # 输出处理后的更新日志
+#          echo -e "处理后的更新日志:\n$PROCESSED_CHANGELOG"
+#          echo "CHANGELOG=$PROCESSED_CHANGELOG" >> $GITHUB_ENV  # 将处理后的日志存储为环境变量
+
       - name: 获取更新日志
         if: env.should_build == 'true'
         id: get_changelog
@@ -54,18 +80,25 @@ jobs:
 
           # 遍历每条日志
           while IFS= read -r entry; do
+            # 打印当前日志条目
+            echo "当前日志条目: $entry"
+
             # 检查日志是否包含中文
             if [[ "$entry" =~ [\u4e00-\u9fa5] ]]; then
               # 去除 * 字符
               entry=$(echo "$entry" | sed 's/\*//g')
               PROCESSED_CHANGELOG+="$INDEX. $entry\n"
+              echo "包含中文: 是"
               INDEX=$((INDEX + 1))
+            else
+              echo "包含中文: 否"
             fi
           done <<< "$CHANGELOG"
 
           # 输出处理后的更新日志
           echo -e "处理后的更新日志:\n$PROCESSED_CHANGELOG"
           echo "CHANGELOG=$PROCESSED_CHANGELOG" >> $GITHUB_ENV  # 将处理后的日志存储为环境变量
+
 
       # 检查 JDK 是否已安装
       - name: 检查 JDK 是否已安装
