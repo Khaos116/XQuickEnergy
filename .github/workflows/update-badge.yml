@@ -30,7 +30,7 @@ jobs:
       - name: 检查 README 中的当前版本
         id: check_version
         run: |
-          CURRENT_TAG=$(grep -oP 'releases/tag/\K[^"]+' README.md | head -1)
+          CURRENT_TAG=$(grep -oP 'releases/tag/\K[^)"]+' README.md | head -1)
           echo "README 中的当前版本: $CURRENT_TAG"
           echo "current_version=$CURRENT_TAG" >> $GITHUB_ENV
 
