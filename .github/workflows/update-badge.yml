@@ -26,12 +26,36 @@ jobs:
           echo "Latest release tag: $LATEST_TAG"
           echo "latest_release=$LATEST_TAG" >> $GITHUB_ENV  # 使用环境文件设置输出
 
-      # 更新 README.md 中的 `${LATEST_VERSION}` 为最新的版本号
-      - name: Update README
+      # 查看 README.md 中的当前版本
+      - name: Check current version in README
+        id: check_version
         run: |
-          # 替换 README.md 中的 `${LATEST_VERSION}` 为实际的版本号
-          sed -i "s|\${LATEST_VERSION}|${{ env.latest_release }}|g" README.md
-          echo "Updated README.md"
+          CURRENT_TAG=$(grep -oP 'tag=\K[^&]+' README.md | head -1)
+          echo "Current version in README: $CURRENT_TAG"
+          echo "current_version=$CURRENT_TAG" >> $GITHUB_ENV
+
+      # 更新 README.md 中的版本标签
+      - name: Update README if necessary
+        id: update_readme
+        run: |
+          if [ "${{ env.latest_release }}" != "${{ env.current_version }}" ]; then
+            sed -i "s|tag=${{ env.current_version }}|tag=${{ env.latest_release }}|g" README.md
+            echo "Updated README.md with latest version"
+            echo "needs_update=true" >> $GITHUB_ENV  # 标记需要更新
+          else
+            echo "README.md is already up to date."
+            echo "needs_update=false" >> $GITHUB_ENV  # 标记不需要更新
+          fi
+
+      # 如果需要更新，则继续执行后续步骤
+      - name: Check if update is needed
+        run: |
+          if [ "${{ env.needs_update }}" == "true" ]; then
+            echo "Proceeding to commit and push changes."
+          else
+            echo "No update needed. Exiting workflow."
+            exit 0  # 退出工作流
+          fi
 
       # 查看 Git 状态
       - name: Check git status
