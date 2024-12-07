@@ -33,11 +33,11 @@ jobs:
         id: compare_versions
         run: |
           echo "比较版本: RELEASE_TAG=${{ env.RELEASE_TAG }}, TAGS=${{ env.TAGS }}"
-          if [[ "${{ env.RELEASE_TAG }}" == "${{ env.TAGS }}" ]]; then
-            echo "版本相同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 相同，开始打包"
+          if [[ "${{ env.RELEASE_TAG }}" != "${{ env.TAGS }}" ]]; then
+            echo "版本不同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 不同，开始打包"
             echo "should_build=true" >> $GITHUB_ENV
           else
-            echo "版本不同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 不同，无需发版"
+            echo "版本相同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 相同，无需发版"
             echo "should_build=false" >> $GITHUB_ENV
           fi
 
