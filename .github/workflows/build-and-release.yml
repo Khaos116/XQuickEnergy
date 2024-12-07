@@ -49,7 +49,6 @@ jobs:
           CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"%s" | tr '\n' ' ')
           echo "更新日志: $CHANGELOG"
           echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV  # 将日志存储为单行
-      
 
       - name: 安装 JDK 11
         if: env.should_build == 'true'
@@ -65,7 +64,7 @@ jobs:
       - name: 下载并安装 Gradle
         if: env.should_build == 'true'
         run: |
-          wget https://services.gradle.org/distributions/gradle-7.6-bin.zip
+          wget 
           unzip gradle-7.6-bin.zip
           sudo mv gradle-7.6 /opt/gradle
           sudo ln -s /opt/gradle/bin/gradle /usr/local/bin/gradle
@@ -86,6 +85,14 @@ jobs:
           echo "开始打包 myLazyNoSo 分支..."
           ./gradlew clean assembleCompatibleRelease
 
+      - name: 选择最新的 APK 文件
+        if: env.should_build == 'true'
+        id: select_latest_apk
+        run: |
+          LATEST_APK=$(ls -t APK/Release/*.apk | head -n 1)
+          echo "最新的 APK 文件: $LATEST_APK"
+          echo "LATEST_APK=$LATEST_APK" >> $GITHUB_ENV
+
       - name: 发布到 GitHub
         if: env.should_build == 'true'
         uses: softprops/action-gh-release@v1
@@ -93,6 +100,6 @@ jobs:
           tag_name: ${{ env.RELEASE_TAG }}
           name: "XQE_lazy_${{ env.TAGS }}"  # 自定义发布标题
           body: ${{ env.CHANGELOG }}  # 更新日志
-          files: build/outputs/apk/compatible/release/*.apk  # 更新为实际生成的 APK 路径
+          files: ${{ env.LATEST_APK }}  # 发布最新的 APK 文件
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
