@@ -35,27 +35,23 @@ jobs:
           echo "当前最新版本标签 (myLazyNoSo): ${TAG}"  # 打印当前最新版本标签
           echo "VERSION=${TAG}" >> $GITHUB_ENV  # 提取最新的版本标签
 
-      - name: 检查已发布的最新版本 (main_tk)
+      - name: 获取最新发布版本标签
+        id: latest_release
+        run: |
+          # 使用 GitHub API 获取最新的 Release 标签
+          RESPONSE=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest")
+          RELEASE_TAG=$(echo "${RESPONSE}" | jq -r .tag_name || echo "未找到发布版本")
+          echo "最新发布版本标签: ${RELEASE_TAG}"
+          echo "LATEST_RELEASE=${RELEASE_TAG}" >> $GITHUB_ENV  # 保存最新发布版本标签
+
+      - name: 检查版本是否发布
         id: check_release
         run: |
-          # 切换到 main_tk 分支以获取远程标签
-          git fetch origin main_tk:main_tk
-          git checkout main_tk
-          
-          # 获取远程标签并处理输出
-          echo "Fetching tags from main_tk..."
-          TAGS=$(git ls-remote --tags origin)
-          echo "${TAGS}"  # 打印所有远程标签
-          
-          # 使用 cut 提取最新的已发布标签
-          REMOTE_TAG=$(echo "${TAGS}" | cut -f2 | sed 's/refs\/tags\///' | sort -V | tail -n 1 || echo "未找到远程标签")
-          echo "已发布的最新版本标签 (main_tk): ${REMOTE_TAG}"  # 打印已发布的最新版本标签
-          
-          if [[ "${REMOTE_TAG}" == "${{ env.VERSION }}" ]]; then
-            echo "已发布最新版本 ${REMOTE_TAG}，跳过打包和发布。"
+          if [[ "${{ env.VERSION }}" == "${{ env.LATEST_RELEASE }}" ]]; then
+            echo "已发布最新版本 ${RELEASE_TAG}，跳过打包和发布。"
             echo "skip=true" >> $GITHUB_ENV  # 设置跳过标志
           else
-            echo "未发布版本 ${REMOTE_TAG}，将继续打包。"
+            echo "未发布版本 ${RELEASE_TAG}，将继续打包。"
             echo "skip=false" >> $GITHUB_ENV  # 设置继续标志
 
       - name: 打包 APK
