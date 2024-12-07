@@ -147,7 +147,7 @@ public class MyUtils {
           return false;
         }
       } else {
-        Log.farm("KT-庄园任务🈲🚫[" + title + "]");
+        Log.farm("KT-庄园任务🈲[" + title + "]");
       }
     } catch (Exception e) {
       e.printStackTrace();
