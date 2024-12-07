@@ -5,7 +5,7 @@ on:
     branches:
       - main_tk  # 修改为 main_tk 分支
   schedule:
-    - cron: '0 * * * *' # 每小时运行
+    - cron: '0 */8 * * *' # 每8小时运行
   workflow_dispatch:  # 允许手动触发
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
       - name: 检查 README 中的当前版本
         id: check_version
         run: |
-          CURRENT_TAG=$(grep -oP 'tag=\K[^&]+' README.md | head -1)
+          CURRENT_TAG=$(grep -oP 'releases/tag/\K[^"]+' README.md | head -1)
           echo "README 中的当前版本: $CURRENT_TAG"
           echo "current_version=$CURRENT_TAG" >> $GITHUB_ENV
 
@@ -39,7 +39,7 @@ jobs:
         id: update_readme
         run: |
           if [ "${{ env.latest_release }}" != "${{ env.current_version }}" ]; then
-            sed -i "s|tag=${{ env.current_version }}|tag=${{ env.latest_release }}|g" README.md
+            sed -i "s|releases/tag=${{ env.current_version }}|releases/tag=${{ env.latest_release }}|g" README.md
             echo "已更新 README.md 以包含最新版本"
             echo "needs_update=true" >> $GITHUB_ENV  # 标记需要更新
           else
