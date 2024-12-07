@@ -1,0 +1,27 @@
+name: 判断字符串是否包含中文
+
+on:
+  workflow_dispatch:  # 手动触发工作流
+
+jobs:
+  check-chinese:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 设置字符串
+        id: set_strings
+        run: |
+          # 定义待检查的字符串列表
+          STRINGS=("v1.6.1.1fix" "优化打印" "Merge branch 'refs/heads/lazy_main' into myLazyNoSo" ".cxx/" "Merge pull request #15 from JiangAshao/main" "修复派遣伙伴列表第一个不可派遣")
+          
+          # 输出所有待检查的字符串
+          echo "待检查的字符串: ${STRINGS[@]}"
+          
+          # 遍历每个字符串进行中文判断
+          for str in "${STRINGS[@]}"; do
+            echo "当前字符串: $str"
+            if echo "$str" | grep -Pq '[\x{4e00}-\x{9fa5}]'; then
+              echo "$str 包含中文"
+            else
+              echo "$str 不包含中文"
+            fi
+          done
