@@ -6,6 +6,7 @@ on:
       - main_tk  # 修改为 main_tk 分支
   schedule:
     - cron: '0 * * * *' # 每小时运行
+  workflow_dispatch:  # 允许手动触发
 
 jobs:
   update-badge:
