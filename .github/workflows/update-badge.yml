@@ -48,15 +48,26 @@ jobs:
             echo "needs_update=false" >> $GITHUB_ENV  # 标记不需要更新
           fi
 
-      # 检查是否需要提交更改
-      - name: 检查是否需要提交更新
+      # 打印替换后的 README 内容
+      - name: 打印更新后的 README 内容
         run: |
-          if [ "${{ env.needs_update }}" == "true" ]; then
-            echo "README.md 版本已更新，准备提交更改。"
-          else
-            echo "README.md 已是最新，退出工作流。"
-            exit 0  # 如果没有更新，退出工作流
-          fi
+          cat README.md
+
+      # 拉取远程更新
+      - name: 拉取远程更改
+        run: |
+          git pull origin main_tk --rebase
+
+      # 查看文件差异
+      - name: 查看文件差异
+        run: |
+          git diff README.md
+
+      # 强制添加所有更改并提交
+      - name: 强制添加所有更改并提交
+        run: |
+          git add -A  # 强制添加所有更改
+          git commit -m "更新 README 以包含最新版本徽章" || echo "没有更改需要提交"  # 如果没有更改，跳过提交
 
       # 查看 Git 状态
       - name: 查看 Git 状态
@@ -69,12 +80,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # 提交更改并推送
+      # 提交并推送更改
       - name: 提交并推送更改
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add README.md
-          git status  # 查看添加的文件
-          git commit -m "更新 README 以包含最新版本徽章" || echo "没有更改需要提交"  # 添加错误处理
           git push git@github.com:${{ github.repository }}.git HEAD:main_tk
