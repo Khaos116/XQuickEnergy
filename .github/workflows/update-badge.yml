@@ -38,14 +38,18 @@ jobs:
         run: |
           git status
 
+      # 设置 SSH 密钥并配置 SSH 代理
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       # 提交更改并推送
       - name: Commit and push changes
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}  # 使用 GitHub Secrets 中的 PAT
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add README.md
           git status  # 查看添加的文件
           git commit -m "Update README with latest version badge" || echo "No changes to commit"  # 添加错误处理
-          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main_tk
+          git push git@github.com:${{ github.repository }}.git HEAD:main_tk
