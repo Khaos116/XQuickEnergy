@@ -1,68 +1,84 @@
 name: Build and Release
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # 手动触发工作流
 
 jobs:
-  build:
+  check_version:
     runs-on: ubuntu-latest
 
     steps:
       - name: 检出代码
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 拉取所有标签和完整历史
 
-      - name: 获取最新标签
-        id: get_tag
+      - name: 获取最新发布版本标签
+        id: get_release_tag
         run: |
-          # 获取最新发布的 tag
-          RELEASE_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
-          echo "最新发布的 tag: $RELEASE_TAG"
-          echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV
+          RESPONSE=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest")
+          RELEASE_TAG=$(echo "${RESPONSE}" | jq -r .tag_name)
+          echo "最新发布的版本标签: ${RELEASE_TAG}"
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV  # 设置环境变量
 
-      - name: 获取当前时间
-        id: get_time
+      - name: 获取 myLazyNoSo 分支的最新标签
+        id: get_my_lazy_tag
         run: |
-          # 获取当前时间并转换为 GMT+8 格式
-          DATE_TIME=$(TZ='Asia/Singapore' date '+%Y%m%d_%H%M')
-          echo "当前时间: $DATE_TIME"
-          echo "DATE_TIME=${DATE_TIME}" >> $GITHUB_ENV
+          git fetch --tags  # 确保获取所有标签
+          TAGS=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep -E '^v' | head -n 1)
+          echo "myLazyNoSo 分支的最新标签: ${TAGS}"
+          echo "TAGS=${TAGS}" >> $GITHUB_ENV  # 设置环境变量
 
-      - name: 构建 APK 文件名
-        id: build_apk_name
+      - name: 比较版本标签
+        id: compare_versions
         run: |
-          # 构建 APK 文件名
-          APK_NAME="XQE_Release_${{ env.RELEASE_TAG }}_${{ env.DATE_TIME }}.apk"
-          echo "APK 文件名: $APK_NAME"
-          echo "APK_NAME=${APK_NAME}" >> $GITHUB_ENV
+          echo "比较版本: RELEASE_TAG=${{ env.RELEASE_TAG }}, TAGS=${{ env.TAGS }}"
+          if [[ "${{ env.RELEASE_TAG }}" != "${{ env.TAGS }}" ]]; then
+            echo "版本不同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 不同，开始打包"
+            echo "should_build=true" >> $GITHUB_ENV
+          else
+            echo "版本相同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 相同，无需发版"
+            echo "should_build=false" >> $GITHUB_ENV
+          fi
 
       - name: 获取更新日志
         if: env.should_build == 'true'
+        id: get_changelog
         run: |
-          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"%s" | sed 's/^/ - /')
+          # 获取两个标签之间的提交日志
+          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"* %s" | sed 's/^/ - /')
           echo "更新日志:"
           echo "${CHANGELOG}"
-          echo "CHANGELOG=${CHANGELOG}" >> $GITHUB_ENV
+          echo "CHANGELOG=${CHANGELOG}" >> $GITHUB_ENV  # 设置环境变量
 
-      - name: 输出更新日志
-        if: env.should_build == 'true'
-        run: |
-          echo "更新日志: ${{ env.CHANGELOG }}"
-
-      - name: 安装 JDK 和 Gradle
+      - name: 安装 JDK 11
         if: env.should_build == 'true'
         run: |
           sudo apt update
           sudo apt install -y openjdk-11-jdk
-          wget 
+
+      - name: 验证 JDK 安装
+        if: env.should_build == 'true'
+        run: |
+          java -version
+
+      - name: 下载并安装 Gradle
+        if: env.should_build == 'true'
+        run: |
+          wget https://services.gradle.org/distributions/gradle-7.6-bin.zip
           unzip gradle-7.6-bin.zip
           sudo mv gradle-7.6 /opt/gradle
           sudo ln -s /opt/gradle/bin/gradle /usr/local/bin/gradle
 
-      - name: 验证 Gradle 和 JDK 安装
+      - name: 验证 Gradle 安装
         if: env.should_build == 'true'
         run: |
-          java -version
           gradle -v
+
+      - name: 添加执行权限到 gradlew
+        if: env.should_build == 'true'
+        run: |
+          chmod +x ./gradlew  # 给 gradlew 文件添加执行权限
 
       - name: 打包 myLazyNoSo 分支 (Gradle)
         if: env.should_build == 'true'
@@ -75,14 +91,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.RELEASE_TAG }}
-          name: "XQE_lazy_${{ env.TAGS }}"
+          name: "XQE_lazy_${{ env.TAGS }}"  # 自定义发布标题
           body: ${{ env.CHANGELOG }}  # 更新日志
-          files: build/outputs/apk/compatible/release/*.apk
+          files: build/outputs/apk/compatible/release/*.apk  # 更新为实际生成的 APK 路径
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 重命名 APK 文件
-        if: env.should_build == 'true'
-        run: |
-          mv build/outputs/apk/compatible/release/*.apk build/outputs/apk/compatible/release/${{ env.APK_NAME }}
-          echo "APK 文件已重命名为: ${{ env.APK_NAME }}"
