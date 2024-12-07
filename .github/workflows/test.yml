@@ -37,9 +37,19 @@ jobs:
         run: |
           echo "比较版本: RELEASE_TAG=${{ env.RELEASE_TAG }}, TAGS=${{ env.TAGS }}"
           if [[ "${{ env.RELEASE_TAG }}" != "${{ env.TAGS }}" ]]; then
-            echo "版本不同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 不同，开始打包"
+            echo "版本不同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 不同，继续执行"
             echo "should_build=true" >> $GITHUB_ENV
           else
             echo "版本相同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 相同，无需发版"
             echo "should_build=false" >> $GITHUB_ENV
           fi
+
+      - name: 获取 ${{ env.RELEASE_TAG }} 和 ${{ env.TAGS }} 之间的提交日志
+        id: get_commit_logs
+        run: |
+          echo "获取从 ${RELEASE_TAG} 到 ${TAGS} 之间的提交日志"
+          # 获取 RELESE_TAG 和 TAGS 之间的提交日志
+          COMMIT_LOGS=$(git log --oneline ${RELEASE_TAG}..${TAGS})
+          echo "提交日志:"
+          echo "${COMMIT_LOGS}"
+          echo "COMMIT_LOGS=${COMMIT_LOGS}" >> $GITHUB_ENV  # 将提交日志存储到环境变量中
