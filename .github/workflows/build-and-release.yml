@@ -27,7 +27,7 @@ jobs:
           java-version: '11'  # 设置 Java 版本
           distribution: 'adopt'  # 指定 JDK 发行版
 
-      - name: 提取打包版本标签 (myLazyNoSo)
+      - name: 提取当前分支最新版本标签 (myLazyNoSo)
         id: version
         run: |
           # 从 myLazyNoSo 分支提取最新标签
