@@ -15,3 +15,31 @@ jobs:
         env:
           GIT_TERMINAL_PROMPT: 0  # 禁用 Git 终端提示，避免冗余输出
           GIT_SSH_COMMAND: "ssh -o LogLevel=QUIET"  # 禁用 SSH 日志输出
+
+      - name: 获取最新发布版本标签
+        id: get_release_tag
+        run: |
+          RESPONSE=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest")
+          RELEASE_TAG=$(echo "${RESPONSE}" | jq -r .tag_name)
+          echo "最新发布的版本标签: ${RELEASE_TAG}"
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV  # 设置环境变量
+
+      - name: 获取 myLazyNoSo 分支的最新标签
+        id: get_my_lazy_tag
+        run: |
+          git fetch --tags  # 确保获取所有标签
+          TAGS=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep -E '^v' | head -n 1)
+          echo "myLazyNoSo 分支的最新标签: ${TAGS}"
+          echo "TAGS=${TAGS}" >> $GITHUB_ENV  # 设置环境变量
+
+      - name: 比较版本标签
+        id: compare_versions
+        run: |
+          echo "比较版本: RELEASE_TAG=${{ env.RELEASE_TAG }}, TAGS=${{ env.TAGS }}"
+          if [[ "${{ env.RELEASE_TAG }}" != "${{ env.TAGS }}" ]]; then
+            echo "版本不同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 不同，开始打包"
+            echo "should_build=true" >> $GITHUB_ENV
+          else
+            echo "版本相同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 相同，无需发版"
+            echo "should_build=false" >> $GITHUB_ENV
+          fi
