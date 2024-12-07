@@ -79,6 +79,9 @@ jobs:
 
           # 遍历每条日志
           while IFS= read -r entry; do
+            # 打印当前日志条目
+            echo "当前日志条目: $entry"
+
             # 使用 grep 来检查日志中是否包含中文字符
             if echo "$entry" | grep -Pq '[\x{4e00}-\x{9fa5}]'; then
               # 去除 * 字符并保存到临时文件
