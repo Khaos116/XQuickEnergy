@@ -39,7 +39,8 @@ jobs:
         id: update_readme
         run: |
           if [ "${{ env.latest_release }}" != "${{ env.current_version }}" ]; then
-            sed -i "s|releases/tag=${{ env.current_version }}|releases/tag=${{ env.latest_release }}|g" README.md
+            # 替换 README 中的所有旧版本标签为最新标签
+            sed -i "s|${{ env.current_version }}|${{ env.latest_release }}|g" README.md
             echo "已更新 README.md 以包含最新版本"
             echo "needs_update=true" >> $GITHUB_ENV  # 标记需要更新
           else
@@ -47,14 +48,14 @@ jobs:
             echo "needs_update=false" >> $GITHUB_ENV  # 标记不需要更新
           fi
 
-      # 如果需要更新，则继续执行后续步骤
-      - name: 检查是否需要更新
+      # 检查是否需要提交更改
+      - name: 检查是否需要提交更新
         run: |
           if [ "${{ env.needs_update }}" == "true" ]; then
-            echo "继续提交并推送更改。"
+            echo "README.md 版本已更新，准备提交更改。"
           else
-            echo "不需要更新。退出工作流。"
-            exit 0  # 退出工作流
+            echo "README.md 已是最新，退出工作流。"
+            exit 0  # 如果没有更新，退出工作流
           fi
 
       # 查看 Git 状态
