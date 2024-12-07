@@ -81,4 +81,58 @@ jobs:
           # 输出处理后的更新日志
           echo -e "处理后的更新日志:\n$PROCESSED_CHANGELOG"
           echo "CHANGELOG=$PROCESSED_CHANGELOG" >> $GITHUB_ENV  # 将处理后的日志存储为环境变量
-      
+
+      # 检查 JDK 是否已安装
+      - name: 检查 JDK 是否已安装
+        id: check_jdk
+        run: |
+          if java -version &>/dev/null; then
+            echo "JDK 已安装"
+            echo "jdk_installed=true" >> $GITHUB_ENV
+          else
+            echo "JDK 未安装"
+            echo "jdk_installed=false" >> $GITHUB_ENV
+          fi
+
+      # 检查 Gradle 是否已安装
+      - name: 检查 Gradle 是否已安装
+        id: check_gradle
+        run: |
+          if ./gradlew -v &>/dev/null; then
+            echo "Gradle 已安装"
+            echo "gradle_installed=true" >> $GITHUB_ENV
+          else
+            echo "Gradle 未安装"
+            echo "gradle_installed=false" >> $GITHUB_ENV
+          fi
+
+      # 缓存 JDK
+      - name: 缓存 JDK
+        if: env.jdk_installed == 'false'
+        uses: actions/cache@v3
+        with:
+          path: ~/.sdkman/candidates
+          key: ${{ runner.os }}-jdk-11-${{ hashFiles('**/build.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-11-
+
+      # 缓存 Gradle
+      - name: 缓存 Gradle
+        if: env.gradle_installed == 'false'
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: 安装 JDK 11
+        if: env.jdk_installed == 'false' && env.should_build == 'true'
+        run: |
+          sudo apt update
+          sudo apt install -y openjdk-11-jdk
+
+      - name: 验证 JDK 安装
+        if: env.should_build == 'true'
+        run: |
+          java -version
