@@ -48,7 +48,7 @@ jobs:
           else
             echo "未发布版本 ${LATEST_RELEASE}，将继续打包。"
             echo "skip=false" >> $GITHUB_ENV  # 设置继续标志
-          fi
+          fi  # 确保这里有 fi
 
       - name: 打包 APK
         if: env.skip == 'false'  # 仅在未发布时执行
