@@ -53,7 +53,7 @@ jobs:
           INDEX=1
 
           # 遍历每条日志
-          for entry in "$CHANGELOG"; do
+          while read -r entry; do
             # 检查日志是否包含中文
             if [[ "$entry" =~ [\u4e00-\u9fa5] ]]; then
               # 去除 * 字符
@@ -61,7 +61,7 @@ jobs:
               PROCESSED_CHANGELOG+="$INDEX. $entry\n"
               INDEX=$((INDEX + 1))
             fi
-          done
+          done <<< "$CHANGELOG"
 
           # 输出处理后的更新日志
           echo -e "处理后的更新日志:\n$PROCESSED_CHANGELOG"
@@ -128,9 +128,9 @@ jobs:
           chmod +x ./gradlew
 
       # 使用 Gradle Wrapper 构建
-#      - name: 使用 Gradle Wrapper 构建
-#        if: env.should_build == 'true'
-#        run: |
+      - name: 使用 Gradle Wrapper 构建
+        if: env.should_build == 'true'
+        run: |
 #          ./gradlew clean assembleCompatibleRelease
 
       - name: 延迟等待文件生成
