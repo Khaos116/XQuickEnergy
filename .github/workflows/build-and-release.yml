@@ -83,8 +83,8 @@ jobs:
             # 打印当前日志条目
             echo "当前日志条目: $entry"
 
-            # 判断是否包含中文字符（汉字）
-            if [[ "$entry" =~ [\u4e00-\u9fa5] ]]; then
+            # 使用 grep 来检查日志中是否包含中文字符
+            if echo "$entry" | grep -Pq '[\x{4e00}-\x{9fa5}]'; then
               # 去除 * 字符
               entry=$(echo "$entry" | sed 's/\*//g')
               PROCESSED_CHANGELOG+="$INDEX. $entry\n"
