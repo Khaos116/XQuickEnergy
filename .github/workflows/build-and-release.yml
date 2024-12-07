@@ -15,7 +15,7 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: 检出代码
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}  # 使用 SSH 密钥进行认证
           ref: myLazyNoSo  # 指定要检出的分支
@@ -61,7 +61,7 @@ jobs:
 
       - name: 上传 APK 文件
         if: env.skip == 'false'  # 仅在未发布时执行
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3  # 更新为 v3
         with:
           name: apk
           path: ./XQE_lazy_${{ env.VERSION }}.apk  # 上传重命名后的 APK 文件
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # 更新为 v3
         with:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}  # 使用 SSH 密钥进行认证
           ref: myLazyNoSo  # 指定要检出的分支
