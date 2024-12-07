@@ -1,10 +1,10 @@
-name: Check and Release Version
+name: Check and Notify Version
 
 on:
   workflow_dispatch:  # 手动触发工作流
 
 jobs:
-  check_and_release:
+  check_version:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,25 +26,9 @@ jobs:
           echo "myLazyNoSo 分支的最新标签: ${TAGS}"
 
       - name: 比较版本标签
-        id: compare_versions
         run: |
           if [ "$RELEASE_TAG" == "$TAGS" ]; then
-            echo "版本相同: 发布版本标签和 myLazyNoSo 分支标签相同，跳过发布操作"
-            echo "skip_release=true" >> $GITHUB_ENV
+            echo "版本相同: 发布版本标签和 myLazyNoSo 分支标签相同，无需发版"
           else
-            echo "版本不同: 开始对 myLazyNoSo 分支进行打包和发布"
-            echo "skip_release=false" >> $GITHUB_ENV
-
-      - name: 打包并发布 myLazyNoSo 分支（如果版本不同）
-        if: env.skip_release == 'false'
-        run: |
-          # 打包操作（假设使用 tar.gz 格式）
-          git archive --format=tar.gz -o myLazyNoSo_${TAGS}.tar.gz HEAD
-          # 创建发布
-          gh release create ${TAGS} myLazyNoSo_${TAGS}.tar.gz --title "Release ${TAGS}" --notes "发布版本 ${TAGS} 的 myLazyNoSo 分支"
-          echo "发布成功，版本 ${TAGS} 已上传到 GitHub Releases"
-
-      - name: 打印版本相同信息
-        if: env.skip_release == 'true'
-        run: |
-          echo "版本相同，无需发布更新"
+            echo "版本不同: 发布版本标签和 myLazyNoSo 分支标签不同，需要发版"
+          fi
