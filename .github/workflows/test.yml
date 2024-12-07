@@ -94,18 +94,6 @@ jobs:
             echo "jdk_installed=false" >> $GITHUB_ENV
           fi
 
-      # 检查 Gradle 是否已安装
-      - name: 检查 Gradle 是否已安装
-        id: check_gradle
-        run: |
-          if ./gradlew -v &>/dev/null; then
-            echo "Gradle 已安装"
-            echo "gradle_installed=true" >> $GITHUB_ENV
-          else
-            echo "Gradle 未安装"
-            echo "gradle_installed=false" >> $GITHUB_ENV
-          fi
-
       # 缓存 JDK
       - name: 缓存 JDK
         if: env.jdk_installed == 'false'
@@ -115,17 +103,6 @@ jobs:
           key: ${{ runner.os }}-jdk-11-${{ hashFiles('**/build.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-jdk-11-
-
-      # 缓存 Gradle
-      - name: 手动缓存 Gradle 构建
-        if: env.gradle_installed == 'false'
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-build-${{ hashFiles('**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-build-
-
 
       - name: 安装 JDK 11
         if: env.jdk_installed == 'false' && env.should_build == 'true'
@@ -137,3 +114,38 @@ jobs:
         if: env.should_build == 'true'
         run: |
           java -version
+
+      # 检查 Gradle 是否已安装
+      - name: 检查 Gradle 是否已安装
+        id: check_gradle
+        run: |
+          if gradle -v &>/dev/null; then
+            echo "Gradle 已安装"
+            echo "gradle_installed=true" >> $GITHUB_ENV
+          else
+            echo "Gradle 未安装"
+            echo "gradle_installed=false" >> $GITHUB_ENV
+          fi
+
+      # 缓存 Gradle
+      - name: 缓存 Gradle
+        if: env.gradle_installed == 'false'
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 安装 Gradle
+      - name: 安装 Gradle
+        if: env.gradle_installed == 'false' && env.should_build == 'true'
+        run: |
+          sudo apt update
+          sudo apt install -y gradle
+
+      # 验证 Gradle 安装
+      - name: 验证 Gradle 安装
+        if: env.should_build == 'true'
+        run: |
+          gradle -v
