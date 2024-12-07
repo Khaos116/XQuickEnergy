@@ -1,88 +1,18 @@
-name: Log Info
+name: CI
 
 on:
-  workflow_dispatch:  # 手动触发工作流
+  push:
+    branches:
+      - main
 
 jobs:
-  check_version:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: 检出代码
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # 拉取所有标签和完整历史
-        env:
-          GIT_TERMINAL_PROMPT: 0  # 禁用 Git 终端提示，避免冗余输出
-          GIT_SSH_COMMAND: "ssh -o LogLevel=QUIET"  # 禁用 SSH 日志输出
 
-      - name: 获取最新发布版本标签
-        id: get_release_tag
-        run: |
-          RESPONSE=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest")
-          RELEASE_TAG=$(echo "${RESPONSE}" | jq -r .tag_name)
-          echo "最新发布的版本标签: ${RELEASE_TAG}"
-          echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV  # 设置环境变量
-
-      - name: 获取 myLazyNoSo 分支的最新标签
-        id: get_my_lazy_tag
-        run: |
-          git fetch --tags  # 确保获取所有标签
-          TAGS=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep -E '^v' | head -n 1)
-          echo "myLazyNoSo 分支的最新标签: ${TAGS}"
-          echo "TAGS=${TAGS}" >> $GITHUB_ENV  # 设置环境变量
-
-      - name: 比较版本标签
-        id: compare_versions
-        run: |
-          echo "比较版本: RELEASE_TAG=${{ env.RELEASE_TAG }}, TAGS=${{ env.TAGS }}"
-          if [[ "${{ env.RELEASE_TAG }}" != "${{ env.TAGS }}" ]]; then
-            echo "版本不同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 不同，继续执行"
-            echo "should_build=true" >> $GITHUB_ENV
-          else
-            echo "版本相同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 相同，无需发版"
-            echo "should_build=false" >> $GITHUB_ENV
-          fi
-
-      - name: 获取 ${{ env.RELEASE_TAG }} 和 ${{ env.TAGS }} 之间的提交日志
-        if: env.should_build == 'true'
-        id: get_changelog
-        run: |
-          # 获取两个标签之间的提交日志
-          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"%s")
-
-          # 临时文件用于存储中文日志
-          TEMP_LOG_FILE=$(mktemp)
-
-          # 遍历每条日志
-          while IFS= read -r entry; do
-            # 打印当前日志条目
-            # echo "当前日志条目: $entry"
-
-            # 使用 grep 来检查日志中是否包含中文字符
-            if echo "$entry" | grep -Pq '[\x{4e00}-\x{9fa5}]'; then
-              # 去除 * 字符并保存到临时文件
-              entry=$(echo "$entry" | sed 's/\*//g')
-              echo "$entry" >> "$TEMP_LOG_FILE"
-            fi
-          done <<< "$CHANGELOG"
-
-          # 去重：排序并去除重复的日志条目
-          SORTED_UNIQUE_CHANGELOG=$(sort "$TEMP_LOG_FILE" | uniq)
-
-          # 将去重后的日志条目格式化并存储到 PROCESSED_CHANGELOG 变量
-          PROCESSED_CHANGELOG=""
-          INDEX=1
-          while IFS= read -r unique_entry; do
-            PROCESSED_CHANGELOG+="$INDEX. $unique_entry\n"
-            INDEX=$((INDEX + 1))
-          done <<< "$SORTED_UNIQUE_CHANGELOG"
-
-          # 输出处理后的更新日志
-          echo -e "处理后的更新日志:\n$PROCESSED_CHANGELOG"
-          echo "CHANGELOG=$PROCESSED_CHANGELOG" >> $GITHUB_ENV  # 将处理后的日志存储为环境变量
-
-      # 检查 JDK 是否已安装
       - name: 检查 JDK 是否已安装
         id: check_jdk
         run: |
@@ -94,7 +24,6 @@ jobs:
             echo "jdk_installed=false" >> $GITHUB_ENV
           fi
 
-      # 缓存 JDK
       - name: 缓存 JDK
         if: env.jdk_installed == 'false'
         uses: actions/cache@v3
@@ -105,17 +34,14 @@ jobs:
             ${{ runner.os }}-jdk-11-
 
       - name: 安装 JDK 11
-        if: env.jdk_installed == 'false' && env.should_build == 'true'
+        if: env.jdk_installed == 'false'
         run: |
           sudo apt update
           sudo apt install -y openjdk-11-jdk
 
       - name: 验证 JDK 安装
-        if: env.should_build == 'true'
-        run: |
-          java -version
+        run: java -version
 
-            # 检查 Gradle 是否已安装
       - name: 检查 Gradle 是否已安装
         id: check_gradle
         run: |
@@ -127,7 +53,11 @@ jobs:
             echo "gradle_installed=false" >> $GITHUB_ENV
           fi
 
-      # 缓存 Gradle
+      - name: 输出缓存路径和键
+        run: |
+          echo "当前缓存路径: ~/.gradle/caches"
+          echo "当前缓存键: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle*') }}"
+
       - name: 缓存 Gradle
         if: env.gradle_installed == 'false'
         uses: actions/cache@v3
@@ -137,16 +67,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # 安装 Gradle
+      - name: 构建项目以下载依赖
+        run: ./gradlew build --info
+
       - name: 安装 Gradle
-        if: env.gradle_installed == 'false' && env.should_build == 'true'
+        if: env.gradle_installed == 'false'
         run: |
           sudo apt update
           sudo apt install -y gradle
 
-      # 验证 Gradle 安装
       - name: 验证 Gradle 安装
-        if: env.should_build == 'true'
-        run: |
-          gradle -v
-
+        run: gradle -v
