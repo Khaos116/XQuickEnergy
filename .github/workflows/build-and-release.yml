@@ -46,7 +46,7 @@ jobs:
         id: get_changelog
         run: |
           # 获取两个标签之间的提交日志
-          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"* %s" | sed 's/^/ - /')
+          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"%s" | sed 's/^/* /')  # 以 * 开头
           echo "更新日志:"
           echo "${CHANGELOG}"
           echo "CHANGELOG=${CHANGELOG}" >> $GITHUB_ENV  # 设置环境变量
