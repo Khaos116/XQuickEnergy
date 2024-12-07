@@ -83,7 +83,7 @@ jobs:
             # 打印当前日志条目
             echo "当前日志条目: $entry"
 
-            # 判断是否包含中文字符，只匹配汉字
+            # 判断是否包含中文字符（汉字）
             if [[ "$entry" =~ [\u4e00-\u9fa5] ]]; then
               # 去除 * 字符
               entry=$(echo "$entry" | sed 's/\*//g')
@@ -98,6 +98,7 @@ jobs:
           # 输出处理后的更新日志
           echo -e "处理后的更新日志:\n$PROCESSED_CHANGELOG"
           echo "CHANGELOG=$PROCESSED_CHANGELOG" >> $GITHUB_ENV  # 将处理后的日志存储为环境变量
+      
       
       
 
