@@ -14,11 +14,12 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: 检出代码
+      - name: 检出代码 (myLazyNoSo 分支)
         uses: actions/checkout@v3
         with:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}  # 使用 SSH 密钥进行认证
           ref: myLazyNoSo  # 指定要检出的分支
+          fetch-depth: 0  # 拉取所有标签和完整历史
 
       - name: 设置 JDK
         uses: actions/setup-java@v3  # 使用 v3 版本
@@ -26,27 +27,31 @@ jobs:
           java-version: '11'  # 设置 Java 版本
           distribution: 'adopt'  # 指定 JDK 发行版
 
-      - name: 提取版本标签
+      - name: 提取打包版本标签 (myLazyNoSo)
         id: version
         run: |
-          TAG=$(git describe --tags --abbrev=0 || echo "未找到标签")
-          echo "当前最新版本标签: ${TAG}"  # 打印当前最新版本标签
-          echo "版本标签=${TAG}" >> $GITHUB_ENV  # 提取最新的版本标签
+          # 从 myLazyNoSo 分支提取最新标签
+          TAG=$(git tag --sort=-v:refname | head -n 1 || echo "未找到标签")
+          echo "当前最新版本标签 (myLazyNoSo): ${TAG}"  # 打印当前最新版本标签
+          echo "VERSION=${TAG}" >> $GITHUB_ENV  # 提取最新的版本标签
 
-      - name: 检查已发布的最新版本
+      - name: 检查已发布的最新版本 (main_tk)
         id: check_release
         run: |
-          # 获取远程标签
-          REMOTE_TAG=$(git ls-remote --tags origin | awk -F/ '{print \$3}' | sort -V | tail -n 1)
-          echo "已发布的最新版本标签: ${REMOTE_TAG}"  # 打印已发布的最新版本标签
+          # 切换到 main_tk 分支以获取远程标签
+          git fetch origin main_tk:main_tk
+          git checkout main_tk
           
-          if git ls-remote --tags origin | grep -q "refs/tags/${{ env.VERSION }}"; then
+          # 获取远程标签
+          REMOTE_TAG=$(git ls-remote --tags origin | awk '{print \$2}' | sed 's/refs\/tags\///' | sort -V | tail -n 1 || echo "未找到远程标签")
+          echo "已发布的最新版本标签 (main_tk): ${REMOTE_TAG}"  # 打印已发布的最新版本标签
+          
+          if [[ "${REMOTE_TAG}" == "${{ env.VERSION }}" ]]; then
             echo "已发布最新版本 ${TAG}，跳过打包和发布。"
             echo "skip=true" >> $GITHUB_ENV  # 设置跳过标志
           else
             echo "未发布版本 ${TAG}，将继续打包。"
             echo "skip=false" >> $GITHUB_ENV  # 设置继续标志
-          fi
 
       - name: 打包 APK
         if: env.skip == 'false'  # 仅在未发布时执行
@@ -71,11 +76,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: 检出代码
+      - name: 检出代码 (myLazyNoSo 分支)
         uses: actions/checkout@v3  # 更新为 v3
         with:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}  # 使用 SSH 密钥进行认证
           ref: myLazyNoSo  # 指定要检出的分支
+          fetch-depth: 0  # 拉取所有标签和完整历史
 
       - name: 创建变更日志
         id: changelog
