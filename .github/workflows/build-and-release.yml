@@ -46,16 +46,17 @@ jobs:
         id: get_changelog
         run: |
           # 获取两个标签之间的提交日志
-          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"%s" | tr '\n' ' ')
+          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"%s")
 
           # 处理更新日志
           PROCESSED_CHANGELOG=""
           INDEX=1
 
-          for entry in $CHANGELOG; do
-            # 检查是否包含中文
-            if [[ $entry =~ [\u4e00-\u9fa5] ]]; then
-              # 去除包含 * 的日志
+          # 遍历每条日志
+          for entry in "$CHANGELOG"; do
+            # 检查日志是否包含中文
+            if [[ "$entry" =~ [\u4e00-\u9fa5] ]]; then
+              # 去除 * 字符
               entry=$(echo "$entry" | sed 's/\*//g')
               PROCESSED_CHANGELOG+="$INDEX. $entry\n"
               INDEX=$((INDEX + 1))
@@ -127,10 +128,10 @@ jobs:
           chmod +x ./gradlew
 
       # 使用 Gradle Wrapper 构建
-      - name: 使用 Gradle Wrapper 构建
-        if: env.should_build == 'true'
-        run: |
-          ./gradlew clean assembleCompatibleRelease
+#      - name: 使用 Gradle Wrapper 构建
+#        if: env.should_build == 'true'
+#        run: |
+#          ./gradlew clean assembleCompatibleRelease
 
       - name: 延迟等待文件生成
         if: env.should_build == 'true'
