@@ -64,7 +64,7 @@ jobs:
       - name: 下载并安装 Gradle
         if: env.should_build == 'true'
         run: |
-          wget 
+          wget https://services.gradle.org/distributions/gradle-7.6-bin.zip
           unzip gradle-7.6-bin.zip
           sudo mv gradle-7.6 /opt/gradle
           sudo ln -s /opt/gradle/bin/gradle /usr/local/bin/gradle
