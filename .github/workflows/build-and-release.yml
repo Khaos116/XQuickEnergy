@@ -42,15 +42,19 @@ jobs:
           git fetch origin main_tk:main_tk
           git checkout main_tk
           
-          # 获取远程标签
+          # 获取远程标签并处理输出
+          echo "Fetching tags from main_tk..."
+          git ls-remote --tags origin
+          
+          # 获取最新的已发布标签
           REMOTE_TAG=$(git ls-remote --tags origin | awk '{print \$2}' | sed 's/refs\/tags\///' | sort -V | tail -n 1 || echo "未找到远程标签")
           echo "已发布的最新版本标签 (main_tk): ${REMOTE_TAG}"  # 打印已发布的最新版本标签
           
           if [[ "${REMOTE_TAG}" == "${{ env.VERSION }}" ]]; then
-            echo "已发布最新版本 ${TAG}，跳过打包和发布。"
+            echo "已发布最新版本 ${REMOTE_TAG}，跳过打包和发布。"
             echo "skip=true" >> $GITHUB_ENV  # 设置跳过标志
           else
-            echo "未发布版本 ${TAG}，将继续打包。"
+            echo "未发布版本 ${REMOTE_TAG}，将继续打包。"
             echo "skip=false" >> $GITHUB_ENV  # 设置继续标志
 
       - name: 打包 APK
