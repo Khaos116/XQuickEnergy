@@ -122,9 +122,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties', '**/build.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
 
       - name: 安装 JDK 11
         if: env.jdk_installed == 'false' && env.should_build == 'true'
