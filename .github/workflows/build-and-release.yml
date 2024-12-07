@@ -30,10 +30,51 @@ jobs:
           echo "TAGS=${TAGS}" >> $GITHUB_ENV  # 设置环境变量
 
       - name: 比较版本标签
+        id: compare_versions
         run: |
           echo "比较版本: RELEASE_TAG=${{ env.RELEASE_TAG }}, TAGS=${{ env.TAGS }}"
           if [[ "${{ env.RELEASE_TAG }}" == "${{ env.TAGS }}" ]]; then
-            echo "版本相同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 相同，无需发版"
+            echo "版本相同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 相同，开始打包"
+            echo "should_build=true" >> $GITHUB_ENV
           else
-            echo "版本不同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 不同，需要发版"
+            echo "版本不同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 不同，无需发版"
+            echo "should_build=false" >> $GITHUB_ENV
           fi
+
+      - name: 安装 Gradle 和 JDK
+        if: env.should_build == 'true'
+        run: |
+          sudo apt update
+          sudo apt install -y openjdk-11-jdk
+          wget https://services.gradle.org/distributions/gradle-7.6-bin.zip
+          unzip gradle-7.6-bin.zip
+          sudo mv gradle-7.6 /opt/gradle
+          sudo ln -s /opt/gradle/bin/gradle /usr/local/bin/gradle
+          gradle -v
+
+      - name: 打包 myLazyNoSo 分支 (Gradle)
+        if: env.should_build == 'true'
+        run: |
+          echo "开始打包 myLazyNoSo 分支..."
+          ./gradlew clean assembleCompatibleRelease
+
+      - name: 获取更新日志
+        if: env.should_build == 'true'
+        id: get_changelog
+        run: |
+          # 获取两个标签之间的提交日志
+          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"* %s" | sed 's/^/ - /')
+          echo "更新日志:"
+          echo "${CHANGELOG}"
+          echo "CHANGELOG=${CHANGELOG}" >> $GITHUB_ENV  # 设置环境变量
+
+      - name: 发布到 GitHub
+        if: env.should_build == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: "XQE_lazy_${{ env.TAGS }}"  # 自定义发布标题
+          body: ${{ env.CHANGELOG }}  # 更新日志
+          files: build/outputs/apk/compatible/release/*.apk  # 更新为实际生成的 APK 路径
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
