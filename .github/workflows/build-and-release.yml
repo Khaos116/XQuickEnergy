@@ -21,9 +21,10 @@ jobs:
           ref: myLazyNoSo  # 指定要检出的分支
 
       - name: 设置 JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3  # 使用 v3 版本
         with:
           java-version: '11'  # 设置 Java 版本
+          distribution: 'adopt'  # 指定 JDK 发行版，可以选择 'adopt', 'zulu', 'temurin' 等
 
       - name: 设置 Gradle
         uses: gradle/wrapper-validation-action@v1
