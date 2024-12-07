@@ -24,15 +24,6 @@ jobs:
             echo "jdk_installed=false" >> $GITHUB_ENV
           fi
 
-      - name: 缓存 JDK
-        if: env.jdk_installed == 'false'
-        uses: actions/cache@v3
-        with:
-          path: ~/.sdkman/candidates
-          key: ${{ runner.os }}-jdk-11-${{ hashFiles('**/build.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-jdk-11-
-
       - name: 安装 JDK 11
         if: env.jdk_installed == 'false'
         run: |
@@ -42,39 +33,50 @@ jobs:
       - name: 验证 JDK 安装
         run: java -version
 
-      - name: 检查 Gradle 是否已安装
-        id: check_gradle
-        run: |
-          if gradle -v &>/dev/null; then
-            echo "Gradle 已安装"
-            echo "gradle_installed=true" >> $GITHUB_ENV
-          else
-            echo "Gradle 未安装"
-            echo "gradle_installed=false" >> $GITHUB_ENV
-          fi
-
-      - name: 输出缓存路径和键
-        run: |
-          echo "当前缓存路径: ~/.gradle/caches"
-          echo "当前缓存键: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle*') }}"
-
-      - name: 缓存 Gradle
-        if: env.gradle_installed == 'false'
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: 构建项目以下载依赖
-        run: ./gradlew build --info
-
       - name: 安装 Gradle
-        if: env.gradle_installed == 'false'
         run: |
-          sudo apt update
           sudo apt install -y gradle
 
       - name: 验证 Gradle 安装
         run: gradle -v
+
+      - name: 构建项目
+        run: ./gradlew build --info
+
+      - name: 设置 gradlew 可执行权限
+        run: |
+          chmod +x ./gradlew
+
+      - name: 使用 Gradle Wrapper 构建
+        if: env.should_build == 'true'
+        run: |
+           ./gradlew clean assembleCompatibleRelease
+          
+      - name: 延迟等待文件生成
+        if: env.should_build == 'true'
+        run: |
+          echo "等待 5 秒以确保 APK 文件生成完成..."
+          sleep 5  # 延迟 5 秒
+
+      - name: 检查 APK 文件是否存在
+        if: env.should_build == 'true'
+        run: |
+          APK_FILE=$(ls build/outputs/apk/compatible/release/*.apk | head -n 1)
+          if [[ -z "$APK_FILE" ]]; then
+            echo "未找到 APK 文件，构建可能未成功"
+            exit 1
+          else
+            echo "找到 APK 文件: $APK_FILE"
+            echo "APK_FILE=$APK_FILE" >> $GITHUB_ENV
+          fi
+
+      - name: 发布到 GitHub
+        if: env.should_build == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: "XQE_lazy_${{ env.TAGS }}"  # 自定义发布标题
+          body: ${{ env.CHANGELOG }}  # 更新日志
+          files: ${{ env.APK_FILE }}  # 发布最新的 APK 文件
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
