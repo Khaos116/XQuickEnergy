@@ -32,7 +32,7 @@ jobs:
       - name: 比较版本标签
         run: |
           echo "比较版本: RELEASE_TAG=${{ env.RELEASE_TAG }}, TAGS=${{ env.TAGS }}"
-          if [[ $(echo -e "${{ env.RELEASE_TAG }}\n${{ env.TAGS }}" | sort -V | head -n 1) == "${{ env.RELEASE_TAG }}" ]]; then
+          if [[ "${{ env.RELEASE_TAG }}" == "${{ env.TAGS }}" ]]; then
             echo "版本相同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 相同，无需发版"
           else
             echo "版本不同: 发布版本标签 (${{ env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${{ env.TAGS }}) 不同，需要发版"
