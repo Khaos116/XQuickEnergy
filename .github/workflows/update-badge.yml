@@ -21,14 +21,15 @@ jobs:
         id: get_release
         run: |
           LATEST_TAG=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r .tag_name)
+          
           echo "Latest release tag: $LATEST_TAG"
           echo "::set-output name=latest_release::$LATEST_TAG"
 
-      # 更新 README.md 中的徽章链接
+      # 更新 README.md 中的 `${LATEST_VERSION}` 为最新的版本号
       - name: Update README
         run: |
-          # 更新徽章 URL，兼容 v 前缀和没有 v 前缀的版本标签
-          sed -i "s|v*[0-9]*\.[0-9]*\.[0-9]*\([.][0-9]*\)?[a-zA-Z0-9]*|${{ steps.get_release.outputs.latest_release }}|g" README.md
+          # 替换 README.md 中的 `${LATEST_VERSION}` 为实际的版本号
+          sed -i "s|\${LATEST_VERSION}|${{ steps.get_release.outputs.latest_release }}|g" README.md
 
       # 提交更改
       - name: Commit changes
@@ -36,5 +37,5 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add README.md
-          git commit -m "Update badge to latest release version"
+          git commit -m "Update README with latest version badge"
           git push
