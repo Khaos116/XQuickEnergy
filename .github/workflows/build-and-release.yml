@@ -42,6 +42,7 @@ jobs:
       - name: 检查版本是否发布
         id: check_release
         run: |
+          # 确保此 if 语句结束后有 fi
           if [[ "${{ env.VERSION }}" == "${{ env.LATEST_RELEASE }}" ]]; then
             echo "已发布最新版本 ${LATEST_RELEASE}，跳过打包和发布。"
             echo "skip=true" >> $GITHUB_ENV  # 设置跳过标志
