@@ -14,21 +14,26 @@ jobs:
           fetch-depth: 0  # 拉取所有标签和完整历史
 
       - name: 获取最新发布版本标签
+        id: get_release_tag
         run: |
           RESPONSE=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest")
           RELEASE_TAG=$(echo "${RESPONSE}" | jq -r .tag_name)
           echo "最新发布的版本标签: ${RELEASE_TAG}"
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV  # 设置环境变量
 
       - name: 获取 myLazyNoSo 分支的最新标签
+        id: get_my_lazy_tag
         run: |
           git fetch --tags  # 确保获取所有标签
           TAGS=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep -E '^v' | head -n 1)
           echo "myLazyNoSo 分支的最新标签: ${TAGS}"
+          echo "TAGS=${TAGS}" >> $GITHUB_ENV  # 设置环境变量
 
       - name: 比较版本标签
         run: |
-          if [[ $(echo -e "$RELEASE_TAG\n$TAGS" | sort -V | head -n 1) == "$RELEASE_TAG" ]]; then
-            echo "版本相同: 发布版本标签 (${RELEASE_TAG}) 和 myLazyNoSo 分支标签 (${TAGS}) 相同，无需发版"
+          echo "比较版本: RELEASE_TAG=${{ env.RELEASE_TAG }}, TAGS=${{ env.TAGS }}"
+          if [[ $(echo -e "${{ env.RELEASE_TAG }}\n${{ env.TAGS }}" | sort -V | head -n 1) == "${{ env.RELEASE_TAG }}" ]]; then
+            echo "版本相同: 发布版本标签 (${ { env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${ { env.TAGS }}) 相同，无需发版"
           else
-            echo "版本不同: 发布版本标签 (${RELEASE_TAG}) 和 myLazyNoSo 分支标签 (${TAGS}) 不同，需要发版"
+            echo "版本不同: 发布版本标签 (${ { env.RELEASE_TAG }}) 和 myLazyNoSo 分支标签 (${ { env.TAGS }}) 不同，需要发版"
           fi
