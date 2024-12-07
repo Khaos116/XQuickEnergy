@@ -27,7 +27,6 @@ jobs:
       - name: 提取当前分支最新版本标签 (myLazyNoSo)
         id: version
         run: |
-          # 获取所有标签，按创建时间排序
           TAG=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | head -n 1 || echo "未找到标签")
           echo "当前最新版本标签 (myLazyNoSo): ${TAG}"  # 打印当前最新版本标签
           echo "VERSION=${TAG}" >> $GITHUB_ENV  # 提取最新的版本标签
@@ -35,7 +34,6 @@ jobs:
       - name: 获取最新发布版本标签
         id: latest_release
         run: |
-          # 使用 GitHub API 获取最新的 Release 标签
           RESPONSE=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest")
           RELEASE_TAG=$(echo "${RESPONSE}" | jq -r .tag_name || echo "未找到发布版本")
           echo "最新发布版本标签: ${RELEASE_TAG}"
@@ -45,11 +43,12 @@ jobs:
         id: check_release
         run: |
           if [[ "${{ env.VERSION }}" == "${{ env.LATEST_RELEASE }}" ]]; then
-            echo "已发布最新版本 ${RELEASE_TAG}，跳过打包和发布。"
+            echo "已发布最新版本 ${LATEST_RELEASE}，跳过打包和发布。"
             echo "skip=true" >> $GITHUB_ENV  # 设置跳过标志
           else
-            echo "未发布版本 ${RELEASE_TAG}，将继续打包。"
+            echo "未发布版本 ${LATEST_RELEASE}，将继续打包。"
             echo "skip=false" >> $GITHUB_ENV  # 设置继续标志
+          fi
 
       - name: 打包 APK
         if: env.skip == 'false'  # 仅在未发布时执行
