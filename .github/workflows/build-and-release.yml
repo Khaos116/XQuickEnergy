@@ -45,10 +45,26 @@ jobs:
         if: env.should_build == 'true'
         id: get_changelog
         run: |
-          # 获取两个标签之间的提交日志，并将换行符转换为空格
+          # 获取两个标签之间的提交日志
           CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"%s" | tr '\n' ' ')
-          echo "更新日志: $CHANGELOG"
-          echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV  # 将日志存储为单行
+
+          # 处理更新日志
+          PROCESSED_CHANGELOG=""
+          INDEX=1
+
+          for entry in $CHANGELOG; do
+            # 检查是否包含中文
+            if [[ $entry =~ [\u4e00-\u9fa5] ]]; then
+              # 去除包含 * 的日志
+              entry=$(echo "$entry" | sed 's/\*//g')
+              PROCESSED_CHANGELOG+="$INDEX. $entry\n"
+              INDEX=$((INDEX + 1))
+            fi
+          done
+
+          # 输出处理后的更新日志
+          echo -e "处理后的更新日志:\n$PROCESSED_CHANGELOG"
+          echo "CHANGELOG=$PROCESSED_CHANGELOG" >> $GITHUB_ENV  # 将处理后的日志存储为环境变量
 
       # 检查 JDK 是否已安装
       - name: 检查 JDK 是否已安装
