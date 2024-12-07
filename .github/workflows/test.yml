@@ -125,6 +125,12 @@ jobs:
           echo "等待 5 秒以确保 APK 文件生成完成..."
           sleep 5  # 延迟 5 秒
 
+      - name: 检查构建输出目录
+        if: env.should_build == 'true'
+        run: |
+          echo "查看 build 目录结构"
+          ls -R build/outputs
+
       - name: 检查 APK 文件是否存在
         if: env.should_build == 'true'
         run: |
