@@ -50,31 +50,31 @@ jobs:
         run: |
           ./gradlew clean assembleCompatibleRelease
 
-      - name: 延迟等待文件生成
-        if: env.should_build == 'true'
-        run: |
-          echo "等待 5 秒以确保 APK 文件生成完成..."
-          sleep 5  # 延迟 5 秒
-
-      - name: 检查 APK 文件是否存在
-        if: env.should_build == 'true'
-        run: |
-          APK_FILE=$(ls build/outputs/apk/compatible/release/*.apk | head -n 1)
-          if [[ -z "$APK_FILE" ]]; then
-            echo "未找到 APK 文件，构建可能未成功"
-            exit 1
-          else
-            echo "找到 APK 文件: $APK_FILE"
-            echo "APK_FILE=$APK_FILE" >> $GITHUB_ENV
-          fi
-
-      - name: 发布到 GitHub
-        if: env.should_build == 'true'
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.RELEASE_TAG }}
-          name: "XQE_lazy_${{ env.TAGS }}"  # 自定义发布标题
-          body: ${{ env.CHANGELOG }}  # 更新日志
-          files: ${{ env.APK_FILE }}  # 发布最新的 APK 文件
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: 延迟等待文件生成
+#        if: env.should_build == 'true'
+#        run: |
+#          echo "等待 5 秒以确保 APK 文件生成完成..."
+#          sleep 5  # 延迟 5 秒
+#
+#      - name: 检查 APK 文件是否存在
+#        if: env.should_build == 'true'
+#        run: |
+#          APK_FILE=$(ls build/outputs/apk/compatible/release/*.apk | head -n 1)
+#          if [[ -z "$APK_FILE" ]]; then
+#            echo "未找到 APK 文件，构建可能未成功"
+#            exit 1
+#          else
+#            echo "找到 APK 文件: $APK_FILE"
+#            echo "APK_FILE=$APK_FILE" >> $GITHUB_ENV
+#          fi
+#
+#      - name: 发布到 GitHub
+#        if: env.should_build == 'true'
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          tag_name: ${{ env.RELEASE_TAG }}
+#          name: "XQE_lazy_${{ env.TAGS }}"  # 自定义发布标题
+#          body: ${{ env.CHANGELOG }}  # 更新日志
+#          files: ${{ env.APK_FILE }}  # 发布最新的 APK 文件
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
