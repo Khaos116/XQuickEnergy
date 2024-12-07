@@ -50,8 +50,52 @@ jobs:
           echo "更新日志: $CHANGELOG"
           echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV  # 将日志存储为单行
 
+      # 检查 JDK 是否已安装
+      - name: 检查 JDK 是否已安装
+        id: check_jdk
+        run: |
+          if java -version &>/dev/null; then
+            echo "JDK 已安装"
+            echo "jdk_installed=true" >> $GITHUB_ENV
+          else
+            echo "JDK 未安装"
+            echo "jdk_installed=false" >> $GITHUB_ENV
+          fi
+
+      # 检查 Gradle 是否已安装
+      - name: 检查 Gradle 是否已安装
+        id: check_gradle
+        run: |
+          if gradle -v &>/dev/null; then
+            echo "Gradle 已安装"
+            echo "gradle_installed=true" >> $GITHUB_ENV
+          else
+            echo "Gradle 未安装"
+            echo "gradle_installed=false" >> $GITHUB_ENV
+          fi
+
+      # 缓存 JDK
+      - name: 缓存 JDK
+        if: env.jdk_installed == 'false'
+        uses: actions/cache@v3
+        with:
+          path: ~/.sdkman/candidates
+          key: ${{ runner.os }}-jdk-11-${{ hashFiles('**/build.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-11-
+
+      # 缓存 Gradle
+      - name: 缓存 Gradle
+        if: env.gradle_installed == 'false'
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: 安装 JDK 11
-        if: env.should_build == 'true'
+        if: env.jdk_installed == 'false' && env.should_build == 'true'
         run: |
           sudo apt update
           sudo apt install -y openjdk-11-jdk
@@ -61,28 +105,10 @@ jobs:
         run: |
           java -version
 
-      - name: 下载并安装 Gradle
+      # 使用 Gradle Wrapper
+      - name: 使用 Gradle Wrapper 构建
         if: env.should_build == 'true'
         run: |
-          wget https://services.gradle.org/distributions/gradle-7.6-bin.zip
-          unzip gradle-7.6-bin.zip
-          sudo mv gradle-7.6 /opt/gradle
-          sudo ln -s /opt/gradle/bin/gradle /usr/local/bin/gradle
-
-      - name: 验证 Gradle 安装
-        if: env.should_build == 'true'
-        run: |
-          gradle -v
-
-      - name: 添加执行权限到 gradlew
-        if: env.should_build == 'true'
-        run: |
-          chmod +x ./gradlew  # 给 gradlew 文件添加执行权限
-
-      - name: 打包 myLazyNoSo 分支 (Gradle)
-        if: env.should_build == 'true'
-        run: |
-          echo "开始打包 myLazyNoSo 分支..."
           ./gradlew clean assembleCompatibleRelease
 
       - name: 延迟等待文件生成
