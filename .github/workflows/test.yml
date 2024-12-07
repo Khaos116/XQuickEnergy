@@ -45,12 +45,40 @@ jobs:
           fi
 
       - name: 获取 ${{ env.RELEASE_TAG }} 和 ${{ env.TAGS }} 之间的提交日志
-        id: get_commit_logs
+        if: env.should_build == 'true'
+        id: get_changelog
         run: |
-          echo "获取从 ${RELEASE_TAG} 到 ${TAGS} 之间的提交日志"
-          # 获取 RELEASE_TAG 和 TAGS 之间的提交日志
-          COMMIT_LOGS=$(git log --oneline "${RELEASE_TAG}".."${TAGS}" --no-merges)
-          echo "提交日志:"
-          echo "${COMMIT_LOGS}"
-          echo "COMMIT_LOGS=${COMMIT_LOGS}" >> $GITHUB_ENV  # 将提交日志存储到环境变量中
+          # 获取两个标签之间的提交日志
+          CHANGELOG=$(git log ${{ env.RELEASE_TAG }}..${{ env.TAGS }} --pretty=format:"%s")
+
+          # 临时文件用于存储中文日志
+          TEMP_LOG_FILE=$(mktemp)
+
+          # 遍历每条日志
+          while IFS= read -r entry; do
+            # 打印当前日志条目
+            # echo "当前日志条目: $entry"
+
+            # 使用 grep 来检查日志中是否包含中文字符
+            if echo "$entry" | grep -Pq '[\x{4e00}-\x{9fa5}]'; then
+              # 去除 * 字符并保存到临时文件
+              entry=$(echo "$entry" | sed 's/\*//g')
+              echo "$entry" >> "$TEMP_LOG_FILE"
+            fi
+          done <<< "$CHANGELOG"
+
+          # 去重：排序并去除重复的日志条目
+          SORTED_UNIQUE_CHANGELOG=$(sort "$TEMP_LOG_FILE" | uniq)
+
+          # 将去重后的日志条目格式化并存储到 PROCESSED_CHANGELOG 变量
+          PROCESSED_CHANGELOG=""
+          INDEX=1
+          while IFS= read -r unique_entry; do
+            PROCESSED_CHANGELOG+="$INDEX. $unique_entry\n"
+            INDEX=$((INDEX + 1))
+          done <<< "$SORTED_UNIQUE_CHANGELOG"
+
+          # 输出处理后的更新日志
+          echo -e "处理后的更新日志:\n$PROCESSED_CHANGELOG"
+          echo "CHANGELOG=$PROCESSED_CHANGELOG" >> $GITHUB_ENV  # 将处理后的日志存储为环境变量
       
