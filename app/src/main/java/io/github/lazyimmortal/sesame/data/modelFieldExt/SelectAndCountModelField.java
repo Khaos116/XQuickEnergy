@@ -40,6 +40,16 @@ public class SelectAndCountModelField extends ModelField<Map<String, Integer>> i
         this.selectListFunc = selectListFunc;
     }
 
+    public SelectAndCountModelField(String code, String name, Map<String, Integer> value, List<? extends IdAndName> expandValue, String description) {
+        super(code, name, value, description);
+        this.expandValue = expandValue;
+    }
+
+    public SelectAndCountModelField(String code, String name, Map<String, Integer> value, SelectListFunc selectListFunc, String description) {
+        super(code, name, value, description);
+        this.selectListFunc = selectListFunc;
+    }
+
     @Override
     public String getType() {
         return "SELECT_AND_COUNT";
@@ -55,7 +65,7 @@ public class SelectAndCountModelField extends ModelField<Map<String, Integer>> i
         btn.setText(getName());
         btn.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         btn.setTextColor(ContextCompat.getColor(context, R.color.button));
-        btn.setBackground(context.getResources().getDrawable(R.drawable.button));
+        btn.setBackground(ContextCompat.getDrawable(context, R.drawable.button));
         btn.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         btn.setMinHeight(150);
         btn.setMaxHeight(180);
