@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main_tk  # 修改为 main_tk 分支
+    tags:
+      - 'v*'  # 新的标签提交时触发，匹配以 'v' 开头的标签
   schedule:
     - cron: '0 */8 * * *' # 每8小时运行
   workflow_dispatch:  # 允许手动触发
