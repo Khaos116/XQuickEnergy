@@ -1,7 +1,10 @@
-name: Build And Publish APK
+name: 编译并发布APK
 
 on:
   workflow_dispatch:  # 手动触发工作流
+  push:
+    tags:
+      - 'v*'  # 当推送新的以 'v' 开头的标签时自动触发，例如 v1.0.0
 
 permissions: #发布到github需要
   contents: write
@@ -78,7 +81,7 @@ jobs:
           SORTED_UNIQUE_CHANGELOG=$(sort "$TEMP_LOG_FILE" | uniq)
           
           # 将去重后的日志条目格式化并存储到 PROCESSED_CHANGELOG 变量
-          PROCESSED_CHANGELOG=""
+          PROCESSED_CHANGELOG="使用GitHub Actions自动发布更新"
           INDEX=1
           while IFS= read -r unique_entry; do
             PROCESSED_CHANGELOG+="<br>$INDEX. $unique_entry"

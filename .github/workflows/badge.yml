@@ -1,4 +1,4 @@
-name: Update Badge
+name: 更新最新版徽章
 
 on:
   push:
