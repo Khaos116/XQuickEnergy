@@ -177,9 +177,11 @@ jobs:
         if: env.should_build == 'true'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.RELEASE_TAG }}
+          tag_name: ${{ env.TAGS }}  # 使用 myLazyNoSo 分支的最新标签
           name: "XQE_lazy_${{ env.TAGS }}版"  # 自定义发布标题
           body: ${{ env.CHANGELOG }}  # 更新日志
           files: ${{ env.APK_FILE }}  # 发布最新的 APK 文件
+          draft: false  # 确保不是草稿
+          prerelease: false  # 如果需要，可以设置为 true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
