@@ -14,7 +14,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 
 import io.github.lazyimmortal.sesame.BuildConfig;
 import io.github.lazyimmortal.sesame.R;
@@ -113,7 +115,7 @@ public class MainActivity extends BaseActivity {
         if(MyUtils.showHomeDialog()) alertDialog.show();//CHANGE BY KT
         Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
         if (positiveButton != null) {
-            positiveButton.setTextColor(Color.parseColor("#216EEE")); // 设置按钮颜色为红色
+            positiveButton.setTextColor(ContextCompat.getColor(this, R.color.button));
         }
         Button btn = findViewById(R.id.btn_other_log);//CHANGE BY KT
         btn.setText(MyUtils.showHomeAllLog() ? R.string.view_record_file : R.string.other_log);//首页这显示全部
@@ -393,7 +395,7 @@ public class MainActivity extends BaseActivity {
         // 在 AlertDialog 显示之后获取返回按钮并设置颜色
         Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
         if (positiveButton != null) {
-            positiveButton.setTextColor(Color.parseColor("#216EEE")); // 设置按钮颜色为红色
+            positiveButton.setTextColor(ContextCompat.getColor(this, R.color.button));
         }
         int length = userNameArray.length;
         if (length > 0 && length < 3) {
@@ -424,13 +426,11 @@ public class MainActivity extends BaseActivity {
         setBaseTitle(ViewAppInfo.getAppTitle() + "【" + runType.getName() + "】");
         switch (runType) {
             case DISABLE:
-                setBaseTitleTextColor(Color.parseColor("#333333"));
+                setBaseTitleTextColor(ContextCompat.getColor(this, R.color.textColorDisable));
                 break;
             case MODEL:
-                setBaseTitleTextColor(getResources().getColor(R.color.textColorPrimary));
-                break;
             case PACKAGE:
-                setBaseTitleTextColor(getResources().getColor(R.color.textColorPrimary));
+                setBaseTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
                 break;
         }
     }

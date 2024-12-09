@@ -1,13 +1,15 @@
 package io.github.lazyimmortal.sesame.data;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import io.github.lazyimmortal.sesame.R;
@@ -110,7 +112,7 @@ public class ModelField<T> implements Serializable {
         TextView btn = new TextView(context);
         btn.setText(getName());
         btn.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        btn.setTextColor(Color.parseColor("#216EEE"));
+        btn.setTextColor(ContextCompat.getColor(context, R.color.button));
         btn.setBackground(context.getResources().getDrawable(R.drawable.button));
         btn.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         btn.setMinHeight(150);
