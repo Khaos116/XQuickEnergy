@@ -127,7 +127,7 @@ public class AntForestV2 extends ModelTask {
     private BooleanModelField stealthCard;
     private BooleanModelField stealthCardConstant;
     private ChoiceModelField bubbleBoostType;
-    private ListModelField.ListJoinCommaToStringModelField bubbleBoostTime;
+    private StringModelField bubbleBoostTime;
     private ChoiceModelField energyShieldType;
     private ChoiceModelField helpFriendCollectType;
     private SelectModelField helpFriendCollectList;
@@ -192,7 +192,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(stealthCardConstant = new BooleanModelField("stealthCardConstant", "隐身卡 | 限时隐身永动机", false));
         if (ExtendHandle.handleAlphaRequest("enableDeveloperMode")) {
             modelFields.addField(bubbleBoostType = new ChoiceModelField("bubbleBoostType", "加速器 | 定时使用", UsePropType.CLOSE, UsePropType.nickNames));
-            modelFields.addField(bubbleBoostTime = new ListModelField.ListJoinCommaToStringModelField("bubbleBoostTime", "加速器 | 定时使用时间", ListUtil.newArrayList("0630")));
+            modelFields.addField(bubbleBoostTime = new StringModelField("bubbleBoostTime", "加速器 | 定时使用时间", "0630"));
             modelFields.addField(energyShieldType = new ChoiceModelField("energyShieldType", "保护罩 | 接力使用", UsePropType.CLOSE, UsePropType.nickNames));
         }
         modelFields.addField(returnWater10 = new IntegerModelField("returnWater10", "返水 | 10克需收能量(关闭:0)", 0));
@@ -1382,13 +1382,23 @@ public class AntForestV2 extends ModelTask {
     }
 
     private void forestExtend() {
-        if (ExtendHandle.handleAlphaRequest("enableDeveloperMode", "forest", "boost|shield")) {
-            if (bubbleBoostType.getValue() != UsePropType.CLOSE) {
-                ExtendHandle.handleAlphaRequest("boost", bubbleBoostType.getConfigValue(), bubbleBoostTime.getConfigValue());
+        try {
+            if (!ExtendHandle.handleAlphaRequest("antForest", "vitality")) {
+                return;
             }
-            if (energyShieldType.getValue() != UsePropType.CLOSE) {
-                ExtendHandle.handleAlphaRequest("shield", energyShieldType.getConfigValue(), String.valueOf(usingProps.get(PropGroup.shield.name())));
-            }
+            JSONObject jo = new JSONObject();
+            jo.put("bubbleBoost",
+                    new JSONObject()
+                            .put("bubbleBoostType", bubbleBoostType.getValue())
+                            .put("bubbleBoostTime", bubbleBoostTime.getValue()));
+            jo.put("energyShield",
+                    new JSONObject()
+                            .put("energyShieldType", energyShieldType.getValue())
+                            .put("energyShieldTime", usingProps.get(PropGroup.shield.name())));
+            ExtendHandle.handleAlphaRequest("antForest", "boost|shield", jo.toString());
+        } catch (Throwable t) {
+            Log.i(TAG, "forestExtend err:");
+            Log.printStackTrace(TAG, t);
         }
     }
 
@@ -2100,9 +2110,9 @@ public class AntForestV2 extends ModelTask {
             JSONObject animalProp = null;
             for (int i = 0; i < animalProps.length(); i++) {
                 jo = animalProps.getJSONObject(i);
-                if (i == 0) {
+                if (animalProp == null) {
                     animalProp = jo;
-                    if (consumeAnimalPropType.getValue() == ConsumeAnimalPropType.SEQUENCE && animalProp.has("main") && animalProp.getJSONObject("main").getInt("holdsNum") > 0) {
+                    if (consumeAnimalPropType.getValue() == ConsumeAnimalPropType.SEQUENCE) {
                         break;
                     }
                 } else if (jo.getJSONObject("main").getInt("holdsNum") > animalProp.getJSONObject("main").getInt("holdsNum")) {

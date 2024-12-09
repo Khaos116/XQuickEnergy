@@ -136,7 +136,7 @@ public class NewSettingsActivity extends BaseActivity {
             WebView.setWebContentsDebuggingEnabled(true);
         }
         webView.addJavascriptInterface(new WebViewCallback(), "HOOK");
-        if (!ExtendHandle.handleAlphaRequest("webView", "load", "html")) {
+        if (!ExtendHandle.handleAlphaRequest("enableDeveloperMode")) {
             String htmlData = AESUtil.loadDecryptHtmlData(context);
             webView.loadDataWithBaseURL("file:///android_asset/web/", htmlData, "text/html", "UTF-8", null);
         } else {
