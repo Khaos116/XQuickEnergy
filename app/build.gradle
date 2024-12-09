@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    def version = "v1.6.1fix"
 
     compileSdk 34
     defaultConfig {
@@ -9,8 +8,8 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 31
-        versionCode 1132
-        versionName version
+        versionCode 1134
+        versionName  "v1.6.1.3fix"
     }
     ext {
         applicationName = "Sesame"
