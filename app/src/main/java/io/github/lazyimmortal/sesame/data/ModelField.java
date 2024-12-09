@@ -33,6 +33,9 @@ public class ModelField<T> implements Serializable {
     private String name;
 
     @JsonIgnore
+    private String description;
+
+    @JsonIgnore
     protected T defaultValue;
 
     protected volatile T value;
@@ -50,6 +53,16 @@ public class ModelField<T> implements Serializable {
         this.code = code;
         this.name = name;
         this.defaultValue = value;
+        this.description = null;
+        setObjectValue(value);
+    }
+
+    public ModelField(String code, String name, T value, String description) {
+        this();
+        this.code = code;
+        this.name = name;
+        this.defaultValue = value;
+        this.description = description;
         setObjectValue(value);
     }
 
@@ -113,7 +126,7 @@ public class ModelField<T> implements Serializable {
         btn.setText(getName());
         btn.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         btn.setTextColor(ContextCompat.getColor(context, R.color.button));
-        btn.setBackground(context.getResources().getDrawable(R.drawable.button));
+        btn.setBackground(ContextCompat.getDrawable(context, R.drawable.button));
         btn.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         btn.setMinHeight(150);
         btn.setMaxHeight(180);

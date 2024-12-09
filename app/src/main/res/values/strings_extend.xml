@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="get_tree_items">查询树苗余量🌱</string>
-    <string name="get_newTree_items">查询树苗上新🌱</string>
-    <string name="query_area_trees">查询未解锁地区🗺️</string>
-    <string name="get_unlock_treeItems">查询未解锁项目🐘</string>
-    <string name="set_custom_walk_path_id_list">自定义路线列表🚶🏻‍♂️</string>
-    <string name="set_custom_walk_path_id_queue">待行走路线队列🚶🏻‍♂️</string>
-    <string name="developer_mode">开发者模式💻</string>
+    <string name="get_tree_items">Get tree items🌱</string>
+    <string name="get_newTree_items">Get newTree items🌱</string>
+    <string name="query_area_trees">Query unlock area🗺️</string>
+    <string name="get_unlock_treeItems">Query unlock item🐘</string>
+    <string name="clear_dish_image">Clear dish image💿</string>
+    <string name="set_custom_walk_path_id_list">Set custom walk pathId list🚶🏻‍♂️</string>
+    <string name="set_custom_walk_path_id_queue">Set custom walk pathId queue🚶🏻‍♂️</string>
+    <string name="developer_mode">Developer mode💻</string>
 
-    <string name="btn_add_custom_walk_path_id">添加</string>
-    <string name="btn_clear_custom_walk_path_id_queue">清除</string>
-    <string name="msg_input_custom_walk_path_id">请输入要添加的路线代码</string>
+    <string name="btn_add_custom_walk_path_id">Add</string>
+    <string name="btn_clear_custom_walk_path_id_queue">Clear</string>
+    <string name="msg_input_custom_walk_path_id">Please input walk pathId</string>
 </resources>
