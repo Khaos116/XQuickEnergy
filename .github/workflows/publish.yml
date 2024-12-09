@@ -32,6 +32,14 @@ jobs:
           echo "最新发布的版本标签: ${RELEASE_TAG}"
           echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV  # 设置环境变量
 
+      - name: 获取默认分支的最新标签
+        id: get_default_tag
+        run: |
+          git fetch --tags  # 确保获取所有标签
+          DEFAULT_TAG=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep -E '^v' | head -n 1)
+          echo "默认分支的最新标签: ${DEFAULT_TAG}"
+          echo "DEFAULT_TAG=${DEFAULT_TAG}" >> $GITHUB_ENV  # 设置环境变量    
+
       - name: 切换到 myLazyNoSo 分支
         run: |
           git fetch origin myLazyNoSo  # 获取 myLazyNoSo 分支
@@ -112,7 +120,29 @@ jobs:
       - name: 验证 JDK 安装
         run: java -version
 
-      - name: 下载并安装指定版本的 Gradle
+      - name: 检查 Gradle 是否已安装
+        id: check_gradle
+        run: |
+          if gradle -v &>/dev/null; then
+            echo "Gradle 已安装"
+            echo "gradle_installed=true" >> $GITHUB_ENV
+            gradle -v  # 打印 Gradle 版本
+          else
+            echo "Gradle 未安装"
+            echo "gradle_installed=false" >> $GITHUB_ENV
+          fi
+
+      - name: 缓存 Gradle 版本
+        if: env.gradle_installed == 'false'
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle
+          key: gradle-${{ runner.os }}-v7.2
+          restore-keys: |
+            gradle-${{ runner.os }}-v7.2
+
+      - name: 下载并安装 Gradle 7.2
+        if: env.gradle_installed == 'false'
         run: |
           GRADLE_VERSION=7.2
           wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
@@ -177,7 +207,7 @@ jobs:
         if: env.should_build == 'true'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.TAGS }}  # 使用 myLazyNoSo 分支的最新标签
+          tag_name: ${{ env.DEFAULT_TAG }}  # 使用 myLazyNoSo 分支的最新标签
           name: "XQE_lazy_${{ env.TAGS }}版"  # 自定义发布标题
           body: ${{ env.CHANGELOG }}  # 更新日志
           files: ${{ env.APK_FILE }}  # 发布最新的 APK 文件
