@@ -3,6 +3,8 @@ package fansirsqi.xposed.sesame.task.antFarm;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import fansirsqi.xposed.sesame.entity.IdAndName;
 import fansirsqi.xposed.sesame.model.ModelFields;
 import fansirsqi.xposed.sesame.model.ModelGroup;
 import fansirsqi.xposed.sesame.model.modelFieldExt.*;
@@ -34,6 +36,8 @@ public class AntFarm extends ModelTask {
     private int unreceiveTaskAward = 0;
     private double finalScore = 0d;
 
+    private String familyGroupId;
+
     private FarmTool[] farmTools;
 
     private static final List<String> bizKeyList;
@@ -45,7 +49,6 @@ public class AntFarm extends ModelTask {
         bizKeyList.add("YEB_PURCHASE");
         bizKeyList.add("WIDGET_addzujian");//添加庄园小组件
         bizKeyList.add("HIRE_LOW_ACTIVITY");//雇佣小鸡拿饲料
-        //楢䭺祥楌瑳愮摤∨䕈剁彔佄䅎䥔乏䅟噄乁䕃彄但䑏噟∲㬩⼯裧莿뻧龣믤ꆊ
         bizKeyList.add("DIANTAOHUANDUAN");//去点淘逛一逛
         bizKeyList.add("TAO_GOLDEN_V2");//去逛一逛淘金币小镇
         bizKeyList.add("SHANGYEHUA_90_1");//去杂货铺逛一逛
@@ -128,6 +131,9 @@ public class AntFarm extends ModelTask {
     private BooleanModelField getFeed;
     private SelectModelField getFeedlList;
     private ChoiceModelField getFeedType;
+    private BooleanModelField family;
+    private SelectModelField familyOptions;
+
 
     @Override
     public ModelFields getFields() {
@@ -173,6 +179,8 @@ public class AntFarm extends ModelTask {
         List<String> farmGameTimeList = new ArrayList<>();
         farmGameTimeList.add("2200-2400");
         modelFields.addField(farmGameTime = new ListModelField.ListJoinCommaToStringModelField("farmGameTime", "小鸡游戏时间(范围)", farmGameTimeList));
+        modelFields.addField(family = new BooleanModelField("family", "家庭 | 开启", false));
+        modelFields.addField(familyOptions = new SelectModelField("familyOptions", "家庭 | 选项", new LinkedHashSet<>(), AntFarmFamilyOption::getAntFarmFamilyOptions));
         return modelFields;
     }
 
@@ -364,6 +372,10 @@ public class AntFarm extends ModelTask {
             if (getFeed.getValue()) {
                 letsGetChickenFeedTogether();
             }
+            //家庭
+            if (family.getValue()) {
+                family();
+            }
             // 开宝箱
             if (enableDdrawGameCenterAward.getValue()) {
                 drawGameCenterAward();
@@ -438,6 +450,7 @@ public class AntFarm extends ModelTask {
                 harvestBenevolenceScore = joFarmVO.getDouble("harvestBenevolenceScore");
                 parseSyncAnimalStatusResponse(joFarmVO.toString());
                 userId = joFarmVO.getJSONObject("masterUserInfoVO").getString("userId");
+                familyGroupId = getFamilyGroupId(userId);
 
                 if (useSpecialFood.getValue()) {
                     JSONArray cuisineList = jo.getJSONArray("cuisineList");
@@ -1867,7 +1880,7 @@ public class AntFarm extends ModelTask {
                             if (chouchouleReceiveFarmTaskAward(taskId)) {
                                 doubleCheck = true;
                             }
-                        } else if ("TODO".equals(taskStatus)) {
+                        } else if ("TODO".equals(taskStatus) && !Objects.equals(jo.optString("innerAction"), "DONATION")) {
                             if (chouchouleDoFarmTask(taskId, title, rightsTimesLimit - rightsTimes)) {
                                 doubleCheck = true;
                             }
@@ -2408,5 +2421,131 @@ public class AntFarm extends ModelTask {
 
         String[] nickNames = {"选中通知", "选中不通知"};
 
+    }
+
+    public void family() {
+        if (StringUtil.isEmpty(familyGroupId)) {
+            return;
+        }
+        try {
+            JSONObject jo = enterFamily();
+            if (jo == null) {
+                return;
+            }
+            familyGroupId = jo.getString("groupId");
+            int familyAwardNum = jo.getInt("familyAwardNum");
+            boolean familySignTips = jo.getBoolean("familySignTips");
+
+            if (familySignTips && familyOptions.getValue().contains("familySign")) {
+                familySign();
+            }
+
+            if (familyAwardNum > 0 && familyOptions.getValue().contains("familyClaimReward")) {
+                familyClaimRewardList();
+            }
+        } catch (Throwable t) {
+            Log.runtime(TAG, "family err:");
+            Log.printStackTrace(TAG, t);
+        }
+    }
+
+    private String getFamilyGroupId(String userId) {
+        try {
+            JSONObject jo = new JSONObject(AntFarmRpcCall.queryLoveCabin(userId));
+            if (!"SUCCESS".equals(jo.optString("memo"))) {
+                if (jo.has("memo")) {
+                    Log.record(jo.getString("memo"));
+                    Log.runtime(jo.getString("memo"), jo.toString());
+                } else {
+                    Log.runtime(TAG, jo.toString());
+                }
+            }else{
+                return jo.optString("groupId");
+            }
+        } catch (Throwable t) {
+            Log.runtime(TAG, "家庭获取GroupId异常:");
+            Log.printStackTrace(t);
+        }
+        return null;
+    }
+
+    private JSONObject enterFamily() {
+        try {
+            JSONObject jo = new JSONObject(AntFarmRpcCall.enterFamily());
+            if ("SUCCESS".equals(jo.optString("memo"))) {
+                return jo;
+            }
+        } catch (Throwable t) {
+            Log.runtime(TAG, "庄园家庭异常:");
+            Log.printStackTrace(TAG, t);
+        }
+        return null;
+    }
+
+    //签到
+    private void familySign() {
+        try {
+            JSONObject jo = new JSONObject(AntFarmRpcCall.familyReceiveFarmTaskAward("FAMILY_SIGN_TASK"));
+            if ("SUCCESS".equals(jo.optString("memo"))) {
+                Log.farm("庄园家庭🏠提交任务[每日签到]");
+            }
+        } catch (Throwable t) {
+            Log.runtime(TAG, "庄园家庭每日签到异常:");
+            Log.printStackTrace(TAG, t);
+        }
+    }
+
+    //领取奖励
+    public void familyClaimRewardList(){
+        try {
+            JSONObject jo = new JSONObject(AntFarmRpcCall.familyAwardList());
+            if (!"SUCCESS".equals(jo.optString("memo"))) {
+                return;
+            }
+            JSONArray ja = jo.getJSONArray("familyAwardRecordList");
+            for (int i = 0; i < ja.length(); i++) {
+                jo = ja.getJSONObject(i);
+                if (jo.optBoolean("expired")
+                        || jo.optBoolean("received", true)
+                        || jo.has("linkUrl")
+                        || (jo.has("operability") && !jo.getBoolean("operability"))) {
+                    continue;
+                }
+                String rightId = jo.getString("rightId");
+                String awardName = jo.getString("awardName");
+                int count = jo.optInt("count", 1);
+                familyClaimReward(rightId, awardName, count);
+            }
+        } catch (Throwable t) {
+            Log.runtime(TAG, "家庭领取奖励:");
+            Log.printStackTrace(TAG, t);
+        }
+    }
+
+    private void familyClaimReward(String rightId, String awardName, int count) {
+        try {
+            JSONObject jo = new JSONObject(AntFarmRpcCall.receiveFamilyAward(rightId));
+            if ("SUCCESS".equals(jo.optString("memo"))) {
+                Log.farm("亲密家庭🏠领取奖励[" + awardName + "*" + count + "]");
+            }
+        } catch (Throwable t) {
+            Log.runtime(TAG, "领取奖励异常:");
+            Log.printStackTrace(TAG, t);
+        }
+    }
+
+    static class AntFarmFamilyOption extends IdAndName {
+
+        public AntFarmFamilyOption(String i, String n) {
+            id = i;
+            name = n;
+        }
+
+        public static List<AntFarmFamilyOption> getAntFarmFamilyOptions() {
+            List<AntFarmFamilyOption> list = new ArrayList<>();
+            list.add(new AntFarmFamilyOption("familySign", "每日签到"));
+            list.add(new AntFarmFamilyOption("familyClaimReward", "领取奖励"));
+            return list;
+        }
     }
 }

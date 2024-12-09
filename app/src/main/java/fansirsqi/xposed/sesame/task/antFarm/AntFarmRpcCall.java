@@ -460,4 +460,24 @@ public class AntFarmRpcCall {
         return ApplicationHook.requestString("com.alipay.antfarm.saveOrnaments",
                 "[{\"animalId\":\"" + animalId + "\",\"farmId\":\"" + farmId + "\",\"ornaments\":\"" + ornaments + "\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\"" + VERSION + "\"}]");
     }
+    // 亲密家庭
+    public static String enterFamily() {
+        String args = "[{\"fromAnn\":false,\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\"}]";
+        return ApplicationHook.requestString("com.alipay.antfarm.enterFamily", args);
+    }
+    public static String familyReceiveFarmTaskAward(String taskId) {
+        String args = "[{\"awardType\":\"FAMILY_INTIMACY\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"taskId\":\"" + taskId + "\",\"taskSceneCode\":\"ANTFARM_FAMILY_TASK\"}]";
+        return ApplicationHook.requestString("com.alipay.antfarm.receiveFarmTaskAward", args);
+    }
+
+    public static String familyAwardList() {
+        String args = "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\"}]";
+        return ApplicationHook.requestString("com.alipay.antfarm.familyAwardList", args);
+    }
+
+    public static String receiveFamilyAward(String rightId) {
+        String args = "[{\"requestType\":\"NORMAL\",\"rightId\":\"" + rightId + "\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\"}]";
+        return ApplicationHook.requestString("com.alipay.antfarm.receiveFamilyAward", args);
+    }
+
 }

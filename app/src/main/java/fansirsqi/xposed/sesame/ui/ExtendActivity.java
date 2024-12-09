@@ -13,11 +13,11 @@ import fansirsqi.xposed.sesame.util.Log;
  * 扩展功能页面
  */
 public class ExtendActivity extends BaseActivity {
-    private static final String TAG = "ExtendActivity";
-    private final String debugTips = getResources().getString(R.string.debug_tips);
+    private String debugTips;
 
     /**
      * 初始化Activity
+     *
      * @param savedInstanceState 保存的实例状态
      */
     @Override
@@ -25,6 +25,7 @@ public class ExtendActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_extend); // 设置布局文件
 
+        debugTips = getString(R.string.debug_tips);
         // 初始化按钮并设置点击事件
         initButtonsAndSetListeners();
     }
@@ -41,7 +42,7 @@ public class ExtendActivity extends BaseActivity {
         Button btnGetUnlockTreeItems = findViewById(R.id.get_unlock_treeItems);
 
         // 设置Activity标题
-        setBaseTitle(getResources().getString(R.string.extended_func));
+        setBaseTitle(getString(R.string.extended_func));
         // 为每个按钮设置点击事件
         btnGetTreeItems.setOnClickListener(new TreeItemsOnClickListener());
         btnGetNewTreeItems.setOnClickListener(new NewTreeItemsOnClickListener());
@@ -51,6 +52,7 @@ public class ExtendActivity extends BaseActivity {
 
     /**
      * 发送广播事件
+     *
      * @param type 广播类型
      */
     private void sendItemsBroadcast(String type) {
