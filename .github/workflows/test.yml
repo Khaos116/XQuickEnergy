@@ -1,4 +1,4 @@
-name: 使用 Gradle 7.2
+name: 缓存并检查 Gradle 7.2
 
 on:
   workflow_dispatch:  # 手动触发工作流
@@ -11,7 +11,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: 设置 Gradle 缓存
+      # 检查是否已经安装了 Gradle 7.2
+      - name: 检查并安装 Gradle 7.2
+        id: check_gradle
+        run: |
+          GRADLE_VERSION=7.2
+          if gradle -v | grep -q "Gradle ${GRADLE_VERSION}"; then
+            echo "Gradle ${GRADLE_VERSION} 已安装"
+          else
+            echo "Gradle ${GRADLE_VERSION} 未安装，开始缓存并安装"
+            wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
+            unzip gradle-${GRADLE_VERSION}-bin.zip -d /opt/gradle
+            echo "/opt/gradle/gradle-${GRADLE_VERSION}/bin" >> $GITHUB_PATH  # 将 Gradle 添加到 PATH
+          fi
+
+      # 设置缓存路径以加速构建
+      - name: 缓存 Gradle 目录
         uses: actions/cache@v3
         with:
           path: ~/.gradle
@@ -19,13 +34,6 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-v7.2
 
-      - name: 安装 Gradle 7.2
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          GRADLE_VERSION=7.2
-          wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
-          unzip gradle-${GRADLE_VERSION}-bin.zip -d /opt/gradle
-          echo "/opt/gradle/gradle-${GRADLE_VERSION}/bin" >> $GITHUB_PATH  # 添加到 PATH
-
-      - name: 验证 Gradle 版本
-        run: ./gradlew -v
+      # 验证安装并输出 Gradle 版本
+      - name: 验证 Gradle 安装
+        run: gradle -v
