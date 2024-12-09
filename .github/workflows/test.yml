@@ -2,18 +2,25 @@ name: 缓存Gradle
 
 on:
   workflow_dispatch:  # 手动触发工作流
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 检查 Gradle 是否已安装
+      - name: 检查 Gradle 是否已安装并验证版本
         id: check_gradle
         run: |
           if gradle -v &>/dev/null; then
-            echo "Gradle 已安装"
-            echo "gradle_installed=true" >> $GITHUB_ENV
-            gradle -v  # 打印 Gradle 版本
+            INSTALLED_GRADLE_VERSION=$(gradle -v | grep 'Gradle' | awk '{print \$2}')
+            echo "已安装 Gradle 版本: ${INSTALLED_GRADLE_VERSION}"
+            if [ "$INSTALLED_GRADLE_VERSION" == "7.2" ]; then
+              echo "Gradle 7.2 已安装"
+              echo "gradle_installed=true" >> $GITHUB_ENV
+            else
+              echo "已安装的 Gradle 版本不是 7.2, 而是 $INSTALLED_GRADLE_VERSION"
+              echo "gradle_installed=false" >> $GITHUB_ENV
+            fi
           else
             echo "Gradle 未安装"
             echo "gradle_installed=false" >> $GITHUB_ENV
