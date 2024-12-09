@@ -139,7 +139,7 @@ jobs:
             TIMESTAMP=$(date +"%Y%m%d_%H%M")
           
             # 生成新的文件名
-            NEW_NAME="XQE_Release_${TAGS}_${TIMESTAMP}.apk"
+            NEW_NAME="XQE_lazy_${TAGS}_${TIMESTAMP}.apk"
           
             # 重命名文件
             mv "$LATEST_APK" "$APK_DIR/$NEW_NAME"
