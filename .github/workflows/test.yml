@@ -29,6 +29,11 @@ jobs:
           echo "最新发布的版本标签: ${RELEASE_TAG}"
           echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV  # 设置环境变量
 
+      - name: 切换到 myLazyNoSo 分支
+        run: |
+          git fetch origin myLazyNoSo  # 获取 myLazyNoSo 分支
+          git checkout myLazyNoSo  # 切换到 myLazyNoSo 分支    
+
       - name: 获取 myLazyNoSo 分支的最新标签
         id: get_my_lazy_tag
         run: |
