@@ -1,0 +1,80 @@
+name: 更新最新版徽章
+
+on:
+  push:
+    branches:
+      - main_tk  # 修改为 main_tk 分支
+  schedule:
+    - cron: '0 */8 * * *' # 每8小时运行
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 检出代码
+      - name: 检出代码
+        uses: actions/checkout@v3
+
+      # 获取最新的 release 标签
+      - name: 获取最新版本标签
+        id: get_release
+        run: |
+          LATEST_TAG=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r .tag_name)
+          
+          echo "最新版本标签: $LATEST_TAG"
+          echo "latest_release=$LATEST_TAG" >> $GITHUB_ENV  # 使用环境文件设置输出
+
+      # 查看 README.md 中的当前版本
+      - name: 检查 README 中的当前版本
+        id: check_version
+        run: |
+          CURRENT_TAG=$(grep -oP 'releases/tag/\K[^)"]+' README.md | head -1)
+          echo "README 中的当前版本: $CURRENT_TAG"
+          echo "current_version=$CURRENT_TAG" >> $GITHUB_ENV
+
+      # 更新 README.md 中的版本标签
+      - name: 如果需要则更新 README
+        id: update_readme
+        run: |
+          if [ "${{ env.latest_release }}" != "${{ env.current_version }}" ]; then
+            # 替换 README 中的所有旧版本标签为最新标签
+            sed -i "s|${{ env.current_version }}|${{ env.latest_release }}|g" README.md
+            echo "已更新 README.md 以包含最新版本"
+            echo "needs_update=true" >> $GITHUB_ENV  # 标记需要更新
+          else
+            echo "README.md 已是最新。"
+            echo "needs_update=false" >> $GITHUB_ENV  # 标记不需要更新
+          fi
+
+      # 检查是否需要提交更改
+      - name: 检查是否需要提交更新
+        run: |
+          if [ "${{ env.needs_update }}" == "true" ]; then
+            echo "README.md 版本已更新，准备提交更改。"
+          else
+            echo "README.md 已是最新，退出工作流。"
+            exit 0  # 如果没有更新，退出工作流
+          fi
+
+      # 查看 Git 状态
+      - name: 查看 Git 状态
+        run: |
+          git status
+
+      # 设置 SSH 密钥并配置 SSH 代理
+      - name: 设置 SSH 密钥
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # 提交更改并推送
+      - name: 提交并推送更改
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add README.md
+          git status  # 查看添加的文件
+          git commit -m "更新README最新版本" || echo "没有更改需要提交"  # 添加错误处理
+          git push git@github.com:${{ github.repository }}.git HEAD:main_tk
