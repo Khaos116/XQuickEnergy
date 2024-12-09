@@ -58,14 +58,14 @@ jobs:
           
           # 临时文件用于存储中文日志
           TEMP_LOG_FILE=$(mktemp)
-          
-          # 遍历每条日志
+    
+          # 遍历每条日志并替换换行符为 Markdown 格式
           while IFS= read -r entry; do
             # 使用 grep 来检查日志中是否包含中文字符
             if echo "$entry" | grep -Pq '[\x{4e00}-\x{9fa5}]'; then
               # 去除 * 字符并保存到临时文件
               entry=$(echo "$entry" | sed 's/\*//g')
-              echo "$entry" >> "$TEMP_LOG_FILE"
+              echo "$entry<br>" >> "$TEMP_LOG_FILE"  # 使用 <br> 标签替换换行符
             fi
           done <<< "$CHANGELOG"
           
@@ -174,4 +174,4 @@ jobs:
           body: ${{ env.CHANGELOG }}  # 更新日志
           files: ${{ env.APK_FILE }}  # 发布最新的 APK 文件
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}  # 使用 PAT
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
