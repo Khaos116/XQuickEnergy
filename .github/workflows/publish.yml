@@ -4,7 +4,7 @@ on:
   workflow_dispatch:  # 手动触发工作流
   push:
     tags:
-      - 'v*'  # 当推送新的以 'v' 开头的标签时自动触发，例如 v1.0.0
+      - 'v*'  # 新的标签提交时触发，匹配以 'v' 开头的标签
 
 permissions: #发布到github需要
   contents: write
