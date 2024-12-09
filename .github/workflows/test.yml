@@ -131,26 +131,34 @@ jobs:
           APK_DIR="app/build/outputs/apk/compatible/release"
           if [ -d "$APK_DIR" ] && ls "$APK_DIR"/*.apk 1> /dev/null 2>&1; then
             echo "找到 APK 文件，准备重命名最新的文件..."
-          
+
+            # 设置时区为 GMT+8
+            export TZ="Asia/Shanghai"
+
             # 获取按时间倒序排列的最新 APK 文件
             LATEST_APK=$(ls -t "$APK_DIR"/*.apk | head -n 1)
-          
-            # 获取当前时间并格式化为 YYYYMMDD_HHMM
+
+            # 获取当前时间并格式化为 YYYYMMDD_HHMM (GMT+8)
             TIMESTAMP=$(date +"%Y%m%d_%H%M")
-          
+
             # 生成新的文件名
             NEW_NAME="XQE_lazy_${TAGS}_${TIMESTAMP}.apk"
-          
+
             # 重命名文件
             mv "$LATEST_APK" "$APK_DIR/$NEW_NAME"
             echo "重命名成功: $NEW_NAME"
-          
+
             # 将重命名后的文件路径赋值给环境变量
             echo "APK_FILE=${APK_DIR}/${NEW_NAME}" >> $GITHUB_ENV
           else
             echo "没有找到 APK 文件或目录不存在"
             exit 1  # 退出并标记为失败
           fi
+
+      - name: 设置 SSH 密钥
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: 发布到 GitHub
         if: env.should_build == 'true'
