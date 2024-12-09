@@ -3,7 +3,7 @@ name: 更新最新版徽章
 on:
   push:
     branches:
-      - main_tk  # 修改为 main_tk 分支
+      - master  # 修改为 master 分支
   schedule:
     - cron: '0 */8 * * *' # 每8小时运行
   workflow_dispatch:  # 允许手动触发
@@ -77,4 +77,4 @@ jobs:
           git add README.md
           git status  # 查看添加的文件
           git commit -m "更新README最新版本" || echo "没有更改需要提交"  # 添加错误处理
-          git push git@github.com:${{ github.repository }}.git HEAD:main_tk
+          git push git@github.com:${{ github.repository }}.git HEAD:master
