@@ -1,4 +1,4 @@
-name: Check and Rename APK
+name: Log Dir
 
 on:
   workflow_dispatch:  # 手动触发工作流
@@ -11,24 +11,11 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v2  # 检出项目代码
 
-      - name: 检查 APK 文件并重命名
+      - name: 检查 app 文件夹是否存在并打印文件
         run: |
-          APK_DIR="app/build/outputs/apk/compatible/release"
-          if [ -d "$APK_DIR" ] && ls "$APK_DIR"/*.apk 1> /dev/null 2>&1; then
-            echo "找到 APK 文件，准备重命名最新的文件..."
-
-            # 获取按时间倒序排列的最新 APK 文件
-            LATEST_APK=$(ls -t "$APK_DIR"/*.apk | head -n 1)
-
-            # 获取当前时间并格式化为 YYYYMMDD_HHMM
-            TIMESTAMP=$(date +"%Y%m%d_%H%M")
-
-            # 生成新的文件名
-            NEW_NAME="XQE_Release_TAG_${TIMESTAMP}.apk"
-
-            # 重命名文件
-            mv "$LATEST_APK" "$APK_DIR/$NEW_NAME"
-            echo "重命名成功: $NEW_NAME"
+          if [ -d "app" ]; then  # 检查 app 文件夹是否存在
+            echo "app 文件夹存在，列出其中的文件："
+            ls -l app  # 列出 app 文件夹下的文件（详细列表）
           else
-            echo "没有找到 APK 文件或目录不存在"
+            echo "app 文件夹不存在"  # 如果 app 文件夹不存在，输出提示信息
           fi
