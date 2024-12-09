@@ -1,7 +1,12 @@
-name: Build APK
+name: Build And Publish APK
 
 on:
   workflow_dispatch:  # 手动触发工作流
+
+permissions: #发布到github需要
+  contents: write
+  actions: read
+  packages: write
 
 jobs:
   build:
@@ -169,4 +174,4 @@ jobs:
           body: ${{ env.CHANGELOG }}  # 更新日志
           files: ${{ env.APK_FILE }}  # 发布最新的 APK 文件
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}  # 使用 PAT
