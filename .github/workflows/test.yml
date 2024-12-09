@@ -125,22 +125,31 @@ jobs:
           echo "等待 5 秒以确保 APK 文件生成完成..."
           sleep 5  # 延迟 5 秒
 
-      - name: 检查构建输出目录
-        if: env.should_build == 'true'
+      - name: 检查 APK 文件并重命名
+        id: rename_apk
         run: |
-          echo "查看 build 目录结构"
-          ls -R build/outputs
-
-      - name: 检查 APK 文件是否存在
-        if: env.should_build == 'true'
-        run: |
-          APK_FILE=$(ls build/outputs/apk/compatible/release/*.apk | head -n 1)
-          if [[ -z "$APK_FILE" ]]; then
-            echo "未找到 APK 文件，构建可能未成功"
-            exit 1
+          APK_DIR="app/build/outputs/apk/compatible/release"
+          if [ -d "$APK_DIR" ] && ls "$APK_DIR"/*.apk 1> /dev/null 2>&1; then
+            echo "找到 APK 文件，准备重命名最新的文件..."
+          
+            # 获取按时间倒序排列的最新 APK 文件
+            LATEST_APK=$(ls -t "$APK_DIR"/*.apk | head -n 1)
+          
+            # 获取当前时间并格式化为 YYYYMMDD_HHMM
+            TIMESTAMP=$(date +"%Y%m%d_%H%M")
+          
+            # 生成新的文件名
+            NEW_NAME="XQE_Release_${TAGS}_${TIMESTAMP}.apk"
+          
+            # 重命名文件
+            mv "$LATEST_APK" "$APK_DIR/$NEW_NAME"
+            echo "重命名成功: $NEW_NAME"
+          
+            # 将重命名后的文件路径赋值给环境变量
+            echo "APK_FILE=${APK_DIR}/${NEW_NAME}" >> $GITHUB_ENV
           else
-            echo "找到 APK 文件: $APK_FILE"
-            echo "APK_FILE=$APK_FILE" >> $GITHUB_ENV
+            echo "没有找到 APK 文件或目录不存在"
+            exit 1  # 退出并标记为失败
           fi
 
       - name: 发布到 GitHub
@@ -148,7 +157,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.RELEASE_TAG }}
-          name: "XQE_lazy_${{ env.TAGS }}"  # 自定义发布标题
+          name: "XQE_lazy_${{ env.TAGS }}版"  # 自定义发布标题
           body: ${{ env.CHANGELOG }}  # 更新日志
           files: ${{ env.APK_FILE }}  # 发布最新的 APK 文件
         env:
