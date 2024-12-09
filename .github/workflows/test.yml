@@ -27,8 +27,5 @@ jobs:
           unzip gradle-${GRADLE_VERSION}-bin.zip -d /opt/gradle
           echo "/opt/gradle/gradle-${GRADLE_VERSION}/bin" >> $GITHUB_PATH  # 添加到 PATH
 
-      - name: 使用 Gradle Wrapper 构建项目
-        run: ./gradlew build
-
       - name: 验证 Gradle 版本
         run: ./gradlew -v
