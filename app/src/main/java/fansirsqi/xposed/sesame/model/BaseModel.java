@@ -38,7 +38,7 @@ public class BaseModel extends Model {
   /** 能量收集的时间范围 */
   @Getter
   private static final ListModelField.ListJoinCommaToStringModelField energyTime =
-      new ListModelField.ListJoinCommaToStringModelField("energyTime", "只收能量时间(范围)", ListUtil.newArrayList("0000-2359"));
+      new ListModelField.ListJoinCommaToStringModelField("energyTime", "只收能量时间(范围)", ListUtil.newArrayList("0700-0730"));
 
   /** 定时任务模式选择 */
   @Getter private static final ChoiceModelField timedTaskModel = new ChoiceModelField("timedTaskModel", "定时任务模式", TimedTaskModel.SYSTEM, TimedTaskModel.nickNames);

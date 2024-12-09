@@ -273,10 +273,9 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                   LocalDateTime lastExecTimeDateTime = TimeUtil.getLocalDateTimeByTimeMillis(lastExecTime);
                                   LocalDateTime nextExecTimeDateTime = TimeUtil.getLocalDateTimeByTimeMillis(lastExecTime + checkInterval);
                                   for (String execAtTime : execAtTimeList) {
+                                    if (execAtTime.equals("-1")) return;
                                     LocalDateTime execAtTimeDateTime = TimeUtil.getLocalDateTimeByTimeStr(execAtTime);
-                                    if (execAtTimeDateTime != null
-                                            && lastExecTimeDateTime.isBefore(execAtTimeDateTime)
-                                            && nextExecTimeDateTime.isAfter(execAtTimeDateTime)) {
+                                    if (execAtTimeDateTime != null && lastExecTimeDateTime.isBefore(execAtTimeDateTime) && nextExecTimeDateTime.isAfter(execAtTimeDateTime)) {
                                       Log.record("设置定时执行:" + execAtTime);
                                       // 执行延时操作
                                       execDelayedHandler(ChronoUnit.MILLIS.between(lastExecTimeDateTime, execAtTimeDateTime));
@@ -393,6 +392,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         for (int i = 1, len = wakenAtTimeList.size(); i < len; i++) {
           try {
             String wakenAtTime = wakenAtTimeList.get(i);
+            if (wakenAtTime.equals("-1")) return;
             LocalDateTime wakenAtTimeDateTime = TimeUtil.getTodayLocalDateTimeByTimeStr(wakenAtTime);
             if (wakenAtTimeDateTime != null) {
               if (wakenAtTimeDateTime.isAfter(now)) {

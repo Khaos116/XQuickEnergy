@@ -14,7 +14,7 @@ android {
     def major = 1          // 主版本号
     def minor = 5          // 次版本号
     def patch = 4          // 补丁版本号
-    def buildTag = "alpha" // 构建标签 (alpha, beta, release, 等)
+    def buildTag = "alphafix" // 构建标签 (alpha, beta, release, 等)
     def buildDate
     def buildDate2
     def buildTime
@@ -56,6 +56,9 @@ android {
     if (buildTag == "alpha"||buildTag == "beta") {
         _versionName = "${buildDate2}.${buildTag}.${buildTime2}" // 版本名称改用好分辨的格式
     }
+    else if (buildTag == "alphafix"||buildTag == "betafix") {
+        _versionName = "${buildDate2}.${buildTag}.${buildTime2}.fix" // 版本名称改用好分辨的格式
+    }
     else {
         _versionName = "${major}.${minor}.${patch}.${buildTag}"
         buildTag = ""
@@ -93,7 +96,7 @@ android {
         compatible {
             dimension "default" // 兼容产品风味
             ext.applicationType = "Compatible"
-            minSdk 21    // 支持较老的 Android 版本
+            minSdk 26    // 支持较老的 Android 版本
             targetSdk 27
         }
     }

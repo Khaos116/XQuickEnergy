@@ -529,7 +529,6 @@ public class AntForest extends ModelTask {
           }
         }
         if (exchangeEnergyDoubleClick.getValue() && StatusUtil.canExchangeDoubleCardToday()) {
-          exchangeEnergyDoubleClickCount.getValue();
           exchangeEnergyDoubleClick();
         }
         if (exchangeEnergyDoubleClickLongTime.getValue() && StatusUtil.canExchangeDoubleCardTodayLongTime()) {
