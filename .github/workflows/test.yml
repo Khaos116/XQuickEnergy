@@ -58,14 +58,14 @@ jobs:
           
           # 临时文件用于存储中文日志
           TEMP_LOG_FILE=$(mktemp)
-    
-          # 遍历每条日志并替换换行符为 Markdown 格式
+          
+          # 遍历每条日志
           while IFS= read -r entry; do
             # 使用 grep 来检查日志中是否包含中文字符
             if echo "$entry" | grep -Pq '[\x{4e00}-\x{9fa5}]'; then
               # 去除 * 字符并保存到临时文件
               entry=$(echo "$entry" | sed 's/\*//g')
-              echo "$entry<br>" >> "$TEMP_LOG_FILE"  # 使用 <br> 标签替换换行符
+              echo "$entry" >> "$TEMP_LOG_FILE"
             fi
           done <<< "$CHANGELOG"
           
@@ -76,7 +76,7 @@ jobs:
           PROCESSED_CHANGELOG=""
           INDEX=1
           while IFS= read -r unique_entry; do
-            PROCESSED_CHANGELOG+="$INDEX. $unique_entry\n"
+            PROCESSED_CHANGELOG+="$INDEX. $unique_entry  "
             INDEX=$((INDEX + 1))
           done <<< "$SORTED_UNIQUE_CHANGELOG"
           
