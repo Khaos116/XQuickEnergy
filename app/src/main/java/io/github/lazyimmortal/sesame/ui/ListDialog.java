@@ -30,7 +30,6 @@ import io.github.lazyimmortal.sesame.entity.CooperateUser;
 import io.github.lazyimmortal.sesame.entity.FriendWatch;
 import io.github.lazyimmortal.sesame.entity.IdAndName;
 import io.github.lazyimmortal.sesame.entity.WalkPath;
-import io.github.lazyimmortal.sesame.util.ToastUtil;
 import io.github.lazyimmortal.sesame.util.idMap.*;
 
 import java.util.List;
@@ -139,7 +138,7 @@ public class ListDialog {
                         break;
                 }
                 if (index < 0) {
-                    ToastUtil.show(v.getContext(), "未搜到");
+                    Toast.makeText(v.getContext(), "未搜到", Toast.LENGTH_SHORT).show();
                 } else {
                     lv_list.setSelection(index);
                 }

@@ -4,7 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Iterator;
-import java.util.Objects;
 
 import io.github.lazyimmortal.sesame.data.TokenConfig;
 import io.github.lazyimmortal.sesame.hook.Toast;
@@ -24,26 +23,26 @@ public class ExtendHandle {
             return;
         }
         switch (type) {
-            case "antForest":
-                if (Objects.equals("getTreeItems", fun)) {
-                    getTreeItems();
-                } else if (Objects.equals("getNewTreeItems", fun)) {
-                    getNewTreeItems();
-                } else if (Objects.equals("queryAreaTrees", fun)) {
-                    queryAreaTrees();
-                } else if (Objects.equals("getUnlockTreeItems", fun)) {
-                    getUnlockTreeItems();
-                }
+            case "getTreeItems":
+                getTreeItems();
+                break;
+            case "getNewTreeItems":
+                getNewTreeItems();
+                break;
+            case "queryAreaTrees":
+                queryAreaTrees();
+                break;
+            case "getUnlockTreeItems":
+                getUnlockTreeItems();
                 break;
             case "setCustomWalkPathIdList":
                 addCustomWalkPathIdList(data);
                 break;
-            case "setCustomWalkPathIdQueue":
-                if (Objects.equals("addCustomWalkPathIdQueue", fun)) {
-                    addCustomWalkPathIdQueue(data);
-                } else if (Objects.equals("clearCustomWalkPathIdQueue", fun)) {
-                    clearCustomWalkPathIdQueue();
-                }
+            case "addCustomWalkPathIdQueue":
+                addCustomWalkPathIdQueue(data);
+                break;
+            case "clearCustomWalkPathIdQueue":
+                clearCustomWalkPathIdQueue();
                 break;
         }
     }

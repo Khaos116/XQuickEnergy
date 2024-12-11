@@ -13,15 +13,15 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
-
-import java.io.File;
 
 import io.github.lazyimmortal.sesame.R;
 import io.github.lazyimmortal.sesame.util.FileUtil;
 import io.github.lazyimmortal.sesame.util.LanguageUtil;
-import io.github.lazyimmortal.sesame.util.ToastUtil;
+
+import java.io.File;
 
 public class HtmlViewerActivity extends BaseActivity {
     MyWebView mWebView;
@@ -103,7 +103,7 @@ public class HtmlViewerActivity extends BaseActivity {
                     if (path != null) {
                         File exportFile = FileUtil.exportFile(new File(path));
                         if (exportFile != null) {
-                            ToastUtil.show(this, "文件已导出到: " + exportFile.getPath());
+                            Toast.makeText(this, "文件已导出到: " + exportFile.getPath(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -115,7 +115,7 @@ public class HtmlViewerActivity extends BaseActivity {
                     if (path != null) {
                         File file = new File(path);
                         if (FileUtil.clearFile(file)) {
-                            ToastUtil.show(this, "文件已清空");
+                            android.widget.Toast.makeText(this, "文件已清空", android.widget.Toast.LENGTH_SHORT).show();
                             mWebView.reload();
                         }
                     }
@@ -129,9 +129,9 @@ public class HtmlViewerActivity extends BaseActivity {
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                         startActivity(intent);
                     } else if ("file".equalsIgnoreCase(scheme)) {
-                        ToastUtil.show(this, "该文件不支持用浏览器打开");
+                        Toast.makeText(this, "该文件不支持用浏览器打开", Toast.LENGTH_SHORT).show();
                     } else {
-                        ToastUtil.show(this, "不支持用浏览器打开");
+                        Toast.makeText(this, "不支持用浏览器打开", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;
@@ -139,7 +139,7 @@ public class HtmlViewerActivity extends BaseActivity {
             case 4:
                 ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 cm.setPrimaryClip(ClipData.newPlainText(null, mWebView.getUrl()));
-                ToastUtil.show(this, getString(R.string.copy_success));
+                Toast.makeText(this, getString(R.string.copy_success), Toast.LENGTH_SHORT).show();
                 break;
 
             case 5:

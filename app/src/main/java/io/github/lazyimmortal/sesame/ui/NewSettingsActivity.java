@@ -8,15 +8,25 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.webkit.*;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.github.lazyimmortal.sesame.BuildConfig;
+import io.github.lazyimmortal.sesame.R;
+import io.github.lazyimmortal.sesame.data.*;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.common.SelectModelFieldFunc;
+import io.github.lazyimmortal.sesame.data.task.ModelTask;
+import io.github.lazyimmortal.sesame.entity.AlipayUser;
+import io.github.lazyimmortal.sesame.model.extend.ExtendHandle;
+import io.github.lazyimmortal.sesame.ui.dto.ModelDto;
+import io.github.lazyimmortal.sesame.ui.dto.ModelFieldInfoDto;
+import io.github.lazyimmortal.sesame.ui.dto.ModelFieldShowDto;
+import io.github.lazyimmortal.sesame.ui.dto.ModelGroupDto;
+import io.github.lazyimmortal.sesame.util.*;
+import io.github.lazyimmortal.sesame.util.idMap.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,44 +37,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import io.github.lazyimmortal.sesame.BuildConfig;
-import io.github.lazyimmortal.sesame.R;
-import io.github.lazyimmortal.sesame.data.AppConfig;
-import io.github.lazyimmortal.sesame.data.ConfigV2;
-import io.github.lazyimmortal.sesame.data.Model;
-import io.github.lazyimmortal.sesame.data.ModelConfig;
-import io.github.lazyimmortal.sesame.data.ModelField;
-import io.github.lazyimmortal.sesame.data.ModelFields;
-import io.github.lazyimmortal.sesame.data.ModelGroup;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.common.SelectModelFieldFunc;
-import io.github.lazyimmortal.sesame.data.task.ModelTask;
-import io.github.lazyimmortal.sesame.entity.AlipayUser;
-import io.github.lazyimmortal.sesame.model.extend.ExtendHandle;
-import io.github.lazyimmortal.sesame.ui.dto.ModelDto;
-import io.github.lazyimmortal.sesame.ui.dto.ModelFieldInfoDto;
-import io.github.lazyimmortal.sesame.ui.dto.ModelFieldShowDto;
-import io.github.lazyimmortal.sesame.ui.dto.ModelGroupDto;
-import io.github.lazyimmortal.sesame.util.AESUtil;
-import io.github.lazyimmortal.sesame.util.FileUtil;
-import io.github.lazyimmortal.sesame.util.JsonUtil;
-import io.github.lazyimmortal.sesame.util.LanguageUtil;
-import io.github.lazyimmortal.sesame.util.Log;
-import io.github.lazyimmortal.sesame.util.StringUtil;
-import io.github.lazyimmortal.sesame.util.ToastUtil;
-import io.github.lazyimmortal.sesame.util.idMap.AnimalIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.BeachIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.CooperationIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.FarmOrnamentsIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.MarathonIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.MemberBenefitIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.NewAncientTreeIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.PromiseSimpleTemplateIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.ReserveIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.TreeIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.VitalityBenefitIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.WalkPathIdMap;
 
 public class NewSettingsActivity extends BaseActivity {
 
@@ -158,7 +130,7 @@ public class NewSettingsActivity extends BaseActivity {
                     return true;
                 }
                 view.stopLoading();
-                ToastUtil.show(context, "Forbidden Scheme:\"" + scheme + "\"");
+                Toast.makeText(context, "Forbidden Scheme:\"" + scheme + "\"", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
@@ -394,9 +366,9 @@ public class NewSettingsActivity extends BaseActivity {
                                 userConfigDirectoryFile = FileUtil.getUserConfigDirectoryFile(userId);
                             }
                             if (FileUtil.deleteFile(userConfigDirectoryFile)) {
-                                ToastUtil.show(this, "配置删除成功");
+                                Toast.makeText(this, "配置删除成功", Toast.LENGTH_SHORT).show();
                             } else {
-                                ToastUtil.show(this, "配置删除失败");
+                                Toast.makeText(this, "配置删除失败", Toast.LENGTH_SHORT).show();
                             }
                             finish();
                         })
@@ -416,7 +388,7 @@ public class NewSettingsActivity extends BaseActivity {
                     finish();
                     startActivity(intent);
                 } else {
-                    ToastUtil.show(this, "切换失败");
+                    Toast.makeText(this, "切换失败", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
@@ -441,13 +413,13 @@ public class NewSettingsActivity extends BaseActivity {
                     }
                     FileInputStream inputStream = new FileInputStream(configV2File);
                     if (FileUtil.streamTo(inputStream, getContentResolver().openOutputStream(data.getData()))) {
-                        ToastUtil.show(this, "导出成功！");
+                        Toast.makeText(this, "导出成功！", Toast.LENGTH_SHORT).show();
                     } else {
-                        ToastUtil.show(this, "导出失败！");
+                        Toast.makeText(this, "导出失败！", Toast.LENGTH_SHORT).show();
                     }
                 } catch (IOException e) {
                     Log.printStackTrace(e);
-                    ToastUtil.show(this, "导出失败！");
+                    Toast.makeText(this, "导出失败！", Toast.LENGTH_SHORT).show();
                 }
             }
         } else if (requestCode == IMPORT_REQUEST_CODE) {
@@ -462,7 +434,7 @@ public class NewSettingsActivity extends BaseActivity {
                     }
                     FileOutputStream outputStream = new FileOutputStream(configV2File);
                     if (FileUtil.streamTo(getContentResolver().openInputStream(data.getData()), outputStream)) {
-                        ToastUtil.show(this, "导入成功！");
+                        Toast.makeText(this, "导入成功！", Toast.LENGTH_SHORT).show();
                         if (!StringUtil.isEmpty(userId)) {
                             try {
                                 Intent intent = new Intent("com.eg.android.AlipayGphone.sesame.restart");
@@ -476,11 +448,11 @@ public class NewSettingsActivity extends BaseActivity {
                         finish();
                         startActivity(intent);
                     } else {
-                        ToastUtil.show(this, "导入失败！");
+                        Toast.makeText(this, "导入失败！", Toast.LENGTH_SHORT).show();
                     }
                 } catch (IOException e) {
                     Log.printStackTrace(e);
-                    ToastUtil.show(this, "导入失败！");
+                    Toast.makeText(this, "导入失败！", Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -488,7 +460,7 @@ public class NewSettingsActivity extends BaseActivity {
 
     private void save() {
         if (ConfigV2.isModify(userId) && ConfigV2.save(userId, false)) {
-            ToastUtil.show(this, "保存成功！");
+            Toast.makeText(this, "保存成功！", Toast.LENGTH_SHORT).show();
             if (!StringUtil.isEmpty(userId)) {
                 try {
                     Intent intent = new Intent("com.eg.android.AlipayGphone.sesame.restart");
