@@ -9,4 +9,4 @@
 ### 本仓库仅记录使用
 ### 新版本可前往以下链接：
 ##### [@Fansirsqi](https://github.com/Fansirsqi) 维护的 [Sesame](https://github.com/Fansirsqi/Sesame-TK)
-##### [@lazy-immortal](https://github.com/lazy-immortal) 维护的 [Sesame](https://github.com/lazy-immortal/Sesame)
+##### [@LazyImmortal](https://github.com/LazyImmortal) 维护的 [Sesame](https://github.com/LazyImmortal/Sesame)
