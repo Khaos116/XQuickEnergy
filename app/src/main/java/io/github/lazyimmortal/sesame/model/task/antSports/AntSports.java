@@ -187,8 +187,8 @@ public class AntSports extends ModelTask {
                 return;
             }
             jo = jo.getJSONObject("data");
-            JSONArray taskList = jo.getJSONArray("taskList");
-            for (int i = 0; i < taskList.length(); i++) {
+            JSONArray taskList = MyUtils.antSportTaskListMaybeNull(jo);//CHANGE BY KT
+            if (taskList != null) for (int i = 0; i < taskList.length(); i++) {
                 jo = taskList.getJSONObject(i);
 
                 String taskStatus = jo.getString("taskStatus");
@@ -754,8 +754,8 @@ public class AntSports extends ModelTask {
             if (!MessageUtil.checkResultCode(TAG, jo)) {
                 return false;
             }
-            JSONArray userExchangeRecords = jo.getJSONArray("userExchangeRecords");
-            if (userExchangeRecords.length() == 0) {
+            JSONArray userExchangeRecords = MyUtils.antSportUserExchangeRecordsMaybeNull(jo);//CHANGE BY KT
+            if (userExchangeRecords == null || userExchangeRecords.length() == 0) {
                 return true;
             }
             jo = userExchangeRecords.getJSONObject(0);
