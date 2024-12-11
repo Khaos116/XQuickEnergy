@@ -37,9 +37,7 @@ public abstract class ModelTask extends Model {
             }
             MAIN_TASK_MAP.put(task, Thread.currentThread());
             try {
-                Log.record("🅾️【" + getName() + "】模块🔜执行开始🎬");
                 task.run();
-                Log.record("💯【" + getName() + "】模块🔜执行完毕🔚");
             } catch (Exception e) {
                 Log.printStackTrace(e);
             } finally {

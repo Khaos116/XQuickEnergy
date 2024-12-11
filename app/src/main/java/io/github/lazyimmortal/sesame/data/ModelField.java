@@ -6,19 +6,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import io.github.lazyimmortal.sesame.R;
-import io.github.lazyimmortal.sesame.util.JsonUtil;
-import io.github.lazyimmortal.sesame.util.TypeUtil;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Objects;
+
+import io.github.lazyimmortal.sesame.R;
+import io.github.lazyimmortal.sesame.util.JsonUtil;
+import io.github.lazyimmortal.sesame.util.ToastUtil;
+import io.github.lazyimmortal.sesame.util.TypeUtil;
+import lombok.Data;
 
 @Data
 public class ModelField<T> implements Serializable {
@@ -132,7 +133,7 @@ public class ModelField<T> implements Serializable {
         btn.setMaxHeight(180);
         btn.setPaddingRelative(40, 0, 40, 0);
         btn.setAllCaps(false);
-        btn.setOnClickListener(v -> Toast.makeText(context, "无配置项", Toast.LENGTH_SHORT).show());
+        btn.setOnClickListener(v -> ToastUtil.show(context, "无配置项"));
         return btn;
     }
 

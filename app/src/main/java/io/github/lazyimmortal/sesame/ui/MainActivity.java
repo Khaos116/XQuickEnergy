@@ -85,9 +85,7 @@ public class MainActivity extends BaseActivity {
                             }
                             viewHandler.removeCallbacks(titleRunner);
                             if (isClick) {
-                                Toast toast = Toast.makeText(context, "芝麻粒加载状态正常", Toast.LENGTH_SHORT);
-                                toast.setGravity(toast.getGravity(), toast.getXOffset(), BaseModel.getToastOffsetY().getValue());
-                                toast.show();
+                                ToastUtil.show(context, "芝麻粒加载状态正常");
                                 isClick = false;
                             }
                             break;
@@ -107,7 +105,7 @@ public class MainActivity extends BaseActivity {
         } else {
             registerReceiver(broadcastReceiver, intentFilter);
         }
-        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.tips);
         builder.setMessage(R.string.start_message);
         builder.setPositiveButton(R.string.btn_understood, (dialog, which) -> dialog.dismiss());
@@ -247,7 +245,7 @@ public class MainActivity extends BaseActivity {
             //   项目开源且公益  维护都是自愿
             //   但是如果打包改个名拿去卖钱忽悠小白
             //   那我只能说你妈死了 就当开源项目给你妈烧纸钱了
-                data = "https://github.com/lazy-immortal/Sesame";
+                data = "https://github.com/LazyImmortal/Sesame";
                 break;
 
             case R.id.btn_settings:
@@ -306,7 +304,7 @@ public class MainActivity extends BaseActivity {
             case 3:
                 File errorLogFile = FileUtil.exportFile(FileUtil.getErrorLogFile());
                 if (errorLogFile != null) {
-                    Toast.makeText(this, "文件已导出到: " + errorLogFile.getPath(), Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(this, "文件已导出到: " + errorLogFile.getPath());
                 }
                 break;
 
@@ -323,21 +321,21 @@ public class MainActivity extends BaseActivity {
             case 5:
                 File allLogFile = FileUtil.exportFile(FileUtil.getRuntimeLogFile());
                 if (allLogFile != null) {
-                    Toast.makeText(this, "文件已导出到: " + allLogFile.getPath(), Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(this, "文件已导出到: " + allLogFile.getPath());
                 }
                 break;
 
             case 6:
                 File statisticsFile = FileUtil.exportFile(FileUtil.getStatisticsFile());
                 if (statisticsFile != null) {
-                    Toast.makeText(this, "文件已导出到: " + statisticsFile.getPath(), Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(this, "文件已导出到: " + statisticsFile.getPath());
                 }
                 break;
 
             case 7:
                 if (FileUtil.copyTo(FileUtil.getExportedStatisticsFile(), FileUtil.getStatisticsFile())) {
                     tvStatistics.setText(Statistics.getText());
-                    Toast.makeText(this, "导入成功！", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(this, "导入成功！");
                 }
                 break;
 
@@ -399,7 +397,7 @@ public class MainActivity extends BaseActivity {
         }
         int length = userNameArray.length;
         if (length > 0 && length < 3) {
-            new Thread(()-> {
+            new Thread(() -> {
                 TimeUtil.sleep(800);
                 if (!selected.get()) {
                     alertDialog.dismiss();

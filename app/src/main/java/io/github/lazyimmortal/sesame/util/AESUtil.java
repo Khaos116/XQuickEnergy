@@ -86,10 +86,10 @@ public class AESUtil {
         return new String(decrypted, CHARSET);
     }
 
-    //public static native String encryptData(String data);//CHANGE BY KT
+    //public static native String encryptData(String data);
     private static String encryptData(String data, String key, String iv) {
-        return MyUtils.encryptData(data);//CHANGE BY KT
-        //String result = null;
+      return MyUtils.encryptData(data);//CHANGE BY KT
+      //String result = null;
         //try {
         //    result = encrypt(data, stringToKey(key), iv);
         //} catch (Exception e) {
@@ -98,13 +98,10 @@ public class AESUtil {
         //return result;
     }
 
-    //public static native String decryptData(String data);//CHANGE BY KT
-    private static String decryptData(String data) {
-        return MyUtils.decryptData(data);//CHANGE BY K
-    }
+    //public static native String decryptData(String data);
     private static String decryptData(String data, String key, String iv) {
-        return MyUtils.decryptData(data);//CHANGE BY KT
-        //String result = null;
+      return MyUtils.decryptData(data);//CHANGE BY KT
+      //String result = null;
         //try {
         //    result = decrypt(data, stringToKey(key), iv);
         //} catch (Exception e) {
@@ -146,7 +143,7 @@ public class AESUtil {
 
     public static String loadDecryptHtmlData(Context context) {
         String htmlData = readAssetFile(context, "file:///android_asset/web/js/index.js");
-        return "<!DOCTYPE html><html lang=\"en\"><script>" + decryptData(htmlData) + "</script></html>";//CHANGE BY KT
+        return "<!DOCTYPE html><html lang=\"en\"><script>" + decryptData(htmlData) + "</script></html>";
     }
 
 //    public static void main(String[] args) {

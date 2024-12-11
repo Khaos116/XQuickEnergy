@@ -7,7 +7,7 @@
     <color name="main_button_text">#290C4C</color>
     <color name="button">#216EEE</color>
     <color name="button_pressed">#219FFF</color>
-    <color name="button_text">#FFFFFF</color>   
+    <color name="button_text">#FFFFFF</color>
     <color name="dashboard_item_1">#216EEE</color>
     <color name="dashboard_item_2">#5351FC</color>
     <color name="dashboard_item_3">#E64000</color>
@@ -17,6 +17,5 @@
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="textColorDisable">#333333</color>
     <color name="navigationBarColor">#AA000000</color>
-    <color name="color_alpha">#00000000</color>
-    <color name="color_btn_down">#F0F0F0</color>
+
 </resources>

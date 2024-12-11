@@ -63,7 +63,7 @@ public class AntSports extends ModelTask {
         ModelFields modelFields = new ModelFields();
         modelFields.addField(walk = new BooleanModelField("walk", "行走路线 | 开启", false));
         modelFields.addField(walkPathTheme = new ChoiceModelField("walkPathTheme", "行走路线 | 路线主题", WalkPathTheme.DA_MEI_ZHONG_GUO, WalkPathTheme.nickNames));
-        modelFields.addField(walkCustomPathIdList = new SelectModelField("walkCustomPathIdList", "行走路线 | 自定义路线列表", new LinkedHashSet<>(), WalkPath::getList));
+        modelFields.addField(walkCustomPathIdList = new SelectModelField("walkCustomPathIdList", "行走路线 | 自定义路线列表", new LinkedHashSet<>(), WalkPath::getList, "请选择要行走的路线，选择多条则随机走其中一条"));
         modelFields.addField(sportsTasks = new BooleanModelField("sportsTasks", "运动任务", false));
         modelFields.addField(receiveCoinAsset = new BooleanModelField("receiveCoinAsset", "收运动币", false));
         modelFields.addField(donateCharityCoinType = new ChoiceModelField("donateCharityCoinType", "捐运动币 | 方式", DonateCharityCoinType.ZERO, DonateCharityCoinType.nickNames));
@@ -187,8 +187,8 @@ public class AntSports extends ModelTask {
                 return;
             }
             jo = jo.getJSONObject("data");
-            JSONArray taskList = MyUtils.antSportTaskListMaybeNull(jo);//CHANGE BY KT
-            if (taskList != null) for (int i = 0; i < taskList.length(); i++) {
+            JSONArray taskList = jo.getJSONArray("taskList");
+            for (int i = 0; i < taskList.length(); i++) {
                 jo = taskList.getJSONObject(i);
 
                 String taskStatus = jo.getString("taskStatus");
@@ -754,8 +754,8 @@ public class AntSports extends ModelTask {
             if (!MessageUtil.checkResultCode(TAG, jo)) {
                 return false;
             }
-            JSONArray userExchangeRecords = MyUtils.antSportUserExchangeRecordsMaybeNull(jo);//CHANGE BY KT
-            if (userExchangeRecords == null || userExchangeRecords.length() == 0) {
+            JSONArray userExchangeRecords = jo.getJSONArray("userExchangeRecords");
+            if (userExchangeRecords.length() == 0) {
                 return true;
             }
             jo = userExchangeRecords.getJSONObject(0);
