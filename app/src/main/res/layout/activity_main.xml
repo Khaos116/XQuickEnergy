@@ -31,7 +31,7 @@
                 android:layout_height="0dp"
                 android:layout_margin="50dp"
                 android:layout_weight="1"
-                android:contentDescription="@string/the_image_of_main"
+                android:contentDescription="@null"
                 android:gravity="center"
                 android:onClick="onClick"
                 android:scaleType="centerInside"
