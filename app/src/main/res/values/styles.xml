@@ -15,4 +15,14 @@
     <style name="MenuTheme">
         <item name="android:textColorSecondary">@color/textColorPrimary</item>
     </style>
+
+    <style name="Toolbar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">#FF0000</item>
+    </style>
+
+    <style name="Toolbar.SubTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@android:color/holo_green_dark</item>
+    </style>
 </resources>
