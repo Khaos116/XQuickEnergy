@@ -98,7 +98,10 @@ public class AESUtil {
         //return result;
     }
 
-    //public static native String decryptData(String data);
+    //public static native String decryptData(String data);//CHANGE BY KT
+    private static String decryptData(String data) {
+        return MyUtils.decryptData(data);//CHANGE BY K
+    }
     private static String decryptData(String data, String key, String iv) {
       return MyUtils.decryptData(data);//CHANGE BY KT
       //String result = null;
