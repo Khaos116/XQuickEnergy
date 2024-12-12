@@ -1,10 +1,14 @@
 package io.github.lazyimmortal.sesame.util;
 
+import android.content.Context;
+
 import com.fasterxml.jackson.databind.JsonMappingException;
-import lombok.Data;
 
 import java.io.File;
 import java.util.Calendar;
+
+import io.github.lazyimmortal.sesame.R;
+import lombok.Data;
 
 @Data
 public class Statistics {
@@ -79,6 +83,23 @@ public class Statistics {
         table.append("\n今月  收: ").append(getData(TimeType.MONTH, DataType.COLLECTED)).append(" 帮: ").append(getData(TimeType.MONTH, DataType.HELPED)).append(" 浇: ").append(getData(TimeType.MONTH, DataType.WATERED));
         table.append("\n今日  收: ").append(getData(TimeType.DAY, DataType.COLLECTED)).append(" 帮: ").append(getData(TimeType.DAY, DataType.HELPED)).append(" 浇: ").append(getData(TimeType.DAY, DataType.WATERED));
         return table.toString();
+    }
+
+    public static String getText(Context context) {
+        return getText(
+                context.getString(R.string.year),
+                context.getString(R.string.month),
+                context.getString(R.string.day),
+                context.getString(R.string.collected),
+                context.getString(R.string.helped),
+                context.getString(R.string.watered)
+        );
+    }
+
+    public static String getText(String year, String month, String day, String collected, String helped, String watered) {
+        return year + "  " + collected + ": " + getData(TimeType.YEAR, DataType.COLLECTED) + " " + helped + ": " + getData(TimeType.YEAR, DataType.HELPED) + " " + watered + ": " + getData(TimeType.YEAR, DataType.WATERED) +
+                "\n" + month + "  " + collected + ": " + getData(TimeType.MONTH, DataType.COLLECTED) + " " + helped + ": " + getData(TimeType.MONTH, DataType.HELPED) + " " + watered + ": " + getData(TimeType.MONTH, DataType.WATERED) +
+                "\n" + day + "  " + collected + ": " + getData(TimeType.DAY, DataType.COLLECTED) + " " + helped + ": " + getData(TimeType.DAY, DataType.HELPED) + " " + watered + ": " + getData(TimeType.DAY, DataType.WATERED);
     }
 
     public static synchronized Statistics load() {

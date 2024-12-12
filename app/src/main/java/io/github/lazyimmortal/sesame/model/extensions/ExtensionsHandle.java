@@ -1,4 +1,4 @@
-package io.github.lazyimmortal.sesame.model.extend;
+package io.github.lazyimmortal.sesame.model.extensions;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,8 +15,8 @@ import io.github.lazyimmortal.sesame.util.StringUtil;
 import io.github.lazyimmortal.sesame.util.TimeUtil;
 import io.github.lazyimmortal.sesame.util.idMap.WalkPathIdMap;
 
-public class ExtendHandle {
-    private static final String TAG = ExtendHandle.class.getSimpleName();
+public class ExtensionsHandle {
+    private static final String TAG = ExtensionsHandle.class.getSimpleName();
 
     public static void handleRequest(String type, String fun, String data) {
         if (handleAlphaRequest(type, fun, data)) {
@@ -57,7 +57,7 @@ public class ExtendHandle {
 
     public static Boolean handleAlphaRequest(String type, String fun, String data) {
         try {
-            return (Boolean) Class.forName("io.github.lazyimmortal.sesame.model.extend.ExtendHandleAlpha")
+            return (Boolean) Class.forName("io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandleAlpha")
                     .getMethod("handleAlphaRequest", String.class, String.class, String.class)
                     .invoke(null, type, fun, data);
         } catch (Exception e) {

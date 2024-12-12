@@ -4,15 +4,19 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Base64;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class AESUtil {
 
@@ -106,6 +110,28 @@ public class AESUtil {
             throw new RuntimeException(e);
         }
         return result;
+    }
+
+    public static String readZipFile(String zipFilePath, String filePath) {
+        try {
+            ZipFile zipFile = new ZipFile(zipFilePath);
+            ZipEntry entry = zipFile.getEntry(filePath);
+            if (entry != null) {
+                InputStream inputStream = zipFile.getInputStream(entry);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                StringBuilder content = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line).append("\n");
+                }
+                reader.close();
+                inputStream.close();
+                return content.toString();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
     public static String readAssetFile(Context context, String filePath) {

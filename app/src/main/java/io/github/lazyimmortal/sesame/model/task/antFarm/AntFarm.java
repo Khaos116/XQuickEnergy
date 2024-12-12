@@ -15,7 +15,7 @@ import io.github.lazyimmortal.sesame.entity.AlipayUser;
 import io.github.lazyimmortal.sesame.entity.CustomOption;
 import io.github.lazyimmortal.sesame.entity.FarmOrnaments;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
-import io.github.lazyimmortal.sesame.model.extend.ExtendHandle;
+import io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandle;
 import io.github.lazyimmortal.sesame.model.normal.answerAI.AnswerAI;
 import io.github.lazyimmortal.sesame.rpc.intervallimit.RpcIntervalLimit;
 import io.github.lazyimmortal.sesame.util.*;
@@ -2230,7 +2230,7 @@ public class AntFarm extends ModelTask {
         if (StringUtil.isEmpty(ownerGroupId)) {
             return;
         }
-        ExtendHandle.handleAlphaRequest("antFarm", "doFamilyTask");
+        ExtensionsHandle.handleAlphaRequest("antFarm", "doFamilyTask");
         try {
             JSONObject jo = enterFamily();
             if (jo == null) {

@@ -27,7 +27,7 @@ import io.github.lazyimmortal.sesame.entity.AlipayVersion;
 import io.github.lazyimmortal.sesame.entity.FriendWatch;
 import io.github.lazyimmortal.sesame.entity.RpcEntity;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
-import io.github.lazyimmortal.sesame.model.extend.TestRpc;
+import io.github.lazyimmortal.sesame.model.extensions.TestRpc;
 import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
 import io.github.lazyimmortal.sesame.model.task.antMember.AntMemberRpcCall;
 import io.github.lazyimmortal.sesame.rpc.bridge.NewRpcBridge;
