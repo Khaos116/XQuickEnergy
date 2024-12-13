@@ -221,8 +221,12 @@ jobs:
             # 获取当前时间并格式化为 YYYYMMDD_HHMM (GMT+8)
             TIMESTAMP=$(date +"%Y%m%d_%H%M")
 
-            # 生成新的文件名
-            NEW_NAME="XQE_lazy_${TAGS}fix_${TIMESTAMP}.apk"
+            # 生成新的文件名 判断 TAGS 是否包含 "fix"
+            if [[ "$TAGS" == *fix* ]]; then
+              NEW_NAME="XQE_lazy_${TAGS}_${TIMESTAMP}.apk"
+            else
+              NEW_NAME="XQE_lazy_${TAGS}fix_${TIMESTAMP}.apk"
+            fi
 
             # 重命名文件
             mv "$LATEST_APK" "$APK_DIR/$NEW_NAME"
@@ -245,7 +249,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.DEFAULT_TAG }}  # 使用默认分支的最新标签
-          name: "XQE_lazy_${{ env.TAGS }}fix版"  # 自定义发布标题
+          name: ${{ contains(env.TAGS, 'fix') && format('XQE_lazy_{0}版', env.TAGS) || format('XQE_lazy_{0}fix版', env.TAGS) }}  # 自定义发布标题
           body: "该版本由Github Actions自动编译发布<br>${{ env.FINAL_CHANGELOG_WITH_BR }}"  # 使用经过换行符处理后的内容
           files: ${{ env.APK_FILE }}  # 发布最新的 APK 文件
           draft: false  # 确保不是草稿
