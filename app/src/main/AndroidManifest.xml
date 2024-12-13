@@ -68,7 +68,7 @@
             tools:ignore="MissingClass" />
 
         <activity
-            android:name="io.github.lazyimmortal.sesame.ui.ExtendActivity"
+            android:name="io.github.lazyimmortal.sesame.ui.ExtensionsActivity"
             android:resizeableActivity="true"
             tools:targetApi="n" />
 

@@ -13,7 +13,7 @@ import io.github.lazyimmortal.sesame.R;
 import io.github.lazyimmortal.sesame.data.TokenConfig;
 import io.github.lazyimmortal.sesame.util.ToastUtil;
 
-public class ExtendActivity extends BaseActivity {
+public class ExtensionsActivity extends BaseActivity {
 
     Button btnGetTreeItems, btnGetNewTreeItems;
     Button btnQueryAreaTrees, btnGetUnlockTreeItems;
@@ -25,7 +25,7 @@ public class ExtendActivity extends BaseActivity {
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_extend);
-        setBaseTitle(getString(R.string.extend_options));
+        setBaseTitle(getString(R.string.extensions));
         btnGetTreeItems = findViewById(R.id.btn_get_tree_items);
         btnGetNewTreeItems = findViewById(R.id.btn_get_newTree_items);
         btnQueryAreaTrees = findViewById(R.id.btn_query_area_trees);
@@ -40,7 +40,7 @@ public class ExtendActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 sendItemsBroadcast("antForest", "getTreeItems", null);
-                ToastUtil.show(ExtendActivity.this, "已发送查询请求，请在森林日志查看结果！");
+                ToastUtil.show(ExtensionsActivity.this, "已发送查询请求，请在森林日志查看结果！");
             }
         });
 
@@ -48,7 +48,7 @@ public class ExtendActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 sendItemsBroadcast("antForest", "getNewTreeItems", null);
-                ToastUtil.show(ExtendActivity.this, "已发送查询请求，请在森林日志查看结果！");
+                ToastUtil.show(ExtensionsActivity.this, "已发送查询请求，请在森林日志查看结果！");
             }
         });
 
@@ -56,7 +56,7 @@ public class ExtendActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 sendItemsBroadcast("antForest", "queryAreaTrees", null);
-                ToastUtil.show(ExtendActivity.this, "已发送查询请求，请在森林日志查看结果！");
+                ToastUtil.show(ExtensionsActivity.this, "已发送查询请求，请在森林日志查看结果！");
             }
         });
 
@@ -64,12 +64,12 @@ public class ExtendActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 sendItemsBroadcast("antForest", "getUnlockTreeItems", null);
-                ToastUtil.show(ExtendActivity.this, "已发送查询请求，请在森林日志查看结果！");
+                ToastUtil.show(ExtensionsActivity.this, "已发送查询请求，请在森林日志查看结果！");
             }
         });
 
         btnClearDishImage.setOnClickListener(v -> {
-            Context context = ExtendActivity.this;
+            Context context = ExtensionsActivity.this;
             new AlertDialog.Builder(context)
                     .setTitle(R.string.clear_dish_image)
                     .setMessage("确认执行该操作？")
@@ -85,7 +85,7 @@ public class ExtendActivity extends BaseActivity {
         });
 
         btnSetCustomWalkPathId.setOnClickListener(v -> {
-            Context context = ExtendActivity.this;
+            Context context = ExtensionsActivity.this;
             EditText input = new EditText(context);
             input.setHint(R.string.msg_input_custom_walk_path_id);
 
@@ -98,7 +98,7 @@ public class ExtendActivity extends BaseActivity {
                     }).show();
         });
         btnSetCustomWalkPathIdQueue.setOnClickListener(v -> {
-            Context context = ExtendActivity.this;
+            Context context = ExtensionsActivity.this;
             EditText input = new EditText(context);
             input.setHint(R.string.msg_input_custom_walk_path_id);
 
@@ -117,9 +117,9 @@ public class ExtendActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    startActivity(new Intent(ExtendActivity.this, Class.forName("io.github.lazyimmortal.sesame.ui.AlphaActivity")));
+                    startActivity(new Intent(ExtensionsActivity.this, Class.forName("io.github.lazyimmortal.sesame.ui.AlphaActivity")));
                 } catch (Exception e) {
-                    ToastUtil.show(ExtendActivity.this, "不符合开启资格！");
+                    ToastUtil.show(ExtensionsActivity.this, "不符合开启资格！");
                 }
             }
         });

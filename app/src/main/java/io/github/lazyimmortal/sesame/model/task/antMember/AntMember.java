@@ -12,7 +12,7 @@ import io.github.lazyimmortal.sesame.entity.CustomOption;
 import io.github.lazyimmortal.sesame.entity.MemberBenefit;
 import io.github.lazyimmortal.sesame.entity.PromiseSimpleTemplate;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
-import io.github.lazyimmortal.sesame.model.extend.ExtendHandle;
+import io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandle;
 import io.github.lazyimmortal.sesame.util.*;
 import io.github.lazyimmortal.sesame.util.idMap.MemberBenefitIdMap;
 import io.github.lazyimmortal.sesame.util.idMap.PromiseSimpleTemplateIdMap;
@@ -67,7 +67,7 @@ public class AntMember extends ModelTask {
         modelFields.addField(enableGameCenter = new BooleanModelField("enableGameCenter", "游戏中心 | 签到", false));
         modelFields.addField(merchantSignIn = new BooleanModelField("merchantSignIn", "商家服务 | 签到", false));
         modelFields.addField(merchantKMDK = new BooleanModelField("merchantKMDK", "商家服务 | 开门打卡", false));
-        if (ExtendHandle.handleAlphaRequest("enableDeveloperMode")) {
+        if (ExtensionsHandle.handleAlphaRequest("enableDeveloperMode")) {
             modelFields.addField(virtualProfit = new BooleanModelField("virtualProfit", "网商银行 | 福利金", false));
         }
         return modelFields;
@@ -106,7 +106,7 @@ public class AntMember extends ModelTask {
                 AntInsurance.executeTask(antInsuranceOptions.getValue());
             }
             if (virtualProfit.getValue()) {
-                ExtendHandle.handleAlphaRequest("antBank", "virtualProfit", virtualProfit.getConfigValue());
+                ExtensionsHandle.handleAlphaRequest("antBank", "virtualProfit", virtualProfit.getConfigValue());
             }
             // 消费金签到
             if (signinCalendar.getValue()) {
@@ -207,7 +207,7 @@ public class AntMember extends ModelTask {
                     if (Objects.equals("BROWSE", type)) {
                         doubleCheck = doBrowseTask(taskList);
                     } else {
-                        ExtendHandle.handleAlphaRequest("antMember", "doMoreTask", jo.toString());
+                        ExtensionsHandle.handleAlphaRequest("antMember", "doMoreTask", jo.toString());
                     }
                 }
                 if (doubleCheck) {

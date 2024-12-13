@@ -1,4 +1,4 @@
-package io.github.lazyimmortal.sesame.model.extend;
+package io.github.lazyimmortal.sesame.model.extensions;
 
 public class TestRpc {
     private static final String TAG = TestRpc.class.getSimpleName();
@@ -18,7 +18,7 @@ public class TestRpc {
 
             @Override
             public void run() {
-                ExtendHandle.handleRequest(testType, broadcastFun, broadcastData);
+                ExtensionsHandle.handleRequest(testType, broadcastFun, broadcastData);
             }
         }.setData(broadcastFun, broadcastData, testType).start();
     }

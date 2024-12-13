@@ -20,7 +20,7 @@ import io.github.lazyimmortal.sesame.data.*;
 import io.github.lazyimmortal.sesame.data.modelFieldExt.common.SelectModelFieldFunc;
 import io.github.lazyimmortal.sesame.data.task.ModelTask;
 import io.github.lazyimmortal.sesame.entity.AlipayUser;
-import io.github.lazyimmortal.sesame.model.extend.ExtendHandle;
+import io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandle;
 import io.github.lazyimmortal.sesame.ui.dto.ModelDto;
 import io.github.lazyimmortal.sesame.ui.dto.ModelFieldInfoDto;
 import io.github.lazyimmortal.sesame.ui.dto.ModelFieldShowDto;
@@ -139,7 +139,7 @@ public class NewSettingsActivity extends BaseActivity {
             WebView.setWebContentsDebuggingEnabled(true);
         }
         webView.addJavascriptInterface(new WebViewCallback(), "HOOK");
-        if (!ExtendHandle.handleAlphaRequest("enableDeveloperMode")) {
+        if (!ExtensionsHandle.handleAlphaRequest("enableDeveloperMode")) {
             String htmlData = AESUtil.loadDecryptHtmlData(context);
             webView.loadDataWithBaseURL("file:///android_asset/web/", htmlData, "text/html", "UTF-8", null);
         } else {
