@@ -153,6 +153,12 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y openjdk-17-jdk
+          # 设置 JDK 17 为默认版本
+          sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+          sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
+          # 设置 JAVA_HOME 环境变量
+          echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" | sudo tee -a /etc/environment
+          source /etc/environment
 
       - name: 验证 JDK 安装
         run: java -version
