@@ -148,11 +148,11 @@ jobs:
             echo "jdk_installed=false" >> $GITHUB_ENV
           fi
 
-      - name: 安装 JDK 11
+      - name: 安装 JDK 17
         if: env.jdk_installed == 'false'
         run: |
           sudo apt update
-          sudo apt install -y openjdk-11-jdk
+          sudo apt install -y openjdk-17-jdk
 
       - name: 验证 JDK 安装
         run: java -version
