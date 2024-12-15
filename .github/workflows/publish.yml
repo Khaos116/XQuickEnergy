@@ -137,14 +137,14 @@ jobs:
           echo "FINAL_CHANGELOG 内容（替换为 <br> 后）："
           echo "$FINAL_CHANGELOG_WITH_BR"
 
-      - name: 检查 JDK 是否已安装
+      - name: 检查 JDK 17 是否已安装
         id: check_jdk
         run: |
-          if java -version &>/dev/null; then
-            echo "JDK 已安装"
+          if java -version 2>&1 | grep -q "17"; then
+            echo "JDK 17 已安装"
             echo "jdk_installed=true" >> $GITHUB_ENV
           else
-            echo "JDK 未安装"
+            echo "JDK 17 未安装"
             echo "jdk_installed=false" >> $GITHUB_ENV
           fi
 
