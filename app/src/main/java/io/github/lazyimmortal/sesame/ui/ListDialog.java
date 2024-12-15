@@ -127,16 +127,12 @@ public class ListDialog {
                 }
                 ListAdapter la = ListAdapter.get(v.getContext());
                 int index = -1;
-                switch (v.getId()) {
-                    case R.id.btn_find_last:
-                        // 下面Text要转String，不然判断equals会出问题
-                        index = la.findLast(searchText.getText().toString());
-                        break;
-
-                    case R.id.btn_find_next:
-                        // 同上
-                        index = la.findNext(searchText.getText().toString());
-                        break;
+                if (v.getId() == R.id.btn_find_last) {
+                    // 下面Text要转String，不然判断equals会出问题
+                    index = la.findLast(searchText.getText().toString());
+                } else if (v.getId() == R.id.btn_find_next) {
+                    // 同上
+                    index = la.findNext(searchText.getText().toString());
                 }
                 if (index < 0) {
                     ToastUtil.show(v.getContext(), "未搜到");
@@ -151,13 +147,10 @@ public class ListDialog {
 
         View.OnClickListener batchBtnOnClickListener = v1 -> {
             ListAdapter la = ListAdapter.get(v1.getContext());
-            switch (v1.getId()) {
-                case R.id.btn_select_all:
-                    la.selectAll();
-                    break;
-                case R.id.btn_select_invert:
-                    la.SelectInvert();
-                    break;
+            if (v1.getId() == R.id.btn_select_all) {
+                la.selectAll();
+            } else if (v1.getId() == R.id.btn_select_invert) {
+                la.SelectInvert();
             }
         };
         btn_select_all.setOnClickListener(batchBtnOnClickListener);

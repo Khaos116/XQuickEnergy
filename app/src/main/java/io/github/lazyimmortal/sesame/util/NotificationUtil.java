@@ -74,7 +74,11 @@ public class NotificationUtil {
     public static void stop() {
         try {
             if (context instanceof Service) {
-                ((Service) context).stopForeground(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    ((Service) context).stopForeground(Service.STOP_FOREGROUND_REMOVE);
+                } else {
+                    ((Service) context).stopForeground(true);
+                }
             } else {
                 if (mNotifyManager != null) {
                     mNotifyManager.cancel(NOTIFICATION_ID);

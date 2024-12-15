@@ -11,19 +11,38 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.robv.android.xposed.*;
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Application;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import lombok.Getter;
 import io.github.lazyimmortal.sesame.BuildConfig;
 import io.github.lazyimmortal.sesame.data.*;
 import io.github.lazyimmortal.sesame.data.ConfigV2;
@@ -47,7 +66,16 @@ import io.github.lazyimmortal.sesame.rpc.bridge.OldRpcBridge;
 import io.github.lazyimmortal.sesame.rpc.bridge.RpcBridge;
 import io.github.lazyimmortal.sesame.rpc.bridge.RpcVersion;
 import io.github.lazyimmortal.sesame.rpc.intervallimit.RpcIntervalLimit;
-import io.github.lazyimmortal.sesame.util.*;
+import io.github.lazyimmortal.sesame.util.ClassUtil;
+import io.github.lazyimmortal.sesame.util.FileUtil;
+import io.github.lazyimmortal.sesame.util.LibraryUtil;
+import io.github.lazyimmortal.sesame.util.Log;
+import io.github.lazyimmortal.sesame.util.NotificationUtil;
+import io.github.lazyimmortal.sesame.util.PermissionUtil;
+import io.github.lazyimmortal.sesame.util.Statistics;
+import io.github.lazyimmortal.sesame.util.Status;
+import io.github.lazyimmortal.sesame.util.StringUtil;
+import io.github.lazyimmortal.sesame.util.TimeUtil;
 import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
 import lombok.Getter;
 
@@ -55,6 +83,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.Getter;
 
 public class ApplicationHook implements IXposedHookLoadPackage {
 
@@ -206,7 +235,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                 context = appService.getApplicationContext();
                                 //System.load(LibraryUtil.getLibSesamePath(context));//CHANGE BY KT
                                 service = appService;
-                                mainHandler = new Handler();
+                                mainHandler = new Handler(Looper.getMainLooper());
                                 mainTask = BaseTask.newInstance("MAIN_TASK", new Runnable() {
 
                                     private volatile long lastExecTime = 0;
@@ -678,6 +707,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         }
     }
 
+    @SuppressLint({"ScheduleExactAlarm", "MissingPermission"})
     private static Boolean setAlarmTask(long triggerAtMillis, PendingIntent operation) {
         try {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

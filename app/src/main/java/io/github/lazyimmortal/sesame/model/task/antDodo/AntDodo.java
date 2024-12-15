@@ -81,7 +81,11 @@ public class AntDodo extends ModelTask {
 
     @Override
     public Boolean check() {
-        return !TaskCommon.IS_ENERGY_TIME;
+        if (TaskCommon.IS_ENERGY_TIME) {
+            Log.forest("任务暂停⏸️神奇物种:当前为仅收能量时间");
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -649,7 +653,9 @@ public class AntDodo extends ModelTask {
                 }
                 JSONObject animal = animalForUser.getJSONObject("animal");
                 for (int j = 0; j < count; j++) {
-                    giftToFriend(animal, targetUserId);
+                    if (!giftToFriend(animal, targetUserId)) {
+                        return;
+                    }
                     TimeUtil.sleep(500L);
                 }
             }
@@ -659,17 +665,19 @@ public class AntDodo extends ModelTask {
         }
     }
 
-    private void giftToFriend(JSONObject animal, String targetUserId) {
+    private Boolean giftToFriend(JSONObject animal, String targetUserId) {
         try {
             String animalId = animal.getString("animalId");
             JSONObject jo = new JSONObject(AntDodoRpcCall.social(animalId, targetUserId));
             if (MessageUtil.checkResultCode(TAG, jo)) {
                 Log.forest("赠送卡片🦕[" + UserIdMap.getMaskName(targetUserId) + "]" + getAnimalInfo(animal));
+                return true;
             }
         } catch (Throwable th) {
             Log.i(TAG, "giftToFriend err:");
             Log.printStackTrace(TAG, th);
         }
+        return false;
     }
 
     public enum PropGroup {

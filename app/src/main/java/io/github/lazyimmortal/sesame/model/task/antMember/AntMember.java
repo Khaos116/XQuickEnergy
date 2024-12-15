@@ -75,7 +75,11 @@ public class AntMember extends ModelTask {
 
     @Override
     public Boolean check() {
-        return !TaskCommon.IS_ENERGY_TIME;
+        if (TaskCommon.IS_ENERGY_TIME) {
+            Log.other("任务暂停⏸️蚂蚁会员:当前为仅收能量时间");
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -105,7 +109,7 @@ public class AntMember extends ModelTask {
             if (antInsurance.getValue()) {
                 AntInsurance.executeTask(antInsuranceOptions.getValue());
             }
-            if (virtualProfit.getValue()) {
+            if (ExtensionsHandle.handleAlphaRequest("enableDeveloperMode")) {
                 ExtensionsHandle.handleAlphaRequest("antBank", "virtualProfit", virtualProfit.getConfigValue());
             }
             // 消费金签到

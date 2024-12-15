@@ -1,6 +1,7 @@
 package io.github.lazyimmortal.sesame.util;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 
 import org.json.JSONObject;
 
@@ -15,8 +16,9 @@ public class LibraryUtil {
             libSesamePath = context.getPackageManager()
                     .getApplicationInfo(BuildConfig.APPLICATION_ID, 0)
                     .nativeLibraryDir + "/" + System.mapLibraryName("sesame");
-        } catch (Throwable t) {
-            Log.printStackTrace(TAG, t);
+        } catch (PackageManager.NameNotFoundException e) {
+            ToastUtil.show(context, "请授予支付宝读取芝麻粒的权限");
+            Log.printStackTrace(TAG, e);
         }
         return libSesamePath;
     }

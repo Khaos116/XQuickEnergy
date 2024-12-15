@@ -153,7 +153,11 @@ public class AntFarm extends ModelTask {
 
     @Override
     public Boolean check() {
-        return !TaskCommon.IS_ENERGY_TIME;
+        if (TaskCommon.IS_ENERGY_TIME) {
+            Log.farm("任务暂停⏸️蚂蚁庄园:当前为仅收能量时间");
+            return false;
+        }
+        return true;
     }
 
     @Override

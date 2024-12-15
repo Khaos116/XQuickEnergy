@@ -98,7 +98,7 @@ public class SettingsActivity extends BaseActivity {
                             linearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                             linearLayout.setGravity(Gravity.CENTER_HORIZONTAL);
                             linearLayout.setOrientation(LinearLayout.VERTICAL);
-                            for (ModelField modelField : modelFields.values()) {
+                            for (ModelField<?> modelField : modelFields.values()) {
                                 View view = modelField.getView(context);
                                 if (view != null) {
                                     linearLayout.addView(view);

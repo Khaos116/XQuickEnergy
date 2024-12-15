@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends BaseActivity {
 
-    private final Handler handler = new Handler();
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private boolean hasPermissions = false;
 
@@ -68,9 +69,10 @@ public class MainActivity extends BaseActivity {
             supportActionBar.setIcon(R.drawable.title_logo);
         }*/
         updateSubTitle(ViewAppInfo.getRunType());
+        viewHandler = new Handler(Looper.getMainLooper());
         setBaseSubtitle("编译时间: " + BuildConfig.BUILD_TIME);
         setBaseSubtitleTextColor(Color.parseColor("#5351FC"));
-        viewHandler = new Handler();
+      viewHandler = new Handler(Looper.getMainLooper());
         titleRunner = () -> updateSubTitle(RunType.DISABLE);
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -217,44 +219,34 @@ public class MainActivity extends BaseActivity {
         }
 
         String data = "file://";
-        switch (v.getId()) {
-            case R.id.btn_forest_log:
-                data += FileUtil.getForestLogFile().getAbsolutePath();
-                break;
-
-            case R.id.btn_farm_log:
-                data += FileUtil.getFarmLogFile().getAbsolutePath();
-                break;
-
-            case R.id.btn_other_log:
-                if (MyUtils.showHomeAllLog()) {//首页这显示全部 //CHANGE BY KT
-                    String recordData = "file://";
-                    recordData += FileUtil.getRecordLogFile().getAbsolutePath();
-                    Intent recordIt = new Intent(this, HtmlViewerActivity.class);
-                    recordIt.setData(Uri.parse(recordData));
-                    recordIt.putExtra("canClear", true);
-                    startActivity(recordIt);
-                    return;
-                } else {
-                    data += FileUtil.getOtherLogFile().getAbsolutePath();
-                }
-                break;
-
-            case R.id.btn_github:
+        if (v.getId() == R.id.btn_forest_log) {
+            data += FileUtil.getForestLogFile().getAbsolutePath();
+        } else if (v.getId() == R.id.btn_farm_log) {
+            data += FileUtil.getFarmLogFile().getAbsolutePath();
+        } else if (v.getId() == R.id.btn_other_log) {
+          if (MyUtils.showHomeAllLog()) {//首页这显示全部 //CHANGE BY KT
+            String recordData = "file://";
+            recordData += FileUtil.getRecordLogFile().getAbsolutePath();
+            Intent recordIt = new Intent(this, HtmlViewerActivity.class);
+            recordIt.setData(Uri.parse(recordData));
+            recordIt.putExtra("canClear", true);
+            startActivity(recordIt);
+            return;
+          } else {
+            data += FileUtil.getOtherLogFile().getAbsolutePath();
+          }
+        } else if (v.getId() == R.id.btn_friend_watch) {
+            ListDialog.show(this, getString(R.string.friend_watch), FriendWatch.getList(), SelectModelFieldFunc.newMapInstance(), false, ListDialog.ListType.SHOW);
+            return;
+        } else if (v.getId() == R.id.btn_github) {
             //   欢迎自己打包 欢迎大佬pr
             //   项目开源且公益  维护都是自愿
             //   但是如果打包改个名拿去卖钱忽悠小白
             //   那我只能说你妈死了 就当开源项目给你妈烧纸钱了
-                data = "https://github.com/LazyImmortal/Sesame";
-                break;
-
-            case R.id.btn_settings:
-                selectSettingUid();
-                return;
-
-            case R.id.btn_friend_watch:
-                ListDialog.show(this, getString(R.string.friend_watch), FriendWatch.getList(), SelectModelFieldFunc.newMapInstance(), false, ListDialog.ListType.SHOW);
-                return;
+            data = "https://github.com/LazyImmortal/Sesame";
+        } else if (v.getId() == R.id.btn_settings) {
+            selectSettingUid();
+            return;
         }
         Intent it = new Intent(this, HtmlViewerActivity.class);
         it.setData(Uri.parse(data));
