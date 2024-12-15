@@ -11,17 +11,21 @@ android {
     def buildTime = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("Asia/Shanghai"))
 
     compileSdk 34
+    namespace 'io.github.lazyimmortal.sesame'
     defaultConfig {
         applicationId "io.github.lazyimmortal.sesame"
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
-        targetSdk 31
+        targetSdk 34
         versionCode gitCommitCount
         versionName version
 
         buildConfigField "String", "GIT_COMMIT_HASH", "\"${gitCommitHash}\""
         buildConfigField "String", "GIT_BRANCH_NAME", "\"${gitBranchName}\""
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
+    }
+    buildFeatures {
+        buildConfig = true // 显式启用 BuildConfig
     }
     ext {
         applicationName = "Sesame"
@@ -70,9 +74,9 @@ dependencies {
     implementation 'com.elvishew:xlog:1.11.0'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 
-    normalImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.1'
-    normalImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.1'
-    normalImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.17.1'
+    normalImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.2'
+    normalImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2'
+    normalImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.18.2'
 
     compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.5'
     compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.5'

@@ -18,7 +18,7 @@ import io.github.lazyimmortal.sesame.entity.*;
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.hook.Toast;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
-import io.github.lazyimmortal.sesame.model.extend.ExtendHandle;
+import io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandle;
 import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
 import io.github.lazyimmortal.sesame.model.task.antFarm.AntFarm.TaskStatus;
 import io.github.lazyimmortal.sesame.rpc.intervallimit.FixedOrRangeIntervalLimit;
@@ -118,13 +118,11 @@ public class AntForestV2 extends ModelTask {
     private StringModelField queryInterval;
     private StringModelField collectInterval;
     private StringModelField doubleCollectInterval;
-    private BooleanModelField doubleCard;
+    private ChoiceModelField doubleClickType;
     private ListModelField.ListJoinCommaToStringModelField doubleCardTime;
     @Getter
     private IntegerModelField doubleCountLimit;
     private BooleanModelField doubleCardConstant;
-    private BooleanModelField doubleCardOnlyLimitTime;
-    private BooleanModelField stealthCard;
     private ChoiceModelField stealthCardType;
     private BooleanModelField stealthCardConstant;
     private ChoiceModelField bubbleBoostType;
@@ -175,7 +173,8 @@ public class AntForestV2 extends ModelTask {
         ModelFields modelFields = new ModelFields();
         modelFields.addField(collectEnergy = new BooleanModelField("collectEnergy", "收集能量", false));
         modelFields.addField(batchRobEnergy = new BooleanModelField("batchRobEnergy", "一键收取", false));
-        modelFields.addField(expiredEnergy = new BooleanModelField("expiredEnergy", "收过期能量", false));
+        modelFields.addField(collectWateringBubble = new BooleanModelField("collectWateringBubble", "收取金球", false));
+        modelFields.addField(expiredEnergy = new BooleanModelField("expiredEnergy", "收取过期能量", false));
         modelFields.addField(queryInterval = new StringModelField("queryInterval", "查询间隔(毫秒或毫秒范围)", "500-1000"));
         modelFields.addField(collectInterval = new StringModelField("collectInterval", "收取间隔(毫秒或毫秒范围)", "1000-1500"));
         modelFields.addField(doubleCollectInterval = new StringModelField("doubleCollectInterval", "双击间隔(毫秒或毫秒范围)", "50-150"));
@@ -184,15 +183,13 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(tryCount = new IntegerModelField("tryCount", "尝试收取(次数)", 1, 0, 10));
         modelFields.addField(retryInterval = new IntegerModelField("retryInterval", "重试间隔(毫秒)", 1000, 0, 10000));
         modelFields.addField(dontCollectList = new SelectModelField("dontCollectList", "不收取能量列表", new LinkedHashSet<>(), AlipayUser::getList));
-        modelFields.addField(doubleCard = new BooleanModelField("doubleCard", "双击卡 | 使用", false));
+        modelFields.addField(doubleClickType = new ChoiceModelField("doubleClickType", "双击卡 | 自动使用", UsePropType.CLOSE, UsePropType.nickNames));
         modelFields.addField(doubleCountLimit = new IntegerModelField("doubleCountLimit", "双击卡 | 使用次数", 6));
         modelFields.addField(doubleCardTime = new ListModelField.ListJoinCommaToStringModelField("doubleCardTime", "双击卡 | 使用时间(范围)", ListUtil.newArrayList("0700-0730")));
         modelFields.addField(doubleCardConstant = new BooleanModelField("DoubleCardConstant", "双击卡 | 限时双击永动机", false));
-        modelFields.addField(doubleCardOnlyLimitTime = new BooleanModelField("doubleCardOnlyLimitTime", "双击卡 | 仅使用限时双击卡", false));
-        modelFields.addField(stealthCard = new BooleanModelField("stealthCard", "隐身卡 | 使用", false));
-        modelFields.addField(stealthCardConstant = new BooleanModelField("stealthCardConstant", "隐身卡 | 限时隐身永动机", false));
-        if (ExtendHandle.handleAlphaRequest("enableDeveloperMode")) {
+        if (ExtensionsHandle.handleAlphaRequest("enableDeveloperMode")) {
             modelFields.addField(stealthCardType = new ChoiceModelField("stealthCardType", "隐身卡 | 接力使用", UsePropType.CLOSE, UsePropType.nickNames));
+            modelFields.addField(stealthCardConstant = new BooleanModelField("stealthCardConstant", "隐身卡 | 限时隐身永动机", false));
             modelFields.addField(bubbleBoostType = new ChoiceModelField("bubbleBoostType", "加速器 | 定时使用", UsePropType.CLOSE, UsePropType.nickNames));
             modelFields.addField(bubbleBoostTime = new StringModelField("bubbleBoostTime", "加速器 | 定时使用时间", "0630"));
             modelFields.addField(energyShieldType = new ChoiceModelField("energyShieldType", "保护罩 | 接力使用", UsePropType.CLOSE, UsePropType.nickNames));
@@ -201,15 +198,14 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(returnWater18 = new IntegerModelField("returnWater18", "返水 | 18克需收能量(关闭:0)", 0));
         modelFields.addField(returnWater33 = new IntegerModelField("returnWater33", "返水 | 33克需收能量(关闭:0)", 0));
         modelFields.addField(waterFriendType = new ChoiceModelField("waterFriendType", "浇水 | 动作", WaterFriendType.WATER_00, WaterFriendType.nickNames));
-        modelFields.addField(waterFriendList = new SelectAndCountModelField("waterFriendList", "浇水 | 好友列表", new LinkedHashMap<>(), AlipayUser::getList, "提示:请填写每日浇水次数，每次浇水克数由(浇水 | 动作)控制"));
+        modelFields.addField(waterFriendList = new SelectAndCountModelField("waterFriendList", "浇水 | 好友列表", new LinkedHashMap<>(), AlipayUser::getList, "请填写浇水次数(每日)"));
         modelFields.addField(helpFriendCollectType = new ChoiceModelField("helpFriendCollectType", "复活能量 | 动作", HelpFriendCollectType.NONE, HelpFriendCollectType.nickNames));
         modelFields.addField(helpFriendCollectList = new SelectModelField("helpFriendCollectList", "复活能量 | 好友列表", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(vitalityExchangeBenefit = new BooleanModelField("vitalityExchangeBenefit", "活力值 | 兑换权益", false));
-        modelFields.addField(vitalityExchangeBenefitList = new SelectAndCountModelField("vitalityExchangeBenefitList", "活力值 | 权益列表", new LinkedHashMap<>(), VitalityBenefit::getList, "提示:请填写每日兑换次数"));
+        modelFields.addField(vitalityExchangeBenefitList = new SelectAndCountModelField("vitalityExchangeBenefitList", "活力值 | 权益列表", new LinkedHashMap<>(), VitalityBenefit::getList, "请填写兑换次数(每日)"));
         modelFields.addField(closeWhackMole = new BooleanModelField("closeWhackMole", "自动关闭6秒拼手速", true));
         modelFields.addField(collectProp = new BooleanModelField("collectProp", "收集道具", false));
-        modelFields.addField(whoYouWantToGiveTo = new SelectModelField("whoYouWantToGiveTo", "赠送道具好友列表（所有可送道具）", new LinkedHashSet<>(), AlipayUser::getList));
-        modelFields.addField(collectWateringBubble = new BooleanModelField("collectWateringBubble", "收取金球", false));
+        modelFields.addField(whoYouWantToGiveTo = new SelectModelField("whoYouWantToGiveTo", "赠送道具好友列表", new LinkedHashSet<>(), AlipayUser::getList, "会赠送所有可送道具都给已选择的好友"));
         modelFields.addField(energyRain = new BooleanModelField("energyRain", "收集能量雨", false));
         modelFields.addField(giveEnergyRainList = new SelectModelField("giveEnergyRainList", "赠送能量雨好友列表", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(userPatrol = new BooleanModelField("userPatrol", "保护地巡护", false));
@@ -220,9 +216,10 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(medicalHealth = new BooleanModelField("medicalHealth", "医疗健康", false));
         modelFields.addField(greenLife = new BooleanModelField("greenLife", "森林集市", false));
         modelFields.addField(ecoLife = new BooleanModelField("ecoLife", "绿色行动 | 开启", false));
-        modelFields.addField(ecoLifeOptions = new SelectModelField("ecoLifeOptions", "绿色行动 | 选项", new LinkedHashSet<>(), CustomOption::getEcoLifeOptions));
+        modelFields.addField(ecoLifeOptions = new SelectModelField("ecoLifeOptions", "绿色行动 | 选项", new LinkedHashSet<>(), CustomOption::getEcoLifeOptions, "光盘行动需要先手动完成一次"));
         modelFields.addField(dress = new BooleanModelField("dress", "装扮保护 | 开启", false));
         modelFields.addField(dressDetailList = new TextModelField("dressDetailList", "装扮保护 | 装扮信息", ""));
+        modelFields.addField(new EmptyModelField("dressDetailListClear", "装扮保护 | 装扮信息清除", () -> dressDetailList.reset()));
         return modelFields;
     }
 
@@ -466,16 +463,7 @@ public class AntForestV2 extends ModelTask {
                     ecoLife();
                 }
                 waterFriendEnergy();
-                Set<String> set = whoYouWantToGiveTo.getValue();
-                if (!set.isEmpty()) {
-                    for (String userId : set) {
-                        if (!Objects.equals(selfId, userId)) {
-                            giveProp(userId);
-                            break;
-                        }
-                    }
-                }
-                forestExtend();
+                giveProp();
                 if (vitalityExchangeBenefit.getValue()) {
                     vitalityExchangeBenefit();
                 }
@@ -1033,6 +1021,7 @@ public class AntForestV2 extends ModelTask {
                     collectRobExpandEnergy(jo.optString("extInfo"));
                 }
             }
+            forestExtensions();
         } catch (Throwable th) {
             Log.i(TAG, "updateUsingPropsEndTime err:");
             Log.printStackTrace(TAG, th);
@@ -1383,9 +1372,9 @@ public class AntForestV2 extends ModelTask {
         return 39;
     }
 
-    private void forestExtend() {
+    private void forestExtensions() {
         try {
-            if (!ExtendHandle.handleAlphaRequest("antForest", "vitality")) {
+            if (!ExtensionsHandle.handleAlphaRequest("antForest", "vitality")) {
                 return;
             }
             JSONObject jo = new JSONObject();
@@ -1403,7 +1392,7 @@ public class AntForestV2 extends ModelTask {
                     new JSONObject()
                             .put("energyShieldType", energyShieldType.getValue())
                             .put("energyShieldTime", usingProps.get(PropGroup.shield.name())));
-            ExtendHandle.handleAlphaRequest("antForest", "boost|shield", jo.toString());
+            ExtensionsHandle.handleAlphaRequest("antForest", "boost|shield", jo.toString());
         } catch (Throwable t) {
             Log.i(TAG, "forestExtend err:");
             Log.printStackTrace(TAG, t);
@@ -1709,25 +1698,17 @@ public class AntForestV2 extends ModelTask {
         if (Objects.equals(selfId, userId)) {
             return;
         }
-        if (needDoubleClick() || needStealthCard()) {
+        if (needDoubleClick()) {
             synchronized (usePropLockObj) {
-                JSONArray forestPropVOList = null;
                 if (needDoubleClick()) {
-                    forestPropVOList = getForestPropVOList();
-                    useDoubleCard(forestPropVOList);
-                }
-                if (needStealthCard()) {
-                    if (forestPropVOList == null) {
-                        forestPropVOList = getForestPropVOList();
-                    }
-                    useStealthCard(forestPropVOList);
+                    useDoubleCard(getForestPropVOList());
                 }
             }
         }
     }
 
     private Boolean needDoubleClick() {
-        if (!doubleCard.getValue()) {
+        if (doubleClickType.getValue() == UsePropType.CLOSE) {
             return false;
         }
         Long doubleClickEndTime = usingProps.get(PropGroup.doubleClick.name());
@@ -1735,17 +1716,6 @@ public class AntForestV2 extends ModelTask {
             return true;
         }
         return doubleClickEndTime < System.currentTimeMillis();
-    }
-
-    private Boolean needStealthCard() {
-        if (!stealthCard.getValue()) {
-            return false;
-        }
-        Long stealthCardEndTime = usingProps.get(PropGroup.stealthCard.name());
-        if (stealthCardEndTime == null) {
-            return true;
-        }
-        return stealthCardEndTime < System.currentTimeMillis();
     }
 
     private void useDoubleCard(JSONArray forestPropVOList) {
@@ -1770,7 +1740,7 @@ public class AntForestV2 extends ModelTask {
                 if (jo == null) {
                     return;
                 }
-                if (!jo.has("recentExpireTime") && doubleCardOnlyLimitTime.getValue()) {
+                if (!jo.has("recentExpireTime") && doubleClickType.getValue() == UsePropType.ONLY_LIMIT_TIME) {
                     return;
                 }
                 // 使用能量双击卡
@@ -1789,45 +1759,24 @@ public class AntForestV2 extends ModelTask {
         }
     }
 
-    private void useStealthCard(JSONArray forestPropVOList) {
-        try {
-            // 背包查找 隐身卡
-            JSONObject jo = null;
-            List<JSONObject> list = getPropGroup(forestPropVOList, PropGroup.stealthCard.name());
-            if (!list.isEmpty()) {
-                jo = list.get(0);
-            }
-            if (jo == null || !jo.has("recentExpireTime")) {
-                if (stealthCardConstant.getValue()) {
-                    // 商店兑换 限时隐身卡
-                    if (exchangeBenefit("SK20230521000206")) {
-                        jo = getForestPropVO(getForestPropVOList(), "LIMIT_TIME_STEALTH_CARD");
-                    }
-                }
-            }
-            if (jo == null) {
-                return;
-            }
-            // 使用 隐身卡
-            if (consumeProp(jo)) {
-                Long endTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(
-                        jo.getJSONObject("propConfigVO").getLong("durationTime"));
-                usingProps.put(PropGroup.stealthCard.name(), endTime);
-            } else {
-                updateUsingPropsEndTime();
-            }
-        } catch (Throwable th) {
-            Log.i(TAG, "useStealthCard err:");
-            Log.printStackTrace(TAG, th);
-        }
-    }
-
     private boolean hasDoubleCardTime() {
         long currentTimeMillis = System.currentTimeMillis();
         return TimeUtil.checkInTimeRange(currentTimeMillis, doubleCardTime.getValue());
     }
 
     /* 赠送道具 */
+    private void giveProp() {
+        Set<String> set = whoYouWantToGiveTo.getValue();
+        if (!set.isEmpty() && selfId != null) {
+            for (String userId : set) {
+                if (!Objects.equals(selfId, userId)) {
+                    giveProp(userId);
+                    break;
+                }
+            }
+        }
+    }
+
     private void giveProp(String targetUserId) {
         try {
             do {
@@ -1846,9 +1795,9 @@ public class AntForestV2 extends ModelTask {
                         jo = new JSONObject(AntForestRpcCall.giveProp(giveConfigId, propId, targetUserId));
                         if (MessageUtil.checkResultCode(TAG, jo)) {
                             Log.forest("赠送道具🎭[" + UserIdMap.getMaskName(targetUserId) + "]#" + propName);
-                        }
-                        if (holdsNum > 1 || forestPropVOList.length() > 1) {
-                            continue;
+                            if (holdsNum > 1 || forestPropVOList.length() > 1) {
+                                continue;
+                            }
                         }
                     }
                 } finally {

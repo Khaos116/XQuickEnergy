@@ -115,7 +115,11 @@ public class AntStall extends ModelTask {
 
     @Override
     public Boolean check() {
-        return !TaskCommon.IS_ENERGY_TIME;
+        if (TaskCommon.IS_ENERGY_TIME) {
+            Log.farm("任务暂停⏸️蚂蚁新村:当前为仅收能量时间");
+            return false;
+        }
+        return true;
     }
 
     @Override

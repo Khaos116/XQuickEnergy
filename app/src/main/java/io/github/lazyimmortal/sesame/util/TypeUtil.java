@@ -121,7 +121,7 @@ public class TypeUtil {
     }
 
     public static ParameterizedType[] getGenerics(Class<?> clazz) {
-        List<ParameterizedType> result = new ArrayList();
+        List<ParameterizedType> result = new ArrayList<>();
         Type genericSuper = clazz.getGenericSuperclass();
         if (null != genericSuper && !Object.class.equals(genericSuper)) {
             ParameterizedType parameterizedType = toParameterizedType(genericSuper);
