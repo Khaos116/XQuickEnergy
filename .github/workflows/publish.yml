@@ -163,6 +163,9 @@ jobs:
       - name: 验证 JDK 安装
         run: java -version
 
+      - name: 设置 Gradle 使用 JDK 17
+        run: echo "org.gradle.java.home=$JAVA_HOME" >> gradle.properties
+
       - name: 检查 Gradle 是否已安装
         id: check_gradle
         run: |
