@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 //修改内容在MyUtils
 android {
     def buildTime = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("Asia/Shanghai"))
-
+    namespace 'io.github.lazyimmortal.sesame'
     compileSdk 34
     defaultConfig {
         applicationId "kt.lazy.sesame"
@@ -32,6 +32,9 @@ android {
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
         //resConfigs "zh-rCN", "zh-rTW", "zh-rHK", "en-rUS", "en-rGB"
         resConfigs "en-rGB" //保留中文和英文资源(如果随便写一种没有的语言，则只会打默认的文字资源到APK)
+    }
+    buildFeatures {
+        buildConfig = true // 显式启用 BuildConfig
     }
     ext {
         applicationName = "Sesame"
