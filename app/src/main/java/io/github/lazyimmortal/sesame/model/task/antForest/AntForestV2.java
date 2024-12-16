@@ -187,7 +187,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(doubleCountLimit = new IntegerModelField("doubleCountLimit", "双击卡 | 使用次数", 6));
         modelFields.addField(doubleCardTime = new ListModelField.ListJoinCommaToStringModelField("doubleCardTime", "双击卡 | 使用时间(范围)", ListUtil.newArrayList("0700-0730")));
         modelFields.addField(doubleCardConstant = new BooleanModelField("DoubleCardConstant", "双击卡 | 限时双击永动机", false));
-        if (ExtensionsHandle.handleAlphaRequest("enableDeveloperMode")) {
+        if (ExtensionsHandle.handleRequest("enableDeveloperMode")) {
             modelFields.addField(stealthCardType = new ChoiceModelField("stealthCardType", "隐身卡 | 接力使用", UsePropType.CLOSE, UsePropType.nickNames));
             modelFields.addField(stealthCardConstant = new BooleanModelField("stealthCardConstant", "隐身卡 | 限时隐身永动机", false));
             modelFields.addField(bubbleBoostType = new ChoiceModelField("bubbleBoostType", "加速器 | 定时使用", UsePropType.CLOSE, UsePropType.nickNames));
@@ -1374,15 +1374,14 @@ public class AntForestV2 extends ModelTask {
 
     private void forestExtensions() {
         try {
-            if (!ExtensionsHandle.handleAlphaRequest("antForest", "vitality")) {
+            if (!ExtensionsHandle.handleRequest("antForest", "vitality")) {
                 return;
             }
-            JSONObject jo = new JSONObject();
+            JSONObject jo = new JSONObject().put("usingProps", usingProps);
             jo.put("stealthCard",
                     new JSONObject()
                             .put("stealthCardType", stealthCardType.getValue())
                             .put("stealthCardConstant", stealthCardConstant.getValue())
-                            .put("stealthCardTime", usingProps.get(PropGroup.stealthCard.name()))
             );
             jo.put("bubbleBoost",
                     new JSONObject()
@@ -1391,8 +1390,8 @@ public class AntForestV2 extends ModelTask {
             jo.put("energyShield",
                     new JSONObject()
                             .put("energyShieldType", energyShieldType.getValue())
-                            .put("energyShieldTime", usingProps.get(PropGroup.shield.name())));
-            ExtensionsHandle.handleAlphaRequest("antForest", "boost|shield", jo.toString());
+            );
+            ExtensionsHandle.handleRequest("antForest", "boost|shield", jo.toString());
         } catch (Throwable t) {
             Log.i(TAG, "forestExtend err:");
             Log.printStackTrace(TAG, t);

@@ -131,8 +131,12 @@ public class TokenConfig {
         }
     }
 
-    public static Boolean clearDishImage() {
+    public static int getDishImageCount() {
         load();
+        return INSTANCE.dishImageList.size();
+    }
+
+    public static Boolean clearDishImage() {
         TokenConfig.INSTANCE.dishImageList.clear();
         return save();
     }
