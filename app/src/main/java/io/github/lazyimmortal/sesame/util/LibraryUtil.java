@@ -18,7 +18,7 @@ public class LibraryUtil {
                     .nativeLibraryDir + "/" + System.mapLibraryName("sesame");
         } catch (PackageManager.NameNotFoundException e) {
             ToastUtil.show(context, "请授予支付宝读取芝麻粒的权限");
-            Log.printStackTrace(TAG, e);
+            Log.record("请授予支付宝读取芝麻粒的权限");
         }
         return libSesamePath;
     }

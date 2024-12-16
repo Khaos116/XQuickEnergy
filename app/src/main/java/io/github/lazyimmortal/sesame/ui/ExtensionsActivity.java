@@ -72,7 +72,7 @@ public class ExtensionsActivity extends BaseActivity {
             Context context = ExtensionsActivity.this;
             new AlertDialog.Builder(context)
                     .setTitle(R.string.clear_dish_image)
-                    .setMessage("确认执行该操作？")
+                    .setMessage("确认清空" + TokenConfig.getDishImageCount() + "组光盘行动图片？")
                     .setPositiveButton(R.string.ok, (dialog, which) -> {
                         if (TokenConfig.clearDishImage()) {
                             ToastUtil.show(context, "光盘行动图片清空成功");

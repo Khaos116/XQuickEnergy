@@ -19,9 +19,9 @@ import io.github.lazyimmortal.sesame.util.idMap.WalkPathIdMap;
 public class ExtensionsHandle {
     private static final String TAG = ExtensionsHandle.class.getSimpleName();
 
-    public static void handleRequest(String type, String fun, String data) {
+    public static Boolean handleRequest(String type, String fun, String data) {
         if (handleAlphaRequest(type, fun, data)) {
-            return;
+            return true;
         }
         switch (type) {
             case "antForest":
@@ -33,6 +33,8 @@ public class ExtensionsHandle {
                     queryAreaTrees();
                 } else if (Objects.equals("getUnlockTreeItems", fun)) {
                     getUnlockTreeItems();
+                } else {
+                    return false;
                 }
                 break;
             case "setCustomWalkPathIdList":
@@ -43,17 +45,22 @@ public class ExtensionsHandle {
                     addCustomWalkPathIdQueue(data);
                 } else if (Objects.equals("clearCustomWalkPathIdQueue", fun)) {
                     clearCustomWalkPathIdQueue();
+                } else {
+                    return false;
                 }
                 break;
+            default:
+                return false;
         }
+        return true;
     }
 
-    public static Boolean handleAlphaRequest(String type) {
-        return handleAlphaRequest(type, null, null);
+    public static Boolean handleRequest(String type, String fun) {
+        return handleRequest(type, fun, null);
     }
 
-    public static Boolean handleAlphaRequest(String type, String fun) {
-        return handleAlphaRequest(type, fun, null);
+    public static Boolean handleRequest(String type) {
+        return handleRequest(type, null, null);
     }
 
     public static Boolean handleAlphaRequest(String type, String fun, String data) {
