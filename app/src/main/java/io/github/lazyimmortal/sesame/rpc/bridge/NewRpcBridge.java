@@ -50,6 +50,7 @@ public class NewRpcBridge implements RpcBridge {
             if (newRpcInstance == null) {
                 Object nodeExtensionMap = XposedHelpers.callMethod(extensionManager, "getNodeExtensionMap");
                 if (nodeExtensionMap != null) {
+                    @SuppressWarnings("unchecked")
                     Map<Object, Map<String, Object>> map = (Map<Object, Map<String, Object>>) nodeExtensionMap;
                     for (Map.Entry<Object, Map<String, Object>> entry : map.entrySet()) {
                         Map<String, Object> map1 = entry.getValue();

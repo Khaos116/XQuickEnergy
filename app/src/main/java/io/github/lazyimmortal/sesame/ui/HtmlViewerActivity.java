@@ -32,7 +32,6 @@ public class HtmlViewerActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LanguageUtil.setLocale(this);
         setContentView(R.layout.activity_html_viewer);
         setBaseSubtitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
 

@@ -47,8 +47,6 @@ public class BaseModel extends Model {
     @Getter
     private static final IntegerModelField toastOffsetY = new IntegerModelField("toastOffsetY", "气泡纵向偏移", 0);
     @Getter
-    private static final BooleanModelField languageSimplifiedChinese = new BooleanModelField("languageSimplifiedChinese", "只显示中文并设置时区", true);
-    @Getter
     private static final BooleanModelField enableOnGoing = new BooleanModelField("enableOnGoing", "开启状态栏禁删", false);
 
     @Override
@@ -83,7 +81,6 @@ public class BaseModel extends Model {
         modelFields.addField(recordLog);
         modelFields.addField(showToast);
         modelFields.addField(enableOnGoing);
-        modelFields.addField(languageSimplifiedChinese);
         modelFields.addField(toastOffsetY);
         return modelFields;
     }

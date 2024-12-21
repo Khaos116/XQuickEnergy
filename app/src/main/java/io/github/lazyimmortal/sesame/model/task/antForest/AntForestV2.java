@@ -1,20 +1,50 @@
 package io.github.lazyimmortal.sesame.model.task.antForest;
 
-import de.robv.android.xposed.XposedHelpers;
-import lombok.Getter;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import de.robv.android.xposed.XposedHelpers;
 import io.github.lazyimmortal.sesame.data.ConfigV2;
 import io.github.lazyimmortal.sesame.data.ModelFields;
 import io.github.lazyimmortal.sesame.data.ModelGroup;
 import io.github.lazyimmortal.sesame.data.RuntimeInfo;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.*;
 import io.github.lazyimmortal.sesame.data.TokenConfig;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.BooleanModelField;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.ChoiceModelField;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.EmptyModelField;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.IntegerModelField;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.ListModelField;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.SelectAndCountModelField;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.SelectModelField;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.StringModelField;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.TextModelField;
 import io.github.lazyimmortal.sesame.data.task.ModelTask;
-import io.github.lazyimmortal.sesame.entity.*;
+import io.github.lazyimmortal.sesame.entity.AlipayUser;
+import io.github.lazyimmortal.sesame.entity.CollectEnergyEntity;
+import io.github.lazyimmortal.sesame.entity.CustomOption;
+import io.github.lazyimmortal.sesame.entity.FriendWatch;
+import io.github.lazyimmortal.sesame.entity.KVNode;
+import io.github.lazyimmortal.sesame.entity.RpcEntity;
+import io.github.lazyimmortal.sesame.entity.VitalityBenefit;
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.hook.Toast;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
@@ -24,16 +54,20 @@ import io.github.lazyimmortal.sesame.model.task.antFarm.AntFarm.TaskStatus;
 import io.github.lazyimmortal.sesame.rpc.intervallimit.FixedOrRangeIntervalLimit;
 import io.github.lazyimmortal.sesame.rpc.intervallimit.RpcIntervalLimit;
 import io.github.lazyimmortal.sesame.ui.ObjReference;
-import io.github.lazyimmortal.sesame.util.*;
+import io.github.lazyimmortal.sesame.util.AverageMath;
+import io.github.lazyimmortal.sesame.util.JsonUtil;
+import io.github.lazyimmortal.sesame.util.ListUtil;
+import io.github.lazyimmortal.sesame.util.Log;
+import io.github.lazyimmortal.sesame.util.MessageUtil;
+import io.github.lazyimmortal.sesame.util.NotificationUtil;
+import io.github.lazyimmortal.sesame.util.RandomUtil;
+import io.github.lazyimmortal.sesame.util.Statistics;
+import io.github.lazyimmortal.sesame.util.Status;
+import io.github.lazyimmortal.sesame.util.StringUtil;
+import io.github.lazyimmortal.sesame.util.TimeUtil;
 import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
 import io.github.lazyimmortal.sesame.util.idMap.VitalityBenefitIdMap;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import lombok.Getter;
 
 /**
  * 蚂蚁森林V2
@@ -118,19 +152,11 @@ public class AntForestV2 extends ModelTask {
     private StringModelField queryInterval;
     private StringModelField collectInterval;
     private StringModelField doubleCollectInterval;
-    private BooleanModelField doubleCard;
     private ChoiceModelField doubleClickType;
     private ListModelField.ListJoinCommaToStringModelField doubleCardTime;
     @Getter
     private IntegerModelField doubleCountLimit;
     private BooleanModelField doubleCardConstant;
-    private BooleanModelField doubleCardOnlyLimitTime;
-    private BooleanModelField stealthCard;
-    private ChoiceModelField stealthCardType;
-    private BooleanModelField stealthCardConstant;
-    private ChoiceModelField bubbleBoostType;
-    private StringModelField bubbleBoostTime;
-    private ChoiceModelField energyShieldType;
     private ChoiceModelField helpFriendCollectType;
     private SelectModelField helpFriendCollectList;
     private IntegerModelField returnWater33;
@@ -190,13 +216,6 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(doubleCountLimit = new IntegerModelField("doubleCountLimit", "双击卡 | 使用次数", 6));
         modelFields.addField(doubleCardTime = new ListModelField.ListJoinCommaToStringModelField("doubleCardTime", "双击卡 | 使用时间(范围)", ListUtil.newArrayList("0700-0730")));
         modelFields.addField(doubleCardConstant = new BooleanModelField("DoubleCardConstant", "双击卡 | 限时双击永动机", false));
-        if (ExtensionsHandle.handleRequest("enableDeveloperMode")) {
-            modelFields.addField(stealthCardType = new ChoiceModelField("stealthCardType", "隐身卡 | 接力使用", UsePropType.CLOSE, UsePropType.nickNames));
-            modelFields.addField(stealthCardConstant = new BooleanModelField("stealthCardConstant", "隐身卡 | 限时隐身永动机", false));
-            modelFields.addField(bubbleBoostType = new ChoiceModelField("bubbleBoostType", "加速器 | 定时使用", UsePropType.CLOSE, UsePropType.nickNames));
-            modelFields.addField(bubbleBoostTime = new StringModelField("bubbleBoostTime", "加速器 | 定时使用时间", "0630"));
-            modelFields.addField(energyShieldType = new ChoiceModelField("energyShieldType", "保护罩 | 接力使用", UsePropType.CLOSE, UsePropType.nickNames));
-        }
         modelFields.addField(returnWater10 = new IntegerModelField("returnWater10", "返水 | 10克需收能量(关闭:0)", 0));
         modelFields.addField(returnWater18 = new IntegerModelField("returnWater18", "返水 | 18克需收能量(关闭:0)", 0));
         modelFields.addField(returnWater33 = new IntegerModelField("returnWater33", "返水 | 33克需收能量(关闭:0)", 0));
@@ -1377,26 +1396,9 @@ public class AntForestV2 extends ModelTask {
 
     private void forestExtensions() {
         try {
-            if (!ExtensionsHandle.handleRequest("antForest", "vitality")) {
-                return;
-            }
-            JSONObject jo = new JSONObject().put("usingProps", usingProps);
-            jo.put("stealthCard",
-                    new JSONObject()
-                            .put("stealthCardType", stealthCardType.getValue())
-                            .put("stealthCardConstant", stealthCardConstant.getValue())
-            );
-            jo.put("bubbleBoost",
-                    new JSONObject()
-                            .put("bubbleBoostType", bubbleBoostType.getValue())
-                            .put("bubbleBoostTime", bubbleBoostTime.getValue()));
-            jo.put("energyShield",
-                    new JSONObject()
-                            .put("energyShieldType", energyShieldType.getValue())
-            );
-            ExtensionsHandle.handleRequest("antForest", "boost|shield", jo.toString());
+            ExtensionsHandle.handleAlphaRequest("antForest", "extensions", usingProps);
         } catch (Throwable t) {
-            Log.i(TAG, "forestExtend err:");
+            Log.i(TAG, "forestExtensions err:");
             Log.printStackTrace(TAG, t);
         }
     }
@@ -1769,13 +1771,16 @@ public class AntForestV2 extends ModelTask {
     /* 赠送道具 */
     private void giveProp() {
         Set<String> set = whoYouWantToGiveTo.getValue();
-        if (!set.isEmpty() && selfId != null) {
-            for (String userId : set) {
-                if (!Objects.equals(selfId, userId)) {
-                    giveProp(userId);
-                    break;
-                }
+        if (set.isEmpty()) {
+            return;
+        }
+        for (String userId : set) {
+            if (UserIdMap.getCurrentUid() == null
+                    || Objects.equals(UserIdMap.getCurrentUid(), userId)) {
+                continue;
             }
+            giveProp(userId);
+            break;
         }
     }
 
@@ -1891,6 +1896,9 @@ public class AntForestV2 extends ModelTask {
      * 光盘行动
      */
     private void photoGuangPan(String dayPoint) {
+        if (!TaskCommon.IS_AFTER_6AM) {
+            return;
+        }
         try {
             String source = "renwuGD";
             //检查今日任务状态

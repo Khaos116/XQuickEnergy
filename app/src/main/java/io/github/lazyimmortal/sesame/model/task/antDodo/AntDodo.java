@@ -582,13 +582,15 @@ public class AntDodo extends ModelTask {
 
     private String getGiftToFriendTargetUserId() {
         Set<String> set = giftToFriendList.getValue();
-        if (set.isEmpty() || UserIdMap.getCurrentUid() == null) {
+        if (set.isEmpty()) {
             return null;
         }
         for (String userId : set) {
-            if (!Objects.equals(UserIdMap.getCurrentUid(), userId)) {
-                return userId;
+            if (UserIdMap.getCurrentUid() == null
+                    || Objects.equals(UserIdMap.getCurrentUid(), userId)) {
+                continue;
             }
+            return userId;
         }
         return null;
     }

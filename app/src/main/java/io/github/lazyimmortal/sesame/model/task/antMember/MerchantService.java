@@ -65,7 +65,7 @@ public class MerchantService {
 
     public static void taskListQueryV2() {
         zcjSignIn();
-        ExtensionsHandle.handleRequest("merchantService", "doHideTask");
+        ExtensionsHandle.handleAlphaRequest("merchantService", "doHideTask", null);
         try {
             JSONObject jo = new JSONObject(MerchantServiceRpcCall.taskListQueryV2());
             if (!MessageUtil.checkSuccess(TAG, jo)) {

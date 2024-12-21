@@ -32,7 +32,8 @@ public class MyWebView extends WebView {
         getSettings().setBuiltInZoomControls(true);
         getSettings().setDisplayZoomControls(false);
         getSettings().setUseWideViewPort(false);
-        getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+        getSettings().setUseWideViewPort(true);
+        getSettings().setLoadWithOverviewMode(true);
         getSettings().setAllowFileAccess(true);
         setWebViewClient(
                 new WebViewClient() {

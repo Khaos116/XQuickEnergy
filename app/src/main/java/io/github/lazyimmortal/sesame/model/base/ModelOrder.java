@@ -1,9 +1,13 @@
 package io.github.lazyimmortal.sesame.model.base;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.lazyimmortal.sesame.data.Model;
+import io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandle;
 import io.github.lazyimmortal.sesame.model.normal.answerAI.AnswerAI;
 import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
-import io.github.lazyimmortal.sesame.model.task.ancientTree.AncientTree;
+import io.github.lazyimmortal.sesame.model.task.antDodo.AntDodo;
 import io.github.lazyimmortal.sesame.model.task.antFarm.AntFarm;
 import io.github.lazyimmortal.sesame.model.task.antForest.AntForestV2;
 import io.github.lazyimmortal.sesame.model.task.antMember.AntMember;
@@ -13,33 +17,27 @@ import io.github.lazyimmortal.sesame.model.task.antSports.AntSports;
 import io.github.lazyimmortal.sesame.model.task.antStall.AntStall;
 import io.github.lazyimmortal.sesame.model.task.greenFinance.GreenFinance;
 import io.github.lazyimmortal.sesame.model.task.protectEcology.ProtectEcology;
-import io.github.lazyimmortal.sesame.model.task.antDodo.AntDodo;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import lombok.Getter;
 
 public class ModelOrder {
 
-    private static final Class<Model>[] array = new Class[]{
-            BaseModel.class
-            , AntForestV2.class
-            , AntFarm.class
-            , AntStall.class
-            , AntOrchard.class
-            , ProtectEcology.class
-            , AntDodo.class
-            , AntOcean.class
-            , AntSports.class
-            , AntMember.class
-            , GreenFinance.class
-            , AnswerAI.class
-    };
+    @Getter
+    private static final List<Class<? extends Model>> clazzList = new ArrayList<>();
 
-    private static final List<Class<Model>> readOnlyClazzList = Collections.unmodifiableList(Arrays.asList(array));
+    static {
+        clazzList.add(BaseModel.class);
+        clazzList.add(AntForestV2.class);
+        clazzList.add(AntFarm.class);
+        clazzList.add(AntStall.class);
+        clazzList.add(AntOrchard.class);
+        clazzList.add(ProtectEcology.class);
+        clazzList.add(AntDodo.class);
+        clazzList.add(AntOcean.class);
+        clazzList.add(AntSports.class);
+        clazzList.add(AntMember.class);
+        clazzList.add(GreenFinance.class);
+        clazzList.add(AnswerAI.class);
 
-    public static List<Class<Model>> getClazzList() {
-        return readOnlyClazzList;
+        ExtensionsHandle.handleAlphaRequest("ModelOrder", "addExtensionsClass", clazzList);
     }
-
 }
