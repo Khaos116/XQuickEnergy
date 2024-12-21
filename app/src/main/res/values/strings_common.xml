@@ -24,6 +24,7 @@
     <string name="tips">Tips</string>
     <string name="btn_understood">I see</string>
     <string name="hide_the_application_icon">Hide the application icon</string>
+    <string name="language_simplified_chinese">Always Chinese Language</string>
     <string name="view_error_log_file">View error log file</string>
     <string name="export_error_log_file">Export error log file</string>
     <string name="export_runtime_log_file">Export all log file</string>

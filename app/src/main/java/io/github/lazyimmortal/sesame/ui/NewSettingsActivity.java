@@ -115,7 +115,6 @@ public class NewSettingsActivity extends BaseActivity {
         BeachIdMap.load();
         WalkPathIdMap.load();
         ConfigV2.load(userId);
-        LanguageUtil.setLocale(this);
         setContentView(R.layout.activity_new_settings);
         if (userName != null) {
             setBaseSubtitle(getString(R.string.settings) + ": " + userName);
@@ -167,7 +166,7 @@ public class NewSettingsActivity extends BaseActivity {
             WebView.setWebContentsDebuggingEnabled(true);
         }
         webView.addJavascriptInterface(new WebViewCallback(), "HOOK");
-        if (!ExtensionsHandle.handleRequest("enableDeveloperMode")) {
+        if (ExtensionsHandle.handleAlphaRequest("enableDeveloperMode", null, null) == null) {
             String htmlData = AESUtil.loadDecryptHtmlData(context);
             webView.loadDataWithBaseURL("file:///android_asset/web/", htmlData, "text/html", "UTF-8", null);
         } else {

@@ -103,7 +103,6 @@
     <string name="battery_perm">Request Battery Permission for Alipay</string>
     <string name="new_rpc">Use New Api(minimum required v10.3.96.8100)</string>
     <string name="debug_mode">Capture packets(base on New Api)</string>
-    <string name="language_simplified_chinese">Chinese Language</string>
     <string name="language_simplified_chinese_need_restart">Need to restart the app to take effect</string>
     <string name="ant_orchard">Ant orchard</string>
     <string name="receive_orchard_task_award">Receive orchard task award</string>

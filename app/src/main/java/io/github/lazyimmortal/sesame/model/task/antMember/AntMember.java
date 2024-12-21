@@ -48,7 +48,6 @@ public class AntMember extends ModelTask {
     private BooleanModelField enableGameCenter;
     private BooleanModelField merchantSignIn;
     private BooleanModelField merchantKMDK;
-    private BooleanModelField virtualProfit;
 
     @Override
     public ModelFields getFields() {
@@ -67,9 +66,6 @@ public class AntMember extends ModelTask {
         modelFields.addField(enableGameCenter = new BooleanModelField("enableGameCenter", "游戏中心 | 签到", false));
         modelFields.addField(merchantSignIn = new BooleanModelField("merchantSignIn", "商家服务 | 签到", false));
         modelFields.addField(merchantKMDK = new BooleanModelField("merchantKMDK", "商家服务 | 开门打卡", false));
-        if (ExtensionsHandle.handleRequest("enableDeveloperMode")) {
-            modelFields.addField(virtualProfit = new BooleanModelField("virtualProfit", "网商银行 | 福利金", false));
-        }
         return modelFields;
     }
 
@@ -108,9 +104,6 @@ public class AntMember extends ModelTask {
             }
             if (antInsurance.getValue()) {
                 AntInsurance.executeTask(antInsuranceOptions.getValue());
-            }
-            if (ExtensionsHandle.handleRequest("enableDeveloperMode")) {
-                ExtensionsHandle.handleRequest("antBank", "virtualProfit", virtualProfit.getConfigValue());
             }
             // 消费金签到
             if (signinCalendar.getValue()) {
@@ -211,7 +204,7 @@ public class AntMember extends ModelTask {
                     if (Objects.equals("BROWSE", type)) {
                         doubleCheck = doBrowseTask(taskList);
                     } else {
-                        ExtensionsHandle.handleRequest("antMember", "doMoreTask", jo.toString());
+                        ExtensionsHandle.handleAlphaRequest("antMember", "doMoreTask", jo);
                     }
                 }
                 if (doubleCheck) {

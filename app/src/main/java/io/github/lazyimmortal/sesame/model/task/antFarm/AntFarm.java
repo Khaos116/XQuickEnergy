@@ -2234,7 +2234,7 @@ public class AntFarm extends ModelTask {
         if (StringUtil.isEmpty(ownerGroupId)) {
             return;
         }
-        ExtensionsHandle.handleRequest("antFarm", "doFamilyTask");
+        ExtensionsHandle.handleAlphaRequest("antFarm", "doFamilyTask", null);
         try {
             JSONObject jo = enterFamily();
             if (jo == null) {

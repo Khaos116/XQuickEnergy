@@ -25,6 +25,7 @@ public class AppConfig {
     private boolean init;
 
     private Boolean newUI = true;
+    private Boolean languageSimplifiedChinese = true;
 
     private static File getExternalFilesDir() {
         try {

@@ -24,6 +24,7 @@
     <string name="tips">提示</string>
     <string name="btn_understood">我知道了</string>
     <string name="hide_the_application_icon">隐藏图标</string>
+    <string name="language_simplified_chinese">始终使用中文</string>
     <string name="view_error_log_file">查看异常日志</string>
     <string name="export_error_log_file">导出异常日志</string>
     <string name="view_runtime_log_file">查看运行日志</string>

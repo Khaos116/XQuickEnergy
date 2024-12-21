@@ -37,6 +37,7 @@ import io.github.lazyimmortal.sesame.data.modelFieldExt.common.SelectModelFieldF
 import io.github.lazyimmortal.sesame.entity.FriendWatch;
 import io.github.lazyimmortal.sesame.entity.UserEntity;
 import io.github.lazyimmortal.sesame.util.FileUtil;
+import io.github.lazyimmortal.sesame.util.LanguageUtil;
 import io.github.lazyimmortal.sesame.util.LibraryUtil;
 import io.github.lazyimmortal.sesame.util.Log;
 import io.github.lazyimmortal.sesame.util.PermissionUtil;
@@ -164,11 +165,6 @@ public class MainActivity extends BaseActivity {
                 }
             }
             try {
-                AppConfig.load();
-            } catch (Exception e) {
-                Log.printStackTrace(e);
-            }
-            try {
                 List<String> userNameList = new ArrayList<>();
                 List<UserEntity> userEntityList = new ArrayList<>();
                 File[] configFiles = FileUtil.CONFIG_DIRECTORY_FILE.listFiles();
@@ -253,16 +249,19 @@ public class MainActivity extends BaseActivity {
         menu.add(0, 1, 1, R.string.hide_the_application_icon)
                 .setCheckable(true)
                 .setChecked(state > PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
-        menu.add(0, 2, 2, R.string.view_error_log_file);
-        menu.add(0, 3, 3, R.string.export_error_log_file);
-        menu.add(0, 4, 4, R.string.view_runtime_log_file);
-        menu.add(0, 5, 5, R.string.export_runtime_log_file);
-        menu.add(0, 6, 6, R.string.export_the_statistic_file);
-        menu.add(0, 7, 7, R.string.import_the_statistic_file);
-        menu.add(0, 8, 8, R.string.view_debug_file);
-        menu.add(0, 9, 9, R.string.view_record_file);
-        menu.add(0, 10, 10, R.string.extensions);
-        menu.add(0, 11, 11, R.string.settings);
+        menu.add(0, 2, 2, R.string.language_simplified_chinese)
+                .setCheckable(true)
+                .setChecked(AppConfig.INSTANCE.getLanguageSimplifiedChinese());
+        menu.add(0, 3, 3, R.string.view_error_log_file);
+        menu.add(0, 4, 4, R.string.export_error_log_file);
+        menu.add(0, 5, 5, R.string.view_runtime_log_file);
+        menu.add(0, 6, 6, R.string.export_runtime_log_file);
+        menu.add(0, 7, 7, R.string.export_the_statistic_file);
+        menu.add(0, 8, 8, R.string.import_the_statistic_file);
+        menu.add(0, 9, 9, R.string.view_debug_file);
+        menu.add(0, 10, 10, R.string.view_record_file);
+        menu.add(0, 11, 11, R.string.extensions);
+        menu.add(0, 12, 12, R.string.settings);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -277,6 +276,16 @@ public class MainActivity extends BaseActivity {
                 break;
 
             case 2:
+                AppConfig appConfig = AppConfig.INSTANCE;
+                appConfig.setLanguageSimplifiedChinese(!appConfig.getLanguageSimplifiedChinese());
+                if (AppConfig.save()) {
+                    item.setChecked(!item.isChecked());
+                    LanguageUtil.setLocal(this);
+                    recreate();
+                }
+                break;
+
+            case 3:
                 String errorData = "file://";
                 errorData += FileUtil.getErrorLogFile().getAbsolutePath();
                 Intent errorIt = new Intent(this, HtmlViewerActivity.class);
@@ -286,14 +295,14 @@ public class MainActivity extends BaseActivity {
                 startActivity(errorIt);
                 break;
 
-            case 3:
+            case 4:
                 File errorLogFile = FileUtil.exportFile(FileUtil.getErrorLogFile());
                 if (errorLogFile != null) {
                     ToastUtil.show(this, "文件已导出到: " + errorLogFile.getPath());
                 }
                 break;
 
-            case 4:
+            case 5:
                 String allData = "file://";
                 allData += FileUtil.getRuntimeLogFile().getAbsolutePath();
                 Intent allIt = new Intent(this, HtmlViewerActivity.class);
@@ -303,28 +312,28 @@ public class MainActivity extends BaseActivity {
                 startActivity(allIt);
                 break;
 
-            case 5:
+            case 6:
                 File allLogFile = FileUtil.exportFile(FileUtil.getRuntimeLogFile());
                 if (allLogFile != null) {
                     ToastUtil.show(this, "文件已导出到: " + allLogFile.getPath());
                 }
                 break;
 
-            case 6:
+            case 7:
                 File statisticsFile = FileUtil.exportFile(FileUtil.getStatisticsFile());
                 if (statisticsFile != null) {
                     ToastUtil.show(this, "文件已导出到: " + statisticsFile.getPath());
                 }
                 break;
 
-            case 7:
+            case 8:
                 if (FileUtil.copyTo(FileUtil.getExportedStatisticsFile(), FileUtil.getStatisticsFile())) {
                     tvStatistics.setText(Statistics.getText(MainActivity.this));
                     ToastUtil.show(this, "导入成功！");
                 }
                 break;
 
-            case 8:
+            case 9:
                 String debugData = "file://";
                 debugData += FileUtil.getDebugLogFile().getAbsolutePath();
                 Intent debugIt = new Intent(this, HtmlViewerActivity.class);
@@ -333,7 +342,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(debugIt);
                 break;
 
-            case 9:
+            case 10:
                 String recordData = "file://";
                 recordData += FileUtil.getRecordLogFile().getAbsolutePath();
                 Intent recordIt = new Intent(this, HtmlViewerActivity.class);
@@ -342,12 +351,12 @@ public class MainActivity extends BaseActivity {
                 startActivity(recordIt);
                 break;
 
-            case 10:
+            case 11:
                 Intent extend = new Intent(this, ExtensionsActivity.class);
                 startActivity(extend);
                 break;
 
-            case 11:
+            case 12:
                 selectSettingUid();
                 break;
         }

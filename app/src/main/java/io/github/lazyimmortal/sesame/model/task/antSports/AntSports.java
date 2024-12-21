@@ -1,11 +1,14 @@
 package io.github.lazyimmortal.sesame.model.task.antSports;
 
-import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedHelpers;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedHelpers;
 import io.github.lazyimmortal.sesame.data.ModelFields;
 import io.github.lazyimmortal.sesame.data.ModelGroup;
 import io.github.lazyimmortal.sesame.data.TokenConfig;
@@ -18,13 +21,14 @@ import io.github.lazyimmortal.sesame.entity.AlipayUser;
 import io.github.lazyimmortal.sesame.entity.WalkPath;
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
-import io.github.lazyimmortal.sesame.util.*;
+import io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandle;
+import io.github.lazyimmortal.sesame.util.Log;
+import io.github.lazyimmortal.sesame.util.MessageUtil;
+import io.github.lazyimmortal.sesame.util.RandomUtil;
+import io.github.lazyimmortal.sesame.util.Status;
+import io.github.lazyimmortal.sesame.util.StringUtil;
+import io.github.lazyimmortal.sesame.util.TimeUtil;
 import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
-
-import java.util.Calendar;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public class AntSports extends ModelTask {
 
@@ -89,10 +93,9 @@ public class AntSports extends ModelTask {
                         protected void afterHookedMethod(MethodHookParam param) {
                             int originStep = (Integer) param.getResult();
                             int step = tmpStepCount();
-                            if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < 6 || originStep >= step) {
-                                return;
+                            if (TaskCommon.IS_AFTER_6AM && originStep < step) {
+                                param.setResult(step);
                             }
-                            param.setResult(step);
                         }
                     });
             Log.i(TAG, "hook readDailyStep successfully");
@@ -337,6 +340,11 @@ public class AntSports extends ModelTask {
     private void walk() {
         String goingPathId = queryGoingPathId();
         do {
+            String tempPathId = (String) ExtensionsHandle
+                    .handleAlphaRequest("antSports", "walk", null);
+            if (tempPathId != null) {
+                goingPathId = tempPathId;
+            }
             TimeUtil.sleep(1000);
             if (isNeedJoinNewPath(goingPathId)) {
                 String joinPathId = queryJoinPathId();
@@ -628,7 +636,7 @@ public class AntSports extends ModelTask {
         return pathId;
     }
 
-    private static Boolean checkJoinPathId(String joinPathId) {
+    public static Boolean checkJoinPathId(String joinPathId) {
         try {
             JSONObject jo = queryPath(joinPathId);
             String goingPathId = jo.optString("goingPathId");
@@ -644,7 +652,7 @@ public class AntSports extends ModelTask {
         return false;
     }
 
-    private Boolean joinPath(String pathId) {
+    public static Boolean joinPath(String pathId) {
         if (pathId == null) {
             // 守护体育梦
             pathId = "p000202408231708";

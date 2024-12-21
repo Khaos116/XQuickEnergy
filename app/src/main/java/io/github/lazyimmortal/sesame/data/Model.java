@@ -27,7 +27,7 @@ public abstract class Model {
 
     private static final Map<Class<? extends Model>, Model> modelMap = new ConcurrentHashMap<>();
 
-    private static final List<Class<Model>> modelClazzList = ModelOrder.getClazzList();
+    private static final List<Class<? extends Model>> modelClazzList = ModelOrder.getClazzList();
 
     @Getter
     private static final Model[] modelArray = new Model[modelClazzList.size()];
@@ -110,9 +110,9 @@ public abstract class Model {
     public static synchronized void initAllModel() {
         destroyAllModel();
         for (int i = 0, len = modelClazzList.size(); i < len; i++) {
-            Class<Model> modelClazz = modelClazzList.get(i);
+            Class<? extends Model> modelClazz = modelClazzList.get(i);
             try {
-                Constructor<Model> constructor = modelClazz.getConstructor();
+                Constructor<? extends Model> constructor = modelClazz.getConstructor();
                 Model model = constructor.newInstance();
                 ModelConfig modelConfig = new ModelConfig(model);
                 modelArray[i] = model;

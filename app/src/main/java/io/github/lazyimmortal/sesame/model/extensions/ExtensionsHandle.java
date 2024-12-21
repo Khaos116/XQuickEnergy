@@ -19,9 +19,9 @@ import io.github.lazyimmortal.sesame.util.idMap.WalkPathIdMap;
 public class ExtensionsHandle {
     private static final String TAG = ExtensionsHandle.class.getSimpleName();
 
-    public static Boolean handleRequest(String type, String fun, String data) {
-        if (handleAlphaRequest(type, fun, data)) {
-            return true;
+    public static void handleRequest(String type, String fun, Object data) {
+        if (handleAlphaRequest(type, fun, data) != null) {
+            return;
         }
         switch (type) {
             case "antForest":
@@ -33,43 +33,28 @@ public class ExtensionsHandle {
                     queryAreaTrees();
                 } else if (Objects.equals("getUnlockTreeItems", fun)) {
                     getUnlockTreeItems();
-                } else {
-                    return false;
                 }
                 break;
             case "setCustomWalkPathIdList":
-                addCustomWalkPathIdList(data);
+                addCustomWalkPathIdList((String) data);
                 break;
             case "setCustomWalkPathIdQueue":
                 if (Objects.equals("addCustomWalkPathIdQueue", fun)) {
-                    addCustomWalkPathIdQueue(data);
+                    addCustomWalkPathIdQueue((String) data);
                 } else if (Objects.equals("clearCustomWalkPathIdQueue", fun)) {
                     clearCustomWalkPathIdQueue();
-                } else {
-                    return false;
                 }
                 break;
-            default:
-                return false;
         }
-        return true;
     }
 
-    public static Boolean handleRequest(String type, String fun) {
-        return handleRequest(type, fun, null);
-    }
-
-    public static Boolean handleRequest(String type) {
-        return handleRequest(type, null, null);
-    }
-
-    public static Boolean handleAlphaRequest(String type, String fun, String data) {
+    public static Object handleAlphaRequest(String type, String fun, Object data) {
         try {
-            return (Boolean) Class.forName("io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandleAlpha")
-                    .getMethod("handleAlphaRequest", String.class, String.class, String.class)
+            return Class.forName("io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandleAlpha")
+                    .getMethod("handleAlphaRequest", String.class, String.class, Object.class)
                     .invoke(null, type, fun, data);
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 
