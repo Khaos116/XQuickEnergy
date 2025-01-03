@@ -1,11 +1,9 @@
 # Sesame
 
 [![License](https://img.shields.io/github/license/LazyImmortal/Sesame.svg)](LICENSE)
-
-[//]: # ([![Download]&#40;https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/total?labelColor=fff&label=Downloads&logo=github&#41;]&#40;../../releases&#41;)
-[![Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/v1.6.4.4fix/total?labelColor=7A00E6&label=Downloads&logo=github)](../../releases/tag/v1.6.4.4fix)
+[![Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/v1.6.4.4fix/total?labelColor=7A00E6&label=v1.6.4.4fix下载&logo=github)](../../releases/tag/v1.6.4.4fix)
 [![All Releases Download](https://img.shields.io/github/downloads/LazyImmortal/Sesame/total.svg)](../../releases)
-[![Telegram](https://img.shields.io/static/v1?label=Telegram&message=Channel&color=0088cc)](https://t.me/Sesame_Channels)
+[![Telegram](https://img.shields.io/badge/XQuickEnergy-nul?&logo=Telegram&label=Telegram&labelColor=fff&link=https%3A%2F%2Ft.me%2Fmysl_group)](https://t.me/mysl_group)
 
 ## 为了大家的资金安全与个人信息安全，强烈建议
 1. 不要使用任何未开放源代码的修改版！
