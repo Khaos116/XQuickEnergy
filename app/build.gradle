@@ -26,8 +26,8 @@ android {
         //Android15.0       35
         //noinspection EditedTargetSdkVersion,OldTargetApi
         targetSdk 34
-        versionCode 1215
-        versionName "v1.6.4.3fix"
+        versionCode 1300
+        versionName "v1.6.4.4fix"
 
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
         //resConfigs "zh-rCN", "zh-rTW", "zh-rHK", "en-rUS", "en-rGB"
