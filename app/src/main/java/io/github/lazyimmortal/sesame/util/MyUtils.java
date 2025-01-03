@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
+import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
 
 /**
  * Date:2024/12/3
@@ -33,7 +34,7 @@ public class MyUtils {
 
   //是否关闭验证(拼手速、派遣动物、能量雨、赠送道具、部分蚂蚁积分任务 -> 目前发现这些操作会触发验证)
   public static boolean closeVerification() {
-    return true;
+    return BaseModel.getCloseVerification().getValue();
   }
 
   //打印用户切换

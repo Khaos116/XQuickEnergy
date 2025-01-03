@@ -48,6 +48,8 @@ public class BaseModel extends Model {
     private static final IntegerModelField toastOffsetY = new IntegerModelField("toastOffsetY", "气泡纵向偏移", 0);
     @Getter
     private static final BooleanModelField enableOnGoing = new BooleanModelField("enableOnGoing", "开启状态栏禁删", false);
+    @Getter
+    private static final BooleanModelField closeVerification = new BooleanModelField("closeVerification", "关闭需要验证的功能", true);
 
     @Override
     public String getName() {
@@ -82,6 +84,7 @@ public class BaseModel extends Model {
         modelFields.addField(showToast);
         modelFields.addField(enableOnGoing);
         modelFields.addField(toastOffsetY);
+        modelFields.addField(closeVerification);
         return modelFields;
     }
 
