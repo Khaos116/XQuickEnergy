@@ -1,0 +1,74 @@
+name: 读取最新版修改记录
+
+on:
+  workflow_dispatch:  # 手动触发工作流
+
+jobs:
+  get-commits:
+    runs-on: ubuntu-latest
+    steps:
+      # 日志读取-1. 检出代码
+      - name: Checkout myLazyNoSo branch
+        uses: actions/checkout@v3
+        with:
+          ref: myLazyNoSo  # 明确指定分支为 myLazyNoSo
+          fetch-depth: 0   # 获取完整历史记录
+      # 日志读取-2. 获取最新的两个标签及其时间
+      - name: Get latest tags and their dates
+        id: get_tags
+        run: |
+          git fetch --tags
+          TAGS=($(git tag --sort=-v:refname))
+
+          NEW_TAG=${TAGS[0]}
+          OLD_TAG=${TAGS[1]}
+
+          NEW_TAG_DATE=$(git log -1 --format="%ad" --date=format:"%Y-%m-%d %H:%M" "$NEW_TAG")
+          OLD_TAG_DATE=$(git log -1 --format="%ad" --date=format:"%Y-%m-%d %H:%M" "$OLD_TAG")
+
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+          echo "OLD_TAG=$OLD_TAG" >> $GITHUB_ENV
+          echo "NEW_TAG_DATE=$NEW_TAG_DATE" >> $GITHUB_ENV
+          echo "OLD_TAG_DATE=$OLD_TAG_DATE" >> $GITHUB_ENV
+          
+            # 输出标签的时间
+          echo "OLD_TAG ($OLD_TAG) Date: $OLD_TAG_DATE"
+          echo "NEW_TAG ($NEW_TAG) Date: $NEW_TAG_DATE"
+
+      # 日志读取-3. 获取提交记录并处理
+      - name: Get and process commits
+        id: process_commits
+        run: |
+          # 确保时间从早到晚排序
+          if [[ "$OLD_TAG_DATE" < "$NEW_TAG_DATE" ]]; then
+            START_DATE="$OLD_TAG_DATE"
+            END_DATE="$NEW_TAG_DATE"
+          else
+            START_DATE="$NEW_TAG_DATE"
+            END_DATE="$OLD_TAG_DATE"
+          fi
+
+          # 获取提交记录并过滤包含中文字符的提交信息
+          git log myLazyNoSo --since="$START_DATE" --until="$END_DATE" --pretty=format:"%s" \
+            | LANG=en_US.UTF-8 grep -P "[\x{4E00}-\x{9FFF}]" \
+            | sort -r | awk '!seen[$0]++' \
+            | awk '{print NR ". " $0}' > CHANGELOG.txt
+
+          # 将结果存入环境变量并替换为 Markdown 格式的换行符
+          CHANGELOG_CONTENT=$(cat CHANGELOG.txt | sed ':a;N;$!ba;s/\n/\\n/g')
+          echo "FINAL_CHANGELOG=$CHANGELOG_CONTENT" >> $GITHUB_ENV
+
+      # 日志读取-4. 打印最终结果
+      - name: Print final changelog
+        run: |
+          echo "FINAL_CHANGELOG 内容:"
+          echo -e "${{ env.FINAL_CHANGELOG }}"
+
+      # 日志读取-5. 替换<br>
+      - name: Print final changelog (with <br>)
+        run: |
+          # 将字面上的 \n 替换为 <br>
+          FINAL_CHANGELOG_WITH_BR=$(echo "${{ env.FINAL_CHANGELOG }}" | sed 's/\\n/<br>/g')
+          echo "FINAL_CHANGELOG_WITH_BR=$FINAL_CHANGELOG_WITH_BR" >> $GITHUB_ENV
+          echo "FINAL_CHANGELOG 内容（替换为 <br> 后）："
+          echo "$FINAL_CHANGELOG_WITH_BR"
