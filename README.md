@@ -1,18 +1,22 @@
 # Sesame
-[![License](https://img.shields.io/github/license/Khaos116/XQuickEnergy.svg?color=fff&logo=gnuprivacyguard)](LICENSE)
+
+[![License](https://img.shields.io/github/license/Khaos116/XQuickEnergy.svg?labelColor=fff&color=ec8d16&logo=gnuprivacyguard)](LICENSE)
 [![Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/v1.6.4.4fix/total?color=000000&labelColor=7A00E6&label=v1.6.4.4fix下载&logo=github)](../../releases/tag/v1.6.4.4fix)
 [![All Releases Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/total.svg??color=169af5&label=总下载&logo=circleci)](../../releases)
 [![Telegram](https://img.shields.io/badge/蚂蚁森林交流群-nul?&logo=Telegram&label=Telegram&labelColor=fff&link=https%3A%2F%2Ft.me%2Fmysl_group)](https://t.me/mysl_group)
 
 ## 为了大家的资金安全与个人信息安全，强烈建议
+
 1. 不要使用任何未开放源代码的修改版！
 2. 不要使用任何未开放源代码的修改版！
 3. 不要使用任何未开放源代码的修改版！
 
 ## 主要功能
+
 感谢蚂蚁森林对绿化事业的贡献。快速收取蚂蚁森林能量，也为祖国的绿化事业出一份微薄之力~
 
 ### 版本特点
+
 1. 重构 系统架构，**功能与配置全部模块化**，以后添加功能**无需再开发配置页面，大幅降低开发门槛，并极大节省开发成本**，欢迎有兴趣的朋友参与开发，开发指南见[维基](https://github.com/TKaxv-7S/Sesame-TK/wiki)或如下图所示，非常欢迎大家提[PR](https://github.com/LazyImmortal/Sesame/pulls)
    ![Sesame-TK开发指南](https://github.com/TKaxv-7S/Sesame-TK/assets/22593101/4d8451fe-2b7f-4f19-9439-b0afbf683510)
 2. 重构 **森林收能量代码**，大幅提升能量多的账号收取效率
@@ -22,6 +26,7 @@
 6. 修复 一些逻辑问题
 
 ## 使用说明
+
 1. 本APP是为了学习研究用，不得进行任何形式的转发，发布，传播。
 2. 请于24小时内卸载本APP。若使用期间造成任何损失，作者不负任何责任。
 3. 本APP不篡改，不修改，不获取任何个人信息及其支付宝信息。
@@ -30,6 +35,7 @@
 6. 本APP如无意中侵犯了某个媒体或个人的知识产权，请来信或来电告之，作者将立即删除。
 
 ## 授权说明
+
 本项目基于 [TKaxv-7S版Sesame](https://github.com/TKaxv-7S/Sesame-TK)、[constanline版XQuickEnergy](https://github.com/constanline/XQuickEnergy) 与 [pansong291版XQuickEnergy](https://github.com/pansong291/XQuickEnergy) 开发
 
 遵循 GPLv3 协议，并**禁止**用于任何商业用途、禁止二次修改后**闭源**发布
@@ -37,6 +43,7 @@
 所有图片由 ༒激༙྇流༙྇泉༙྇༒ 授权使用
 
 ## 特别说明
+
 - 本模块完全免费开源，没有任何收费，请勿二次贩卖
 - 由于下游闭源项目**违反**本项目开源协议，前端作者将闭源前端新UI源码，本仓库仅提交发布文件，后端暂不受影响
 - 如果您开发了新功能，觉得开发的功能还不错，同时愿意贡献PR，非常欢迎，也非常感谢大家为这个项目的付出！
@@ -44,6 +51,7 @@
 - 鉴于项目的特殊性，开发团队可能在任何时间**停止更新**或**删除项目**
 
 ## 特别感谢
+
 - 感谢 这个项目的上一位维护者 [@TKaxv-7S](https://github.com/TKaxv-7S) 重构项目代码
 - 感谢 [@wh-990624](https://github.com/wh-990624) 重构并开发新UI
 - 感谢 ༒激༙྇流༙྇泉༙྇༒ 重新设计新UI
