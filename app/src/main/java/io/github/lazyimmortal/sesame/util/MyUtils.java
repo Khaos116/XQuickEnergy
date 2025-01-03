@@ -31,6 +31,11 @@ public class MyUtils {
     return false;
   }
 
+  //是否关闭验证(拼手速、派遣动物、能量雨、赠送道具、部分蚂蚁积分任务 -> 目前发现这些操作会触发验证)
+  public static boolean closeVerification() {
+    return true;
+  }
+
   //打印用户切换
   public static String recordUserName(@Nullable Context context, @Nullable String uid) {
     if (context == null) return "";

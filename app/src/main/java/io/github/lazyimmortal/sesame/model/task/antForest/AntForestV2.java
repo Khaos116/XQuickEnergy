@@ -459,13 +459,13 @@ public class AntForestV2 extends ModelTask {
                     if (!canConsumeAnimalProp) {
                         Log.record("已经有动物伙伴在巡护森林");
                     } else {
-                        queryAnimalPropList();
+                        if(!MyUtils.closeVerification()) queryAnimalPropList();
                     }
                 }
                 if (expiredEnergy.getValue()) {
                     popupTask();
                 }
-                if (energyRain.getValue()) {
+                if (energyRain.getValue() && !MyUtils.closeVerification()) {
                     energyRain();
                 }
                 if (receiveForestTaskAward.getValue()) {
@@ -475,7 +475,7 @@ public class AntForestV2 extends ModelTask {
                     ecoLife();
                 }
                 waterFriendEnergy();
-                giveProp();
+                if(!MyUtils.closeVerification()) giveProp();
                 if (vitalityExchangeBenefit.getValue()) {
                     vitalityExchangeBenefit();
                 }
@@ -1143,6 +1143,7 @@ public class AntForestV2 extends ModelTask {
 
     /* 6秒拼手速 打地鼠 */
     private void whackMole() {
+        if (MyUtils.closeVerification()) return;
         try {
             long start = System.currentTimeMillis();
             JSONObject jo = new JSONObject(AntForestRpcCall.startWhackMole());
