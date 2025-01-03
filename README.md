@@ -1,7 +1,9 @@
 # Sesame
 
 [![License](https://img.shields.io/github/license/LazyImmortal/Sesame.svg)](LICENSE)
-[![Download](https://github.com/Khaos116/XQuickEnergy/total?labelColor=fff&label=v1.6.4.4fix下载&logo=github)](../../releases)
+
+[//]: # ([![Download]&#40;https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/total?labelColor=fff&label=Downloads&logo=github&#41;]&#40;../../releases&#41;)
+[![Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/v1.6.4.4fix/total?labelColor=7A00E6&label=Downloads&logo=github)](../../releases/tag/v1.6.4.4fix)
 [![All Releases Download](https://img.shields.io/github/downloads/LazyImmortal/Sesame/total.svg)](../../releases)
 [![Telegram](https://img.shields.io/static/v1?label=Telegram&message=Channel&color=0088cc)](https://t.me/Sesame_Channels)
 
