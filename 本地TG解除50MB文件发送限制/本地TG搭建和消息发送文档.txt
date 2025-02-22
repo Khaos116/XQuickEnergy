@@ -11,3 +11,5 @@ https://blog.csdn.net/IwannaHair/article/details/141088570
 6.手动把你的机器人加到你的判断即可
   查看聊天判断id(先往频道发个消息)https://api.telegram.org/bot[你的Token]/getUpdates
 7.使用python发送消息时，先在终端管理员安装pip install python-telegram-bot
+8.手动发送文件
+   python .\sendFile.py E:\Work\xxx.apk
