@@ -1,0 +1,13 @@
+主要参考文章：
+https://blog.csdn.net/IwannaHair/article/details/141088570
+
+1.相关软件下载和编译命令 https://tdlib.github.io/telegram-bot-api/build.html?os=Windows
+  注意：Microsoft Visual Studio需要安装C++和.Net的桌面版
+2.CMake注意选择稳定版
+3.编译完成后生成的telegram-bot-api.exe不能随意移动，他和其他的dll有关联
+4.申请API-ID以及API-HASH时可能会报错，多尝试几次
+5.运行.\telegram-bot-api.exe --api-id=[YOUR API-ID] --api-hash=[YOUR API-HASH] --local
+  这个命令后不能关闭窗口，否则后续的消息无法发送
+6.手动把你的机器人加到你的判断即可
+  查看聊天判断id(先往频道发个消息)https://api.telegram.org/bot[你的Token]/getUpdates
+7.使用python发送消息时，先在终端管理员安装pip install python-telegram-bot
