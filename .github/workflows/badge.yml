@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master  # 修改为 master 分支
-  schedule:
-    - cron: '0 */8 * * *' # 每8小时运行
+  #schedule:
+  #  - cron: '0 */8 * * *' # 每8小时运行
   workflow_dispatch:  # 允许手动触发
 
 jobs:
