@@ -83,4 +83,9 @@ jobs:
           git add README.md
           git status  # 查看添加的文件
           git commit -m "更新README最新版本" || echo "没有更改需要提交"  # 添加错误处理
+          
+          # 拉取远程更改并合并
+          git pull origin master --rebase || echo "拉取远程更改失败，可能需要手动解决冲突"
+          
+          # 推送更改
           git push git@github.com:${{ github.repository }}.git HEAD:master
