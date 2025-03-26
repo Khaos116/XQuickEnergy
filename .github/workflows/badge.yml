@@ -86,8 +86,9 @@ jobs:
           
           # 拉取远程更改
           git fetch origin master
-          git merge origin/master || { echo "合并失败，可能存在冲突"; exit 1; }
+          git merge origin/master --allow-unrelated-histories || { echo "合并失败，使用远程版本"; git checkout --theirs README.md; git add README.md; }
           
           # 推送更改
           git push git@github.com:${{ github.repository }}.git HEAD:master
+
 
