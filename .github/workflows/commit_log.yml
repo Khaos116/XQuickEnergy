@@ -18,21 +18,20 @@ jobs:
         id: get_tags
         run: |
           git fetch --tags
-          TAGS=($(git tag --sort=-v:refname))
-       #   TAGS=($(git tag --sort=-v:creatordate))
-
+          TAGS=($(git tag --sort=-creatordate))
+          
           NEW_TAG=${TAGS[0]}
           OLD_TAG=${TAGS[1]}
-
+          
           NEW_TAG_DATE=$(git log -1 --format="%ad" --date=format:"%Y-%m-%d %H:%M" "$NEW_TAG")
           OLD_TAG_DATE=$(git log -1 --format="%ad" --date=format:"%Y-%m-%d %H:%M" "$OLD_TAG")
-
+          
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
           echo "OLD_TAG=$OLD_TAG" >> $GITHUB_ENV
           echo "NEW_TAG_DATE=$NEW_TAG_DATE" >> $GITHUB_ENV
           echo "OLD_TAG_DATE=$OLD_TAG_DATE" >> $GITHUB_ENV
           
-            # 输出标签的时间
+          # 输出标签的时间
           echo "OLD_TAG ($OLD_TAG) Date: $OLD_TAG_DATE"
           echo "NEW_TAG ($NEW_TAG) Date: $NEW_TAG_DATE"
 
