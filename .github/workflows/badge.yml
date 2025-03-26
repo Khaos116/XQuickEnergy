@@ -50,27 +50,33 @@ jobs:
 
       # 检查是否需要提交更改
       - name: 检查是否需要提交更新
+        id: check_update
         run: |
           if [ "${{ env.needs_update }}" == "true" ]; then
             echo "README.md 版本已更新，准备提交更改。"
+            echo "continue=true" >> $GITHUB_ENV  # 设置环境变量以继续执行后续步骤
           else
             echo "README.md 已是最新，退出工作流。"
+            echo "continue=false" >> $GITHUB_ENV  # 设置环境变量以停止后续步骤
             exit 0  # 如果没有更新，退出工作流
           fi
 
       # 查看 Git 状态
       - name: 查看 Git 状态
+        if: env.continue == 'true'  # 只有在需要继续时才执行
         run: |
           git status
 
       # 设置 SSH 密钥并配置 SSH 代理
       - name: 设置 SSH 密钥
+        if: env.continue == 'true'  # 只有在需要继续时才执行
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       # 提交更改并推送
       - name: 提交并推送更改
+        if: env.continue == 'true'  # 只有在需要继续时才执行
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
