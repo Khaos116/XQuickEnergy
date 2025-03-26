@@ -18,7 +18,8 @@ jobs:
         id: get_tags
         run: |
           git fetch --tags
-          TAGS=($(git tag --sort=-v:refname))
+#          TAGS=($(git tag --sort=-v:refname))
+          TAGS=($(git tag --sort=-v:creatordate))
 
           NEW_TAG=${TAGS[0]}
           OLD_TAG=${TAGS[1]}
