@@ -2521,9 +2521,10 @@ public class AntFarm extends ModelTask {
     }
 
     public enum ToolType {
-        STEALTOOL, ACCELERATETOOL, SHARETOOL, FENCETOOL, NEWEGGTOOL, DOLLTOOL;
+        STEALTOOL, ACCELERATETOOL, SHARETOOL, FENCETOOL, NEWEGGTOOL, DOLLTOOL, ORDINARY_ORNAMENT_TOOL, ADVANCE_ORNAMENT_TOOL;
+        //"蹭饭卡",    "加速卡",      "救济卡",    "篱笆卡",   "新蛋卡",  "公仔补签卡",     "普通装扮补签卡",       "高级装扮补签卡"
 
-        public static final CharSequence[] nickNames = {"蹭饭卡", "加速卡", "救济卡", "篱笆卡", "新蛋卡", "公仔补签卡"};
+        public static final CharSequence[] nickNames = {"蹭饭卡", "加速卡", "救济卡", "篱笆卡", "新蛋卡", "公仔补签卡","普通装扮补签卡","高级装扮补签卡"};
 
         public CharSequence nickName() {
             return nickNames[ordinal()];
