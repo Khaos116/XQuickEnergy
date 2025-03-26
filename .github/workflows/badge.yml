@@ -3,7 +3,7 @@ name: 更新最新版徽章
 on:
   push:
     branches:
-      - master  # 修改为 master 分支
+      - myLazyNoSo  # 修改为 myLazyNoSo 分支
   #schedule:
   #  - cron: '0 */8 * * *' # 每8小时运行
   workflow_dispatch:  # 允许手动触发
@@ -85,10 +85,8 @@ jobs:
           git commit -m "更新README最新版本" || echo "没有更改需要提交"  # 添加错误处理
           
           # 拉取远程更改
-          git fetch origin master
-          git merge origin/master --allow-unrelated-histories || { echo "合并失败，使用远程版本"; git checkout --theirs README.md; git add README.md; }
+          git fetch origin myLazyNoSo
+          git merge origin/myLazyNoSo --allow-unrelated-histories || { echo "合并失败，使用远程版本"; git checkout --theirs README.md; git add README.md; }
           
           # 推送更改
-          git push git@github.com:${{ github.repository }}.git HEAD:master
-
-
+          git push git@github.com:${{ github.repository }}.git HEAD:myLazyNoSo
