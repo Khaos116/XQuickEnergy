@@ -8,6 +8,7 @@ import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
 
 /**
  * https://github.com/acooler15/Sesame-TK/blob/develop/app/src/main/java/fansirsqi/xposed/sesame/task/antFarm/chouChouLe.java
+ *
  * @author Byseven
  * @date 2025/1/30
  * @apiNote
@@ -95,7 +96,7 @@ public class ChouChouLe {
             Log.record("该[" + drawMachineActivity.optString("activityId") + "]抽奖活动已结束");
             return;
           }
-          int drawTimes = jo.optInt("drawTimes",0);
+          int drawTimes = jo.optInt("drawTimes", 0);
           for (int ii = 0; ii < drawTimes; ii++) {
             JSONObject drawMachine = new JSONObject(AntFarmRpcCall.drawMachine());
             ThreadUtil.sleep(2000L);
@@ -106,9 +107,13 @@ public class ChouChouLe {
                 //int awardCount = drawMachinePrize.optInt("awardCount", 0);
                 Log.farm("IP抽抽乐🎁[领取: " + title + "]");
               }
+            } else {
+              //{"ariverRpcTraceId":"21ba3bd317430576916613654ef50b","memo":"抽奖次数不足","resultCode":"DRAW_MACHINE01","success":false}
+              if (MyUtils.isDrawTimesNotEnough(drawMachine)) {
+                break;
+              }
             }
           }
-
         }
       } catch (Throwable t) {
         handleException("drawMachine err:", t);
@@ -157,7 +162,7 @@ public class ChouChouLe {
       String s = AntFarmRpcCall.chouchouleDoFarmTask(drawType, bizKey);
       JSONObject jo = new JSONObject(s);
       if (jo.optBoolean("success", false)) {
-        if("ipDraw".equals(drawType)) {
+        if ("ipDraw".equals(drawType)) {
           Log.farm("完成IP抽抽乐🧾️[任务: " + name + "]");
         } else {
           Log.farm("完成抽抽乐🧾️[任务: " + name + "]");

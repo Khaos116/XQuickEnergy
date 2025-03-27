@@ -204,6 +204,21 @@ public class MyUtils {
     return ApplicationHook.requestString("com.alipay.antfarm.doFarmTask",
         "[{\"bizKey\":\"" + bizKey + "\",\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"chouchoule\",\"taskSceneCode\":\"ANTFARM_DRAW_TIMES_TASK\"}]");
   }
+
+  //是否抽奖次数不足
+  public static boolean isDrawTimesNotEnough(JSONObject drawMachine) {
+    if (drawMachine == null) return false;
+    String resultCode = drawMachine.optString("resultCode");
+    String memo = drawMachine.optString("memo");
+    boolean success = drawMachine.optBoolean("success");
+    if (!success && TextUtils.equals("DRAW_MACHINE01", resultCode)) {
+      Log.record("IP抽抽乐抽奖失败1:" + memo);
+      return true;
+    } else if (!success) {
+      Log.record("IP抽抽乐抽奖失败2:" + memo);
+    }
+    return false;
+  }
 }
 
 //庄园任务
