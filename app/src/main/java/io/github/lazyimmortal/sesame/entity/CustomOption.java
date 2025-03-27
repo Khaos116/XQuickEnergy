@@ -27,9 +27,14 @@ public class CustomOption extends IdAndName {
     public static List<CustomOption> getAntFarmFamilyOptions() {
         List<CustomOption> list = new ArrayList<>();
         list.add(new CustomOption("familySign", "每日签到"));
-        list.add(new CustomOption("familyFeed", "帮喂成员"));
-        list.add(new CustomOption("familyEatTogether", "美食请客"));
-        list.add(new CustomOption("familyAwardList", "领取奖励"));
+        list.add(new CustomOption("eatTogetherConfig", "请吃美食"));
+        list.add(new CustomOption("feedFamilyAnimal", "帮喂小鸡"));
+        //list.add(new AntFarmFamilyOption("deliverMsgSend", "道早安"));
+        list.add(new CustomOption("familyClaimReward", "领取奖励"));
+        list.add(new CustomOption("inviteFriendVisitFamily", "好友分享"));
+        list.add(new CustomOption("assignRights", "使用顶梁柱特权"));
+        list.add(new CustomOption("familyDrawInfo", "开扭蛋"));
+        list.add(new CustomOption("batchInviteP2P", "串门送扭蛋"));
         return list;
     }
 
