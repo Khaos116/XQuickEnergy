@@ -328,7 +328,8 @@ public class AntFarm extends ModelTask {
 
             // 抽抽乐
             if (drawMachine.getValue()) {
-                drawMachine();
+                //drawMachine();
+                new ChouChouLe().chouchoule();
             }
 
             // 雇佣小鸡
@@ -1861,80 +1862,80 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    /* 抽抽乐 */
-    private void drawMachine() {
-        doDrawTimesTask();
-        try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall.enterDrawMachine());
-            int leftDrawTimes = jo.getJSONObject("userInfo").optInt("leftDrawTimes", 0);
-            for (int i = 0; i < leftDrawTimes; i++) {
-                if (!drawPrize()) {
-                    return;
-                }
-                TimeUtil.sleep(5000);
-            }
-        } catch (Throwable t) {
-            Log.i(TAG, "drawMachine err:");
-            Log.printStackTrace(TAG, t);
-        }
-    }
-
-    private void doDrawTimesTask() {
-        try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall.listFarmDrawTimesTask());
-            if (!MessageUtil.checkMemo(TAG, jo)) {
-                return;
-            }
-            JSONArray farmTaskList = jo.getJSONArray("farmTaskList");
-            for (int i = 0; i < farmTaskList.length(); i++) {
-                jo = farmTaskList.getJSONObject(i);
-                String taskStatus = jo.getString("taskStatus");
-                if (TaskStatus.RECEIVED.name().equals(taskStatus)) {
-                    continue;
-                }
-                if (TaskStatus.TODO.name().equals(taskStatus)) {
-                    if (!LibraryUtil.doFarmDrawTimesTask(jo)) {
-                        continue;
-                    }
-                    TimeUtil.sleep(3000);
-                }
-                TimeUtil.sleep(2000);
-                String taskId = jo.getString("taskId");
-                String title = jo.getString("title");
-                receiveFarmDrawTimesTaskAward(taskId, title);
-            }
-        } catch (Throwable t) {
-            Log.i(TAG, "doFarmDrawTimesTask err:");
-            Log.printStackTrace(TAG, t);
-        }
-    }
-
-    private void receiveFarmDrawTimesTaskAward(String taskId, String title) {
-        try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall.receiveFarmDrawTimesTaskAward(taskId));
-            if (MessageUtil.checkMemo(TAG, jo)) {
-                Log.farm("装扮抽奖🎟️领取[" + title + "]奖励");
-            }
-        } catch (Throwable t) {
-            Log.i(TAG, "receiveFarmDrawTimesTaskAward err:");
-            Log.printStackTrace(TAG, t);
-        }
-    }
-
-    private Boolean drawPrize() {
-        try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall.drawPrize());
-            if (MessageUtil.checkMemo(TAG, jo)) {
-                String title = jo.optString("title");
-                Log.farm("装扮抽奖🎟️抽中[" + title + "]");
-                return true;
-            }
-        } catch (Throwable t) {
-            Log.i(TAG, "drawPrize err:");
-            Log.printStackTrace(TAG, t);
-        }
-        return false;
-    }
+    ///* 抽抽乐 */
+    //private void drawMachine() {
+    //    doDrawTimesTask();
+    //    try {
+    //        JSONObject jo = new JSONObject(AntFarmRpcCall.enterDrawMachine());
+    //        int leftDrawTimes = jo.getJSONObject("userInfo").optInt("leftDrawTimes", 0);
+    //        for (int i = 0; i < leftDrawTimes; i++) {
+    //            if (!drawPrize()) {
+    //                return;
+    //            }
+    //            TimeUtil.sleep(5000);
+    //        }
+    //    } catch (Throwable t) {
+    //        Log.i(TAG, "drawMachine err:");
+    //        Log.printStackTrace(TAG, t);
+    //    }
+    //}
+    //
+    //private void doDrawTimesTask() {
+    //    try {
+    //        JSONObject jo = new JSONObject(AntFarmRpcCall.listFarmDrawTimesTask());
+    //        if (!MessageUtil.checkMemo(TAG, jo)) {
+    //            return;
+    //        }
+    //        JSONArray farmTaskList = jo.getJSONArray("farmTaskList");
+    //        for (int i = 0; i < farmTaskList.length(); i++) {
+    //            jo = farmTaskList.getJSONObject(i);
+    //            String taskStatus = jo.getString("taskStatus");
+    //            if (TaskStatus.RECEIVED.name().equals(taskStatus)) {
+    //                continue;
+    //            }
+    //            if (TaskStatus.TODO.name().equals(taskStatus)) {
+    //                if (!LibraryUtil.doFarmDrawTimesTask(jo)) {
+    //                    continue;
+    //                }
+    //                TimeUtil.sleep(3000);
+    //            }
+    //            TimeUtil.sleep(2000);
+    //            String taskId = jo.getString("taskId");
+    //            String title = jo.getString("title");
+    //            receiveFarmDrawTimesTaskAward(taskId, title);
+    //        }
+    //    } catch (Throwable t) {
+    //        Log.i(TAG, "doFarmDrawTimesTask err:");
+    //        Log.printStackTrace(TAG, t);
+    //    }
+    //}
+    //
+    //private void receiveFarmDrawTimesTaskAward(String taskId, String title) {
+    //    try {
+    //        JSONObject jo = new JSONObject(AntFarmRpcCall.receiveFarmDrawTimesTaskAward(taskId));
+    //        if (MessageUtil.checkMemo(TAG, jo)) {
+    //            Log.farm("装扮抽奖🎟️领取[" + title + "]奖励");
+    //        }
+    //    } catch (Throwable t) {
+    //        Log.i(TAG, "receiveFarmDrawTimesTaskAward err:");
+    //        Log.printStackTrace(TAG, t);
+    //    }
+    //}
+    //
+    //private Boolean drawPrize() {
+    //    try {
+    //        JSONObject jo = new JSONObject(AntFarmRpcCall.drawPrize());
+    //        if (MessageUtil.checkMemo(TAG, jo)) {
+    //            String title = jo.optString("title");
+    //            Log.farm("装扮抽奖🎟️抽中[" + title + "]");
+    //            return true;
+    //        }
+    //    } catch (Throwable t) {
+    //        Log.i(TAG, "drawPrize err:");
+    //        Log.printStackTrace(TAG, t);
+    //    }
+    //    return false;
+    //}
 
     /* 雇佣好友小鸡 */
     private void hireAnimal() {
