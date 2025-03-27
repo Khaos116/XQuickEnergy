@@ -87,7 +87,7 @@ public class ChouChouLe {
     } while (doubleCheck);
     if ("ipDraw".equals(drawType)) {
       try {
-        JSONObject jo = new JSONObject(AntFarmRpcCall.enterDrawMachine());
+        JSONObject jo = new JSONObject(AntFarmRpcCall.queryDrawMachineActivity());
         if (ResUtil.checkResultCode(TAG, jo)) {
           JSONObject drawMachineActivity = jo.getJSONObject("drawMachineActivity");
           long endTime = drawMachineActivity.getLong("endTime");
