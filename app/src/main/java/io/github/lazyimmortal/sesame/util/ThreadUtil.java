@@ -55,4 +55,16 @@ public class ThreadUtil {
         }
     }
 
+    /**
+     * 使当前线程暂停指定的毫秒数。
+     *
+     * @param millis 毫秒数。
+     */
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
