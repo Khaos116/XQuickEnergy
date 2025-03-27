@@ -1,0 +1,458 @@
+{
+  "ariverRpcTraceId": "2191e87517429370451148374e8e97",
+  "chickenDiarySwitch": true,
+  "cookToday": true,
+  "drawActivityOpen": true,
+  "drawMachineInfo": {
+    "dailyDrawMachineActivityId": "CP122602201",
+    "drawActivityOpen": true,
+    "entranceDayUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*VJH1Q7gjsUMAAAAAAAAAAAAAevqBAQ/original",
+    "entranceNightUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*Tm6wS6BDDlcAAAAAAAAAAAAAevqBAQ/original",
+    "ipDrawMachineActivityId": "ipDrawMachine_250313"
+  },
+  "duringPaintingActivity": false,
+  "familySwitch": true,
+  "foodStock": 1740,
+  "foodStockLimit": 1800,
+  "kitchenSwitch": true,
+  "loveCabinOrnament": {},
+  "loveCabinOrnamentsSwitch": true,
+  "loveCabinVO": {
+    "cabinFloorAchievementRecords": [
+      {
+        "achievementDesc": "第四层收藏柜",
+        "achievementId": "13",
+        "achievementName": "第四层收藏柜",
+        "achievementRanking": 9004799,
+        "achievementTime": 1702575900000
+      },
+      {
+        "achievementDesc": "第五层收藏柜",
+        "achievementId": "14",
+        "achievementName": "第五层收藏柜",
+        "achievementRanking": 7947260,
+        "achievementTime": 1710441492000
+      },
+      {
+        "achievementDesc": "第六层收藏柜",
+        "achievementId": "15",
+        "achievementName": "第六层收藏柜",
+        "achievementRanking": 7268319,
+        "achievementTime": 1718828073000
+      },
+      {
+        "achievementDesc": "第七层收藏柜",
+        "achievementId": "16",
+        "achievementName": "第七层收藏柜",
+        "achievementRanking": 6745925,
+        "achievementTime": 1728316920000
+      },
+      {
+        "achievementDesc": "第八层收藏柜",
+        "achievementId": "17",
+        "achievementName": "第八层收藏柜",
+        "achievementRanking": 6188038,
+        "achievementTime": 1736879083000
+      }
+    ],
+    "hasGiftAcquired": true,
+    "hasGiftBox": false,
+    "hasNewCabinFloor": false,
+    "hasReceivedActivityGift": false,
+    "loveCabinDollList": [
+      {
+        "acquiredTime": 1741971633000,
+        "dollId": "2025_03_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*B7CXRJtqpccAAAAAAAAAAAAAer97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1739555884000,
+        "dollId": "2025_02_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*GeqBTqD0tHQAAAAAAAAAAAAAer97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1738213021000,
+        "dollId": "NEWYEAR25_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*31ULTaBa89cAAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1736879083000,
+        "dollId": "2025_01_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*vIE6Rq-R8dQAAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1734195634000,
+        "dollId": "2024_12_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*8vHETZNJaQ8AAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1733448691000,
+        "dollId": "WINTER24_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*A6--SKGl2ZsAAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1731606201000,
+        "dollId": "2024_11_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*wHJ_S6bjElsAAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1728921721000,
+        "dollId": "2024_10_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*BCcDRL-UQlQAAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1728316920000,
+        "dollId": "EARLYAUTUMN24_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*OSOsRrDIOTYAAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1726329720000,
+        "dollId": "2024_09_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*1_H1SrtYeNQAAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1723659976000,
+        "dollId": "2024_08_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*-B42SpxIFKUAAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1722463451000,
+        "dollId": "MIDSUMMER24_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*KJCCTYCImQkAAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1721589669000,
+        "dollId": "2024_07_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*VrGzTJ3RnoAAAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1718828073000,
+        "dollId": "2024_06_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*P-xvQZtjqM0AAAAAAAAAAAAADr97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1716601175000,
+        "dollId": "SUMMER24_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*xt88RoJvkvwAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1715737921000,
+        "dollId": "2024_05_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*Az1ZTLyuHowAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1713117306000,
+        "dollId": "2024_04_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*tXUaToRxCb0AAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1711219401000,
+        "dollId": "SPRING24_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*a6IlS5Qq31YAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1710441492000,
+        "dollId": "2024_03_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*Xe_2Qr_rQBgAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1707971087000,
+        "dollId": "2024_02_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*PuVFTLw0DcMAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1707631856000,
+        "dollId": "NEWYEAR24_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*abnKQ5d9_QwAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1705257137000,
+        "dollId": "2024_01_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*IqKNQriRlaUAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1703899292000,
+        "dollId": "WINTER23_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*kfDrT7xD5RcAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1702575900000,
+        "dollId": "2023_12_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*5LxST5NmWKUAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1700000257000,
+        "dollId": "2023_11_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*7zcLTIZ9L50AAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1699163474000,
+        "dollId": "LATEAUTUMN23_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*ZXy9T67ntuoAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1697333133000,
+        "dollId": "2023_10_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*y9G7RoeqLmwAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1694712532000,
+        "dollId": "2023_09_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*COEKTZEwEc8AAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1693967823000,
+        "dollId": "EARLYAUTUMN23_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*Xf4nTK3GzN8AAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1692927133000,
+        "dollId": "2023_08_MONTH_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*jNmvSJLDerIAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1688490360000,
+        "dollId": "MIDSUMMER23_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*wu5BRqWddy4AAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1683513867000,
+        "dollId": "SUMMER23_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*b_vXQYG7xQQAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1677292100000,
+        "dollId": "SPRING23_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*54v7QKbGkJ8AAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1673575853000,
+        "dollId": "WUFU23_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*M9s9TI6ue1oAAAAAAAAAAAAADmt7AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1671769317000,
+        "dollId": "WINTER22_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/mdn/huamei_ga4c9e/afts/img/A*2SmnRqUjxcUAAAAAAAAAAAAADmt7AQ",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1660826090000,
+        "dollId": "FEED_ANIMAL_HISTORY_DOLL",
+        "dollResource": "https://gw.alipayobjects.com/mdn/rms_e9e22c/afts/img/A*qXL6TZuRs28AAAAAAAAAAAAAARQnAQ",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1660826090000,
+        "dollId": "DONATE_ITEM_HISTORY_DOLL",
+        "dollResource": "https://gw.alipayobjects.com/mdn/rms_e9e22c/afts/img/A*rRCnRachfxAAAAAAAAAAAAAAARQnAQ",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1660826090000,
+        "dollId": "DONATE_EGG_HISTORY_DOLL",
+        "dollResource": "https://gw.alipayobjects.com/mdn/rms_e9e22c/afts/img/A*OeouRrQh-4IAAAAAAAAAAAAAARQnAQ",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1660826081000,
+        "dollId": "5TH_DOLL",
+        "dollResource": "https://gw.alipayobjects.com/mdn/rms_e9e22c/afts/img/A*Gz3XSqIGx6YAAAAAAAAAAAAAARQnAQ",
+        "hasNew": false
+      }
+    ],
+    "showLoveCabinDollList": true
+  },
+  "memo": "SUCCESS",
+  "ownAnimal": {
+    "animalBuff": "",
+    "animalId": "20180209001228012088122949590991",
+    "animalNameDisplayRule": "SHOW2FRIEND",
+    "animalStatusVO": {
+      "animalFeedStatus": "EATING",
+      "animalInteractStatus": "HOME"
+    },
+    "animalType": "CHICK",
+    "beHiredEndTime": 1742591970000,
+    "beHiredStartTime": 1742563170000,
+    "consumeSpeed": 0.0107,
+    "currentFarmId": "10250111010440012088052063971212",
+    "currentFarmMasterUserId": "2088052063971212",
+    "farmId": "10180209001228012088122949590991",
+    "feedTimes": 16879,
+    "foodHaveEatten": 0.382,
+    "foodHaveStolen": 0,
+    "injuredInfoVO": {
+      "hitUserId": "2088702563911349"
+    },
+    "littleChick": false,
+    "masterFarmId": "10180209001228012088122949590991",
+    "masterUserInfoVO": {
+      "userId": "2088122949590991"
+    },
+    "name": "",
+    "ornaments": [
+      {
+        "acquired": false,
+        "expiredTime": 88125474828000,
+        "id": "60240823f4fbb9a8",
+        "resourceKey": "coat-aiyoumofa",
+        "setsType": "ACHIEVEMENTSETS",
+        "subType": "coat",
+        "type": "apparels"
+      },
+      {
+        "acquired": false,
+        "expiredTime": 88125474828000,
+        "id": "602408237bec5c19",
+        "resourceKey": "cap-aiyoumofa",
+        "setsType": "ACHIEVEMENTSETS",
+        "subType": "cap",
+        "type": "apparels"
+      }
+    ],
+    "produceManureSpeed": 0.0107,
+    "sleepInfo": {
+      "countDown": 0,
+      "sleepBeginTime": 0,
+      "sleepEndTime": 1742940000000
+    },
+    "startEatTime": 1742935654000,
+    "subAnimalType": "NORMAL",
+    "updateNameTime": 0
+  },
+  "paintingSwitch": true,
+  "quiltSwitch": true,
+  "resultCode": "100",
+  "showUserPaintingList": [],
+  "sleepNotifyInfo": {
+    "canSleep": true,
+    "sleepBeginTime": 1742904000000,
+    "sleepConsumeSpeed": 0.01,
+    "sleepCountDown": 0,
+    "sleepEndTime": 1742940000000
+  },
+  "sleepSwitch": true,
+  "sleepTalkList": [
+    {
+      "text": "我最爱主人了，嘻嘻"
+    },
+    {
+      "text": "想穿新衣服，呼呼"
+    },
+    {
+      "text": "想要抱抱"
+    },
+    {
+      "text": "晚上睡觉觉，白天精神好"
+    },
+    {
+      "text": "好暖和好暖和呀~"
+    },
+    {
+      "text": "本宝宝的小被子，香香软软的..."
+    },
+    {
+      "text": "嘿嘿嘿，裹紧我可爱的小被叽~"
+    },
+    {
+      "text": "嘻嘻我有小被子啦"
+    },
+    {
+      "text": "主人说不可以蹬被子的..."
+    },
+    {
+      "text": "感觉脚脚暖暖的~"
+    },
+    {
+      "text": "别抢我的小被叽！"
+    },
+    {
+      "text": "好软乎呀，呼呼..."
+    },
+    {
+      "text": "主人主人，好暖呀！"
+    },
+    {
+      "text": "盖暖暖被子，做甜甜的梦呀~"
+    },
+    {
+      "text": "向右转！齐步走！"
+    },
+    {
+      "text": "你住月球上，我住庄园里"
+    },
+    {
+      "text": "床前明月光，疑是地上霜"
+    },
+    {
+      "text": "主人，我梦见你啦！"
+    },
+    {
+      "text": "我好喜欢我的主人呀！"
+    },
+    {
+      "text": "哼哼，我寄几玩！"
+    },
+    {
+      "text": "我对主人的爱是无穷大"
+    },
+    {
+      "text": "好好吃饭，天天产蛋"
+    },
+    {
+      "text": "主人好好看，嘿嘿嘿"
+    },
+    {
+      "text": "我主人超腻害"
+    },
+    {
+      "text": "咕咕咕咕咕咕..."
+    },
+    {
+      "text": "一一得一，一二得二"
+    },
+    {
+      "text": "呼呼呼，呼呼呼"
+    },
+    {
+      "text": "我是宝宝"
+    }
+  ],
+  "success": true,
+  "userPaintingList": []
+}

@@ -1,0 +1,134 @@
+{
+  "ariverRpcTraceId": "218024b317429572108763428e4b92",
+  "dadaAnswerSwitch": true,
+  "farmTaskList": [
+    {
+      "awardCount": 1,
+      "awardType": "DRAW_TIMES",
+      "backgroundColor": "#00A446",
+      "bizKey": "SIGN_FREE",
+      "btnText": "去完成",
+      "canReceiveAwardCount": 1,
+      "deliveryControlItem": {
+        "iepTaskTracer": "traceId:218024b317429572108763428e4b92~sceneCode:ANTFARM_DRAW_TIMES_TASK~groupId:DRAW_TIMES_ACTIVITY_TASK~taskType:SIGN_FREE~taskStatus:RECEIVED~decideRightsId:-~finishOnceAwardCnt:1"
+      },
+      "desc": "每日访问抽抽乐，可得1次机会",
+      "icon": "https://mdn.alipayobjects.com/huamei_zxdryz/afts/img/A*laLkTLe7bfkAAAAAAAAAAAAADveNAQ/original",
+      "receivePart": false,
+      "rightsTimes": 1,
+      "rightsTimesLimit": 1,
+      "taskId": "SIGN_FREE",
+      "taskMode": "TRIGGER",
+      "taskStatus": "RECEIVED",
+      "title": "每日签到"
+    },
+    {
+      "awardCount": 1,
+      "awardType": "DRAW_TIMES",
+      "backgroundColor": "#00A446",
+      "bizKey": "IPCCL_baixuegongzhu",
+      "btnText": "去完成",
+      "canReceiveAwardCount": 1,
+      "deliveryControlItem": {
+        "iepTaskTracer": "traceId:218024b317429572108763428e4b92~sceneCode:ANTFARM_DRAW_TIMES_TASK~groupId:DRAW_TIMES_ACTIVITY_TASK~taskType:IPCCL_baixuegongzhu~taskStatus:RECEIVED~decideRightsId:-~finishOnceAwardCnt:1"
+      },
+      "desc": "每日完成1次「白雪公主」抽抽乐抽奖，可得1次机会",
+      "icon": "https://mdn.alipayobjects.com/huamei_mmmnf6/afts/img/A*YGVpQ4RYb54AAAAAAAAAAAAAegK0AQ/original",
+      "receivePart": false,
+      "rightsTimes": 1,
+      "rightsTimesLimit": 1,
+      "targetUrl": "alipays://platformapi/startapp?appId=20000067&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fyuyan%2F180020380000000182%2FprizeMachine.html%3Fsource%3Dip_ccl&ttb=always&abv=NO&pr=NO&so=NO&appClearTop=false&startMultApp=YES&caprMode=sync&titlePenetrate=YES&source=ip_ccl",
+      "taskId": "IPCCL_baixuegongzhu",
+      "taskMode": "TRIGGER",
+      "taskStatus": "RECEIVED",
+      "title": "去抽「小白雪公主装」"
+    },
+    {
+      "awardCount": 3,
+      "awardType": "DRAW_TIMES",
+      "backgroundColor": "#00A446",
+      "bizKey": "SHANGYEHUA_DRAW_TIMES",
+      "btnText": "去完成",
+      "canReceiveAwardCount": 1,
+      "deliveryControlItem": {
+        "iepTaskTracer": "traceId:218024b317429572108763428e4b92~sceneCode:ANTFARM_DRAW_TIMES_TASK~groupId:DRAW_TIMES_ACTIVITY_TASK~taskType:SHANGYEHUA_DRAW_TIMES~taskStatus:RECEIVED~decideRightsId:-~finishOnceAwardCnt:1"
+      },
+      "desc": "浏览杂货铺15s，可得1次机会",
+      "icon": "https://mdn.alipayobjects.com/huamei_zxdryz/afts/img/A*jIhSSa7K-csAAAAAAAAAAAAADveNAQ/original",
+      "receivePart": false,
+      "rightsTimes": 3,
+      "rightsTimesLimit": 3,
+      "targetUrl": "alipays://platformapi/startapp?appId=2060090000304921&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fyuyan%2F180020010001256918%2Fantfarm-landing.html%3FcaprMode%3Dsync&canPullDown=NO&showOptionMenu=NO&spaceCode=ANT_FARM_RAFFLE&renderConfigKey=mediaScene%2327%23%23adPosId%232023121322700074282%23%23spaceCode%23ANT_FARM_RAFFLE&iepTaskType=SHANGYEHUA_DRAW_TIMES&iepTaskSceneCode=ANTFARM_DRAW_TIMES_TASK&canDoTask=false&awardCount=1",
+      "taskId": "SHANGYEHUA_DRAW_TIMES",
+      "taskMode": "TRIGGER",
+      "taskStatus": "RECEIVED",
+      "title": "去杂货铺逛一逛"
+    },
+    {
+      "awardCount": 1,
+      "awardType": "DRAW_TIMES",
+      "backgroundColor": "#00A446",
+      "bizKey": "EXCHANGE_TASK",
+      "btnText": "去完成",
+      "canReceiveAwardCount": 1,
+      "deliveryControlItem": {
+        "iepTaskTracer": "traceId:218024b317429572108763428e4b92~sceneCode:ANTFARM_DRAW_TIMES_TASK~groupId:DRAW_TIMES_ACTIVITY_TASK~taskType:EXCHANGE_TASK~taskStatus:RECEIVED~decideRightsId:-~finishOnceAwardCnt:1"
+      },
+      "desc": "消耗90g饲料，可换取1次机会",
+      "icon": "https://mdn.alipayobjects.com/huamei_zxdryz/afts/img/A*LuwbSbQRuPkAAAAAAAAAAAAADveNAQ/original",
+      "receivePart": false,
+      "rightsTimes": 2,
+      "rightsTimesLimit": 2,
+      "taskId": "EXCHANGE_TASK",
+      "taskMode": "TRIGGER",
+      "taskStatus": "RECEIVED",
+      "title": "消耗饲料换机会"
+    },
+    {
+      "awardCount": 2,
+      "awardType": "DRAW_TIMES",
+      "backgroundColor": "#00A446",
+      "bizKey": "20241108_chouchoulechoukuan2",
+      "btnText": "去完成",
+      "canReceiveAwardCount": 1,
+      "deliveryControlItem": {
+        "iepTaskTracer": "traceId:218024b317429572108763428e4b92~sceneCode:ANTFARM_DRAW_TIMES_TASK~groupId:DRAW_TIMES_ACTIVITY_TASK~taskType:20241108_chouchoulechoukuan2~taskStatus:RECEIVED~decideRightsId:-~finishOnceAwardCnt:1"
+      },
+      "desc": "单笔捐赠“为TA加油”专题页项目1元以上，可得1次机会",
+      "icon": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*hXIgTJ7lEYoAAAAAAAAAAAAADr97AQ/original",
+      "innerAction": "DONATION",
+      "receivePart": false,
+      "rightsTimes": 2,
+      "rightsTimesLimit": 2,
+      "targetUrl": "alipays://platformapi/startapp?appId=10000009&startMultApp=NO&transparentTitle=auto&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fyuyan%2F180020010001262924%2FdonationSubject.html%3FsourceName%3Dmyzy-cclrw%26chInfo%3Dmyzy-cclrw%26caprMode%3Dsync%26subjectId%3D20240917273505633301654",
+      "taskId": "20241108_chouchoulechoukuan2",
+      "taskMode": "TRIGGER",
+      "taskStatus": "RECEIVED",
+      "title": "伸出援手，点亮希望"
+    },
+    {
+      "awardCount": 1,
+      "awardType": "DRAW_TIMES",
+      "backgroundColor": "#00A446",
+      "bizKey": "cclyx_xundaodaqian",
+      "btnText": "去完成",
+      "canReceiveAwardCount": 1,
+      "deliveryControlItem": {
+        "iepTaskTracer": "traceId:218024b317429572108763428e4b92~sceneCode:ANTFARM_DRAW_TIMES_TASK~groupId:ccl_xiaoyouxi~taskType:cclyx_xundaodaqian~taskStatus:RECEIVED~decideRightsId:-~finishOnceAwardCnt:1"
+      },
+      "desc": "玩寻道大千完成砍伐10次可得1个小鸡乐园宝箱和1次机会",
+      "icon": "https://mdn.alipayobjects.com/huamei_e43in1/afts/img/36Z6SJdGho0AAAAAAAAAAAAAelslAQFr/original",
+      "receivePart": false,
+      "rightsTimes": 1,
+      "rightsTimesLimit": 1,
+      "targetUrl": "alipays://platformapi/startapp?appId=2021004127623300&query=channel%3Dzhuangyuan%26gameCenterBackflow%3Dfalse&chInfo=lianyun_zhuangyuan",
+      "taskId": "cclyx_xundaodaqian",
+      "taskMode": "TRIGGER",
+      "taskStatus": "RECEIVED",
+      "title": "【限时】玩游戏得新机会"
+    }
+  ],
+  "memo": "SUCCESS",
+  "resultCode": "100",
+  "success": true
+}

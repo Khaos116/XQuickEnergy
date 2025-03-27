@@ -1,0 +1,137 @@
+{
+  "ariverRpcTraceId": "2191e87517429370594668606e8e97",
+  "drawActivityInfo": {
+    "activityId": "CP122602201",
+    "backgroundImgUrl": "https://mdn.alipayobjects.com/huamei_zxdryz/afts/img/A*dZbfToYZlXUAAAAAAAAAAAAADveNAQ/original",
+    "endTime": 1744646399000,
+    "ruleUrl": "https://render.alipay.com/p/c/180020570000121440/index.html"
+  },
+  "drawPrizeList": [
+    {
+      "prizeId": "PZ1332489098",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*bKzpRL7aTWoAAAAAAAAAAAAAeo3RAQ/original",
+      "prizeName": "抽抽乐18期-亲情卡1张",
+      "prizeNum": 1,
+      "received": false,
+      "specialPrize": false,
+      "subTitle": "可在庄园首页右上角-道具中使用",
+      "title": "庄园亲情卡 (1张)",
+      "type": "CARD"
+    },
+    {
+      "prizeId": "PZ1533984831",
+      "prizeImgDetailTagUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*coNITrehC4MAAAAAAAAAAAAADvqBAQ/original",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*Z7sdS4C5O4AAAAAAAAAAAAAAeo3RAQ/original",
+      "prizeName": "荷气生财",
+      "prizeNum": 1,
+      "prizeTagUrl": "https://mdn.alipayobjects.com/huamei_zxdryz/afts/img/A*paArR5BAyuEAAAAAAAAAAAAADveNAQ/fmt.webp",
+      "received": true,
+      "specialPrize": true,
+      "subTitle": "荷包满满  好运连连",
+      "title": "荷气生财 (永久装扮)",
+      "type": "ANIMAL_ORNAMENT"
+    },
+    {
+      "prizeId": "PZ1133985427",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*YkKZSa8RqzMAAAAAAAAAAAAAeo3RAQ/original",
+      "prizeName": "普通美食",
+      "prizeNum": 1,
+      "received": false,
+      "specialPrize": false,
+      "subTitle": "普通美食：喂食小鸡立产0.12颗爱心蛋",
+      "title": "焦糖香蕉吐司 (1份)",
+      "type": "CUSION"
+    },
+    {
+      "prizeId": "PZ1733985486",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*zg1qQoNWbpEAAAAAAAAAAAAAeo3RAQ/original",
+      "prizeName": "普通美食",
+      "prizeNum": 2,
+      "received": false,
+      "specialPrize": false,
+      "subTitle": "普通美食：喂食小鸡立产0.12颗爱心蛋",
+      "title": "木瓜炖奶 (2份)",
+      "type": "CUSION"
+    },
+    {
+      "prizeId": "PZ1933984933",
+      "prizeImgDetailTagUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*88ExS5EbnlwAAAAAAAAAAAAADvqBAQ/original",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*QejZRYJU7g4AAAAAAAAAAAAAeo3RAQ/original",
+      "prizeName": "芒里偷闲",
+      "prizeNum": 1,
+      "prizeTagUrl": "https://mdn.alipayobjects.com/huamei_zxdryz/afts/img/A*KAuGQI-9X5UAAAAAAAAAAAAADveNAQ/fmt.webp",
+      "received": true,
+      "specialPrize": true,
+      "subTitle": "再忙也要注意休息哦",
+      "title": "芒里偷闲 (永久装扮)",
+      "type": "ANIMAL_ORNAMENT"
+    },
+    {
+      "prizeId": "PZ1832489133",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*RNP6SLDlni4AAAAAAAAAAAAAeo3RAQ/original",
+      "prizeName": "抽抽乐18期_加速卡2张",
+      "prizeNum": 2,
+      "received": false,
+      "specialPrize": false,
+      "subTitle": "可在庄园首页右上角-道具中使用",
+      "title": "庄园加速卡 (2张)",
+      "type": "CARD"
+    },
+    {
+      "prizeId": "PZ1833985768",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*1Xr1TaLQygYAAAAAAAAAAAAAeo3RAQ/original",
+      "prizeName": "普通美食",
+      "prizeNum": 1,
+      "received": false,
+      "specialPrize": false,
+      "subTitle": "爱心美食：喂食小鸡立产0.3颗爱心蛋",
+      "title": "牛油果酥 (1份)",
+      "type": "CUSION"
+    },
+    {
+      "prizeId": "PZ1533984906",
+      "prizeImgDetailTagUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*iZQXT4msCBYAAAAAAAAAAAAAeo3RAQ/original",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*ao0GR4_pr1UAAAAAAAAAAAAAeo3RAQ/original",
+      "prizeName": "不要蕉绿",
+      "prizeNum": 1,
+      "prizeTagUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*1B6MRLh8xd8AAAAAAAAAAAAAeo3RAQ/fmt.webp",
+      "received": true,
+      "specialPrize": true,
+      "subTitle": "对焦虑勇敢说NO!",
+      "title": "不要蕉绿 (永久装扮)",
+      "type": "ANIMAL_ORNAMENT"
+    },
+    {
+      "prizeId": "PZ1333985501",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*e2smQq4i2icAAAAAAAAAAAAAeo3RAQ/original",
+      "prizeName": "普通美食",
+      "prizeNum": 3,
+      "received": false,
+      "specialPrize": false,
+      "subTitle": "普通美食：喂食小鸡立产0.12颗爱心蛋",
+      "title": "龙井柠檬挞 (3份)",
+      "type": "CUSION"
+    },
+    {
+      "prizeId": "PZ1232489126",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*m079RJIvNQsAAAAAAAAAAAAAeo3RAQ/original",
+      "prizeName": "抽抽乐18期_加速卡1张",
+      "prizeNum": 1,
+      "received": false,
+      "specialPrize": false,
+      "subTitle": "可在庄园首页右上角-道具中使用",
+      "title": "庄园加速卡 (1张)",
+      "type": "CARD"
+    }
+  ],
+  "ipDrawMachineActivityId": "ipDrawMachine_250313",
+  "memo": "SUCCESS",
+  "nftEntranceInfo": {
+    "entranceSwitch": false
+  },
+  "resultCode": "100",
+  "success": true,
+  "userInfo": {
+    "leftDrawTimes": 0
+  }
+}
