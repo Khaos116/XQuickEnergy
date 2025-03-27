@@ -1,0 +1,68 @@
+{
+  "ariverRpcTraceId": "client`Z42w/0lIRcQDAKzzwcSqANl2PNLL5g3_5707311",
+  "drawMachineActivity": {
+    "activityId": "ipDrawMachine_250313",
+    "collaboratorImg": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*oIsMQ4ltll4AAAAAAAAAAAAAevqBAQ/fmt.webp",
+    "collaboratorUrl": "https://t.taopiaopiao.com/yep/page/m/tt9vmj91oh",
+    "endTime": 1744127999000,
+    "ruleUrl": "https://render.alipay.com/p/c/180020570000121943/index.html"
+  },
+  "drawMachinePrizeList": [
+    {
+      "awardCount": 3.0,
+      "popPrizeImgUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*uY-kTZsH_7IAAAAAAAAAAAAAevqBAQ/fmt.webp",
+      "prizeId": "ANTFARM_IP_DRAW#IP_FRAGMENT_3",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*uY-kTZsH_7IAAAAAAAAAAAAAevqBAQ/fmt.webp",
+      "title": "碎片3个",
+      "type": "FRAGMENT"
+    },
+    {
+      "awardCount": 50.0,
+      "popPrizeImgUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*v8EJQaxTi6gAAAAAAAAAAAAAevqBAQ/fmt.webp",
+      "prizeId": "ANTFARM_IP_DRAW#IP_FRAGMENT_50",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*v8EJQaxTi6gAAAAAAAAAAAAAevqBAQ/fmt.webp",
+      "title": "碎片50个",
+      "type": "FRAGMENT"
+    },
+    {
+      "awardCount": 5.0,
+      "popPrizeImgUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*-Mo4T7CRVxcAAAAAAAAAAAAAevqBAQ/fmt.webp",
+      "prizeId": "ANTFARM_IP_DRAW#IP_FRAGMENT_5",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*-Mo4T7CRVxcAAAAAAAAAAAAAevqBAQ/fmt.webp",
+      "title": "碎片5个",
+      "type": "FRAGMENT"
+    },
+    {
+      "awardCount": 1.0,
+      "popPrizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*I7fRSpFoQa8AAAAAAAAAAAAAeo3RAQ/original",
+      "prizeId": "ANTFARM_IP_DRAW#IP_ATTIRE_XIAOAIREN",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*I7fRSpFoQa8AAAAAAAAAAAAAeo3RAQ/original",
+      "title": "小矮人装",
+      "type": "SUB_ORNAMENT"
+    },
+    {
+      "awardCount": 10.0,
+      "popPrizeImgUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*v9sQR4skOsUAAAAAAAAAAAAAevqBAQ/original",
+      "prizeId": "ANTFARM_IP_DRAW#IP_FRAGMENT_10",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*v9sQR4skOsUAAAAAAAAAAAAAevqBAQ/original",
+      "title": "碎片10个",
+      "type": "FRAGMENT"
+    },
+    {
+      "awardCount": 1.0,
+      "popPrizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*A10sQLTmmDwAAAAAAAAAAAAAeo3RAQ/original",
+      "prizeId": "ANTFARM_IP_DRAW#IP_ATTIRE_BAIXUEGONGZHU",
+      "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_vm8bfj/afts/img/A*A10sQLTmmDwAAAAAAAAAAAAAeo3RAQ/original",
+      "title": "小白雪公主装",
+      "type": "MAIN_ORNAMENT"
+    }
+  ],
+  "drawTimes": 0,
+  "fragmentCount": 29,
+  "memo": "SUCCESS",
+  "otherDrawMachineActivityIds": [
+    "CP122602201"
+  ],
+  "resultCode": "100",
+  "success": true
+}

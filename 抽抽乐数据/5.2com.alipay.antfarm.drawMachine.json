@@ -1,0 +1,19 @@
+{
+  "ariverRpcTraceId": "client`Z42w/0lIRcQDAKzzwcSqANl2PNLL7Ru_5707411",
+  "drawMachineFinalPrize": {
+    "needFragmentCount": 199,
+    "received": false
+  },
+  "drawMachinePrize": {
+    "awardCount": 5.0,
+    "popPrizeImgUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*-Mo4T7CRVxcAAAAAAAAAAAAAevqBAQ/fmt.webp",
+    "prizeId": "ANTFARM_IP_DRAW#IP_FRAGMENT_5",
+    "prizeImgUrl": "https://mdn.alipayobjects.com/huamei_p5t578/afts/img/A*-Mo4T7CRVxcAAAAAAAAAAAAAevqBAQ/fmt.webp",
+    "title": "碎片5个",
+    "type": "FRAGMENT"
+  },
+  "drawTimes": 2,
+  "memo": "SUCCESS",
+  "resultCode": "100",
+  "success": true
+}

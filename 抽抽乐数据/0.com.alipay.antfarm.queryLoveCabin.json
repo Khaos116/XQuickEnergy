@@ -1,5 +1,5 @@
 {
-  "ariverRpcTraceId": "2191e87517429370451148374e8e97",
+  "ariverRpcTraceId": "21894bca17430505144563679e60c9",
   "chickenDiarySwitch": true,
   "cookToday": true,
   "drawActivityOpen": true,
@@ -12,10 +12,15 @@
   },
   "duringPaintingActivity": false,
   "familySwitch": true,
-  "foodStock": 1740,
+  "foodStock": 1800,
   "foodStockLimit": 1800,
+  "groupId": "0709390009220240914144449741",
   "kitchenSwitch": true,
-  "loveCabinOrnament": {},
+  "loveCabinOrnament": {
+    "cabinOrnamentId": "jiating04",
+    "expireTime": 88139556547000,
+    "hasCabinOrnament": true
+  },
   "loveCabinOrnamentsSwitch": true,
   "loveCabinVO": {
     "cabinFloorAchievementRecords": [
@@ -23,36 +28,36 @@
         "achievementDesc": "第四层收藏柜",
         "achievementId": "13",
         "achievementName": "第四层收藏柜",
-        "achievementRanking": 9004799,
-        "achievementTime": 1702575900000
+        "achievementRanking": 9212049,
+        "achievementTime": 1703779983000
       },
       {
         "achievementDesc": "第五层收藏柜",
         "achievementId": "14",
         "achievementName": "第五层收藏柜",
-        "achievementRanking": 7947260,
-        "achievementTime": 1710441492000
+        "achievementRanking": 8075915,
+        "achievementTime": 1710911933000
       },
       {
         "achievementDesc": "第六层收藏柜",
         "achievementId": "15",
         "achievementName": "第六层收藏柜",
-        "achievementRanking": 7268319,
-        "achievementTime": 1718828073000
+        "achievementRanking": 7475514,
+        "achievementTime": 1721496450000
       },
       {
         "achievementDesc": "第七层收藏柜",
         "achievementId": "16",
         "achievementName": "第七层收藏柜",
-        "achievementRanking": 6745925,
-        "achievementTime": 1728316920000
+        "achievementRanking": 6804669,
+        "achievementTime": 1728956757000
       },
       {
         "achievementDesc": "第八层收藏柜",
         "achievementId": "17",
         "achievementName": "第八层收藏柜",
-        "achievementRanking": 6188038,
-        "achievementTime": 1736879083000
+        "achievementRanking": 6299488,
+        "achievementTime": 1737771287000
       }
     ],
     "hasGiftAcquired": true,
@@ -61,237 +66,237 @@
     "hasReceivedActivityGift": false,
     "loveCabinDollList": [
       {
-        "acquiredTime": 1741971633000,
+        "acquiredTime": 1742867969000,
+        "dollId": "SPRING25_COOK_DOLL",
+        "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*AGQzTZowFsgAAAAAAAAAAAAAer97AQ/original",
+        "hasNew": false
+      },
+      {
+        "acquiredTime": 1742004932000,
         "dollId": "2025_03_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*B7CXRJtqpccAAAAAAAAAAAAAer97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1739555884000,
+        "acquiredTime": 1739552432000,
         "dollId": "2025_02_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*GeqBTqD0tHQAAAAAAAAAAAAAer97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1738213021000,
+        "acquiredTime": 1737771287000,
         "dollId": "NEWYEAR25_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*31ULTaBa89cAAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1736879083000,
+        "acquiredTime": 1736879374000,
         "dollId": "2025_01_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*vIE6Rq-R8dQAAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1734195634000,
+        "acquiredTime": 1734201568000,
         "dollId": "2024_12_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*8vHETZNJaQ8AAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1733448691000,
+        "acquiredTime": 1732671969000,
         "dollId": "WINTER24_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*A6--SKGl2ZsAAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1731606201000,
+        "acquiredTime": 1731635263000,
         "dollId": "2024_11_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*wHJ_S6bjElsAAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1728921721000,
+        "acquiredTime": 1728956757000,
         "dollId": "2024_10_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*BCcDRL-UQlQAAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1728316920000,
+        "acquiredTime": 1727056035000,
         "dollId": "EARLYAUTUMN24_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*OSOsRrDIOTYAAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1726329720000,
+        "acquiredTime": 1726364603000,
         "dollId": "2024_09_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*1_H1SrtYeNQAAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1723659976000,
+        "acquiredTime": 1723687484000,
         "dollId": "2024_08_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*-B42SpxIFKUAAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1722463451000,
+        "acquiredTime": 1721667106000,
         "dollId": "MIDSUMMER24_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*KJCCTYCImQkAAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1721589669000,
+        "acquiredTime": 1721496450000,
         "dollId": "2024_07_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*VrGzTJ3RnoAAAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1718828073000,
+        "acquiredTime": 1718852662000,
         "dollId": "2024_06_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_uofqu7/afts/img/A*P-xvQZtjqM0AAAAAAAAAAAAADr97AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1716601175000,
+        "acquiredTime": 1716781996000,
         "dollId": "SUMMER24_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*xt88RoJvkvwAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1715737921000,
+        "acquiredTime": 1715738475000,
         "dollId": "2024_05_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*Az1ZTLyuHowAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1713117306000,
+        "acquiredTime": 1713117259000,
         "dollId": "2024_04_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*tXUaToRxCb0AAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1711219401000,
+        "acquiredTime": 1710911933000,
         "dollId": "SPRING24_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*a6IlS5Qq31YAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1710441492000,
+        "acquiredTime": 1710441522000,
         "dollId": "2024_03_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*Xe_2Qr_rQBgAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1707971087000,
+        "acquiredTime": 1707971282000,
         "dollId": "2024_02_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*PuVFTLw0DcMAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1707631856000,
+        "acquiredTime": 1707423167000,
         "dollId": "NEWYEAR24_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*abnKQ5d9_QwAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1705257137000,
+        "acquiredTime": 1705257249000,
         "dollId": "2024_01_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*IqKNQriRlaUAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1703899292000,
+        "acquiredTime": 1703779983000,
         "dollId": "WINTER23_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*kfDrT7xD5RcAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1702575900000,
+        "acquiredTime": 1702605681000,
         "dollId": "2023_12_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*5LxST5NmWKUAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1700000257000,
+        "acquiredTime": 1700000300000,
         "dollId": "2023_11_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*7zcLTIZ9L50AAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1699163474000,
+        "acquiredTime": 1698805246000,
         "dollId": "LATEAUTUMN23_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*ZXy9T67ntuoAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1697333133000,
+        "acquiredTime": 1697333217000,
         "dollId": "2023_10_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*y9G7RoeqLmwAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1694712532000,
+        "acquiredTime": 1694743822000,
         "dollId": "2023_09_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*COEKTZEwEc8AAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1693967823000,
+        "acquiredTime": 1694051753000,
         "dollId": "EARLYAUTUMN23_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*Xf4nTK3GzN8AAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1692927133000,
+        "acquiredTime": 1692843896000,
         "dollId": "2023_08_MONTH_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*jNmvSJLDerIAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1688490360000,
+        "acquiredTime": 1688526330000,
         "dollId": "MIDSUMMER23_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*wu5BRqWddy4AAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1683513867000,
+        "acquiredTime": 1683422051000,
         "dollId": "SUMMER23_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*b_vXQYG7xQQAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1677292100000,
+        "acquiredTime": 1677294849000,
         "dollId": "SPRING23_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*54v7QKbGkJ8AAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1673575853000,
+        "acquiredTime": 1673575682000,
         "dollId": "WUFU23_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/huamei_ga4c9e/afts/img/A*M9s9TI6ue1oAAAAAAAAAAAAADmt7AQ/original",
         "hasNew": false
       },
       {
-        "acquiredTime": 1671769317000,
+        "acquiredTime": 1671587863000,
         "dollId": "WINTER22_COOK_DOLL",
         "dollResource": "https://mdn.alipayobjects.com/mdn/huamei_ga4c9e/afts/img/A*2SmnRqUjxcUAAAAAAAAAAAAADmt7AQ",
         "hasNew": false
       },
       {
-        "acquiredTime": 1660826090000,
+        "acquiredTime": 1660790868000,
         "dollId": "FEED_ANIMAL_HISTORY_DOLL",
         "dollResource": "https://gw.alipayobjects.com/mdn/rms_e9e22c/afts/img/A*qXL6TZuRs28AAAAAAAAAAAAAARQnAQ",
         "hasNew": false
       },
       {
-        "acquiredTime": 1660826090000,
+        "acquiredTime": 1660790868000,
         "dollId": "DONATE_ITEM_HISTORY_DOLL",
         "dollResource": "https://gw.alipayobjects.com/mdn/rms_e9e22c/afts/img/A*rRCnRachfxAAAAAAAAAAAAAAARQnAQ",
         "hasNew": false
       },
       {
-        "acquiredTime": 1660826090000,
+        "acquiredTime": 1660790868000,
         "dollId": "DONATE_EGG_HISTORY_DOLL",
         "dollResource": "https://gw.alipayobjects.com/mdn/rms_e9e22c/afts/img/A*OeouRrQh-4IAAAAAAAAAAAAAARQnAQ",
-        "hasNew": false
-      },
-      {
-        "acquiredTime": 1660826081000,
-        "dollId": "5TH_DOLL",
-        "dollResource": "https://gw.alipayobjects.com/mdn/rms_e9e22c/afts/img/A*Gz3XSqIGx6YAAAAAAAAAAAAAARQnAQ",
         "hasNew": false
       }
     ],
@@ -300,46 +305,46 @@
   "memo": "SUCCESS",
   "ownAnimal": {
     "animalBuff": "",
-    "animalId": "20180209001228012088122949590991",
+    "animalId": "20190201002850012088432300394451",
     "animalNameDisplayRule": "SHOW2FRIEND",
     "animalStatusVO": {
       "animalFeedStatus": "EATING",
       "animalInteractStatus": "HOME"
     },
     "animalType": "CHICK",
-    "beHiredEndTime": 1742591970000,
-    "beHiredStartTime": 1742563170000,
+    "beHiredEndTime": 1742938942000,
+    "beHiredStartTime": 1742910142000,
     "consumeSpeed": 0.0107,
     "currentFarmId": "10250111010440012088052063971212",
     "currentFarmMasterUserId": "2088052063971212",
-    "farmId": "10180209001228012088122949590991",
-    "feedTimes": 16879,
-    "foodHaveEatten": 0.382,
-    "foodHaveStolen": 0,
+    "farmId": "10190201002850012088432300394451",
+    "feedTimes": 13096,
+    "foodHaveEatten": 0.485,
+    "foodHaveStolen": 0.0,
     "injuredInfoVO": {
-      "hitUserId": "2088702563911349"
+      "hitUserId": "2088122949590991"
     },
     "littleChick": false,
-    "masterFarmId": "10180209001228012088122949590991",
+    "masterFarmId": "10190201002850012088432300394451",
     "masterUserInfoVO": {
-      "userId": "2088122949590991"
+      "userId": "2088432300394451"
     },
     "name": "",
     "ornaments": [
       {
         "acquired": false,
-        "expiredTime": 88125474828000,
-        "id": "60240823f4fbb9a8",
-        "resourceKey": "coat-aiyoumofa",
+        "expiredTime": 4837075200000,
+        "id": "60230331c37c9094",
+        "resourceKey": "coat-chuxiaweizhilv",
         "setsType": "ACHIEVEMENTSETS",
         "subType": "coat",
         "type": "apparels"
       },
       {
         "acquired": false,
-        "expiredTime": 88125474828000,
-        "id": "602408237bec5c19",
-        "resourceKey": "cap-aiyoumofa",
+        "expiredTime": 4837075200000,
+        "id": "60230331df4a581b",
+        "resourceKey": "cap-chuxiaweizhilv",
         "setsType": "ACHIEVEMENTSETS",
         "subType": "cap",
         "type": "apparels"
@@ -349,9 +354,9 @@
     "sleepInfo": {
       "countDown": 0,
       "sleepBeginTime": 0,
-      "sleepEndTime": 1742940000000
+      "sleepEndTime": 1743112800000
     },
-    "startEatTime": 1742935654000,
+    "startEatTime": 1743050492000,
     "subAnimalType": "NORMAL",
     "updateNameTime": 0
   },
@@ -359,12 +364,13 @@
   "quiltSwitch": true,
   "resultCode": "100",
   "showUserPaintingList": [],
+  "sleepIntimacy": 1,
   "sleepNotifyInfo": {
-    "canSleep": true,
-    "sleepBeginTime": 1742904000000,
+    "canSleep": false,
+    "sleepBeginTime": 1743076800000,
     "sleepConsumeSpeed": 0.01,
-    "sleepCountDown": 0,
-    "sleepEndTime": 1742940000000
+    "sleepCountDown": 26286,
+    "sleepEndTime": 1743112800000
   },
   "sleepSwitch": true,
   "sleepTalkList": [
@@ -454,5 +460,6 @@
     }
   ],
   "success": true,
+  "themeName": "jiating04",
   "userPaintingList": []
 }

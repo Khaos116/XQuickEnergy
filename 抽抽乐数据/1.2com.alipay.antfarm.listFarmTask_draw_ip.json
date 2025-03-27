@@ -1,0 +1,70 @@
+{
+  "ariverRpcTraceId": "21894bca17430505149193716e60c9",
+  "dadaAnswerSwitch": true,
+  "farmTaskList": [
+    {
+      "awardCount": 0,
+      "awardType": "IP_DRAW_MACHINE_DRAW_TIMES",
+      "backgroundColor": "#00A446",
+      "bizKey": "IP_SHANGYEHUA_TASK",
+      "btnText": "去完成",
+      "canReceiveAwardCount": 1,
+      "deliveryControlItem": {
+        "iepTaskTracer": "traceId:21894bca17430505149193716e60c9~sceneCode:ANTFARM_IP_DRAW_TASK~groupId:IP_DRAW_TASK_GROUP~taskType:IP_SHANGYEHUA_TASK~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:1"
+      },
+      "desc": "浏览杂货铺15s，可得1次机会",
+      "icon": "https://mdn.alipayobjects.com/huamei_zxdryz/afts/img/A*jIhSSa7K-csAAAAAAAAAAAAADveNAQ/original",
+      "receivePart": false,
+      "rightsTimes": 0,
+      "rightsTimesLimit": 3,
+      "targetUrl": "alipays://platformapi/startapp?appId=2060090000304921&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fyuyan%2F180020010001256918%2Fantfarm-landing.html%3FcaprMode%3Dsync&canPullDown=NO&showOptionMenu=NO&spaceCode=ANT_FARM_RAFFLE&renderConfigKey=mediaScene%2327%23%23adPosId%232023121322700074282%23%23spaceCode%23ANT_FARM_RAFFLE&iepTaskType=IP_SHANGYEHUA_TASK&iepTaskSceneCode=ANTFARM_IP_DRAW_TASK&canDoTask=true&awardCount=1&doneTimes=0&iepTaskType=IP_SHANGYEHUA_TASK&iepTaskSceneCode=ANTFARM_IP_DRAW_TASK&canDoTask=true&awardCount=1",
+      "taskId": "IP_SHANGYEHUA_TASK",
+      "taskMode": "TRIGGER",
+      "taskStatus": "TODO",
+      "title": "去杂货铺逛一逛"
+    },
+    {
+      "awardCount": 1,
+      "awardType": "IP_DRAW_MACHINE_DRAW_TIMES",
+      "backgroundColor": "#00A446",
+      "bizKey": "IP_SIGN_FREE",
+      "btnText": "去完成",
+      "canReceiveAwardCount": 1,
+      "deliveryControlItem": {
+        "iepTaskTracer": "traceId:21894bca17430505149193716e60c9~sceneCode:ANTFARM_IP_DRAW_TASK~groupId:IP_DRAW_TASK_GROUP~taskType:IP_SIGN_FREE~taskStatus:RECEIVED~decideRightsId:-~finishOnceAwardCnt:1"
+      },
+      "desc": "每日访问IP抽抽乐，可得1次机会",
+      "icon": "https://mdn.alipayobjects.com/huamei_zxdryz/afts/img/A*laLkTLe7bfkAAAAAAAAAAAAADveNAQ/original",
+      "receivePart": false,
+      "rightsTimes": 1,
+      "rightsTimesLimit": 1,
+      "taskId": "IP_SIGN_FREE",
+      "taskMode": "TRIGGER",
+      "taskStatus": "RECEIVED",
+      "title": "每日签到"
+    },
+    {
+      "awardCount": 1,
+      "awardType": "IP_DRAW_MACHINE_DRAW_TIMES",
+      "backgroundColor": "#00A446",
+      "bizKey": "IP_EXCHANGE_TASK",
+      "btnText": "去完成",
+      "canReceiveAwardCount": 1,
+      "deliveryControlItem": {
+        "iepTaskTracer": "traceId:21894bca17430505149193716e60c9~sceneCode:ANTFARM_IP_DRAW_TASK~groupId:IP_DRAW_TASK_GROUP~taskType:IP_EXCHANGE_TASK~taskStatus:RECEIVED~decideRightsId:-~finishOnceAwardCnt:1"
+      },
+      "desc": "消耗90g饲料，可换取1次机会",
+      "icon": "https://mdn.alipayobjects.com/huamei_zxdryz/afts/img/A*LuwbSbQRuPkAAAAAAAAAAAAADveNAQ/original",
+      "receivePart": false,
+      "rightsTimes": 2,
+      "rightsTimesLimit": 2,
+      "taskId": "IP_EXCHANGE_TASK",
+      "taskMode": "TRIGGER",
+      "taskStatus": "RECEIVED",
+      "title": "消耗饲料换机会"
+    }
+  ],
+  "memo": "SUCCESS",
+  "resultCode": "100",
+  "success": true
+}
