@@ -106,7 +106,7 @@ public class AntMember extends ModelTask {
                 AntInsurance.executeTask(antInsuranceOptions.getValue());
             }
             // 消费金签到
-            if (signinCalendar.getValue()) {
+            if (signinCalendar.getValue() && !MyUtils.closeVerification()) {
                 signinCalendar();
             }
             if (enableGameCenter.getValue()) {
