@@ -1,21 +1,10 @@
 package io.github.lazyimmortal.sesame.model.task.antForest;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.text.TextUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import org.json.*;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,28 +12,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.robv.android.xposed.XposedHelpers;
-import io.github.lazyimmortal.sesame.data.ConfigV2;
-import io.github.lazyimmortal.sesame.data.ModelFields;
-import io.github.lazyimmortal.sesame.data.ModelGroup;
-import io.github.lazyimmortal.sesame.data.RuntimeInfo;
-import io.github.lazyimmortal.sesame.data.TokenConfig;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.BooleanModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.ChoiceModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.EmptyModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.IntegerModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.ListModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.SelectAndCountModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.SelectModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.StringModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.TextModelField;
+import io.github.lazyimmortal.sesame.data.*;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.*;
 import io.github.lazyimmortal.sesame.data.task.ModelTask;
-import io.github.lazyimmortal.sesame.entity.AlipayUser;
-import io.github.lazyimmortal.sesame.entity.CollectEnergyEntity;
-import io.github.lazyimmortal.sesame.entity.CustomOption;
-import io.github.lazyimmortal.sesame.entity.FriendWatch;
-import io.github.lazyimmortal.sesame.entity.KVNode;
-import io.github.lazyimmortal.sesame.entity.RpcEntity;
-import io.github.lazyimmortal.sesame.entity.VitalityBenefit;
+import io.github.lazyimmortal.sesame.entity.*;
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.hook.Toast;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
@@ -1572,6 +1543,9 @@ public class AntForestV2 extends ModelTask {
     }
 
     private Boolean finishTask(String sceneCode, String taskType, String taskTitle) {
+        if (TextUtils.equals(sceneCode, "ANTFOREST_VITALITY_TASK") && TextUtils.equals(taskType, "GYG_BK_XYK202503")) {
+            return false;//不支持rpc完成的任务
+        }
         try {
             JSONObject jo = new JSONObject(AntForestRpcCall.finishTask(sceneCode, taskType));
             TimeUtil.sleep(500);
