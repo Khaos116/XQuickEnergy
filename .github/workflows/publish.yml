@@ -33,7 +33,8 @@ jobs:
           echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV  # 设置环境变量
 
       - name: 延迟等待TAG提交
-        if: env.should_build == 'true'
+#        if: env.should_build == 'true'
+        if: ${{ env.should_build == 'true' }}
         run: |
           echo "等待2分钟以确保版本TAG提交完成..."
           sleep 120  # 延迟120秒  
@@ -149,14 +150,16 @@ jobs:
         run: chmod +x gradlew
 
       - name: 开始构建APK
-        if: env.should_build == 'true'
+#        if: env.should_build == 'true'
+        if: ${{ env.should_build == 'true' }}
         run: |
           echo "开始构建 APK..."
           ./gradlew clean assembleCompatibleRelease
           echo "APK 构建完成"
 
       - name: 延迟等待APK生成
-        if: env.should_build == 'true'
+#        if: env.should_build == 'true'
+        if: ${{ env.should_build == 'true' }}
         run: |
           echo "等待 5 秒以确保 APK 文件生成完成..."
           sleep 5  # 延迟 5 秒
@@ -201,7 +204,8 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: 发布到GitHub
-        if: env.should_build == 'true'
+#        if: env.should_build == 'true'
+        if: ${{ env.should_build == 'true' }}
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.DEFAULT_TAG }}  # 使用默认分支的最新标签
