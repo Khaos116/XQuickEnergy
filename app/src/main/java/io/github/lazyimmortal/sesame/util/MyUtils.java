@@ -137,6 +137,9 @@ public class MyUtils {
       String taskMode = jo.optString("taskMode");
       boolean canDoTask = TextUtils.equals("VIEW", taskMode);
       if (!canDoTask) canDoTask = !TextUtils.isEmpty(taskId) && TextUtils.equals("TRIGGER", taskMode) && TextUtils.equals(taskId, bizKey);
+      if (TextUtils.equals("ONLINE_PAY", bizKey)) {
+        canDoTask = false;//不执行支付任务
+      }
       if (canDoTask) {
         jo = new JSONObject(doFarmTask(bizKey));
         if ("SUCCESS".equals(jo.optString("memo"))) {
