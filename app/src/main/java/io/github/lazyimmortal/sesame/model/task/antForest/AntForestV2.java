@@ -1201,7 +1201,10 @@ public class AntForestV2 extends ModelTask {
                 return;
             }
             jo = jo.getJSONObject("data");
-            JSONObject currentActivity = jo.getJSONObject("currentActivity");
+            JSONObject currentActivity = jo.optJSONObject("currentActivity");
+            if (currentActivity == null) {
+                return;
+            }
             int numberOfDaysCompleted = currentActivity.getInt("numberOfDaysCompleted") + 1;
             JSONObject currentTask = jo.getJSONObject("currentTask");
             if (currentTask.getBoolean("checkInCompleted")) {
