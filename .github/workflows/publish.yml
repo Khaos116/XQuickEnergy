@@ -151,13 +151,15 @@ jobs:
       - name: 开始构建APK
         if: env.should_build == 'true'
         run: |
+          echo "开始构建 APK..."
           ./gradlew clean assembleCompatibleRelease
+          echo "APK 构建完成"
 
       - name: 延迟等待APK生成
         if: env.should_build == 'true'
         run: |
-          echo "等待 15 秒以确保 APK 文件生成完成..."
-          sleep 15  # 延迟 15 秒
+          echo "等待 5 秒以确保 APK 文件生成完成..."
+          sleep 5  # 延迟 5 秒
 
       - name: 检查APK文件并重命名
         id: rename_apk
