@@ -144,7 +144,9 @@ public class AntMember extends ModelTask {
 
             queryPointCert(1, 8);
 
-            signPageTaskList();
+            if (!MyUtils.closeVerification()) {
+                signPageTaskList();//人气太旺啦，请稍后再试
+            }
 
             queryAllStatusTaskList();
         } catch (Throwable t) {
