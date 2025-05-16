@@ -116,7 +116,7 @@ public class AntForestRpcCall {
     }
 
     public static String queryEnergyRainHome() {
-        return ApplicationHook.requestString("alipay.antforest.forest.h5.queryEnergyRainHome", "[{\"version\":\"" + VERSION + "\"}]");
+        return ApplicationHook.requestString("alipay.antforest.forest.h5.queryEnergyRainHome", "[{\"source\":\"senlinguangchuangrukou\",\"version\":\""+VERSION+"\"}]");
     }
 
     public static String queryEnergyRainCanGrantList() {
