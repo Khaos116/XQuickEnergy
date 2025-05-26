@@ -158,7 +158,7 @@ public class ChouChouLe {
    */
   private boolean performFarmTask(String drawType, String bizKey, String name) {
     try {
-      ThreadUtil.sleep(15000L); // 所有等待15秒
+      ThreadUtil.sleep(5000L); // 所有等待5秒
       String s = AntFarmRpcCall.chouchouleDoFarmTask(drawType, bizKey);
       JSONObject jo = new JSONObject(s);
       if (jo.optBoolean("success", false)) {
