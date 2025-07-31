@@ -50,4 +50,8 @@ public class RandomUtil {
     public static String getRandomUUID() {
         return UUID.randomUUID().toString();
     }
+
+    public static String getRandomTag() {
+        return "_" + System.currentTimeMillis() + "_" + RandomUtil.getRandomString(8);
+    }
 }

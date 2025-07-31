@@ -1,7 +1,6 @@
 package io.github.lazyimmortal.sesame.model.task.antForest;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.*;
 
 import io.github.lazyimmortal.sesame.entity.AlipayVersion;
 import io.github.lazyimmortal.sesame.entity.RpcEntity;
@@ -420,5 +419,110 @@ public class AntForestRpcCall {
                 "\"position\":\"" + position + "\"," +
                 "\"source\":\"chInfo_ch_appcenter__chsub_9patch\"}]";
         return ApplicationHook.requestString("alipay.antforest.forest.h5.takeOffDress", args);
+    }
+
+    /**
+     * 森林抽抽乐-活动列表
+     */
+    public static String enterDrawActivityopengreen(String source) throws JSONException {
+        JSONObject params = new JSONObject();
+        params.put("activityId", "2025060301");
+        params.put("requestType", "RPC");
+        params.put("sceneCode", "ANTFOREST_NORMAL_DRAW");
+        params.put("source", source);
+        String args = "[" + params + "]";
+        return ApplicationHook.requestString("com.alipay.antiepdrawprod.enterDrawActivityopengreen", args);
+    }
+
+    /**
+     * 森林抽抽乐-请求任务列表
+     */
+    public static String listTaskopengreen(String activityId, String sceneCode, String source) throws JSONException {
+        //        [{"requestType":"RPC","sceneCode":"ANTFOREST_NORMAL_DRAW_TASK","source":"task_entry"}]
+        JSONObject params = new JSONObject();
+        params.put("requestType", "RPC");
+        params.put("sceneCode", sceneCode);
+        params.put("source", source);
+        String args = "[" + params + "]";
+        return ApplicationHook.requestString("com.alipay.antieptask.listTaskopengreen", args);
+    }
+
+    /**
+     * 森林抽抽乐-签到领取次数-访问即算签到，所以直接领取？？
+     */
+    public static String receiveTaskAwardopengreen(String source, String sceneCode, String taskType) throws JSONException {
+        JSONObject params = new JSONObject();
+        params.put("ignoreLimit", true);
+        params.put("requestType", "RPC");
+        params.put("sceneCode", sceneCode);
+        params.put("source", source);
+        params.put("taskType", taskType);
+        String args = "[" + params + "]";
+        return ApplicationHook.requestString("com.alipay.antieptask.receiveTaskAwardopengreen", args);
+    }
+
+    /**
+     * 森林抽抽乐-任务-活力值兑换抽奖次数
+     */
+    public static String exchangeTimesFromTaskopengreen(String activityId, String sceneCode, String source, String taskSceneCode, String taskType) throws JSONException {
+        //        [{"activityId":"2025060301","requestType":"RPC","sceneCode":"ANTFOREST_NORMAL_DRAW","source":"task_entry","taskSceneCode":"ANTFOREST_NORMAL_DRAW_TASK","taskType":"NORMAL_DRAW_EXCHANGE_VITALITY"}]
+        JSONObject params = new JSONObject();
+        params.put("activityId", activityId);
+        params.put("requestType", "RPC");
+        params.put("sceneCode", sceneCode);
+        params.put("source", source);
+        params.put("taskSceneCode", taskSceneCode);
+        params.put("taskType", taskType);
+        String args = "[" + params + "]";
+        return ApplicationHook.requestString("com.alipay.antiepdrawprod.exchangeTimesFromTaskopengreen", args);
+    }
+
+    /**
+     * 森林抽抽乐-任务-广告
+     */
+    public static String finishTask4Chouchoule(String taskType, String sceneCode) throws JSONException {
+        //[{"outBizNo":"FOREST_NORMAL_DRAW_XLIGHT_1_1749288736354_ffba6daf","requestType":"RPC","sceneCode":"ANTFOREST_NORMAL_DRAW_TASK","source":"ADBASICLIB","taskType":"FOREST_NORMAL_DRAW_XLIGHT_1"}]
+        JSONObject params = new JSONObject();
+        params.put("outBizNo", taskType + RandomUtil.getRandomTag());
+        params.put("requestType", "RPC");
+        params.put("sceneCode", sceneCode);
+        params.put("source", "ADBASICLIB");
+        params.put("taskType", taskType);
+        String args = "[" + params + "]";
+        return ApplicationHook.requestString("com.alipay.antiep.finishTask", args);
+    }
+
+    /**
+     * 森林抽抽乐-抽奖
+     */
+    public static String drawopengreen(String activityId, String sceneCode, String source, String userId) throws JSONException {
+        JSONObject params = new JSONObject();
+        params.put("activityId", activityId);
+        params.put("requestType", "RPC");
+        params.put("sceneCode", sceneCode);
+        params.put("source", source);
+        params.put("userId", userId);
+        String args = "[" + params + "]";
+        return ApplicationHook.requestString("com.alipay.antiepdrawprod.drawopengreen", args,
+            "antiepdrawprod", "draw", "DrawRpc");
+    }
+
+    /**
+     * 完成森林抽抽乐 任务
+     *
+     * @param taskType  任务类型
+     * @param sceneCode 场景Code
+     * @return s
+     */
+    public static String finishTaskopengreen(String taskType, String sceneCode) throws JSONException {
+        // [{"outBizNo":"FOREST_NORMAL_DRAW_ANTTODO_1749481064943_2dd9971d","requestType":"RPC","sceneCode":"ANTFOREST_NORMAL_DRAW_TASK","source":"task_entry","taskType":"FOREST_NORMAL_DRAW_ANTTODO"}]
+        JSONObject params = new JSONObject();
+        params.put("outBizNo", taskType + RandomUtil.getRandomTag());
+        params.put("requestType", "RPC");
+        params.put("sceneCode", sceneCode);
+        params.put("source", "task_entry");
+        params.put("taskType", taskType);
+        String args = "[" + params + "]";
+        return ApplicationHook.requestString("com.alipay.antieptask.finishTaskopengreen", args);
     }
 }

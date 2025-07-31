@@ -124,6 +124,7 @@ public class AntForestV2 extends ModelTask {
     private IntegerModelField returnWater18;
     private IntegerModelField returnWater10;
     private BooleanModelField receiveForestTaskAward;
+    private BooleanModelField forestChouChouLe;
     private ChoiceModelField waterFriendType;
     private SelectAndCountModelField waterFriendList;
     private SelectModelField giveEnergyRainList;
@@ -195,6 +196,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(combineAnimalPiece = new BooleanModelField("combineAnimalPiece", "合成动物碎片", false));
         modelFields.addField(consumeAnimalPropType = new ChoiceModelField("consumeAnimalPropType", "派遣动物伙伴", ConsumeAnimalPropType.NONE, ConsumeAnimalPropType.nickNames));
         modelFields.addField(receiveForestTaskAward = new BooleanModelField("receiveForestTaskAward", "森林任务", false));
+        modelFields.addField(forestChouChouLe = new BooleanModelField("forestChouChouLe", "森林寻宝任务", false));
         modelFields.addField(collectGiftBox = new BooleanModelField("collectGiftBox", "领取礼盒", false));
         modelFields.addField(medicalHealth = new BooleanModelField("medicalHealth", "医疗健康", false));
         modelFields.addField(greenLife = new BooleanModelField("greenLife", "森林集市", false));
@@ -463,6 +465,10 @@ public class AntForestV2 extends ModelTask {
                 }
                 if (dress.getValue()) {
                     dress();
+                }
+                if (forestChouChouLe.getValue()) {
+                    ForestChouChouLe chouChouLe = new ForestChouChouLe();
+                    chouChouLe.chouChouLe();
                 }
             }
         } catch (Throwable t) {

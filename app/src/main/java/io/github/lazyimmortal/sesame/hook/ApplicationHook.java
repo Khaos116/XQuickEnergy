@@ -681,33 +681,33 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         return false;
     }
 
-    public static String requestString(RpcEntity rpcEntity) {
-        return rpcBridge.requestString(rpcEntity, 3, -1);
-    }
-
-    public static String requestString(RpcEntity rpcEntity, int tryCount, int retryInterval) {
-        return rpcBridge.requestString(rpcEntity, tryCount, retryInterval);
-    }
-
-    public static String requestString(String method, String data) {
-        return rpcBridge.requestString(method, data);
-    }
-
-    public static String requestString(String method, String data, String relation) {
-        return rpcBridge.requestString(method, data, relation);
-    }
+    //public static String requestString(RpcEntity rpcEntity) {
+    //    return rpcBridge.requestString(rpcEntity, 3, -1);
+    //}
+    //
+    //public static String requestString(RpcEntity rpcEntity, int tryCount, int retryInterval) {
+    //    return rpcBridge.requestString(rpcEntity, tryCount, retryInterval);
+    //}
+    //
+    //public static String requestString(String method, String data) {
+    //    return rpcBridge.requestString(method, data);
+    //}
+    //
+    //public static String requestString(String method, String data, String relation) {
+    //    return rpcBridge.requestString(method, data, relation);
+    //}
 
     /*public static String requestString(String method, String data, String relation, Long time) {
         return rpcBridge.requestString(method, data, relation, time);
     }*/
 
-    public static String requestString(String method, String data, int tryCount, int retryInterval) {
-        return rpcBridge.requestString(method, data, tryCount, retryInterval);
-    }
+    //public static String requestString(String method, String data, int tryCount, int retryInterval) {
+    //    return rpcBridge.requestString(method, data, tryCount, retryInterval);
+    //}
 
-    public static String requestString(String method, String data, String relation, int tryCount, int retryInterval) {
-        return rpcBridge.requestString(method, data, relation, tryCount, retryInterval);
-    }
+    //public static String requestString(String method, String data, String relation, int tryCount, int retryInterval) {
+    //    return rpcBridge.requestString(method, data, relation, tryCount, retryInterval);
+    //}
 
     /*public static String requestString(String method, String data, String relation, Long time, int tryCount, int retryInterval) {
         return rpcBridge.requestString(method, data, relation, time, tryCount, retryInterval);
@@ -717,13 +717,13 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         return rpcBridge.requestObject(rpcEntity, 3, -1);
     }
 
-    public static RpcEntity requestObject(RpcEntity rpcEntity, int tryCount, int retryInterval) {
-        return rpcBridge.requestObject(rpcEntity, tryCount, retryInterval);
-    }
+    //public static RpcEntity requestObject(RpcEntity rpcEntity, int tryCount, int retryInterval) {
+    //    return rpcBridge.requestObject(rpcEntity, tryCount, retryInterval);
+    //}
 
-    public static RpcEntity requestObject(String method, String data) {
-        return rpcBridge.requestObject(method, data);
-    }
+    //public static RpcEntity requestObject(String method, String data) {
+    //    return rpcBridge.requestObject(method, data);
+    //}
 
     public static RpcEntity requestObject(String method, String data, String relation) {
         return rpcBridge.requestObject(method, data, relation);
@@ -733,9 +733,9 @@ public class ApplicationHook implements IXposedHookLoadPackage {
         return rpcBridge.requestObject(method, data, relation, time);
     }*/
 
-    public static RpcEntity requestObject(String method, String data, int tryCount, int retryInterval) {
-        return rpcBridge.requestObject(method, data, tryCount, retryInterval);
-    }
+    //public static RpcEntity requestObject(String method, String data, int tryCount, int retryInterval) {
+    //    return rpcBridge.requestObject(method, data, tryCount, retryInterval);
+    //}
 
     public static RpcEntity requestObject(String method, String data, String relation, int tryCount, int retryInterval) {
         return rpcBridge.requestObject(method, data, relation, tryCount, retryInterval);
@@ -744,6 +744,50 @@ public class ApplicationHook implements IXposedHookLoadPackage {
     /*public static RpcEntity requestObject(String method, String data, String relation, Long time, int tryCount, int retryInterval) {
         return rpcBridge.requestObject(method, data, relation, time, tryCount, retryInterval);
     }*/
+
+    private static String checkResult(String result, String method) {
+        if (result == null || result.trim().isEmpty()) {
+            throw new IllegalStateException("Empty response from RPC method: " + method);
+        }
+        return result;
+    }
+
+    public static String requestString(RpcEntity rpcEntity) {
+        String result = ApplicationHook.rpcBridge.requestString(rpcEntity, 3, -1);
+        return checkResult(result, rpcEntity.getMethodName());
+    }
+    public static String requestString(RpcEntity rpcEntity, int tryCount, int retryInterval) {
+        String result = ApplicationHook.rpcBridge.requestString(rpcEntity, tryCount, retryInterval);
+        return checkResult(result, rpcEntity.getMethodName());
+    }
+    public static String requestString(String method, String data) {
+        String result = ApplicationHook.rpcBridge.requestString(method, data);
+        return checkResult(result, method);
+    }
+    public static String requestString(String method, String data, String relation) {
+        String result = ApplicationHook.rpcBridge.requestString(method, data, relation);
+        return checkResult(result, method);
+    }
+    public static String requestString(String method, String data, String appName, String methodName, String facadeName) {
+        String result = ApplicationHook.rpcBridge.requestString(method, data, appName, methodName, facadeName);
+        return checkResult(result, method);
+    }
+    public static String requestString(String method, String data, int tryCount, int retryInterval) {
+        String result = ApplicationHook.rpcBridge.requestString(method, data, tryCount, retryInterval);
+        return checkResult(result, method);
+    }
+    public static String requestString(String method, String data, String relation, int tryCount, int retryInterval) {
+        String result = ApplicationHook.rpcBridge.requestString(method, data, relation, tryCount, retryInterval);
+        return checkResult(result, method);
+    }
+
+    public static void requestObject(RpcEntity rpcEntity, int tryCount, int retryInterval) {
+        ApplicationHook.rpcBridge.requestObject(rpcEntity, tryCount, retryInterval);
+    }
+
+    public static RpcEntity requestObject(String method, String data, int tryCount, int retryInterval) {
+        return ApplicationHook.rpcBridge.requestObject(method, data, tryCount, retryInterval);
+    }
 
     public static void reLoginByBroadcast() {
         try {
