@@ -180,11 +180,14 @@ jobs:
             # 获取当前时间并格式化为 YYYYMMDD_HHMM (GMT+8)
             TIMESTAMP=$(date +"%Y%m%d_%H%M")
 
-            # 生成新的文件名 判断 TAGS 是否包含 "fix"
-            if [[ "$TAGS" == *fix* ]]; then
-              NEW_NAME="XQE_lazy_${TAGS}_${TIMESTAMP}.apk"
+            # 获取 myLazyNoSo 分支标签（从 env 中读取）
+            TAG_ENV="${{ env.TAGS }}"
+            
+            # 判断 TAG 是否包含 "fix"
+            if [[ "$TAG_ENV" == *fix* ]]; then
+            NEW_NAME="XQE_lazy_${TAG_ENV}_${TIMESTAMP}.apk"
             else
-              NEW_NAME="XQE_lazy_${TAGS}fix_${TIMESTAMP}.apk"
+            NEW_NAME="XQE_lazy_${TAG_ENV}fix_${TIMESTAMP}.apk"
             fi
 
             # 重命名文件
