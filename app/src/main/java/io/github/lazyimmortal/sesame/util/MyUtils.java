@@ -43,6 +43,11 @@ public class MyUtils {
     return BaseModel.getCloseErrorFunction().getValue();
   }
 
+  //关闭"不支持rpc完成的任务"
+  public static boolean closeUnRpc() {
+    return BaseModel.getCloseUnRPC().getValue();
+  }
+
   //打印用户切换
   public static String recordUserName(@Nullable Context context, @Nullable String uid) {
     if (context == null) return "";
