@@ -94,9 +94,15 @@ public class MyUtils {
   }
 
   //发现有不支持的BizSubType
-  public static boolean antMemberUnsSupportBizSubType(String subType) {
+  public static boolean antMemberSupportBizSubType(String subType) {
     if (TextUtils.isEmpty(subType)) return false;
     return !TextUtils.equals(subType, "ngfe_tag__ptr3o4eriu");
+  }
+
+  //发现有不支持的BizKey
+  public static boolean antFarmSupportBizKey(String bizKey) {
+    if (TextUtils.isEmpty(bizKey)) return false;
+    return !bizKey.contains("_chouchoulechoukuan");
   }
 
   //加密

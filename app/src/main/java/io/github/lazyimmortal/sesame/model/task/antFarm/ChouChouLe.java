@@ -162,7 +162,7 @@ public class ChouChouLe {
       //方法: com.alipay.antfarm.receiveFarmTaskAward
       //参数: [{"awardType":"DRAW_TIMES","requestType":"RPC","sceneCode":"ANTFARM","source":"icon","taskId":"20250728_chouchoulechoukuan2","taskSceneCode":"ANTFARM_DRAW_TIMES_TASK"}]
       //数据: {"ariverRpcTraceId":"2184aa8a17545055137768533e9221","memo":"服务器正在开小差，请稍后再试～","resultCode":"102","success":false}
-      if (bizKey != null && bizKey.contains("_chouchoulechoukuan")) {//这个任务已经不能自动完成了，2025-08-07
+      if (!MyUtils.antFarmSupportBizKey(bizKey)) {//这个任务已经不能自动完成了，2025-08-07
         return false;
       }
       ThreadUtil.sleep(5000L); // 所有等待5秒
