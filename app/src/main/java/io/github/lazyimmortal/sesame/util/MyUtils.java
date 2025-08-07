@@ -37,6 +37,12 @@ public class MyUtils {
     return BaseModel.getCloseVerification().getValue();
   }
 
+  //关闭可能异常的功能：
+  //com.alipay.wealthgoldtwa.goldbill.v2.index.collect  系统出错，正在排查
+  public static boolean closeErrorFunction() {
+    return BaseModel.getCloseErrorFunction().getValue();
+  }
+
   //打印用户切换
   public static String recordUserName(@Nullable Context context, @Nullable String uid) {
     if (context == null) return "";

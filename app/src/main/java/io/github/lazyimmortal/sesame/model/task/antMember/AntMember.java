@@ -418,6 +418,7 @@ public class AntMember extends ModelTask {
      */
     private void goldBillCollect(String signInfo) {
         try {
+            if (MyUtils.closeErrorFunction()) return;//2025-08-07 发现执行会出现"系统出错，正在排查"
             String str = AntMemberRpcCall.goldBillCollect(signInfo);
             JSONObject jsonObject = new JSONObject(str);
             if (!jsonObject.optBoolean("success")) {

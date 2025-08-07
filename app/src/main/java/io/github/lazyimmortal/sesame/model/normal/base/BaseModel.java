@@ -50,6 +50,8 @@ public class BaseModel extends Model {
     private static final BooleanModelField enableOnGoing = new BooleanModelField("enableOnGoing", "开启状态栏禁删", false);
     @Getter
     private static final BooleanModelField closeVerification = new BooleanModelField("closeVerification", "关闭需要验证的功能", true);
+    @Getter
+    private static final BooleanModelField closeErrorFunction = new BooleanModelField("closeVerification", "关闭可能异常功能", true);
 
     @Override
     public String getName() {
