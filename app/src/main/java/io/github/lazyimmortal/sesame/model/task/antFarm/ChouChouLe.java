@@ -158,6 +158,13 @@ public class ChouChouLe {
    */
   private boolean performFarmTask(String drawType, String bizKey, String name) {
     try {
+      //RUNTIME: 完成抽抽乐🧾️[任务: 伸出援手，点亮希望]
+      //方法: com.alipay.antfarm.receiveFarmTaskAward
+      //参数: [{"awardType":"DRAW_TIMES","requestType":"RPC","sceneCode":"ANTFARM","source":"icon","taskId":"20250728_chouchoulechoukuan2","taskSceneCode":"ANTFARM_DRAW_TIMES_TASK"}]
+      //数据: {"ariverRpcTraceId":"2184aa8a17545055137768533e9221","memo":"服务器正在开小差，请稍后再试～","resultCode":"102","success":false}
+      if (bizKey != null && bizKey.contains("_chouchoulechoukuan")) {//这个任务已经不能自动完成了，2025-08-07
+        return false;
+      }
       ThreadUtil.sleep(5000L); // 所有等待5秒
       String s = AntFarmRpcCall.chouchouleDoFarmTask(drawType, bizKey);
       JSONObject jo = new JSONObject(s);
@@ -168,8 +175,7 @@ public class ChouChouLe {
           Log.farm("完成抽抽乐🧾️[任务: " + name + "]");
         }
         ThreadUtil.sleep(1000L);
-        receiveFarmTaskAward(drawType, bizKey);
-        return true;
+        return receiveFarmTaskAward(drawType, bizKey);
       }
     } catch (Throwable t) {
       handleException("performFarmTask err:", t);
