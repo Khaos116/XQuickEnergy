@@ -1550,10 +1550,15 @@ public class AntForestV2 extends ModelTask {
     if (MyUtils.closeUnRpc() && "ANTFOREST_VITALITY_TASK".equals(sceneCode) && taskType != null) {
       if (taskType.startsWith("GYG_BK_XYK")
           || taskType.startsWith("GYG_jinritoutiao")//完成任务逛一逛今日头条失败
+          || taskType.startsWith("GYG_huabeikaitong")//完成任务逛一逛花呗失败
       ) {
         //方法: com.alipay.antiep.finishTask
         //参数: [{"outBizNo":"GYG_jinritoutiao_202505_0.3094441562418887","requestType":"H5","sceneCode":"ANTFOREST_VITALITY_TASK","source":"ANTFOREST","taskType":"GYG_jinritoutiao_202505"}]
         //数据: {"ariverRpcTraceId":"2197b86417545058757843021e3235","code":"400000040","desc":"不支持rpc完成的任务","success":false}
+
+        //方法: com.alipay.antiep.finishTask
+        //参数: [{"outBizNo":"GYG_huabeikaitong_202504_0.4569653304313023","requestType":"H5","sceneCode":"ANTFOREST_VITALITY_TASK","source":"ANTFOREST","taskType":"GYG_huabeikaitong_202504"}]
+        //数据: {"ariverRpcTraceId":"21d101dc17545893616134198e0494","code":"400000040","desc":"不支持rpc完成的任务","success":false}
         return false;//不支持rpc完成的任务
       }
     }
