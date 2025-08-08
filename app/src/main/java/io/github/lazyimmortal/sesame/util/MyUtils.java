@@ -165,7 +165,7 @@ public class MyUtils {
           if (TextUtils.equals("HEART_DONATION_ADVANCED_FOOD_V2", bizKey)) {
             Log.farm("KT-庄园任务♥️[" + title + "]#获得爱心美食*" + awardCount);
           } else {
-            Log.farm("KT-庄园任务🧾[" + title + "]#获得饲料" + jo.optString("awardCount") + "g");
+            Log.farm("KT-庄园任务🧾[" + title + "]#获得饲料" + jo.optString("awardCount", "0") + "g");
           }
           return true;
         } else {
