@@ -38,7 +38,8 @@ public class MyUtils {
   }
 
   //关闭可能异常的功能：
-  //com.alipay.wealthgoldtwa.goldbill.v2.index.collect  系统出错，正在排查
+  //黄金票 com.alipay.wealthgoldtwa.goldbill.v2.index.collect  系统出错，正在排查
+  //文体中心走路 alipay.tiyubiz.wenti.walk.participate 系统出错，正在排查
   public static boolean closeErrorFunction() {
     return BaseModel.getCloseErrorFunction().getValue();
   }

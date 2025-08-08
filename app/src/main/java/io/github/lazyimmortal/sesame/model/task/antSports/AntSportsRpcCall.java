@@ -201,6 +201,7 @@ public class AntSportsRpcCall {
                 "[{}]");
     }
 
+    //文体中心
     public static String participate(int bettingPoints, String InstanceId, String ResultId, String roundId) {
         return ApplicationHook.requestString("alipay.tiyubiz.wenti.walk.participate",
                 "[{\"bettingPoints\":" + bettingPoints + ",\"guessInstanceId\":\"" + InstanceId
