@@ -1335,11 +1335,15 @@ public class AntForestV2 extends ModelTask {
             wateredTimes = 3;
             break label;
           case "ENERGY_INSUFFICIENT":
-            Log.record("好友浇水🚿" + jo.getString("resultDesc"));
+            Log.record("好友浇水🚿" + jo.optString("resultDesc"));
+            if (MyUtils.closeErrorFunction() && "TA还不是您的好友哦".equals(jo.optString("resultDesc"))) {
+              wateredTimes = 3;//直接按照已达上限处理
+              break label;
+            }
             isContinue = false;
             break label;
           default:
-            Log.record("好友浇水🚿" + jo.getString("resultDesc"));
+            Log.record("好友浇水🚿" + jo.optString("resultDesc"));
             Log.i(jo.toString());
             break;
         }

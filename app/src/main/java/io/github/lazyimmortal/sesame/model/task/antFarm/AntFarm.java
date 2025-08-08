@@ -1122,6 +1122,12 @@ public class AntFarm extends ModelTask {
         }
       }
       JSONObject jo = new JSONObject(AntFarmRpcCall.receiveFarmTaskAward(taskId));
+      //方法: com.alipay.antfarm.receiveFarmTaskAward
+      //参数: [{"requestType":"NORMAL","sceneCode":"ANTFARM","source":"H5","taskId":"SLEEP","version":"1.8.2302070202.46"}]
+      //数据: {"ariverRpcTraceId":"0b44758817545051557304311e509c","memo":"饲料槽已满","resultCode":"331","success":false}
+      if (MyUtils.closeErrorFunction() && "饲料槽已满".equals(jo.optString("memo"))) {
+        return true;//饲料槽已满则不再循环执行
+      }
       if (!MessageUtil.checkMemo(TAG, jo)) {
         return false;
       }

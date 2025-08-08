@@ -555,7 +555,7 @@ public class AntFarmRpcCall {
 //        return ApplicationHook.requestString("com.alipay.antfarm.listFarmTask", args);
 //    }
 
-    public static String familyReceiveFarmTaskAward(String taskId) {
+    public static String familyReceiveFarmTaskAward(String taskId) {//亲密家庭-提交任务
         String args = "[{\"awardType\":\"FAMILY_INTIMACY\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"taskId\":\"" + taskId + "\",\"taskSceneCode\":\"ANTFARM_FAMILY_TASK\"}]";
         return ApplicationHook.requestString("com.alipay.antfarm.receiveFarmTaskAward", args);
     }
@@ -639,7 +639,7 @@ public class AntFarmRpcCall {
         return ApplicationHook.requestString("com.alipay.antfarm.giftFamilyDrawFragment", args);
     }
 
-    public static String familyDrawSignReceiveFarmTaskAward(String taskId) {
+    public static String familyDrawSignReceiveFarmTaskAward(String taskId) {//亲密家庭-扭蛋任务
         String args = "[{\"awardType\":\"FAMILY_DRAW_TIME\",\"bizType\":\"ANTFARM_GAME_CENTER\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"taskId\":\"" + taskId + "\",\"taskSceneCode\":\"ANTFARM_FAMILY_DRAW_TASK\"}]";
         return ApplicationHook.requestString("com.alipay.antfarm.receiveFarmTaskAward", args);
     }
