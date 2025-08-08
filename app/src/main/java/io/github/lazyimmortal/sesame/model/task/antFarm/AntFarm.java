@@ -1716,6 +1716,12 @@ public class AntFarm extends ModelTask {
   private void visitFriend(String userId, int countLimit) {
     try {
       JSONObject jo = new JSONObject(AntFarmRpcCall.enterFarm(userId));
+      //方法: com.alipay.antfarm.enterFarm
+      //参数: [{"queryLastRecordNum":true,"recall":false,"requestType":"NORMAL","sceneCode":"ANTFARM","source":"H5","userId":"2088642642387040"}]
+      //数据: {"ariverRpcTraceId":"2184aa8a17545054778948193e9221","memo":"非好友","resultCode":"302","success":false}
+      if (MyUtils.closeErrorFunction() && "非好友".equals(jo.optString("memo"))) {//送麦子出现非好友
+        return;
+      }
       if (!MessageUtil.checkMemo(TAG, jo)) {
         return;
       }
