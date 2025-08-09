@@ -1,0 +1,651 @@
+{
+    "ariverRpcTraceId": "0b44758817545051312353796e509c",
+    "collectManureNoticeInSignLimit": 3,
+    "collectManureOrder": 6,
+    "convertToManureTask": {
+        "completeBtn": "已完成",
+        "desc": "收落叶即得100肥料",
+        "icon": "https://mdn.alipayobjects.com/huamei_arbxfu/afts/img/A*WMSiTIxy9ckAAAAAAAAAAAAADm57AQ/original",
+        "manureCount": 100,
+        "showTask": true,
+        "targetUrl": "alipays://platformapi/startapp?appId=60000002&source=senlinluoye&autoShowTask=1",
+        "taskOrder": 10,
+        "taskStatus": "COMPLETE",
+        "title": "去森林领落叶肥料",
+        "todoBtn": "去完成"
+    },
+    "inTeam": false,
+    "manureFactory": {
+        "canCollect": false,
+        "canProduce": false,
+        "manure": {
+            "manurePotList": [
+                {
+                    "allocationAnimalId": "20180209001228012088122949590991",
+                    "calculateTime": 1754505121000,
+                    "manurePotLimit": 360000,
+                    "manurePotNO": "1",
+                    "manurePotNum": 370
+                },
+                {
+                    "manurePotLimit": 360000,
+                    "manurePotNO": "2",
+                    "manurePotNum": 130
+                },
+                {
+                    "calculateTime": 1754004640000,
+                    "manurePotLimit": 360000,
+                    "manurePotNO": "3",
+                    "manurePotNum": 600
+                }
+            ],
+            "tempManurePot": 0
+        }
+    },
+    "memo": "成功",
+    "resultCode": "100",
+    "resultDesc": "成功",
+    "signSwitch": true,
+    "signTaskInfo": {
+        "continuousCount": 4,
+        "currentSignItem": {
+            "awardCount": 600,
+            "awardType": "MANURE",
+            "bonus": false,
+            "currentContinuousCount": 5,
+            "signKey": "2025-08-07",
+            "signOver": false,
+            "signed": false
+        },
+        "list": [
+            {
+                "awardCount": 500,
+                "awardType": "MANURE",
+                "bonus": false,
+                "currentContinuousCount": 1,
+                "signKey": "2025-08-03",
+                "signOver": false,
+                "signed": true
+            },
+            {
+                "awardCount": 600,
+                "awardType": "MANURE",
+                "bonus": false,
+                "currentContinuousCount": 2,
+                "signKey": "2025-08-04",
+                "signOver": false,
+                "signed": true
+            },
+            {
+                "awardCount": 1200,
+                "awardDesc": "最多1万",
+                "awardImg": "https://gw.alipayobjects.com/mdn/rms_bb688c/afts/img/A*MR03TLFtvP0AAAAAAAAAAAAAARQnAQ",
+                "awardOpenButton": "我知道了",
+                "awardOpenSpm": "a2189.b24983.c63735.d255454",
+                "awardOpenSprite": "https://gw.alipayobjects.com/zos/raptor/sign_3day_20221027015320.png",
+                "awardOpenSubTitle": "连续签到第3、7天得宝箱",
+                "awardOpenTitleImg": "https://gw.alipayobjects.com/mdn/rms_bb688c/afts/img/A*Q3ySSLVpFbIAAAAAAAAAAAAAARQnAQ",
+                "awardSignedImg": "https://gw.alipayobjects.com/mdn/rms_bb688c/afts/img/A*fEOXQIu4dqIAAAAAAAAAAAAAARQnAQ",
+                "awardType": "MANURE",
+                "bonus": true,
+                "currentContinuousCount": 3,
+                "signKey": "2025-08-05",
+                "signOver": false,
+                "signed": true
+            },
+            {
+                "awardCount": 600,
+                "awardType": "MANURE",
+                "bonus": false,
+                "currentContinuousCount": 4,
+                "signKey": "2025-08-06",
+                "signOver": false,
+                "signed": true
+            },
+            {
+                "awardCount": 600,
+                "awardType": "MANURE",
+                "bonus": false,
+                "currentContinuousCount": 5,
+                "signKey": "2025-08-07",
+                "signOver": false,
+                "signed": false
+            },
+            {
+                "awardCount": 600,
+                "awardType": "MANURE",
+                "bonus": false,
+                "currentContinuousCount": 6,
+                "signKey": "2025-08-08",
+                "signOver": false,
+                "signed": false
+            },
+            {
+                "awardDesc": "最多2万",
+                "awardImg": "https://gw.alipayobjects.com/mdn/rms_bb688c/afts/img/A*UrtLSLX7Y5QAAAAAAAAAAAAAARQnAQ",
+                "awardOpenButton": "我知道了",
+                "awardOpenSpm": "a2189.b24983.c63735.d255460",
+                "awardOpenSprite": "https://gw.alipayobjects.com/zos/raptor/sign_7day_20221027003430.png",
+                "awardOpenSubTitle": "明日起连续签到7天再得宝箱",
+                "awardOpenTitleImg": "https://gw.alipayobjects.com/mdn/rms_bb688c/afts/img/A*ulkERaX9-SIAAAAAAAAAAAAAARQnAQ",
+                "awardSignedImg": "https://gw.alipayobjects.com/mdn/rms_bb688c/afts/img/A*VZaORJM0VrUAAAAAAAAAAAAAARQnAQ",
+                "awardType": "MANURE",
+                "bonus": true,
+                "currentContinuousCount": 7,
+                "signKey": "2025-08-09",
+                "signOver": false,
+                "signed": false
+            }
+        ]
+    },
+    "success": true,
+    "taskList": [
+        {
+            "actionType": "VISIT",
+            "awardType": "RIGHTS",
+            "confAwardCount": 500,
+            "extend": {
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ORCHARD_NORMAL_NCLY_GLY~taskType:ORCHARD_NORMAL_NCLY_SJWY~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:500"
+            },
+            "groupId": "ORCHARD_NORMAL_NCLY_GLY",
+            "order": 3,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "completeBtn": "砸金蛋",
+                "desc": "可得500肥",
+                "finishedBtn": "领取",
+                "icon": "https://mdn.alipayobjects.com/huamei_zmrmes/afts/img/A*q_ewRqwqI9QAAAAAAAAAAAAADgHOAQ/original",
+                "spm": "a2189.b24983.c63735.d534609",
+                "targetUrl": "alipays://platformapi/startapp?appId=2021004173649916&query=channel%3Dnongchangleyuan&chInfo=lianyun_nc_flrw",
+                "title": "四季物语合成20次",
+                "todoBtn": "去完成",
+                "type": "nongchangleyuan"
+            },
+            "taskId": "ORCHARD_NORMAL_NCLY_SJWY",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "VISIT",
+            "groupId": "10923",
+            "order": -100,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "972",
+            "taobaoTaskParams": {
+                "activityId": 100085,
+                "deliveryId": 74754,
+                "implId": "other_363_2444004_74754_0",
+                "sceneId": 972
+            },
+            "taskDisplayConfig": {
+                "bgImg": "https://gw.alicdn.com/imgextra/i2/O1CN01EZLzGG26r44tfvF6B_!!6000000007714-2-tps-686-120.png",
+                "completeBtn": "已完成",
+                "desc": "连续浏览可得2次肥料奖励",
+                "icon": "https://img.alicdn.com/imgextra/i4/O1CN018OJOLS1EeFhxZvNrc_!!6000000000376-2-tps-100-100.png",
+                "spm": "a2189.b24983.c63735.d486571",
+                "targetUrl": "https://pages.tmall.com/wow/z/hdwk/2021tmfarm/ct-lld-newui?disableNav=YES&ptsm=visit.972.74752&__webview_options__=transparentTitle%3Dalways%26readTitle%3DNO%26ttb%3Dalways%26showOptionMenu%3DNO&pid=431408_1007",
+                "title": "逛好物最高得2000肥料",
+                "todoBtn": "去完成",
+                "type": "other"
+            },
+            "taskId": "74754",
+            "taskPlantType": "TAOBAO",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "VISIT",
+            "groupId": "3605",
+            "order": -90,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 3,
+            "sceneCode": "972",
+            "taobaoTaskParams": {
+                "activityId": 100085,
+                "deliveryId": 70441,
+                "implId": "cloudsail_493_125400501040001_70441_0",
+                "sceneId": 972
+            },
+            "taskDisplayConfig": {
+                "bgImg": "https://gw.alicdn.com/imgextra/i2/O1CN01EZLzGG26r44tfvF6B_!!6000000007714-2-tps-686-120.png",
+                "completeBtn": "已完成",
+                "desc": "浏览15秒得1500肥料，3次共4500",
+                "icon": "https://img.alicdn.com/imgextra/i4/O1CN01KgaCmC1jydQO8tK7Y_!!6000000004617-2-tps-100-100.png",
+                "spm": "a2189.b24983.c63735.d440606",
+                "targetUrl": "https://pages.tmall.com/wow/z/hdwk/2021tmfarm/pentaprism-lld?disableNav=YES&ptsm=order.4973.80374&hd_from_id=100085&__webview_options__=readTitle%3DNO%26ttb%3Dalways&bizCode=cpc_browse_alipay_wlj&pid=mm_12852562_1778064_115759300344&bucketNo=21435880&hdSecurity=1&eurl=http%3A%2F%2Fclick.mz.simba.taobao.com%2Fact_necpm%3Feadt%3D%26p%3D%26s%3D376820523%26k%3D824%26e%3Di250RMJkuDuZLQb4CMPj75Wj%252F0Cv93ekftsgJblytHVg7ygE8oTA%252F4SAGlnkdqbOvutJlFhFTBK4BwYZhZ%252F6wVrM%252FM5gg85zKQJ9Sicw1%252F9zp86NmeaMs0qy5Jd5PYRqxbfCf1UpssXsEdtsAV8VjrvTElC6BMZDYAyoFf2qtKudMsKnxinhfRh0%252FueIt8FPFNUy5WDSIRTFcFG93neFNCxBqU4imuvdv8UtwnNzZyldUlNxnBU7lJdTZPXEKyWNSV%252BtXhK2Cx7dbFhvchgHkvh%252BV1huCe%252F8FU%252FGeeSEerJuINC4lxeLCWrg4FaL8U5glw5X1B6KSf%252FHYVJWlZrN18T6p8OF85pwcn7SZS%252B%252BXiu2OoU%252FUHayP43iodN5RYBd1lgfcVgPGC%252BVcWQuCdAN%252BtlEiitrzfLEEmlo02iNgzjYzCiDZs2t%252Fom48Os5w3HoDSS3Vv5csRpOrfgW6uBvOCHqbXagHOSaS927ufpexqnxZY7ImiGG9TMVKkTacLEF2XgL8Xdjax6tu75EcsV%252B8EpWJsUSoSQuNA9jToVrfm%252F8G7DB4R5fvH%252Fazm7FcICEfjad4OWYJ4R%252F2s5uxXCAhH42neDlmCeEf9rObsVwgITL4D7EjxkY%252FrdtBa2np39b11BkRpXfjlUN%252F98A7kZJEuLdG77TvSDgJdOpwvSBle6SLchnZ9n98EEQ2tNkF1utT6lLzqZIMIxTFLthhAVjGICtXrnyycgokFA%252BZwnOahth%252BW%252FBg4mJDPLyoIZjvt%252FAjfgGylJYCsOjiHZDgMVpquIVXFzvsR25DcnoO%252FYS%252Fn2Vo%252F9Ar%252Fd3pA%253D%253D&etype=3&epid=mm_12852562_1778064_114835150116&adTrace=125400501040001__item_feeds.order__0b44758817545051312353796e509c__I__5__0&settleType=afterTime&settleTime=0&shortTfs=c0d82f963033e2c801997db70db804d6&ffs=&adScene=zfb-farm-task-list&cloudSailSid=d554c5219091670068939fab0108c6b8",
+                "title": "看精选商品得肥料",
+                "todoBtn": "去完成",
+                "type": "cloudsail"
+            },
+            "taskId": "70441",
+            "taskPlantType": "TAOBAO",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "VISIT",
+            "awardType": "RIGHTS",
+            "confAwardCount": 500,
+            "extend": {
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ORCHARD_NORMAL_WAIMAIMIANDAN~taskType:ORCHARD_NORMAL_WAIMAIMIANDAN_VISIT~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:500"
+            },
+            "groupId": "ORCHARD_NORMAL_WAIMAIMIANDAN",
+            "order": -10,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "awardType": "MANURE",
+                "completeBtn": "已领取",
+                "desc": "实付满3元得500肥料",
+                "finishedBtn": "领取",
+                "icon": "https://mdn.alipayobjects.com/huamei_arbxfu/afts/img/A*6YhLRoKNCsMAAAAAQBAAAAgAem57AQ/original",
+                "spm": "a2189.b24983.c63735.d585753",
+                "targetUrl": "alipays://platformapi/startapp?appId=2021005151656223&page=%2Fpages%2Findex%2Findex&query=channelInfo%3D%257B%2522channel%2522%253A%2522mini_app%2522%252C%2522subChannel%2522%253A%2522miniapp.alipay%2522%252C%2522subSubChannel%2522%253A%2522miniapp.alipay.et%2522%257D%26alsc_exsrc%3DES0007553884%26mdFrom%3D%26iconBizType%3D",
+                "title": "下单秋天第一杯奶茶",
+                "todoBtn": "去完成",
+                "type": "SHANGOU"
+            },
+            "taskId": "ORCHARD_NORMAL_WAIMAIMIANDAN_VISIT",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "GAME_CENTER",
+            "awardType": "RIGHTS",
+            "confAwardCount": 300,
+            "extend": {
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ORCHARD_NORMAL_ZADAN10_3000~taskType:ORCHARD_NORMAL_ncly_anygame~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:300"
+            },
+            "groupId": "ORCHARD_NORMAL_ZADAN10_3000",
+            "order": 1,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "completeBtn": "继续玩",
+                "desc": "玩任意游戏可得300肥",
+                "finishedBtn": "领取",
+                "icon": "https://mdn.alipayobjects.com/huamei_t48u2v/afts/img/A*yGtSRquVoB4AAAAAAAAAAAAADh6hAQ/original",
+                "spm": "a2189.b24983.c63735.d446525",
+                "title": "去玩热门小游戏",
+                "todoBtn": "去完成",
+                "type": "nongchangleyuan"
+            },
+            "taskId": "ORCHARD_NORMAL_ncly_anygame",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "SYSTEM_SWITCH",
+            "groupId": "12739",
+            "order": 2,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "3646",
+            "taobaoTaskParams": {
+                "activityId": 100085,
+                "deliveryId": 58298,
+                "implId": "other_1071_1777008_58298_0",
+                "sceneId": 3646
+            },
+            "taskDisplayConfig": {
+                "btnColor": "#FE5F37",
+                "completeBtn": "已完成",
+                "desc": "完成得2500肥料",
+                "icon": "https://img.alicdn.com/imgextra/i2/O1CN0110qbqm1eKipWIJxCq_!!6000000003853-2-tps-100-100.png",
+                "spm": "a2189.b24983.c63735.d425815",
+                "subTitle": "2500",
+                "targetUrl": "https://pages-fast.m.taobao.com/wow/z/hdwk/tmfarm/babanongchang?x-ssr=true&wh_biz=tm&disableNav=YES&disableProgress=YES&checkJumpWishTree=true&hd_from=alipay_mayifarm&hd_from_id=100085&sceneId=3646&deliveryId=36192&task_type=callapp&sceneCode=FUGUO&query=spm=ma.yi.nong.chang&prismFrom=alipay_mayifarm&bc_fl_src=zfb_spare1&x-preload=true",
+                "title": "去淘宝最高得5000肥料",
+                "todoBtn": "去逛逛",
+                "type": "other"
+            },
+            "taskId": "58298",
+            "taskPlantType": "TAOBAO",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "VISIT",
+            "awardType": "RIGHTS",
+            "confAwardCount": 1200,
+            "extend": {
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ORCHARD_NORMAL_KUAISHOU_MAX~taskType:ORCHARD_NORMAL_KUAISHOU_MAX~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:1200"
+            },
+            "groupId": "ORCHARD_NORMAL_KUAISHOU_MAX",
+            "order": 2,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "awardType": "MANURE",
+                "bgImg": "https://mdn.alipayobjects.com/huamei_arbxfu/afts/img/A*6r25SpEN_5UAAAAAAAAAAAAADm57AQ/original",
+                "completeBtn": "已领取",
+                "desc": "成功打开快手得1200肥料",
+                "finishedBtn": "领取",
+                "icon": "https://mdn.alipayobjects.com/huamei_arbxfu/afts/img/A*M7V8SLHpB_YAAAAAAAAAAAAADm57AQ/original",
+                "spm": "a2189.b24983.c63735.d511806",
+                "targetUrl": "alipays://platformapi/startapp?appId=20002133&jumpAction=userGrowth&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fc%2F180020570000104165%2Findex.html%3FsceneCode%3Dbbfarm_ksmultitaskplus_1112&sceneCode=bbfarm_ksmultitaskplus_1112&alipayAppdonwlaodPlanId=be71b422631149429a9b7fabcc00bc2d",
+                "title": "逛一逛快手",
+                "todoBtn": "去完成",
+                "type": "kuaishou"
+            },
+            "taskId": "ORCHARD_NORMAL_KUAISHOU_MAX",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "VISIT",
+            "awardType": "RIGHTS",
+            "confAwardCount": 1000,
+            "extend": {
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ORCHARD_NORMAL_DIAOYU1~taskType:ORCHARD_NORMAL_DIAOYU1~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:1000"
+            },
+            "groupId": "ORCHARD_NORMAL_DIAOYU1",
+            "order": 3,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "awardType": "MANURE",
+                "completeBtn": "继续钓",
+                "desc": "钓1次即得",
+                "finishedBtn": "领取",
+                "icon": "https://mdn.alipayobjects.com/huamei_arbxfu/afts/img/A*so0gQqZvlr4AAAAAAAAAAAAADm57AQ/original",
+                "spm": "a2189.b24983.c63735.d443563",
+                "targetUrl": "alipays://platformapi/startapp?appId=2060090000318790&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fyuyan%2F180020010001266592%2Findex.html%3FcaprMode%3Dsync%26backClose%3D1&chInfo=farmfishtask&source=farmfishtask",
+                "title": "钓鱼1次得1000肥",
+                "todoBtn": "去完成",
+                "type": "diaoyu"
+            },
+            "taskId": "ORCHARD_NORMAL_DIAOYU1",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "VISIT",
+            "awardType": "RIGHTS",
+            "confAwardCount": 2000,
+            "extend": {
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ZHUFANG3IN1~taskType:ORCHARD_WIDGET_FIRST_VISIT_03~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:2000"
+            },
+            "groupId": "ZHUFANG3IN1",
+            "order": 60,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "awardType": "MANURE",
+                "completeBtn": "已领取",
+                "desc": "首次得2000肥，每日访问得更多",
+                "finishedBtn": "去领取",
+                "icon": "https://mdn.alipayobjects.com/huamei_arbxfu/afts/img/A*gGyzTKzS3WUAAAAAAAAAAAAADm57AQ/original",
+                "spm": "a2189.b24983.c63735.d388337",
+                "targetUrl": "alipays://platformapi/startapp?appId=20000067&startMultApp=yes&appClearTop=false&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fc%2F180020570000054219%2Findex.html&chinfo=ch_farm_task",
+                "title": "添加农场小组件并访问",
+                "todoBtn": "去完成",
+                "type": "widget"
+            },
+            "taskId": "ORCHARD_WIDGET_FIRST_VISIT_03",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "VISIT",
+            "groupId": "3604",
+            "order": 80,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 2,
+            "sceneCode": "972",
+            "taskDisplayConfig": {
+                "completeBtn": "已完成",
+                "desc": "下单即得，产生任何退款均将扣回",
+                "icon": "https://img.alicdn.com/imgextra/i4/O1CN01iTybkp1erhMhdgeXG_!!6000000003925-2-tps-80-80.png",
+                "spm": "a2189.b24983.c63735.d542471",
+                "targetUrl": "https://pages.tmall.com/wow/z/hdwk/2021tmfarm/ct-xxd?ptsm=order.972.83753&wh_biz=tm&pid=431238_1007&bizCode=cpc_order_task&disableNav=YES&__webview_options__=transparentTitle%3Dalways%26readTitle%3DNO%26ttb%3Dalways%26showOptionMenu%3DNO&hdSecurity=1",
+                "title": "购买商品得20000肥料",
+                "todoBtn": "去挑选",
+                "type": "other"
+            },
+            "taskId": "83753",
+            "taskPlantType": "TAOBAO",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "P2P_NEW",
+            "extend": {},
+            "order": 92,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 3,
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "completeBtn": "已领取",
+                "desc": "邀请好友助力得600肥料",
+                "finishedBtn": "领取",
+                "icon": "https://gw.alipayobjects.com/mdn/rms_ea8089/afts/img/A*tAkXQruJ-Q0AAAAAAAAAAAAAARQnAQ",
+                "spm": "a2189.b24983.c63735.d131414",
+                "targetUrl": "",
+                "title": "分享给好友",
+                "todoBtn": "去分享",
+                "type": "p2p"
+            },
+            "taskId": "ANTFARM_ORCHARD_P2P_SHARER",
+            "taskPlantType": "ANTIEP",
+            "taskRequire": 0,
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "JUMP",
+            "awardType": "RIGHTS",
+            "confAwardCount": 500,
+            "extend": {
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ORCHARD_TEAM_SPREAD_PERSON~taskType:ORCHARD_TEAM_SPREAD_PERSON_2~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:500"
+            },
+            "groupId": "ORCHARD_TEAM_SPREAD_PERSON",
+            "order": 210,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "completeBtn": "已完成",
+                "desc": "队伍成员每人可领500肥料",
+                "finishedBtn": "领取",
+                "icon": "https://mdn.alipayobjects.com/huamei_7dzrzv/afts/img/A*eqFKTKb8ubkAAAAAAAAAAAAAeu_zAQ/original",
+                "jumpType": "teamPlant",
+                "spm": "a2189.b24983.c63735.d544393",
+                "title": "合种/帮帮种达2人施肥",
+                "todoBtn": "去完成",
+                "type": "manure_person_count"
+            },
+            "taskId": "ORCHARD_TEAM_SPREAD_PERSON_2",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "VISIT",
+            "groupId": "12172",
+            "order": 400,
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "972",
+            "taobaoTaskParams": {
+                "activityId": 100085,
+                "deliveryId": 28876,
+                "implId": "other_1175_928001_28876_0",
+                "sceneId": 972
+            },
+            "taskDisplayConfig": {
+                "completeBtn": "已完成",
+                "desc": "浏览15秒助农专场，得100肥料",
+                "icon": "https://img.alicdn.com/imgextra/i4/O1CN019H8KhY1VE0Y0cRqwb_!!6000000002620-2-tps-80-80.png",
+                "spm": "a2189.b24983.c63735.d223183",
+                "targetUrl": "https://pages.tmall.com/wow/z/hdwk/alipayfarm/country?type=visit&source=task_visit&__webview_options__=readTitle%3DNO%26ttb%3Dauto%26bc%3D5220925",
+                "title": "逛助农好货得肥料",
+                "todoBtn": "去完成",
+                "type": "other"
+            },
+            "taskId": "28876",
+            "taskPlantType": "TAOBAO",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "VISIT",
+            "awardType": "RIGHTS",
+            "confAwardCount": 100,
+            "extend": {
+                "deliveryControlAppName": "antiep",
+                "deliveryControlItemCode": "ORCHARD_NORMAL_TOUTIAO",
+                "deliveryControlSceneCode": "ANTFARM_ORCHARD_TASK_V2",
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ORCHARD_NORMAL_TOUTIAO~taskType:ORCHARD_NORMAL_TOUTIAO~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:100"
+            },
+            "groupId": "ORCHARD_NORMAL_TOUTIAO",
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "awardType": "MANURE",
+                "completeBtn": "已领取",
+                "desc": "完成得100肥料",
+                "finishedBtn": "领取",
+                "icon": "https://mdn.alipayobjects.com/huamei_arbxfu/afts/img/A*11NiQIdOPngAAAAAAAAAAAAADm57AQ/original",
+                "spm": "a2189.b24983.c63735.d591598",
+                "targetUrl": "alipays://platformapi/startapp?appId=20002133&jumpAction=userGrowth&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fc%2F180020570000135932%2Findex.html%3FsceneCode%3Dbabafarm_toutiao_250702&sceneCode=babafarm_toutiao_250702",
+                "title": "逛一逛今日头条",
+                "todoBtn": "去完成",
+                "type": "toutiao"
+            },
+            "taskId": "ORCHARD_NORMAL_TOUTIAO",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "TRIGGER",
+            "awardType": "RIGHTS",
+            "confAwardCount": 100,
+            "extend": {
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ORCHARD_NORMAL_XINYONGKA_JIFEN~taskType:ORCHARD_NORMAL_XINYONGKA_JIFEN~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:100"
+            },
+            "groupId": "ORCHARD_NORMAL_XINYONGKA_JIFEN",
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "awardType": "MANURE",
+                "completeBtn": "已领取",
+                "desc": "浏览可得100肥料",
+                "finishedBtn": "领取",
+                "icon": "https://mdn.alipayobjects.com/huamei_arbxfu/afts/img/A*PJIbSp2z0GEAAAAAAAAAAAAADm57AQ/original",
+                "spm": "a2189.b24983.c63735.d517928",
+                "targetUrl": "alipays://platformapi/startapp?appId=20000067&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fyuyan%2F180020010001269203%2Findex.html%3FcaprMode%3Dsync%26chInfo%3Dnongchangjifen",
+                "title": "查看信用卡积分服务",
+                "todoBtn": "去逛逛",
+                "type": "xinyongka"
+            },
+            "taskId": "ORCHARD_NORMAL_XINYONGKA_JIFEN",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "VISIT",
+            "awardType": "RIGHTS",
+            "confAwardCount": 100,
+            "extend": {
+                "deliveryControlAppName": "antiep",
+                "deliveryControlItemCode": "ORCHARD_NORMAL_TAB2",
+                "deliveryControlSceneCode": "ANTFARM_ORCHARD_TASK_V2",
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ORCHARD_NORMAL_TAB2~taskType:ORCHARD_NORMAL_TAB2~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:100"
+            },
+            "groupId": "ORCHARD_NORMAL_TAB2",
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "completeBtn": "已领取",
+                "desc": "成功访问得100肥料",
+                "finishedBtn": "领取",
+                "icon": "https://mdn.alipayobjects.com/huamei_arbxfu/afts/img/A*s2B9S7aJkD0AAAAAAAAAAAAADm57AQ/original",
+                "spm": "a2189.b24983.c63735.d365466",
+                "targetUrl": "alipays://platformapi/startapp?appId=20000067&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fc%2F180020570000052885%2Findex.html%3FsceneCode%3Dbabafarm_taobaotab_0822",
+                "title": "逛淘宝看视频领现金",
+                "todoBtn": "去完成",
+                "type": "tab2"
+            },
+            "taskId": "ORCHARD_NORMAL_TAB2",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "TRIGGER",
+            "awardType": "RIGHTS",
+            "confAwardCount": 100,
+            "extend": {
+                "deliveryControlAppName": "antiep",
+                "deliveryControlItemCode": "ANTFARM_ORCHARD_NORMAL_ZHIMALI_NEW",
+                "deliveryControlSceneCode": "ANTFARM_ORCHARD_TASK_V2",
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ANTFARM_ORCHARD_NORMAL_ZHIMALI_NEW~taskType:ANTFARM_ORCHARD_NORMAL_ZHIMALI_NEW~taskStatus:TODO~decideRightsId:-~finishOnceAwardCnt:100"
+            },
+            "groupId": "ANTFARM_ORCHARD_NORMAL_ZHIMALI_NEW",
+            "rightsTimes": 0,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "awardType": "MANURE",
+                "completeBtn": "已领取",
+                "desc": "浏览得100肥料",
+                "finishedBtn": "领取",
+                "icon": "https://gw.alipayobjects.com/mdn/rms_786779/afts/img/A*91EaRalW-UsAAAAAAAAAAAAAARQnAQ",
+                "spm": "a2189.b24983.c63735.d305945",
+                "targetUrl": "alipays://platformapi/startapp?appId=2021003124661203&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fyuyan%2F180020010001206385%2Findex.html%3FcaprMode%3Dsync%26chInfo%3Dch_zmxy_erfang_zmlshouye__chsub_babanongchang_zuorenwujifeiliao%26deliverContentCode%3D&startMultApp=NO",
+                "title": "逛一逛芝麻粒",
+                "todoBtn": "去逛逛",
+                "type": "zhimali"
+            },
+            "taskId": "ANTFARM_ORCHARD_NORMAL_ZHIMALI_NEW",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "TODO"
+        },
+        {
+            "actionType": "TRIGGER",
+            "awardCount": 200,
+            "awardType": "RIGHTS",
+            "confAwardCount": 200,
+            "extend": {
+                "deliveryControlAppName": "antiep",
+                "deliveryControlItemCode": "ORCHARD_FOREST_LOWACTIVE_NORMAL_NEW",
+                "deliveryControlSceneCode": "ANTFARM_ORCHARD_TASK_V2",
+                "iepTaskTracer": "traceId:0b44758817545051312353796e509c~sceneCode:ANTFARM_ORCHARD_TASK_V2~groupId:ORCHARD_FOREST_LOWACTIVE_NORMAL_NEW~taskType:ORCHARD_FOREST_LOWACTIVE_NORMAL_NEW~taskStatus:RECEIVED~decideRightsId:-~finishOnceAwardCnt:200"
+            },
+            "groupId": "ORCHARD_FOREST_LOWACTIVE_NORMAL_NEW",
+            "order": 1,
+            "rightsTimes": 1,
+            "rightsTimesLimit": 1,
+            "sceneCode": "ANTFARM_ORCHARD_TASK_V2",
+            "statusChangeTime": 1754498282000,
+            "taskDisplayConfig": {
+                "awardIcon": "https://gw.alipayobjects.com/mdn/social_todo/afts/img/A*BlpJRJYmMOEAAAAAAAAAAAAAARQnAQ",
+                "completeBtn": "已领取",
+                "desc": "逛一逛得200肥料",
+                "finishedBtn": "领取",
+                "icon": "https://gw.alipayobjects.com/mdn/forest/afts/img/A*R1sFT7E-y1EAAAAAAAAAAAAAARQnAQ",
+                "title": "去森林收能量",
+                "todoBtn": "去完成",
+                "type": "forestlowactive"
+            },
+            "taskId": "ORCHARD_FOREST_LOWACTIVE_NORMAL_NEW",
+            "taskPlantType": "ANTIEP",
+            "taskStatus": "RECEIVED"
+        }
+    ]
+}

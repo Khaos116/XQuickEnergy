@@ -149,14 +149,23 @@ public class MyUtils {
   //private void doFarmDailyTask()
   public static boolean libraryDoFarmTask(JSONObject jo) {
     try {
-      String title = jo.optString("title");
-      String bizKey = jo.optString("bizKey");
-      String taskId = jo.optString("taskId");
-      String taskMode = jo.optString("taskMode");
+      String title = jo.optString("title", "");
+      String bizKey = jo.optString("bizKey", "");
+      String taskId = jo.optString("taskId", "");
+      String taskMode = jo.optString("taskMode", "");
+      String desc = jo.optString("desc", "");
       boolean canDoTask = TextUtils.equals("VIEW", taskMode);
       if (!canDoTask) canDoTask = !TextUtils.isEmpty(taskId) && TextUtils.equals("TRIGGER", taskMode) && TextUtils.equals(taskId, bizKey);
-      if (TextUtils.equals("ONLINE_PAY", bizKey)) {
+      if (TextUtils.equals("ONLINE_PAY", bizKey) || TextUtils.equals("OFFLINE_PAY", bizKey)) {//线上和线下支付
         canDoTask = false;//不执行支付任务
+      } else if (title.contains("付款") || title.contains("买") || desc.contains("付款") || (desc.contains("付") && desc.contains("元"))) {//额外判断支付
+        canDoTask = false;//不执行支付任务
+      } else if (bizKey.startsWith("HEART_DONAT")) {//2025-08-09 捐赠任务不让执行了
+        canDoTask = false;//不执行捐赠任务
+      } else if ((desc.contains("捐") && desc.contains("元")) || (desc.contains("捐") && desc.contains("金额"))) {//额外判断捐赠
+        canDoTask = false;//不执行捐赠任务
+      } else if (bizKey.toLowerCase().contains("xiadan")) {
+        canDoTask = false;//不执行下单任务
       }
       if (canDoTask) {
         jo = new JSONObject(doFarmTask(bizKey));
