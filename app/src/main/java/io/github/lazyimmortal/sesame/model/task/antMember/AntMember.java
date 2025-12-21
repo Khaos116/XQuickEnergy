@@ -82,38 +82,38 @@ public class AntMember extends ModelTask {
     @Override
     public void run() {
         try {
-            if (memberSign.getValue()) {
+            if (memberSign != null && memberSign.getValue()) {
                 memberSign();
             }
-            if (memberPointExchangeBenefit.getValue()) {
+            if (memberPointExchangeBenefit != null && memberPointExchangeBenefit.getValue()) {
                 memberPointExchangeBenefit();
             }
-            if (collectSesame.getValue()) {
+            if (collectSesame != null && collectSesame.getValue()) {
                 collectSesame();
             }
             // 生活记录
-            if (promise.getValue()) {
+            if (promise != null && promise.getValue()) {
                 promise();
             }
             // 我的快递任务
-            if (KuaiDiFuLiJia.getValue()) {
+            if (KuaiDiFuLiJia != null && KuaiDiFuLiJia.getValue()) {
                 RecommendTask();
                 OrdinaryTask();
             }
-            if (enableGoldTicket.getValue()) {
+            if (enableGoldTicket != null && enableGoldTicket.getValue()) {
                 goldTicket();
             }
-            if (antInsurance.getValue()) {
+            if (antInsurance != null && antInsurance.getValue()) {
                 AntInsurance.executeTask(antInsuranceOptions.getValue());
             }
             // 消费金签到
-            if (signinCalendar.getValue() && !MyUtils.closeVerification()) {
+            if (signinCalendar != null && signinCalendar.getValue() && !MyUtils.closeVerification()) {
                 signinCalendar();
             }
-            if (enableGameCenter.getValue()) {
+            if (enableGameCenter != null && enableGameCenter.getValue()) {
                 enableGameCenter();
             }
-            if (merchantSignIn.getValue() || merchantKMDK.getValue()) {
+            if ((merchantSignIn != null && merchantSignIn.getValue()) || (merchantKMDK != null && merchantKMDK.getValue())) {
                 if (MerchantService.transcodeCheck()) {
                     if (merchantSignIn.getValue()) {
                         MerchantService.taskListQueryV2();

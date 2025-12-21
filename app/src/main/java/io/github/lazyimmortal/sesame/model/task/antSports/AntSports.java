@@ -899,7 +899,7 @@ public class AntSports extends ModelTask {
                 return;
             }
             //jo = jo.getJSONObject("dailyStepModel");
-            long produceQuantity = jo.getLong("stepLastTime");
+            long produceQuantity = jo.optLong("stepLastTime");
             int hour = Integer.parseInt(Log.getFormatTime().split(":")[0]);
             
             int stepCount= jo.optInt("stepCount");
