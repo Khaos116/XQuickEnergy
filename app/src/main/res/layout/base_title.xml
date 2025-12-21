@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.Toolbar
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/x_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/MenuTheme"
-        android:background="@color/colorPrimary">
-</androidx.appcompat.widget.Toolbar>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/x_toolbar"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="@android:color/holo_blue_light"
+  android:theme="@style/MenuTheme"
+  app:contentInsetEnd="10dp"
+  app:contentInsetStart="10dp"
+  app:subtitleTextAppearance="@style/Toolbar.SubTitleText"
+  app:titleTextAppearance="@style/Toolbar.TitleText"
+  tools:subtitle="副标题显示内容"
+  tools:subtitleTextColor="#5351FC"
+  tools:title="标题显示内容"
+  tools:titleTextColor="#333333" />

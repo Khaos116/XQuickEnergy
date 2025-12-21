@@ -522,7 +522,9 @@ public class AntFarm extends ModelTask {
             if (!MessageUtil.checkMemo(TAG, jo)) {
                 return false;
             }
-            jo = jo.getJSONObject("sleepNotifyInfo");
+            //jo = jo.getJSONObject("sleepNotifyInfo");
+            jo = MyUtils.antFarmSleepNotifyInfoMaybeNull(jo);//CHANGE BY KT
+            if (jo == null) return true;
             return jo.optBoolean("hasSleepToday", false);
         }
         catch (Throwable t) {
@@ -539,7 +541,8 @@ public class AntFarm extends ModelTask {
                 return false;
             }
             JSONObject sleepNotifyInfo = jo.getJSONObject("sleepNotifyInfo");
-            if (!sleepNotifyInfo.optBoolean("canSleep", false)) {
+            //if (!sleepNotifyInfo.optBoolean("canSleep", false)) {
+            if (!sleepNotifyInfo.optBoolean(MyUtils.NO_SLEEP, false)) {//CHANGE BY KT
                 Log.record("小鸡无需睡觉🛌");
                 return false;
             }
@@ -1161,6 +1164,7 @@ public class AntFarm extends ModelTask {
                 // 检查library是否可用
                 try {
                     isDoTask = LibraryUtil.doFarmTask(task);
+                    return isDoTask;//防止重复打印 //CHANGE BY KT
                 }
                 catch (UnsatisfiedLinkError e) {
                     Log.record("Native库不可用，跳过任务: " + title);
@@ -1196,6 +1200,12 @@ public class AntFarm extends ModelTask {
                 }
             }
             JSONObject jo = new JSONObject(AntFarmRpcCall.receiveFarmTaskAward(taskId));
+            //方法: com.alipay.antfarm.receiveFarmTaskAward
+            //参数: [{"requestType":"NORMAL","sceneCode":"ANTFARM","source":"H5","taskId":"SLEEP","version":"1.8.2302070202.46"}]
+            //数据: {"ariverRpcTraceId":"0b44758817545051557304311e509c","memo":"饲料槽已满","resultCode":"331","success":false}
+            if (MyUtils.closeErrorFunction() && "饲料槽已满".equals(jo.optString("memo"))) {//CHANGE BY KT
+                return true;//饲料槽已满则不再循环执行
+            }
             if (!MessageUtil.checkMemo(TAG, jo)) {
                 return false;
             }
@@ -1356,9 +1366,11 @@ public class AntFarm extends ModelTask {
                     continue;
                 }
                 jo = jo.getJSONObject("farmVO").getJSONObject("subFarmVO");
-                String friendFarmId = jo.getString("farmId");
-                JSONArray jaAnimals = jo.getJSONArray("animals");
-                for (int j = 0; j < jaAnimals.length(); j++) {
+                //String friendFarmId = jo.getString("farmId");
+                String friendFarmId = jo.optString("farmId");//CHANGE BY KT
+                //JSONArray jaAnimals = jo.getJSONArray("animals");
+                JSONArray jaAnimals = MyUtils.antFarmAnimalsMaybeNull(jo);
+                if (jaAnimals != null) for (int j = 0; j < jaAnimals.length(); j++) {
                     jo = jaAnimals.getJSONObject(j);
                     String masterFarmId = jo.getString("masterFarmId");
                     if (masterFarmId.equals(friendFarmId)) {
@@ -1805,6 +1817,12 @@ public class AntFarm extends ModelTask {
     private void visitFriend(String userId, int countLimit) {
         try {
             JSONObject jo = new JSONObject(AntFarmRpcCall.enterFarm(userId));
+            //方法: com.alipay.antfarm.enterFarm
+            //参数: [{"queryLastRecordNum":true,"recall":false,"requestType":"NORMAL","sceneCode":"ANTFARM","source":"H5","userId":"2088642642387040"}]
+            //数据: {"ariverRpcTraceId":"2184aa8a17545054778948193e9221","memo":"非好友","resultCode":"302","success":false}
+            if (MyUtils.closeErrorFunction() && "非好友".equals(jo.optString("memo"))) {//送麦子出现非好友
+                return;//CHANGE BY KT
+            }
             if (!MessageUtil.checkMemo(TAG, jo)) {
                 return;
             }

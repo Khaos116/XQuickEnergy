@@ -24,12 +24,7 @@ import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.hook.Toast;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
 import io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandle;
-import io.github.lazyimmortal.sesame.util.Log;
-import io.github.lazyimmortal.sesame.util.MessageUtil;
-import io.github.lazyimmortal.sesame.util.RandomUtil;
-import io.github.lazyimmortal.sesame.util.Status;
-import io.github.lazyimmortal.sesame.util.StringUtil;
-import io.github.lazyimmortal.sesame.util.TimeUtil;
+import io.github.lazyimmortal.sesame.util.*;
 import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
 
 public class AntSports extends ModelTask {
@@ -264,8 +259,9 @@ public class AntSports extends ModelTask {
             if (!jo.has("taskList")) {
                 return;
             }
-            JSONArray taskList = jo.getJSONArray("taskList");
-            for (int i = 0; i < taskList.length(); i++) {
+            //JSONArray taskList = jo.getJSONArray("taskList");
+            JSONArray taskList = MyUtils.antSportTaskListMaybeNull(jo);//CHANGE BY KT
+            if (taskList != null) for (int i = 0; i < taskList.length(); i++) {
                 jo = taskList.getJSONObject(i);
                 
                 String taskStatus = jo.getString("taskStatus");
@@ -871,8 +867,9 @@ public class AntSports extends ModelTask {
             if (!MessageUtil.checkResultCode(TAG, jo)) {
                 return false;
             }
-            JSONArray userExchangeRecords = jo.getJSONArray("userExchangeRecords");
-            if (userExchangeRecords.length() == 0) {
+            //JSONArray userExchangeRecords = jo.getJSONArray("userExchangeRecords");
+            JSONArray userExchangeRecords = MyUtils.antSportUserExchangeRecordsMaybeNull(jo);//CHANGE BY KT
+            if (userExchangeRecords == null || userExchangeRecords.length() == 0) {
                 return true;
             }
             jo = userExchangeRecords.getJSONObject(0);
@@ -1013,6 +1010,12 @@ public class AntSports extends ModelTask {
                             pointOptions = jo.getInt("pointOptions");
                             InstanceId = jo.getString("id");
                             ResultId = jo.getString("instanceResultId");
+                        }
+                        //ERROR: new rpc response | id: 208117859 | method: alipay.tiyubiz.wenti.walk.participate
+                        //args: [{"bettingPoints":100,"guessInstanceId":"2025052011001031000501605799","guessResultId":"2025052011001031007301610705","newParticipant":false,"roundId":"2025052011001031006001566329","stepTimeZone":"Asia/Shanghai"}]
+                        //data: {"error":3000,"errorMessage":"系统出错，正在排查","errorNo":3,"errorTip":"3000"}
+                        if (MyUtils.closeErrorFunction() && "2025052011001031006001566329".equals(roundId)) {
+                            continue;//2025-08-07 发现执行会出现"系统出错，正在排查"
                         }
                         jo = new JSONObject(AntSportsRpcCall.participate(pointOptions, InstanceId, ResultId, roundId));
                         if (jo.optBoolean("success")) {

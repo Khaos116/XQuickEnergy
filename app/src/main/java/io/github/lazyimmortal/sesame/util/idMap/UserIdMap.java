@@ -2,13 +2,11 @@ package io.github.lazyimmortal.sesame.util.idMap;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.robv.android.xposed.XposedHelpers;
+import io.github.lazyimmortal.sesame.util.*;
 import lombok.Getter;
 
 import io.github.lazyimmortal.sesame.entity.UserEntity;
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
-import io.github.lazyimmortal.sesame.util.FileUtil;
-import io.github.lazyimmortal.sesame.util.JsonUtil;
-import io.github.lazyimmortal.sesame.util.Log;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -136,6 +134,7 @@ public class UserIdMap {
             return;
         }
         userMap.put(userId, userEntity);
+        MyUtils.mUidMap.put(userId, userEntity.getNickName());//CHANGE BY KT
     }
     
     public synchronized static void remove(String userId) {
@@ -151,6 +150,7 @@ public class UserIdMap {
                 });
                 for (UserEntity.UserDto dto : dtoMap.values()) {
                     userMap.put(dto.getUserId(), dto.toEntity());
+                    MyUtils.mUidMap.put(dto.getUserId(), dto.toEntity().getNickName());//CHANGE BY KT
                 }
             }
         } catch (Exception e) {
@@ -174,6 +174,7 @@ public class UserIdMap {
                 UserEntity.UserDto dto = JsonUtil.parseObject(body, new TypeReference<UserEntity.UserDto>() {
                 });
                 userMap.put(dto.getUserId(), dto.toEntity());
+                MyUtils.mUidMap.put(dto.getUserId(), dto.toEntity().getNickName());//CHANGE BY KT
             }
         } catch (Exception e) {
             Log.printStackTrace(e);

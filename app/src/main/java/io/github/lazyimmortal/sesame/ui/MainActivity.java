@@ -1,13 +1,9 @@
 package io.github.lazyimmortal.sesame.ui;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,12 +19,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import io.github.lazyimmortal.sesame.BuildConfig;
 import io.github.lazyimmortal.sesame.R;
 import io.github.lazyimmortal.sesame.data.AppConfig;
 import io.github.lazyimmortal.sesame.data.RunType;
@@ -36,15 +27,15 @@ import io.github.lazyimmortal.sesame.data.ViewAppInfo;
 import io.github.lazyimmortal.sesame.data.modelFieldExt.common.SelectModelFieldFunc;
 import io.github.lazyimmortal.sesame.entity.FriendWatch;
 import io.github.lazyimmortal.sesame.entity.UserEntity;
-import io.github.lazyimmortal.sesame.util.FileUtil;
-import io.github.lazyimmortal.sesame.util.LanguageUtil;
-import io.github.lazyimmortal.sesame.util.LibraryUtil;
-import io.github.lazyimmortal.sesame.util.Log;
-import io.github.lazyimmortal.sesame.util.PermissionUtil;
-import io.github.lazyimmortal.sesame.util.Statistics;
-import io.github.lazyimmortal.sesame.util.TimeUtil;
-import io.github.lazyimmortal.sesame.util.ToastUtil;
+import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
+import io.github.lazyimmortal.sesame.util.*;
 import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends BaseActivity {
 
@@ -78,6 +69,9 @@ public class MainActivity extends BaseActivity {
             supportActionBar.setIcon(R.drawable.title_logo);
         }*/
         updateSubTitle(ViewAppInfo.getRunType());
+        viewHandler = new Handler(Looper.getMainLooper());
+        setBaseSubtitle("编译时间: " + BuildConfig.BUILD_TIME);
+        setBaseSubtitleTextColor(Color.parseColor("#5351FC"));
         viewHandler = new Handler(Looper.getMainLooper());
         titleRunner = () -> updateSubTitle(RunType.DISABLE);
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -118,11 +112,13 @@ public class MainActivity extends BaseActivity {
         builder.setMessage(R.string.start_message);
         builder.setPositiveButton(R.string.btn_understood, (dialog, which) -> dialog.dismiss());
         AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        if(MyUtils.showHomeDialog()) alertDialog.show();//CHANGE BY KT
         Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
         if (positiveButton != null) {
             positiveButton.setTextColor(ContextCompat.getColor(this, R.color.button));
         }
+        Button btn = findViewById(R.id.btn_other_log);//CHANGE BY KT
+        btn.setText(MyUtils.showHomeAllLog() ? R.string.view_record_file : R.string.other_log);//首页这显示全部
     }
 
     @Override
@@ -223,7 +219,17 @@ public class MainActivity extends BaseActivity {
         } else if (v.getId() == R.id.btn_farm_log) {
             data += FileUtil.getFarmLogFile().getAbsolutePath();
         } else if (v.getId() == R.id.btn_other_log) {
-            data += FileUtil.getOtherLogFile().getAbsolutePath();
+            if (MyUtils.showHomeAllLog()) {//首页这显示全部 //CHANGE BY KT
+                String recordData = "file://";
+                recordData += FileUtil.getRecordLogFile().getAbsolutePath();
+                Intent recordIt = new Intent(this, HtmlViewerActivity.class);
+                recordIt.setData(Uri.parse(recordData));
+                recordIt.putExtra("canClear", true);
+                startActivity(recordIt);
+                return;
+            } else {
+                data += FileUtil.getOtherLogFile().getAbsolutePath();
+            }
         } else if (v.getId() == R.id.btn_friend_watch) {
             ListDialog.show(this, getString(R.string.friend_watch), FriendWatch.getList(), SelectModelFieldFunc.newMapInstance(), false, ListDialog.ListType.SHOW);
             return;
@@ -245,13 +251,13 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int state = getPackageManager()
-                .getComponentEnabledSetting(new ComponentName(this, getClass().getCanonicalName() + "Alias"));
+            .getComponentEnabledSetting(new ComponentName(this, getClass().getCanonicalName() + "Alias"));
         menu.add(0, 1, 1, R.string.hide_the_application_icon)
-                .setCheckable(true)
-                .setChecked(state > PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
+            .setCheckable(true)
+            .setChecked(state > PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
         menu.add(0, 2, 2, R.string.language_simplified_chinese)
-                .setCheckable(true)
-                .setChecked(AppConfig.INSTANCE.getLanguageSimplifiedChinese());
+            .setCheckable(true)
+            .setChecked(AppConfig.INSTANCE.getLanguageSimplifiedChinese());
         menu.add(0, 3, 3, R.string.view_error_log_file);
         menu.add(0, 4, 4, R.string.export_error_log_file);
         menu.add(0, 5, 5, R.string.view_runtime_log_file);
@@ -259,7 +265,7 @@ public class MainActivity extends BaseActivity {
         menu.add(0, 7, 7, R.string.export_the_statistic_file);
         menu.add(0, 8, 8, R.string.import_the_statistic_file);
         menu.add(0, 9, 9, R.string.view_debug_file);
-        menu.add(0, 10, 10, R.string.view_record_file);
+        menu.add(0, 10, 10, MyUtils.showHomeAllLog() ? R.string.other_log : R.string.view_record_file);//菜单这显示其他 //CHANGE BY KT
         menu.add(0, 11, 11, R.string.extensions);
         menu.add(0, 12, 12, R.string.settings);
         return super.onCreateOptionsMenu(menu);
@@ -271,7 +277,7 @@ public class MainActivity extends BaseActivity {
             case 1:
                 int state = item.isChecked() ? PackageManager.COMPONENT_ENABLED_STATE_DEFAULT : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
                 getPackageManager()
-                        .setComponentEnabledSetting(new ComponentName(this, getClass().getCanonicalName() + "Alias"), state, PackageManager.DONT_KILL_APP);
+                    .setComponentEnabledSetting(new ComponentName(this, getClass().getCanonicalName() + "Alias"), state, PackageManager.DONT_KILL_APP);
                 item.setChecked(!item.isChecked());
                 break;
 
@@ -343,12 +349,20 @@ public class MainActivity extends BaseActivity {
                 break;
 
             case 10:
-                String recordData = "file://";
-                recordData += FileUtil.getRecordLogFile().getAbsolutePath();
-                Intent recordIt = new Intent(this, HtmlViewerActivity.class);
-                recordIt.setData(Uri.parse(recordData));
-                recordIt.putExtra("canClear", true);
-                startActivity(recordIt);
+                if (MyUtils.showHomeAllLog()) {//菜单这显示其他 //CHANGE BY KT
+                    String data = "file://";
+                    data += FileUtil.getOtherLogFile().getAbsolutePath();
+                    Intent it = new Intent(this, HtmlViewerActivity.class);
+                    it.setData(Uri.parse(data));
+                    startActivity(it);
+                } else {
+                    String recordData = "file://";
+                    recordData += FileUtil.getRecordLogFile().getAbsolutePath();
+                    Intent recordIt = new Intent(this, HtmlViewerActivity.class);
+                    recordIt.setData(Uri.parse(recordData));
+                    recordIt.putExtra("canClear", true);
+                    startActivity(recordIt);
+                }
                 break;
 
             case 11:
@@ -395,8 +409,8 @@ public class MainActivity extends BaseActivity {
 
     private void goSettingActivity(int index) {
         UserEntity userEntity = userEntityArray[index];
-        boolean isNewUI = AppConfig.INSTANCE.getNewUI() && !"TEST".equals(ViewAppInfo.getAppVersion()) && LibraryUtil.loadLibrary("sesame");
-        Intent intent = new Intent(this, isNewUI ? NewSettingsActivity.class : SettingsActivity.class);
+        //CHANGE BY KT
+        Intent intent = new Intent(this, SettingsActivity.class);
         if (userEntity != null) {
             intent.putExtra("userId", userEntity.getUserId());
             intent.putExtra("userName", userEntity.getShowName());

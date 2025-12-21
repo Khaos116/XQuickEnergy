@@ -7,6 +7,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
 import android.os.Bundle;
+
+import io.github.lazyimmortal.sesame.util.MyUtils;
 import lombok.Getter;
 import lombok.Setter;
 import io.github.lazyimmortal.sesame.R;
@@ -30,6 +32,7 @@ public final class ViewAppInfo {
     public static void init(Context context) {
         if (ViewAppInfo.context == null) {
             ViewAppInfo.context = context;
+            appTitle = MyUtils.getAppTitleExt(context);
             appTitle = context.getString(R.string.app_name);
             try {
                 PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);

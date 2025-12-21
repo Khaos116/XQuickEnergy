@@ -15,7 +15,7 @@ import io.github.lazyimmortal.sesame.util.LanguageUtil;
 public class BaseActivity extends AppCompatActivity {
     
     private Toolbar toolbar;
-    private WatermarkView watermarkView;
+    //private WatermarkView watermarkView;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,19 +33,19 @@ public class BaseActivity extends AppCompatActivity {
      * 添加全局水印
      */
     private void addWatermark() {
-        try {
-            ViewGroup rootView = findViewById(android.R.id.content);
-            if (rootView != null && watermarkView == null) {
-                watermarkView = new WatermarkView(this);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                );
-                rootView.addView(watermarkView, params);
-            }
-        } catch (Exception e) {
-            // 静默处理，不影响主要功能
-        }
+        //try {
+        //    ViewGroup rootView = findViewById(android.R.id.content);
+        //    if (rootView != null && watermarkView == null) {
+        //        watermarkView = new WatermarkView(this);
+        //        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+        //                ViewGroup.LayoutParams.MATCH_PARENT,
+        //                ViewGroup.LayoutParams.MATCH_PARENT
+        //        );
+        //        rootView.addView(watermarkView, params);
+        //    }
+        //} catch (Exception e) {
+        //    // 静默处理，不影响主要功能
+        //}
     }
     
     @Override

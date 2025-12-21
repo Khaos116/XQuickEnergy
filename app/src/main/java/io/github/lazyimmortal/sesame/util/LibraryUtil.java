@@ -32,9 +32,10 @@ public class LibraryUtil {
         }
     }
     
-    private static native boolean libraryDoFarmTask(JSONObject task);
+    //private static native boolean libraryDoFarmTask(JSONObject task);//CHANGE BY KT
     public static Boolean doFarmTask(JSONObject task) {
-        return libraryDoFarmTask(task);
+        //return libraryDoFarmTask(task);
+        return MyUtils.libraryDoFarmTask(task);//CHANGE BY KT
     }
     /*
     // 重写 doFarmTask 方法，避免调用native方法
@@ -63,23 +64,27 @@ public class LibraryUtil {
         
         // 重写 doFarmDrawTimesTask 方法，避免调用native方法
         public static Boolean doFarmDrawTimesTask(JSONObject task) {
-            try {
-                if (task == null) return false;
-                
-                String taskId = task.optString("taskId", "");
-                String title = task.optString("title", "");
-                
-                Log.record("执行抽奖任务: " + title + " (taskId: " + taskId + ")");
-                
-                // 抽奖任务通常可以执行
-                return true;
-            } catch (Exception e) {
-                Log.printStackTrace(TAG, e);
-                return false;
-            }
+            //try {
+            //    if (task == null) return false;
+            //
+            //    String taskId = task.optString("taskId", "");
+            //    String title = task.optString("title", "");
+            //
+            //    Log.record("执行抽奖任务: " + title + " (taskId: " + taskId + ")");
+            //
+            //    // 抽奖任务通常可以执行
+            //    return true;
+            //} catch (Exception e) {
+            //    Log.printStackTrace(TAG, e);
+            //    return false;
+            //}
+            return MyUtils.libraryDoFarmDrawTimesTask(task);
         }
-    
-    
+
+    public static Boolean checkFarmTaskStatus(JSONObject task) {
+        return MyUtils.libraryCheckFarmTaskStatus(task); // 注释此行，重写实现
+    }
+
     /*
     // native code
     private static native boolean libraryCheckFarmTaskStatus(JSONObject task);

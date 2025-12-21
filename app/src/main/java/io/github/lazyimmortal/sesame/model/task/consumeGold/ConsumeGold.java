@@ -8,6 +8,7 @@ import io.github.lazyimmortal.sesame.data.task.ModelTask;
 import io.github.lazyimmortal.sesame.data.RuntimeInfo;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
 import io.github.lazyimmortal.sesame.util.Log;
+import io.github.lazyimmortal.sesame.util.MyUtils;
 
 public class ConsumeGold extends ModelTask {
     private static final String TAG = ConsumeGold.class.getSimpleName();
@@ -39,7 +40,9 @@ public class ConsumeGold extends ModelTask {
     public void run() {
         try {
             RuntimeInfo.getInstance().put("consumeGold", System.currentTimeMillis());
-            signinCalendar();
+            if (!MyUtils.closeVerification()) {//CHANGE BY KT
+                signinCalendar();
+            }
             taskV2Index("CG_TASK_LIST");
             taskV2Index("HOME_NAVIGATION");
             taskV2Index("CG_SIGNIN_AD_FEEDS");

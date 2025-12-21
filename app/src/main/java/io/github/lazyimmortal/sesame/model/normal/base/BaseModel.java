@@ -49,6 +49,12 @@ public class BaseModel extends Model {
     private static final IntegerModelField toastOffsetY = new IntegerModelField("toastOffsetY", "气泡纵向偏移", 0);
     @Getter
     private static final BooleanModelField enableOnGoing = new BooleanModelField("enableOnGoing", "开启状态栏禁删", false);
+    @Getter
+    private static final BooleanModelField closeVerification = new BooleanModelField("closeVerification", "关闭需要验证的功能", true);
+    @Getter
+    private static final BooleanModelField closeErrorFunction = new BooleanModelField("closeVerification", "关闭可能异常功能", true);
+    @Getter
+    private static final BooleanModelField closeUnRPC = new BooleanModelField("closeVerification", "关闭不支持RPC功能", true);
 
     @Override
     public String getName() {
@@ -84,6 +90,7 @@ public class BaseModel extends Model {
    //     modelFields.addField(closeCaptchaDialogVPN);
         modelFields.addField(enableOnGoing);
         modelFields.addField(toastOffsetY);
+        modelFields.addField(closeVerification);
         return modelFields;
     }
 

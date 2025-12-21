@@ -107,7 +107,7 @@ public class AntMember extends ModelTask {
                 AntInsurance.executeTask(antInsuranceOptions.getValue());
             }
             // 消费金签到
-            if (signinCalendar.getValue()) {
+            if (signinCalendar.getValue() && !MyUtils.closeVerification()) {
                 signinCalendar();
             }
             if (enableGameCenter.getValue()) {
@@ -143,8 +143,10 @@ public class AntMember extends ModelTask {
             }
             
             queryPointCert(1, 8);
-            
-            signPageTaskList();
+
+            if (!MyUtils.closeVerification()) {
+                signPageTaskList();//人气太旺啦，请稍后再试
+            }
             
             queryAllStatusTaskList();
         }
@@ -391,6 +393,9 @@ public class AntMember extends ModelTask {
                     bizParam = targetBusinessArray[1];
                     bizSubType = targetBusinessArray[0];
                 }
+                if (!MyUtils.antMemberSupportBizSubType(bizSubType)) {//CHANGE BY KT
+                    continue;
+                }
                 jo = new JSONObject(AntMemberRpcCall.executeTask(bizParam, bizSubType));
                 TimeUtil.sleep(300);
                 if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -410,6 +415,7 @@ public class AntMember extends ModelTask {
     
     private void goldTicket() {
         try {
+            if (MyUtils.closeErrorFunction()) return;//2025-08-07 发现执行会出现"系统出错，正在排查"
             // 签到
             //已失效
             //goldBillCollect("\"campId\":\"CP1417744\",\"directModeDisableCollect\":true,\"from\":\"antfarm\",");

@@ -4,17 +4,12 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Base64;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -90,26 +85,31 @@ public class AESUtil {
         return new String(decrypted, CHARSET);
     }
 
-    public static native String encryptData(String data);
+    //public static native String encryptData(String data);
     private static String encryptData(String data, String key, String iv) {
-        String result = null;
-        try {
-            result = encrypt(data, stringToKey(key), iv);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return result;
+      return MyUtils.encryptData(data);//CHANGE BY KT
+      //String result = null;
+        //try {
+        //    result = encrypt(data, stringToKey(key), iv);
+        //} catch (Exception e) {
+        //    throw new RuntimeException(e);
+        //}
+        //return result;
     }
 
-    public static native String decryptData(String data);
+    //public static native String decryptData(String data);//CHANGE BY KT
+    private static String decryptData(String data) {
+        return MyUtils.decryptData(data);//CHANGE BY K
+    }
     private static String decryptData(String data, String key, String iv) {
-        String result = null;
-        try {
-            result = decrypt(data, stringToKey(key), iv);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return result;
+      return MyUtils.decryptData(data);//CHANGE BY KT
+      //String result = null;
+        //try {
+        //    result = decrypt(data, stringToKey(key), iv);
+        //} catch (Exception e) {
+        //    throw new RuntimeException(e);
+        //}
+        //return result;
     }
 
     public static String readZipFile(String zipFilePath, String filePath) {

@@ -58,17 +58,7 @@ import io.github.lazyimmortal.sesame.model.task.antFarm.AntFarm.TaskStatus;
 import io.github.lazyimmortal.sesame.rpc.intervallimit.FixedOrRangeIntervalLimit;
 import io.github.lazyimmortal.sesame.rpc.intervallimit.RpcIntervalLimit;
 import io.github.lazyimmortal.sesame.ui.ObjReference;
-import io.github.lazyimmortal.sesame.util.AverageMath;
-import io.github.lazyimmortal.sesame.util.JsonUtil;
-import io.github.lazyimmortal.sesame.util.ListUtil;
-import io.github.lazyimmortal.sesame.util.Log;
-import io.github.lazyimmortal.sesame.util.MessageUtil;
-import io.github.lazyimmortal.sesame.util.NotificationUtil;
-import io.github.lazyimmortal.sesame.util.RandomUtil;
-import io.github.lazyimmortal.sesame.util.Statistics;
-import io.github.lazyimmortal.sesame.util.Status;
-import io.github.lazyimmortal.sesame.util.StringUtil;
-import io.github.lazyimmortal.sesame.util.TimeUtil;
+import io.github.lazyimmortal.sesame.util.*;
 import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
 import io.github.lazyimmortal.sesame.util.idMap.VitalityBenefitIdMap;
 import lombok.Getter;
@@ -532,7 +522,7 @@ public class AntForestV2 extends ModelTask {
                         Log.record("已经有动物伙伴在巡护森林");
                     }
                     else {
-                        queryAnimalPropList();
+                        if (!MyUtils.closeVerification()) queryAnimalPropList();
                     }
                 }
                 if (expiredEnergy.getValue()) {
@@ -543,7 +533,7 @@ public class AntForestV2 extends ModelTask {
                     useEnergyRainCard();
                 }
                 
-                if (energyRain.getValue()) {
+                if (energyRain.getValue() && !MyUtils.closeVerification()) {
                     energyRain();
                 }
                 
@@ -553,8 +543,8 @@ public class AntForestV2 extends ModelTask {
                 if (ecoLife.getValue()) {
                     ecoLife();
                 }
-                
-                giveProp();
+
+                if (!MyUtils.closeVerification()) giveProp();
                 if (vitalityExchangeBenefit.getValue()) {
                     vitalityExchangeBenefit();
                 }
@@ -803,7 +793,8 @@ public class AntForestV2 extends ModelTask {
             long start = System.currentTimeMillis();
             userHomeObject = new JSONObject(AntForestRpcCall.queryHomePage());
             long end = System.currentTimeMillis();
-            long serverTime = userHomeObject.getLong("now");
+            //long serverTime = userHomeObject.getLong("now");
+            long serverTime = MyUtils.antForestV2NowMaybeNull(userHomeObject);//CHANGE BY KT
             int offsetTime = offsetTimeMath.nextInteger((int) ((start + end) / 2 - serverTime));
             Log.i("服务器时间：" + serverTime + "，本地与服务器时间差：" + offsetTime);
         }
@@ -819,7 +810,8 @@ public class AntForestV2 extends ModelTask {
             long start = System.currentTimeMillis();
             userHomeObject = new JSONObject(AntForestRpcCall.queryFriendHomePage(userId));
             long end = System.currentTimeMillis();
-            long serverTime = userHomeObject.getLong("now");
+            //long serverTime = userHomeObject.getLong("now");
+            long serverTime = MyUtils.antForestV2NowMaybeNull(userHomeObject);//CHANGE BY KT
             int offsetTime = offsetTimeMath.nextInteger((int) ((start + end) / 2 - serverTime));
             Log.i("服务器时间：" + serverTime + "，本地与服务器时间差：" + offsetTime);
         }
@@ -1497,6 +1489,7 @@ public class AntForestV2 extends ModelTask {
      * 检查并处理6秒拼手速逻辑（每天主动执行一次）
      */
     private void whackMole() {
+        if (MyUtils.closeVerification()) return;
         try {
             if (!closeWhackMole.getValue()) {
                 // 检查今天是否已执行过打地鼠
@@ -1724,6 +1717,10 @@ public class AntForestV2 extends ModelTask {
                         break label;
                     case "WATERING_USER_LIMIT":
                         Log.record("好友浇水🚿" + jo.getString("resultDesc"));
+                        if (MyUtils.closeErrorFunction() && "TA还不是您的好友哦".equals(jo.optString("resultDesc"))) {
+                            wateredTimes = 3;//直接按照已达上限处理
+                            break label;//CHANGE BY KT
+                        }
                         isContinue = false;
                         break label;
                     default:
@@ -1952,6 +1949,21 @@ public class AntForestV2 extends ModelTask {
     }
     
     private Boolean finishTask(String sceneCode, String taskType, String taskTitle) {
+        if (MyUtils.closeUnRpc() && "ANTFOREST_VITALITY_TASK".equals(sceneCode) && taskType != null) {
+            if (taskType.startsWith("GYG_BK_XYK")
+                || taskType.startsWith("GYG_jinritoutiao")//完成任务逛一逛今日头条失败
+                || taskType.startsWith("GYG_huabeikaitong")//完成任务逛一逛花呗失败
+            ) {
+                //方法: com.alipay.antiep.finishTask
+                //参数: [{"outBizNo":"GYG_jinritoutiao_202505_0.3094441562418887","requestType":"H5","sceneCode":"ANTFOREST_VITALITY_TASK","source":"ANTFOREST","taskType":"GYG_jinritoutiao_202505"}]
+                //数据: {"ariverRpcTraceId":"2197b86417545058757843021e3235","code":"400000040","desc":"不支持rpc完成的任务","success":false}
+
+                //方法: com.alipay.antiep.finishTask
+                //参数: [{"outBizNo":"GYG_huabeikaitong_202504_0.4569653304313023","requestType":"H5","sceneCode":"ANTFOREST_VITALITY_TASK","source":"ANTFOREST","taskType":"GYG_huabeikaitong_202504"}]
+                //数据: {"ariverRpcTraceId":"21d101dc17545893616134198e0494","code":"400000040","desc":"不支持rpc完成的任务","success":false}
+                return false;//不支持rpc完成的任务
+            }
+        }
         try {
             JSONObject jo = new JSONObject(AntForestRpcCall.finishTask(sceneCode, taskType));
             TimeUtil.sleep(500);
