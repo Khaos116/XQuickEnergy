@@ -1,6 +1,8 @@
 package io.github.lazyimmortal.sesame.model.normal.answerAI;
 
 import okhttp3.*;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 import io.github.lazyimmortal.sesame.util.Log;
 
@@ -41,49 +43,91 @@ public class GeminiAI implements AnswerAIInterface {
     @Override
     public String getAnswerStr(String text) {
         Response response = null;
-        String result = "";
         try {
-            String content = "{\n" +
-                    "    \"contents\": [\n" +
-                    "        {\n" +
-                    "            \"parts\": [\n" +
-                    "                {\n" +
-                    "                    \"text\": \"只回答答案 " + text + "\"\n" +
-                    "                }\n" +
-                    "            ]\n" +
-                    "        }\n" +
-                    "    ]\n" +
-                    "}";
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
-            MediaType mediaType = MediaType.parse("application/json");
-            RequestBody body = RequestBody.create(content, mediaType);
-            String url2 = url + "/v1beta/models/gemini-1.5-flash:generateContent?key=" + token;
-            Request request = new Request.Builder()
-                    .url(url2)
-                    .method("POST", body)
-                    .addHeader("Content-Type", "application/json")
-                    .build();
+            JSONObject jsonReq = new JSONObject();
+            // 针对选择题优化的 Prompt
+            String fullPrompt = "直接给出答案文字，严禁解释，不要标点符号。题目：" + text;
+
+            JSONArray contents = new JSONArray();
+            contents.put(new JSONObject().put("parts", new JSONArray().put(new JSONObject().put("text", fullPrompt))));
+            jsonReq.put("contents", contents);
+
+            // 必须开启 google_search，否则无法回答最新的常识题（如蚂蚁庄园）
+            jsonReq.put("tools", new JSONArray().put(new JSONObject().put("google_search", new JSONObject())));
+
+            OkHttpClient client = new OkHttpClient();
+            RequestBody body = RequestBody.create(jsonReq.toString(), MediaType.parse("application/json"));
+
+            String modelName = "gemini-2.5-flash"; // 确保使用你刚才测通的模型
+            String finalUrl = url + "/v1beta/models/" + modelName + ":generateContent?key=" + token;
+
+            Request request = new Request.Builder().url(finalUrl).post(body).build();
             response = client.newCall(request).execute();
-            if (response.body() == null) {
-                return result;
+
+            if (response.body() != null) {
+                String jsonStr = response.body().string();
+                // 调试建议：Log.i("Gemini Raw: " + jsonStr);
+                JSONObject resObj = new JSONObject(jsonStr);
+                String answer = getValueByPath(resObj, "candidates.[0].content.parts.[0].text");
+
+                if (answer != null) {
+                    // 清理所有可能干扰匹配的杂质
+                    return answer.trim().replaceAll("[。，.！!？? \"'“”]", "");
+                }
             }
-            String json = response.body().string();
-            if (!response.isSuccessful()) {
-                Log.other("Gemini请求失败");
-                Log.i("Gemini接口异常：" + json);
-                //可能key出错了
-                return result;
-            }
-            JSONObject jsonObject = new JSONObject(json);
-            result = getValueByPath(jsonObject, "candidates.[0].content.parts.[0].text");
-        } catch (Throwable t) {
-            Log.printStackTrace(TAG, t);
-            if (response != null) {
-                response.close();
-            }
+        } catch (Exception e) {
+            Log.printStackTrace(TAG, e);
+            Log.error("Gemini答题出错: " + e.getMessage());
+        } finally {
+            if (response != null) response.close();
         }
-        return result;
+        return "";
     }
+    //public String getAnswerStr(String text) {
+    //    Response response = null;
+    //    String result = "";
+    //    try {
+    //        String content = "{\n" +
+    //                "    \"contents\": [\n" +
+    //                "        {\n" +
+    //                "            \"parts\": [\n" +
+    //                "                {\n" +
+    //                "                    \"text\": \"只回答答案 " + text + "\"\n" +
+    //                "                }\n" +
+    //                "            ]\n" +
+    //                "        }\n" +
+    //                "    ]\n" +
+    //                "}";
+    //        OkHttpClient client = new OkHttpClient().newBuilder().build();
+    //        MediaType mediaType = MediaType.parse("application/json");
+    //        RequestBody body = RequestBody.create(content, mediaType);
+    //        String url2 = url + "/v1beta/models/gemini-1.5-flash:generateContent?key=" + token;
+    //        Request request = new Request.Builder()
+    //                .url(url2)
+    //                .method("POST", body)
+    //                .addHeader("Content-Type", "application/json")
+    //                .build();
+    //        response = client.newCall(request).execute();
+    //        if (response.body() == null) {
+    //            return result;
+    //        }
+    //        String json = response.body().string();
+    //        if (!response.isSuccessful()) {
+    //            Log.other("Gemini请求失败");
+    //            Log.i("Gemini接口异常：" + json);
+    //            //可能key出错了
+    //            return result;
+    //        }
+    //        JSONObject jsonObject = new JSONObject(json);
+    //        result = getValueByPath(jsonObject, "candidates.[0].content.parts.[0].text");
+    //    } catch (Throwable t) {
+    //        Log.printStackTrace(TAG, t);
+    //        if (response != null) {
+    //            response.close();
+    //        }
+    //    }
+    //    return result;
+    //}
 
     /**
      * 获取答案
