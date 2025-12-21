@@ -251,6 +251,7 @@ public class AntSports extends ModelTask {
     private void sportsTasks() {
         try {
             signInCoinTask();
+            if (MyUtils.closeVerification()) return;
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinTaskPanel());
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
@@ -368,6 +369,7 @@ public class AntSports extends ModelTask {
     
     private void receiveCoinAsset() {
         try {
+            if (MyUtils.closeVerification()) return;
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinBubbleModule());
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
