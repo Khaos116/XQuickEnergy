@@ -135,7 +135,7 @@ android.applicationVariants.configureEach { variant ->
         //版本号
         String versionName = getVersionName()
         //应用名称
-        String appName = "XQE"
+        String appName = "XQE_GR"
         //打包APK完成后的重命名和拷贝
         assemble.doLast {
             //编译完成的时间
