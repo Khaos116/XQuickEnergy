@@ -52,9 +52,9 @@ public class BaseModel extends Model {
     @Getter
     private static final BooleanModelField closeVerification = new BooleanModelField("closeVerification", "关闭需要验证的功能", false);
     @Getter
-    private static final BooleanModelField closeErrorFunction = new BooleanModelField("closeVerification", "关闭可能异常功能", false);
+    private static final BooleanModelField closeErrorFunction = new BooleanModelField("closeErrorFunction", "关闭可能异常功能", false);
     @Getter
-    private static final BooleanModelField closeUnRPC = new BooleanModelField("closeVerification", "关闭不支持RPC功能", false);
+    private static final BooleanModelField closeUnRPC = new BooleanModelField("closeUnRPC", "关闭不支持RPC功能", false);
 
     @Override
     public String getName() {
