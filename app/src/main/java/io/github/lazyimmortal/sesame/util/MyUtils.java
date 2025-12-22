@@ -14,6 +14,20 @@ import java.util.HashMap;
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
 
+/*
+ *  ⭐为了保障您的操作安全，请进行验证后继续：
+ *    com.alipay.sportshealth.biz.rpc.SportsHealthCoinTaskRpc.queryCoinTaskPanel
+ *    com.alipay.sportshealth.biz.rpc.sportsHealthHomeRpc.queryEnergyBubbleModule
+ *    com.alipay.sportshealth.biz.rpc.SportsHealthCoinTaskRpc.completeTask
+ *    com.alipay.antfarm.doFarmTask
+ *  ⭐访问被拒绝：
+ *    method: alipay.mobile.ipsponsorprod.consume.gold.task.signin.calendar
+ *  ⭐人气太旺啦，请稍后再试：
+ *    alipay.antmember.biz.rpc.membertask.h5.signPageTaskList
+ *  ⭐反射了不存在的方法
+ *    ERROR: AntSports, java.lang.NoSuchMethodError: com.alibaba.health.pedometer.intergation.rpc.RpcManager#a()
+ */
+
 /**
  * Date:2024/12/3
  * Time:9:09
@@ -27,10 +41,10 @@ public class MyUtils {
   //修改参数，不让小鸡自动睡觉
   public static final String NO_SLEEP = "canSleepXXX";
 
-  //是否显示首页弹窗
-  public static boolean showHomeDialog() {
-    return false;
-  }
+  public static final boolean _关闭人气太旺 = true;
+  public static final boolean _关闭不存在的方法调用 = true;
+  public static final boolean _关闭首页弹窗 = true;
+  public static final boolean _关闭访问被拒绝 = true;
 
   //是否关闭验证(拼手速、派遣动物、能量雨、赠送道具、部分蚂蚁积分任务、消费金签到 -> 目前发现这些操作会触发验证)
   public static boolean closeVerification() {
