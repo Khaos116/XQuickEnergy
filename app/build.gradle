@@ -5,6 +5,7 @@ apply plugin: 'com.android.application'
 android {
     def buildTime = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("Asia/Shanghai"))
     namespace 'io.github.lazyimmortal.sesame'
+    //noinspection GradleDependency
     compileSdk 34
     defaultConfig {
         applicationId "kt.gr.sesame"
@@ -108,19 +109,20 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:28.0.0'
     compileOnly 'de.robv.android.xposed:api:82'
-    //noinspection AnnotationProcessorOnCompilePath,GradleDependency
+    //noinspection NewerVersionAvailable,AnnotationProcessorOnCompilePath,GradleDependency
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
-    //noinspection GradleDependency
+    //noinspection NewerVersionAvailable,GradleDependency
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
-    //noinspection GradleDependency
+    //noinspection NewerVersionAvailable,GradleDependency
     implementation 'com.elvishew:xlog:1.11.0'
+    //noinspection NewerVersionAvailable,GradleDependency
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'//AI答题
 
-    //noinspection GradleDependency
+    //noinspection NewerVersionAvailable,GradleDependency
     compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.5'
-    //noinspection GradleDependency
+    //noinspection NewerVersionAvailable,GradleDependency
     compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.5'
-    //noinspection GradleDependency
+    //noinspection NewerVersionAvailable,GradleDependency
     compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.5'
 }
 
