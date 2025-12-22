@@ -18,7 +18,7 @@ public class AntSportsRpcCall {
     public static String queryCoinTaskPanel() {
         String args = "[{\"apiVersion\":\"energy\",\"canAddHome\":false,\"chInfo\":\"medical_health\"," + "\"clientAuthStatus\":\"not_support\",\"clientOS\":\"android\",\"features\":[\"DAILY_STEPS_RANK_V2\"," + "\"STEP_BATTLE\",\"CLUB_HOME_CARD\",\"NEW_HOME_PAGE_STATIC\",\"CLOUD_SDK_AUTH\"," +
                       "\"STAY_ON_COMPLETE\"," + "\"EXTRA_TREASURE_BOX\",\"NEW_HOME_PAGE_STATIC\",\"SUPPORT_AI\"," + "\"SUPPORT_TAB3\"," + "\"SUPPORT_FLYRABBIT\",\"SUPPORT_NEW_MATCH\",\"EXTERNAL_ADVERTISEMENT_TASK\"," + "\"PROP\",\"PROPV2\"," + "\"ASIAN_GAMES\"],\"topTaskId\":\"\"}]";
-        return ApplicationHook.requestString("com.alipay.sportshealth.biz.rpc.SportsHealthCoinTaskRpc" + ".queryCoinTaskPanel", args);
+        return ApplicationHook.requestString("com.alipay.sportshealth.biz.rpc.SportsHealthCoinTaskRpc.queryCoinTaskPanel", args);
     }
     
     public static String signUpTask(String taskId) {
@@ -54,7 +54,7 @@ public class AntSportsRpcCall {
         String args = "[{\"apiVersion\":\"energy\",\"bubbleId\":\"\",\"canAddHome\":false," + "\"chInfo" + "\":\"ch_shouquan_shouye\",\"clientAuthStatus\":\"not_support\",\"clientOS\":\"android\"," + "\"distributionChannel\":\"\",\"features\":[\"DAILY_STEPS_RANK_V2\",\"STEP_BATTLE\"," +
                       "\"CLUB_HOME_CARD\",\"NEW_HOME_PAGE_STATIC\",\"CLOUD_SDK_AUTH\",\"STAY_ON_COMPLETE\"," + "\"EXTRA_TREASURE_BOX\",\"NEW_HOME_PAGE_STATIC\",\"SUPPORT_AI\",\"SUPPORT_TAB3\"," + "\"SUPPORT_FLYRABBIT\",\"SUPPORT_NEW_MATCH\",\"EXTERNAL_ADVERTISEMENT_TASK\",\"PROP\",\"PROPV2\"," +
                       "\"ASIAN_GAMES\"],\"outBizNo\":\"\"}]";
-        return ApplicationHook.requestString("com.alipay.sportshealth.biz.rpc.sportsHealthHomeRpc" + ".queryEnergyBubbleModule", args);
+        return ApplicationHook.requestString("com.alipay.sportshealth.biz.rpc.sportsHealthHomeRpc.queryEnergyBubbleModule", args);
     }
     
     /*
