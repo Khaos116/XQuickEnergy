@@ -144,10 +144,8 @@ public class AntMember extends ModelTask {
             
             queryPointCert(1, 8);
 
-            if (!MyUtils.closeVerification()) {
-                signPageTaskList();//人气太旺啦，请稍后再试
-            }
-            
+            signPageTaskList();//人气太旺啦，请稍后再试
+
             queryAllStatusTaskList();
         }
         catch (Throwable t) {
@@ -191,6 +189,7 @@ public class AntMember extends ModelTask {
     private void signPageTaskList() {
         try {
             do {
+                if (MyUtils._关闭人气太旺) return;//人气太旺啦，请稍后再试
                 JSONObject jo = new JSONObject(AntMemberRpcCall.signPageTaskList());
                 TimeUtil.sleep(500);
                 boolean doubleCheck = false;
