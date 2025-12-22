@@ -173,6 +173,7 @@ public class ConsumeGold extends ModelTask {
 
     private void signinCalendar() {
         try {
+            if(MyUtils._关闭访问被拒绝) return;
             String s = ConsumeGoldRpcCall.signinCalendar();
             JSONObject jo = new JSONObject(s);
             if (jo.optBoolean("success")) {

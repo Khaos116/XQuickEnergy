@@ -728,6 +728,7 @@ public class AntMember extends ModelTask {
     // 消费金签到
     private void signinCalendar() {
         try {
+            if(MyUtils._关闭访问被拒绝) return;
             JSONObject jo = new JSONObject(AntMemberRpcCall.signinCalendar());
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
