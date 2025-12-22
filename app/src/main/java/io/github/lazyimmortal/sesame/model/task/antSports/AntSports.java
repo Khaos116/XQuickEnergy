@@ -255,7 +255,7 @@ public class AntSports extends ModelTask {
     private void sportsTasks() {
         try {
             signInCoinTask();
-            if (MyUtils.closeVerification()) return;
+            if (MyUtils.closeVerification()) return;//运动任务查询
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinTaskPanel());
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
@@ -329,6 +329,7 @@ public class AntSports extends ModelTask {
     
     private Boolean completeTask(String taskAction, String taskId, String taskName) {
         try {
+            if (MyUtils.closeVerification() && "SHOW_AD".equals(taskAction) && "AP12300610".equals(taskId)) return false;
             JSONObject jo = new JSONObject(AntSportsRpcCall.completeTask(taskAction, taskId));
             if (MessageUtil.checkSuccess(TAG, jo)) {
                 Log.other("运动任务🧾完成[得运动币:" + taskName + "]");
@@ -373,7 +374,7 @@ public class AntSports extends ModelTask {
     
     private void receiveCoinAsset() {
         try {
-            if (MyUtils.closeVerification()) return;
+            if (MyUtils.closeVerification()) return;//收运动币
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinBubbleModule());
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
