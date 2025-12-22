@@ -167,15 +167,19 @@ public class AntSports extends ModelTask {
                 addChildTask(new ChildModelTask("syncStep", () -> {
                     int step = tmpStepCount();
                     try {
-                        ClassLoader classLoader = ApplicationHook.getClassLoader();
-                        if ((Boolean) XposedHelpers.callMethod(XposedHelpers.callStaticMethod(classLoader.loadClass("com.alibaba.health.pedometer.intergation.rpc.RpcManager"), "a"), "a", new Object[]{step, Boolean.FALSE, "system"})) {
-                            Toast.show("同步步数🏃🏻‍♂️[" + step + "步]");
-                            Log.other("同步步数🏃🏻‍♂️[" + step + "步]#[" + UserIdMap.getShowName(UserIdMap.getCurrentUid()) + "]");
+                        //看你没有这个方法哦//CHANGE BY KT
+                        if (MyUtils._关闭不存在的方法调用) {
+                            Log.record("暂时不反射调用com.alibaba.health.pedometer.intergation.rpc.RpcManager#a()");
+                        } else {
+                            ClassLoader classLoader = ApplicationHook.getClassLoader();
+                            if ((Boolean) XposedHelpers.callMethod(XposedHelpers.callStaticMethod(classLoader.loadClass("com.alibaba.health.pedometer.intergation.rpc.RpcManager"), "a"), "a", new Object[]{step, Boolean.FALSE, "system"})) {
+                                Toast.show("同步步数🏃🏻‍♂️[" + step + "步]");
+                                Log.other("同步步数🏃🏻‍♂️[" + step + "步]#[" + UserIdMap.getShowName(UserIdMap.getCurrentUid()) + "]");
+                            } else {
+                                Log.record("同步运动步数失败:" + step);
+                            }
+                            Status.flagToday("sport::syncStep");
                         }
-                        else {
-                            Log.record("同步运动步数失败:" + step);
-                        }
-                        Status.flagToday("sport::syncStep");
                     }
                     catch (Throwable t) {
                         Log.printStackTrace(TAG, t);
@@ -660,7 +664,8 @@ public class AntSports extends ModelTask {
     
     private static void parseRewardsByJSONObjectData(JSONObject data) {
         try {
-            JSONArray treasureBoxList = data.getJSONArray("treasureBoxList");
+            JSONArray treasureBoxList = data.optJSONArray("treasureBoxList");
+            if (treasureBoxList == null) return;//CHANGE BY KT
             openTreasureBox(treasureBoxList);
             if (data.has("brandRewardVOs")) {
                 JSONArray brandRewardVOs = data.getJSONArray("brandRewardVOs");
