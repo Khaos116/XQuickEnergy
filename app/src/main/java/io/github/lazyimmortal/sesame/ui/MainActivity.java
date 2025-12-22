@@ -112,7 +112,7 @@ public class MainActivity extends BaseActivity {
         builder.setMessage(R.string.start_message);
         builder.setPositiveButton(R.string.btn_understood, (dialog, which) -> dialog.dismiss());
         AlertDialog alertDialog = builder.create();
-        if(MyUtils.showHomeDialog()) alertDialog.show();//CHANGE BY KT
+        if(!MyUtils._关闭首页弹窗) alertDialog.show();//CHANGE BY KT
         Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
         if (positiveButton != null) {
             positiveButton.setTextColor(ContextCompat.getColor(this, R.color.button));
