@@ -48,13 +48,13 @@ public class BaseModel extends Model {
     @Getter
     private static final IntegerModelField toastOffsetY = new IntegerModelField("toastOffsetY", "气泡纵向偏移", 0);
     @Getter
-    private static final BooleanModelField enableOnGoing = new BooleanModelField("enableOnGoing", "开启状态栏禁删", false);
+    private static final BooleanModelField enableOnGoing = new BooleanModelField("enableOnGoing", "开启状态栏禁删", true);
     @Getter
-    private static final BooleanModelField closeVerification = new BooleanModelField("closeVerification", "关闭需要验证的功能", true);
+    private static final BooleanModelField closeVerification = new BooleanModelField("closeVerification", "关闭需要验证的功能", false);
     @Getter
-    private static final BooleanModelField closeErrorFunction = new BooleanModelField("closeVerification", "关闭可能异常功能", true);
+    private static final BooleanModelField closeErrorFunction = new BooleanModelField("closeVerification", "关闭可能异常功能", false);
     @Getter
-    private static final BooleanModelField closeUnRPC = new BooleanModelField("closeVerification", "关闭不支持RPC功能", true);
+    private static final BooleanModelField closeUnRPC = new BooleanModelField("closeVerification", "关闭不支持RPC功能", false);
 
     @Override
     public String getName() {
@@ -91,6 +91,8 @@ public class BaseModel extends Model {
         modelFields.addField(enableOnGoing);
         modelFields.addField(toastOffsetY);
         modelFields.addField(closeVerification);
+        modelFields.addField(closeErrorFunction);
+        modelFields.addField(closeUnRPC);
         return modelFields;
     }
 
