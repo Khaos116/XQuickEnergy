@@ -70,7 +70,16 @@ import io.github.lazyimmortal.sesame.rpc.bridge.OldRpcBridge;
 import io.github.lazyimmortal.sesame.rpc.bridge.RpcBridge;
 import io.github.lazyimmortal.sesame.rpc.bridge.RpcVersion;
 import io.github.lazyimmortal.sesame.rpc.intervallimit.RpcIntervalLimit;
-import io.github.lazyimmortal.sesame.util.*;
+import io.github.lazyimmortal.sesame.util.ClassUtil;
+import io.github.lazyimmortal.sesame.util.FileUtil;
+import io.github.lazyimmortal.sesame.util.LibraryUtil;
+import io.github.lazyimmortal.sesame.util.Log;
+import io.github.lazyimmortal.sesame.util.NotificationUtil;
+import io.github.lazyimmortal.sesame.util.PermissionUtil;
+import io.github.lazyimmortal.sesame.util.Statistics;
+import io.github.lazyimmortal.sesame.util.Status;
+import io.github.lazyimmortal.sesame.util.StringUtil;
+import io.github.lazyimmortal.sesame.util.TimeUtil;
 import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
 import lombok.Getter;
 
@@ -138,6 +147,14 @@ public class ApplicationHook implements IXposedHookLoadPackage {
     
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
+        // Hook验证码关闭功能
+        /*
+        try {
+            CaptchaHook.INSTANCE.setupHook(classLoader);
+            Log.i(TAG+"验证码Hook系统已初始化");
+        } catch (Throwable t) {
+            Log.printStackTrace(TAG+"验证码Hook初始化失败", t);
+        }*/
         if (Objects.equals(BuildConfig.APPLICATION_ID, lpparam.packageName)) {
             try {
                 XposedHelpers.callStaticMethod(lpparam.classLoader.loadClass(ViewAppInfo.class.getName()), "setRunTypeByCode", RunType.MODEL.getCode());
@@ -246,8 +263,8 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                 }
                                 Log.record("应用版本：" + alipayVersion.getVersionString());
                                 Log.record("模块版本：" + modelVersion);
-                                Log.record("编译时间：" + BuildConfig.BUILD_TIME);//CHANGE BY KT
                                 //Log.record("开始执行");
+                                Log.record("编译时间：" + BuildConfig.BUILD_TIME);//CHANGE BY KT
                                 try {
                                     int checkInterval = BaseModel.getCheckInterval().getValue();
                                     if (lastExecTime + 2000 > System.currentTimeMillis()) {
@@ -257,7 +274,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                     }
                                     updateDay();
                                     String targetUid = getUserId();
-                                    Log.record("开始执行" + MyUtils.recordUserName(service, targetUid));//CHANGE BY KT
+                                    Log.record("开始执行" + io.github.lazyimmortal.sesame.util.MyUtils.recordUserName(service, targetUid));//CHANGE BY KT
                                     String currentUid = UserIdMap.getCurrentUid();
                                     if (targetUid == null || currentUid == null) {
                                         Log.record("用户为空，放弃执行");
@@ -652,7 +669,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 Model.initAllModel();
                 Log.record("模块版本：" + modelVersion);
                 //Log.record("开始加载");
-                Log.record("开始加载" + MyUtils.recordUserName(service, userId));//CHANGE BY KT
+                Log.record("开始加载" + io.github.lazyimmortal.sesame.util.MyUtils.recordUserName(service, userId));//CHANGE BY KT
                 ConfigV2.load(userId);
                 if (!Model.getModel(BaseModel.class).getEnableField().getValue()) {
                     Log.record("芝麻粒已禁用");
