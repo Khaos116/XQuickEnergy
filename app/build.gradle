@@ -1,12 +1,13 @@
 //file:noinspection GrDeprecatedAPIUsage
 apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 //修改内容在MyUtils
 android {
     def buildTime = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("Asia/Shanghai"))
     namespace 'io.github.lazyimmortal.sesame'
     //noinspection GradleDependency
-    compileSdk 34
+    compileSdk 35
     defaultConfig {
         applicationId "kt.gr.sesame"
         minSdk 21
@@ -26,9 +27,9 @@ android {
         //Android14.0       34
         //Android15.0       35
         //noinspection EditedTargetSdkVersion,OldTargetApi
-        targetSdk 34
-        versionCode 1381
-        versionName "v1.8.1fix"//需要带上fix，不然自动发布会有判断问题
+        targetSdk 35
+        versionCode 1382
+        versionName "v1.8.2fix"//需要带上fix，不然自动发布会有判断问题
 
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
         //resConfigs "zh-rCN", "zh-rTW", "zh-rHK", "en-rUS", "en-rGB"
@@ -102,6 +103,9 @@ android {
         main {
             jniLibs.srcDirs = ['lib']
         }
+    }
+    kotlinOptions {
+      jvmTarget = '1.8'
     }
 }
 
