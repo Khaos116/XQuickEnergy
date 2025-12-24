@@ -26,6 +26,10 @@ import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
  *    alipay.antmember.biz.rpc.membertask.h5.signPageTaskList
  *  ⭐反射了不存在的方法
  *    ERROR: AntSports, java.lang.NoSuchMethodError: com.alibaba.health.pedometer.intergation.rpc.RpcManager#a()
+ *  ⭐当前网络不可用，请稍后重试
+ *    alipay.antforest.forest.h5.queryTaskList
+ *  ⭐广告请求错误 this is a cheating traffic   作弊流量
+ *    com.alipay.adexchange.ad.facade.xlightPlugin
  */
 
 /**
@@ -45,6 +49,8 @@ public class MyUtils {
   public static final boolean _关闭不存在的方法调用 = true;
   public static final boolean _关闭首页弹窗 = true;
   public static final boolean _关闭访问被拒绝 = true;
+  public static final boolean _关闭必弹验证 = true;
+  public static final boolean _关闭作弊广告流量 = true;
 
   //是否关闭验证(拼手速、派遣动物、能量雨、赠送道具、部分蚂蚁积分任务、消费金签到 -> 目前发现这些操作会触发验证)
   public static boolean closeVerification() {

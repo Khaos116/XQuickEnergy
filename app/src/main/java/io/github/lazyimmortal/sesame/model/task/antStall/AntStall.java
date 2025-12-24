@@ -606,7 +606,7 @@ public class AntStall extends ModelTask {
                     return false;
                 }
                 case "ANTSTALL_XLIGHT_VARIABLE_AWARD": {
-                    if (MyUtils.closeErrorFunction()) return false;
+                    if (MyUtils._关闭作弊广告流量) return false;
                     //【木兰市集】逛精选好物
                     JSONObject jo = new JSONObject(AntStallRpcCall.xlightPlugin());
                     if (!jo.has("playingResult")) {
