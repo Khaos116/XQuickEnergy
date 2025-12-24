@@ -2,10 +2,10 @@
 芝你麻咸鱼的粒-TK(https://github.com/Fansirsqi/Sesame-TK) 的代码补充一些新功能。本项目开源代码地址：https://github.com/Dragon813/Sesame-GR。
 # Sesame
 
-[![License](https://img.shields.io/github/license/LazyImmortal/Sesame.svg)](LICENSE)
-[![Latest Release](https://img.shields.io/github/release/LazyImmortal/Sesame.svg)](../../releases)
-[![All Releases Download](https://img.shields.io/github/downloads/LazyImmortal/Sesame/total.svg)](../../releases)
-[![Telegram](https://img.shields.io/static/v1?label=Telegram&message=Channel&color=0088cc)](https://t.me/Sesame_Channels)
+[![License](https://img.shields.io/github/license/Khaos116/XQuickEnergy.svg?labelColor=fff&color=ec8d16&logo=gnuprivacyguard)](LICENSE)
+[![Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/v1.7.1fix/total?color=000000&labelColor=7A00E6&label=v1.7.1fix下载&logo=github)](../../releases/tag/v1.7.1fix)
+[![All Releases Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/total.svg??color=169af5&label=总下载&logo=circleci)](../../releases)
+[![Telegram](https://img.shields.io/badge/蚂蚁森林交流群-nul?&logo=Telegram&label=Telegram&labelColor=fff&link=https%3A%2F%2Ft.me%2Fmysl_group)](https://t.me/mysl_group)
 
 ## 为了大家的资金安全与个人信息安全，强烈建议
 1. 不要使用任何未开放源代码的修改版！
