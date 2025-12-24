@@ -689,7 +689,7 @@ public class AntOrchard extends ModelTask {
                     }
                 }
             } else {
-                Log.record("获取任务列表失败: " + jo.getString("resultDesc"));
+                Log.record("获取任务列表失败: " + jo.optString("resultDesc",""));
             }
         }
         catch (Throwable t) {
@@ -1142,7 +1142,7 @@ public class AntOrchard extends ModelTask {
                                 Log.record("施肥第 " + (j + 1) + " 次结果：" + spreadResultStr);
                                 JSONObject resultJson = new JSONObject(spreadResultStr);
                                 if (!MessageUtil.checkResultCode(TAG, resultJson)) {
-                                    Log.record("芭芭农场 orchardSpreadManure 错误：" + resultJson.optString("resultDesc"));
+                                    Log.record("芭芭农场 orchardSpreadManure 错误：" + resultJson.optString("resultDesc",""));
                                     return;
                                 }
                             }
