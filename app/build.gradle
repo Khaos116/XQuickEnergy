@@ -7,7 +7,7 @@ android {
     def buildTime = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("Asia/Shanghai"))
     namespace 'io.github.lazyimmortal.sesame'
     //noinspection GradleDependency
-    compileSdk 35
+    compileSdk 34
     defaultConfig {
         applicationId "kt.gr.sesame"
         minSdk 21
@@ -27,7 +27,7 @@ android {
         //Android14.0       34
         //Android15.0       35
         //noinspection EditedTargetSdkVersion,OldTargetApi
-        targetSdk 35
+        targetSdk 34
         versionCode 1382
         versionName "v1.8.2fix"//需要带上fix，不然自动发布会有判断问题
 
