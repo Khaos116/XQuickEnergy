@@ -511,6 +511,11 @@ public class AntFarmRpcCall {
                       "\"source\":\"H5\",\"spaceType\":\"ChickFamily\"}]";
         return ApplicationHook.requestString("com.alipay.antfarm.familyEatTogether", args);
     }
+
+    public static String queryRecentFarmFood(int queryNum) {
+        String args = "[{\"queryNum\": " + queryNum + ",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\"}]";
+        return ApplicationHook.requestString("com.alipay.antfarm.queryRecentFarmFood", args);
+    }
     
     // 添加到 AntFarmRpcCall.java 中
     

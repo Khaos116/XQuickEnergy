@@ -39,7 +39,7 @@ public class ModelField<T> implements Serializable {
     @JsonIgnore
     protected T defaultValue;
 
-    protected volatile T value;
+    public volatile T value;
 
     public ModelField() {
         valueType = TypeUtil.getTypeArgument(this.getClass().getGenericSuperclass(), 0);

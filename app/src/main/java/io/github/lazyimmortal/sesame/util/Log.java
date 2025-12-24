@@ -116,6 +116,14 @@ public class Log {
         runtimeLogger.i(s);
     }
 
+    public static void runtime(String s) {
+        runtimeLogger.i(s);
+    }
+
+    public static void runtime(String TAG, String msg) {
+        runtime("[" + TAG + "]: " + msg);
+    }
+
     public static void i(String tag, String s) {
         i(tag + ", " + s);
     }
@@ -126,6 +134,10 @@ public class Log {
             return;
         }
         recordLogger.i(str);
+    }
+
+    public static void record(String TAG, String msg) {
+        record("[" + TAG + "]: " + msg);
     }
 
     public static void system(String tag, String s) {
@@ -156,6 +168,11 @@ public class Log {
         i(s);
     }
 
+    public static void error(String TAG, String msg) {
+        error("[" + TAG + "]: " + msg);
+        i("[" + TAG + "]: " + msg);
+    }
+
     public static void printStackTrace(Throwable t) {
         String str = android.util.Log.getStackTraceString(t);
         errorLogger.i(str);
@@ -165,6 +182,12 @@ public class Log {
     public static void printStackTrace(String tag, Throwable t) {
         String str = tag + ", " + android.util.Log.getStackTraceString(t);
         errorLogger.i(str);
+        i(str);
+    }
+
+    public static void printStackTrace(String TAG, String msg, Throwable th) {
+        String str = "[" + TAG + "] Throwable error: " + android.util.Log.getStackTraceString(th);
+        errorLogger.i(str + "[" + msg + "]");
         i(str);
     }
 

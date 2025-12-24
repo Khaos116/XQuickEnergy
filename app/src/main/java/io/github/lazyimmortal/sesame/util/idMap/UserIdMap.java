@@ -20,6 +20,10 @@ public class UserIdMap {
     
     @Getter
     private static String currentUid = null;
+
+    public static String getMyUid() {
+        return getCurrentUid();
+    }
     
     public static Map<String, UserEntity> getUserMap() {
         return readOnlyUserMap;

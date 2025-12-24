@@ -350,7 +350,8 @@ public class AntFarm extends ModelTask {
             }*/
             
             if (family.getValue()) {
-                family();
+                //family();
+                AntFarmFamily.INSTANCE.run(familyOptions, notInviteList);
             }
             
             // 开宝箱

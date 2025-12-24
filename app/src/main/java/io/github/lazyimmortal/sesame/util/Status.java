@@ -69,6 +69,10 @@ public class Status {
         return INSTANCE.flagLogList.contains(tag);
     }
     
+    public static void setFlagToday(String tag) {
+        flagToday(tag);
+    }
+
     public static void flagToday(String tag) {
         if (!hasFlagToday(tag)) {
             INSTANCE.flagLogList.add(tag);
