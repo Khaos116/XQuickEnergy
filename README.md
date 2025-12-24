@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/github/license/Khaos116/XQuickEnergy.svg?labelColor=fff&color=ec8d16&logo=gnuprivacyguard)](LICENSE)
 [![Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/v1.8.2fix/total?color=000000&labelColor=7A00E6&label=v1.8.2fix下载&logo=github)](../../releases/tag/v1.8.2fix)
 [![All Releases Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/total.svg??color=169af5&label=总下载&logo=circleci)](../../releases)
-[![Telegram](https://img.shields.io/badge/蚂蚁森林交流群-nul?&logo=Telegram&label=Telegram&labelColor=fff&link=https%3A%2F%2Ft.me%2Fmysl_group)](https://t.me/mysl_group)
+[![Telegram](https://img.shields.io/badge/蚂蚁森林&庄园辅助-nul?&logo=Telegram&label=Telegram&labelColor=fff&link=https%3A%2F%2Ft.me%2Fmysl_group)](https://t.me/fuckantforest)
 
 ## 为了大家的资金安全与个人信息安全，强烈建议
 1. 不要使用任何未开放源代码的修改版！
