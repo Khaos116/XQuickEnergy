@@ -51,6 +51,7 @@ public class MyUtils {
   public static final boolean _关闭访问被拒绝 = true;
   public static final boolean _关闭必弹验证 = true;
   public static final boolean _关闭作弊广告流量 = true;
+  public static final boolean _关闭不支持RPC = true;
 
   //是否关闭验证(拼手速、派遣动物、能量雨、赠送道具、部分蚂蚁积分任务、消费金签到 -> 目前发现这些操作会触发验证)
   public static boolean closeVerification() {

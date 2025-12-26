@@ -1,5 +1,7 @@
 package io.github.lazyimmortal.sesame.model.task.antOrchard;
 
+import android.text.TextUtils;
+
 import io.github.lazyimmortal.sesame.entity.AlipayPlantScene;
 import io.github.lazyimmortal.sesame.entity.AlipayUser;
 import io.github.lazyimmortal.sesame.data.ModelFields;
@@ -595,6 +597,9 @@ public class AntOrchard extends ModelTask {
                 return false;
             }
             String title = task.getJSONObject("taskDisplayConfig").getString("title");
+            if (MyUtils._关闭不支持RPC && TextUtils.equals("逛一逛一淘", title)) {//CHANGE BY KT
+                return false;
+            }
             String actionType = task.getString("actionType");
             String sceneCode = task.optString("sceneCode");
             String taskId = task.optString("taskId");
