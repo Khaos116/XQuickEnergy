@@ -173,7 +173,7 @@ public class AntSports extends ModelTask {
           try {
             //看你没有这个方法哦//CHANGE BY KT
             if (MyUtils._关闭不存在的方法调用) {
-              Log.record("暂时不反射调用com.alibaba.health.pedometer.intergation.rpc.RpcManager#a()");
+              Log.record("⚠️暂时不反射调用rpc.RpcManager#a()");
             } else {
               ClassLoader classLoader = ApplicationHook.getClassLoader();
               if ((Boolean) XposedHelpers.callMethod(XposedHelpers.callStaticMethod(classLoader.loadClass("com.alibaba.health.pedometer.intergation.rpc.RpcManager"), "a"), "a", new Object[]{step, Boolean.FALSE, "system"})) {
