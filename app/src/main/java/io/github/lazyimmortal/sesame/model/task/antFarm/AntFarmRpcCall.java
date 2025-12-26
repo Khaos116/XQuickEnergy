@@ -145,6 +145,66 @@ public class AntFarmRpcCall {
         String args1 = "[{\"outBizNo\":\"" + outBizNo + "\",\"requestType\":\"RPC\",\"sceneCode\":\"" + sceneCode + "\",\"source\":\"ADBASICLIB\",\"taskType\":\"" + taskType + "\"}]";
         return ApplicationHook.requestString("com.alipay.antiep.finishTask", args1);
     }
+
+    /**
+     * 查询家庭装修信息
+     *
+     * @return 返回结果JSON字符串
+     */
+    public static String queryFamilyDecoration() {
+        return ApplicationHook.requestString("com.alipay.antfarm.queryFamilyDecoration",
+            "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\"}]");
+    }
+
+    /**
+     * 查询物品列表（蚂蚁庄园装修商城）
+     *
+     * @param labelType  标签类型（如 recentlyAdded）
+     * @param pageSize   每页数量
+     * @param startIndex 起始索引
+     * @return 返回结果JSON字符串
+     */
+    public static String getItemList(String labelType, int pageSize, int startIndex) {
+        String data="[{\"activityId\":\"20250808\"," +
+            "\"labelType\":\"" + labelType + "\"," +
+            "\"pageSize\":" + pageSize + "," +
+            "\"requestType\":\"NORMAL\"," +
+            "\"sceneCode\":\"ANTFARM_FITMENT_MALL\"," +
+            "\"source\":\"antfarm\"," +
+            "\"startIndex\":" + startIndex + "}]";
+        return ApplicationHook.requestString("com.alipay.antiep.itemList",data);
+    }
+
+    /**
+     * 兑换装扮或利益点
+     *
+     * @param spuId 标准产品单元ID
+     * @param skuId 库存保持单位ID
+     * @return 返回结果JSON字符串
+     */
+    public static String exchangeBenefit(String spuId, String skuId) {
+        String requestId = generateRequestId();
+        return ApplicationHook.requestString("com.alipay.antcommonweal.exchange.h5.exchangeBenefit",
+            "[{" +
+                "\"context\":{\"activityId\":\"20250808\"}," +
+                "\"requestId\":\"" + requestId + "\"," +
+                "\"requestType\":\"NORMAL\"," +
+                "\"sceneCode\":\"ANTFARM_FITMENT_MALL\"," +
+                "\"skuId\":\"" + skuId + "\"," +
+                "\"source\":\"H5\"," +
+                "\"spuId\":\"" + spuId + "\"" +
+                "}]");
+    }
+
+    /**
+     * 生成RequestId: 时间戳 + _ + 16位随机数
+     */
+    private static String generateRequestId() {
+        long timestamp = System.currentTimeMillis();
+        // 生成16位随机长整型数字（正数）
+        long randomNum = (long) ((Math.random() * 9 + 1) * Math.pow(10, 15));
+        return timestamp + "_" + randomNum;
+    }
     
     public static String receiveFarmTaskAward(String taskId) {
         String args1 = "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"taskId\":\"" + taskId + "\",\"version\":\"" + VERSION + "\"}]";
