@@ -528,7 +528,7 @@ public class AntForestV2 extends ModelTask {
                     if (ecoLifeTime != null && TaskTimeChecker.isTimeReached(ecoLifeTime.value, "0800")) {
                       EcoLife.ecoLife();
                     } else {
-                      Log.record(TAG, "绿色行动未到执行时间，跳过");
+                      Log.forest("🍀绿色行动未到执行时间，跳过");
                     }
                 }
 

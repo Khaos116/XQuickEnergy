@@ -2,16 +2,8 @@ package io.github.lazyimmortal.sesame.model.task.antForest
 
 import com.fasterxml.jackson.core.type.TypeReference
 import io.github.lazyimmortal.sesame.hook.Toast
-import io.github.lazyimmortal.sesame.util.DataStore
-import io.github.lazyimmortal.sesame.util.JsonUtil
-import io.github.lazyimmortal.sesame.util.Log
-import io.github.lazyimmortal.sesame.util.RandomUtil
-import io.github.lazyimmortal.sesame.util.ResChecker
-import io.github.lazyimmortal.sesame.util.Status
-import io.github.lazyimmortal.sesame.util.StringUtil
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
+import io.github.lazyimmortal.sesame.util.*
+import org.json.*
 import java.util.regex.Pattern
 
 object EcoLife {
@@ -31,18 +23,20 @@ object EcoLife {
     @JvmStatic
     fun ecoLife() {
         try {
+            Log.forest("🍀开始查询绿色行动")
             // 查询首页信息
             var jsonObject = JSONObject(AntForestRpcCall.ecolifeQueryHomePage())
             if (!jsonObject.optBoolean("success")) {
                 Log.record("$TAG.ecoLife.queryHomePage", jsonObject.optString("resultDesc"))
+                Log.forest("🍀绿色行动查询失败")
                 return
             }
             var data = jsonObject.getJSONObject("data")
 
-
             // 获取当天的积分和任务列表
             var dayPoint = data.optString("dayPoint", "0")
             if (dayPoint == "0") {
+                Log.forest("🍀绿色行动dayPoint==0")
                 Log.error(TAG, "不知道什么B原因自己去绿色行动找")
                 return
             }
