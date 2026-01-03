@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.HashMap;
+import java.util.*;
 
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
@@ -160,6 +160,10 @@ public class MyUtils {
       return "GR";
     }
     return "";
+  }
+
+  public static Calendar getInstance() {
+    return Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
   }
 
   /**

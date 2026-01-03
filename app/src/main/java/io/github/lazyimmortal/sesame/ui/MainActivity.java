@@ -192,7 +192,7 @@ public class MainActivity extends BaseActivity {
             }
             try {
                 Statistics.load();
-                Statistics.updateDay(Calendar.getInstance());
+                Statistics.updateDay(MyUtils.getInstance());
                 tvStatistics.setText(Statistics.getText(MainActivity.this));
             } catch (Exception e) {
                 Log.printStackTrace(e);

@@ -2684,14 +2684,14 @@ public class AntFarm extends ModelTask {
     private void deliverMsgSend(JSONArray familyAnimalsExceptUser, List<String> familyUserIds) {
         try {
             // 时间窗口控制：仅允许在「早安时间段」内自动发送（06:00 ~ 10:00）
-            Calendar now = Calendar.getInstance();
-            Calendar startTime = Calendar.getInstance();
+            Calendar now = MyUtils.getInstance();
+            Calendar startTime = MyUtils.getInstance();
             startTime.set(Calendar.HOUR_OF_DAY, 6);
             startTime.set(Calendar.MINUTE, 0);
             startTime.set(Calendar.SECOND, 0);
             startTime.set(Calendar.MILLISECOND, 0);
             
-            Calendar endTime = Calendar.getInstance();
+            Calendar endTime = MyUtils.getInstance();
             endTime.set(Calendar.HOUR_OF_DAY, 10);
             endTime.set(Calendar.MINUTE, 0);
             endTime.set(Calendar.SECOND, 0);

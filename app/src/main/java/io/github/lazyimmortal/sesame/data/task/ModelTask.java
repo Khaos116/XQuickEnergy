@@ -184,8 +184,11 @@ public abstract class ModelTask extends Model {
     }
 
     public static void startAllTask(Boolean force) {
+        int i = 0;
         for (Model model : getModelArray()) {
             if (model != null) {
+                i++;
+                Log.other("遍历执行模块" + i + "->" + model.getName());
                 if (ModelType.TASK == model.getType()) {
                     if (((ModelTask) model).startTask(force)) {
                         try {

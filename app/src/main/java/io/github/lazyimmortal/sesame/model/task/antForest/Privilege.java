@@ -7,8 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.lazyimmortal.sesame.util.Log;
-import io.github.lazyimmortal.sesame.util.Status;
+import io.github.lazyimmortal.sesame.util.*;
 
 import io.github.lazyimmortal.sesame.util.Status;
 import io.github.lazyimmortal.sesame.util.Log;
@@ -183,7 +182,7 @@ public class Privilege {
     }
     
     private static boolean isSignInTimeValid() {
-        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int hour = MyUtils.getInstance().get(Calendar.HOUR_OF_DAY);
         return hour >= SIGN_START_HOUR;
     }
     
@@ -213,7 +212,7 @@ public class Privilege {
     
     private static void executeStudentSignIn() {
         try {
-            String tag = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < SIGN_END_HOUR ? "double" : "single";
+            String tag = MyUtils.getInstance().get(Calendar.HOUR_OF_DAY) < SIGN_END_HOUR ? "double" : "single";
             String response = AntForestRpcCall.studentCheckin();
             JSONObject result = new JSONObject(response);
             handleSignInResult(result, tag);

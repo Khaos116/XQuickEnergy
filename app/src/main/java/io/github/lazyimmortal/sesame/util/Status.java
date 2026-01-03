@@ -415,7 +415,7 @@ public class Status {
     }
     
     public static synchronized void save() {
-        save(Calendar.getInstance());
+        save(MyUtils.getInstance());
     }
     
     public static synchronized void save(Calendar nowCalendar) {

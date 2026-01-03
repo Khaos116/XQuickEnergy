@@ -70,16 +70,7 @@ import io.github.lazyimmortal.sesame.rpc.bridge.OldRpcBridge;
 import io.github.lazyimmortal.sesame.rpc.bridge.RpcBridge;
 import io.github.lazyimmortal.sesame.rpc.bridge.RpcVersion;
 import io.github.lazyimmortal.sesame.rpc.intervallimit.RpcIntervalLimit;
-import io.github.lazyimmortal.sesame.util.ClassUtil;
-import io.github.lazyimmortal.sesame.util.FileUtil;
-import io.github.lazyimmortal.sesame.util.LibraryUtil;
-import io.github.lazyimmortal.sesame.util.Log;
-import io.github.lazyimmortal.sesame.util.NotificationUtil;
-import io.github.lazyimmortal.sesame.util.PermissionUtil;
-import io.github.lazyimmortal.sesame.util.Statistics;
-import io.github.lazyimmortal.sesame.util.Status;
-import io.github.lazyimmortal.sesame.util.StringUtil;
-import io.github.lazyimmortal.sesame.util.TimeUtil;
+import io.github.lazyimmortal.sesame.util.*;
 import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
 import lombok.Getter;
 
@@ -349,7 +340,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                             }
                         });
                         registerBroadcastReceiver(appService);
-                        dayCalendar = Calendar.getInstance();
+                        dayCalendar = MyUtils.getInstance();
                         Statistics.load();
                         FriendWatch.load();
                         if (initHandler(true)) {
@@ -563,7 +554,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             unsetWakenAtTimeAlarm();
             try {
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent("com.eg.android.AlipayGphone.sesame.execute"), getPendingIntentFlag());
-                Calendar calendar = Calendar.getInstance();
+                Calendar calendar = MyUtils.getInstance();
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
                 calendar.set(Calendar.MINUTE, 0);
@@ -580,7 +571,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
             }
             List<String> wakenAtTimeList = BaseModel.getWakenAtTimeList().getValue();
             if (wakenAtTimeList != null && !wakenAtTimeList.isEmpty()) {
-                Calendar nowCalendar = Calendar.getInstance();
+                Calendar nowCalendar = MyUtils.getInstance();
                 for (int i = 1, len = wakenAtTimeList.size(); i < len; i++) {
                     try {
                         String wakenAtTime = wakenAtTimeList.get(i);
@@ -851,7 +842,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
     }
     
     public static void updateDay() {
-        Calendar nowCalendar = Calendar.getInstance();
+        Calendar nowCalendar = MyUtils.getInstance();
         try {
             int nowYear = nowCalendar.get(Calendar.YEAR);
             int nowMonth = nowCalendar.get(Calendar.MONTH);

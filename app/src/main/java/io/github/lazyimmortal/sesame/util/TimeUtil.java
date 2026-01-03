@@ -4,9 +4,7 @@ import android.annotation.SuppressLint;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -92,7 +90,7 @@ public class TimeUtil {
 
     public static Integer isCompareTimeStr(Long timeMillis, String compareTimeStr) {
         try {
-            Calendar timeCalendar = Calendar.getInstance();
+            Calendar timeCalendar = MyUtils.getInstance();
             timeCalendar.setTimeInMillis(timeMillis);
             Calendar compareCalendar = getTodayCalendarByTimeStr(compareTimeStr);
             if (compareCalendar != null) {
@@ -149,7 +147,7 @@ public class TimeUtil {
     }
 
     public static Calendar getCalendarByTimeMillis(Long timeMillis) {
-        Calendar timeCalendar = Calendar.getInstance();
+        Calendar timeCalendar = MyUtils.getInstance();
         if (timeMillis != null) {
             timeCalendar.setTimeInMillis(timeMillis);
         }
@@ -165,7 +163,7 @@ public class TimeUtil {
     }
 
     public static String getDateStr(int plusDay) {
-        Calendar c = Calendar.getInstance();
+        Calendar c = MyUtils.getInstance();
         if (plusDay != 0) {
             c.add(Calendar.DATE, plusDay);
         }
@@ -173,7 +171,7 @@ public class TimeUtil {
     }
 
     public static Calendar getToday() {
-        Calendar c = Calendar.getInstance();
+        Calendar c = MyUtils.getInstance();
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
@@ -182,7 +180,7 @@ public class TimeUtil {
     }
 
     public static Calendar getNow() {
-        return Calendar.getInstance();
+        return MyUtils.getInstance();
     }
 
     public static void sleep(long millis) {
@@ -199,7 +197,7 @@ public class TimeUtil {
      * @return 当前年的第几周
      */
     public static int getWeekNumber(Date dateTime) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = MyUtils.getInstance();
         calendar.setTime(dateTime);
         // 设置周的第一天为周一
         calendar.setFirstDayOfWeek(Calendar.MONDAY);

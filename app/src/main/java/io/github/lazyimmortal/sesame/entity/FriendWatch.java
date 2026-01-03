@@ -118,9 +118,9 @@ public class FriendWatch extends IdAndName {
         if (last == 0L) {
             return true;
         }
-        Calendar cLast = Calendar.getInstance();
+        Calendar cLast = MyUtils.getInstance();
         cLast.setTimeInMillis(last);
-        Calendar cNow = Calendar.getInstance();
+        Calendar cNow = MyUtils.getInstance();
         if (cLast.get(Calendar.DAY_OF_YEAR) == cNow.get(Calendar.DAY_OF_YEAR)) {
             return false;
         }
