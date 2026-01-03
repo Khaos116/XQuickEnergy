@@ -1,7 +1,7 @@
 package io.github.lazyimmortal.sesame.util.idMap
 
 /**
- * Author:XX
+ * Author:khaos116
  * Date:2025/12/24
  * Time:10:54
  */
