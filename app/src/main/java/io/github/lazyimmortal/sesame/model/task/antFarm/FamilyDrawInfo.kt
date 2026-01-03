@@ -3,8 +3,6 @@ package io.github.lazyimmortal.sesame.model.task.antFarm
 import io.github.lazyimmortal.sesame.data.modelFieldExt.SelectModelField
 import io.github.lazyimmortal.sesame.data.modelFieldExt.StringModelField
 import io.github.lazyimmortal.sesame.util.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.delay
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.Objects
@@ -64,9 +62,9 @@ object FamilyDrawInfo {
           GlobalThreadPools.sleepCompat(1500)
         }
       }
-    } catch (e: CancellationException) {
+    } catch (e: Exception) {
       // 协程取消异常必须重新抛出，不能吞掉
-      Log.debug("familyDrawTask 协程被取消")
+      Log.debug("familyDrawTask异常:${e.message}")
       throw e
     } catch (t: Throwable) {
       Log.printStackTrace(TAG, "familyDrawTask err:", t)
@@ -119,9 +117,9 @@ object FamilyDrawInfo {
           GlobalThreadPools.sleepCompat(500)
         }
       }
-    } catch (e: CancellationException) {
+    } catch (e: Exception) {
       // 协程取消异常必须重新抛出，不能吞掉
-      Log.debug("familyBatchInviteP2PTask 协程被取消")
+      Log.debug("familyBatchInviteP2PTask异常:${e.message}")
       throw e
     } catch (t: Throwable) {
       Log.printStackTrace(TAG, "familyBatchInviteP2PTask err:", t)
@@ -134,9 +132,9 @@ object FamilyDrawInfo {
       if (ResChecker.checkRes(TAG, jo)) {
         Log.farm("亲密家庭🏠扭蛋任务#$title#奖励领取成功")
       }
-    } catch (e: CancellationException) {
+    } catch (e: Exception) {
       // 协程取消异常必须重新抛出，不能吞掉
-      Log.debug("familyDrawSignReceiveFarmTaskAward 协程被取消")
+      Log.debug("familyDrawSignReceiveFarmTaskAward异常:${e.message}")
       throw e
     } catch (t: Throwable) {
       Log.printStackTrace(TAG, "familyDrawSignReceiveFarmTaskAward err:", t)
@@ -181,9 +179,9 @@ object FamilyDrawInfo {
         Log.farm("开扭蛋🎟️抽中[$title]#[$awardCount]")
         return familyDrawTimes != 0
       }
-    } catch (e: CancellationException) {
+    } catch (e: Exception) {
       // 协程取消异常必须重新抛出，不能吞掉
-      Log.debug("familyDraw 协程被取消")
+      Log.debug("familyDraw异常:${e.message}")
       throw e
     } catch (t: Throwable) {
       Log.printStackTrace(TAG, "familyDraw err:", t)
