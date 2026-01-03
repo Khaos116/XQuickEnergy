@@ -416,7 +416,7 @@ data object AntFarmFamily {
       }
 
       // 本地去重：一天只发送一次，避免重复打扰
-      if (Status.hasFlagToday("antFarm::deliverMsgSend")) {
+      if (Status.hasFlagToday("antFarm::deliverMsgSend_${UserMap.currentUid}")) {
         Log.farm( "家庭任务🏠道早安#今日已在本地发送过，跳过")
         return
       }
@@ -537,7 +537,7 @@ data object AntFarmFamily {
       val resp4 = JSONObject(AntFarmRpcCall.deliverMsgSend(groupId, userIds, content, deliverId))
       if (ResChecker.checkRes(TAG, resp4)) {
         Log.farm("家庭任务🏠道早安: $content 🌈")
-        Status.setFlagToday("antFarm::deliverMsgSend")
+        Status.setFlagToday("antFarm::deliverMsgSend_${UserMap.currentUid}")
       } else {
         Log.farm("家庭任务🏠道早安发送早安消息失败")
       }
