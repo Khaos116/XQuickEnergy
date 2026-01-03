@@ -145,7 +145,7 @@ android.applicationVariants.configureEach { variant ->
         //打包APK完成后的重命名和拷贝
         assemble.doLast {
             //编译完成的时间
-            String buildEndTime = "${new Date().format("yyyyMMdd_HHmm")}"
+            String buildEndTime = new Date().format("yyyyyMMdd_HHmm", TimeZone.getTimeZone("Asia/Shanghai"))
             String apkFileName = "${appName}_${typeName}_${versionName}_${buildEndTime}.apk"
             println "assemble编译结束=$apkFileName"
             //把正式版拷贝到项目APK目录
