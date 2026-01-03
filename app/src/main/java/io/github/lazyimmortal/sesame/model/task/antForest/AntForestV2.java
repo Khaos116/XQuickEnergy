@@ -239,7 +239,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(ecoLife = new BooleanModelField("ecoLife", "绿色行动 | 开启", false));
         modelFields.addField(ecoLifeTime = new StringModelField("ecoLifeTime", "绿色行动 | 默认8点后执行", "0800"));
         modelFields.addField(ecoLifeOptions = new SelectModelField("ecoLifeOptions", "绿色行动 | 选项", new LinkedHashSet<>(), CustomOption::getEcoLifeOptions, "光盘行动需要先手动完成一次"));
-        ecoLifeOption=ecoLifeOptions;
+        ecoLifeOption = ecoLifeOptions;
         modelFields.addField(partnerteamWater = new BooleanModelField("partnerteamWater", "组队合种浇水", false));
         modelFields.addField(partnerteamWaterNum = new IntegerModelField("partnerteamWaterNum", "组队合种浇水" + "(g)", 10, 10, 5000));
 

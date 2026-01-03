@@ -188,7 +188,7 @@ public abstract class ModelTask extends Model {
         for (Model model : getModelArray()) {
             if (model != null) {
                 i++;
-                Log.other("遍历执行模块" + i + "->" + model.getName());
+                Log.other("♥️遍历执行模块[" + i + "]：" + model.getName());
                 if (ModelType.TASK == model.getType()) {
                     if (((ModelTask) model).startTask(force)) {
                         try {

@@ -58,6 +58,8 @@ object EcoLife {
                     dayPoint = data.getString("dayPoint")
                 }
                 ecoLifeTick(actionListVO, dayPoint)
+            } else {
+              Log.forest("🍀绿色行动开关未打开")
             }
         } catch (th: Throwable) {
             Log.record(TAG, "ecoLife err:")
