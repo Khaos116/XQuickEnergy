@@ -128,6 +128,8 @@ dependencies {
     compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.5'
     //noinspection NewerVersionAvailable,GradleDependency
     compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.5'
+    //noinspection NewerVersionAvailable,GradleDependency
+    compatibleImplementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.13.5'
 }
 
 //打包处理

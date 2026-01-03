@@ -1,24 +1,10 @@
 package io.github.lazyimmortal.sesame.model.task.antForest;
 
-import static io.github.lazyimmortal.sesame.util.RandomUtil.getRandomString;
+import androidx.annotation.Nullable;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.*;
 
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,29 +12,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.robv.android.xposed.XposedHelpers;
-import io.github.lazyimmortal.sesame.data.ConfigV2;
-import io.github.lazyimmortal.sesame.data.ModelFields;
-import io.github.lazyimmortal.sesame.data.ModelGroup;
-import io.github.lazyimmortal.sesame.data.RuntimeInfo;
-import io.github.lazyimmortal.sesame.data.TokenConfig;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.BooleanModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.ChoiceModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.EmptyModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.IntegerModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.ListModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.SelectAndCountModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.SelectModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.StringModelField;
-import io.github.lazyimmortal.sesame.data.modelFieldExt.TextModelField;
+import io.github.lazyimmortal.sesame.data.*;
+import io.github.lazyimmortal.sesame.data.modelFieldExt.*;
 import io.github.lazyimmortal.sesame.data.task.ModelTask;
-import io.github.lazyimmortal.sesame.entity.AlipayUser;
-import io.github.lazyimmortal.sesame.entity.CollectEnergyEntity;
-import io.github.lazyimmortal.sesame.entity.CustomOption;
-import io.github.lazyimmortal.sesame.entity.FriendWatch;
-import io.github.lazyimmortal.sesame.entity.KVNode;
-import io.github.lazyimmortal.sesame.entity.RpcEntity;
-import io.github.lazyimmortal.sesame.entity.VitalityBenefit;
-import io.github.lazyimmortal.sesame.entity.AlipayForestHunt;
+import io.github.lazyimmortal.sesame.entity.*;
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.hook.Toast;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
@@ -62,7 +29,6 @@ import io.github.lazyimmortal.sesame.util.*;
 import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
 import io.github.lazyimmortal.sesame.util.idMap.VitalityBenefitIdMap;
 import lombok.Getter;
-import lombok.val;
 
 /**
  * 蚂蚁森林V2
@@ -180,8 +146,14 @@ public class AntForestV2 extends ModelTask {
     private ChoiceModelField consumeAnimalPropType;
     private SelectModelField whoYouWantToGiveTo;
     private BooleanModelField ecoLife;
+    private StringModelField ecoLifeTime;
     private BooleanModelField youthPrivilege;
+
     private SelectModelField ecoLifeOptions;
+    @Nullable
+    public static SelectModelField ecoLifeOption = null;
+    @Nullable
+    public static BooleanModelField ecoLifeOpen = new BooleanModelField("ecoLifeOpen", "绿色任务 |  自动开通", false);
     private BooleanModelField dress;
     private TextModelField dressDetailList;
     
@@ -265,7 +237,9 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(greenRent = new BooleanModelField("greenRent", "绿色租赁", false));
         modelFields.addField(youthPrivilege = new BooleanModelField("youthPrivilege", "青春特权 | 森林道具", false));
         modelFields.addField(ecoLife = new BooleanModelField("ecoLife", "绿色行动 | 开启", false));
+        modelFields.addField(ecoLifeTime = new StringModelField("ecoLifeTime", "绿色行动 | 默认8点后执行", "0800"));
         modelFields.addField(ecoLifeOptions = new SelectModelField("ecoLifeOptions", "绿色行动 | 选项", new LinkedHashSet<>(), CustomOption::getEcoLifeOptions, "光盘行动需要先手动完成一次"));
+        ecoLifeOption=ecoLifeOptions;
         modelFields.addField(partnerteamWater = new BooleanModelField("partnerteamWater", "组队合种浇水", false));
         modelFields.addField(partnerteamWaterNum = new IntegerModelField("partnerteamWaterNum", "组队合种浇水" + "(g)", 10, 10, 5000));
 
@@ -549,7 +523,13 @@ public class AntForestV2 extends ModelTask {
                     queryTaskList();
                 }
                 if (ecoLife.getValue()) {
-                    ecoLife();
+                    //ecoLife();
+                    // 检查是否到达执行时间
+                    if (ecoLifeTime != null && TaskTimeChecker.isTimeReached(ecoLifeTime.value, "0800")) {
+                      EcoLife.ecoLife();
+                    } else {
+                      Log.record(TAG, "绿色行动未到执行时间，跳过");
+                    }
                 }
 
                 if (!MyUtils.closeVerification()) giveProp();

@@ -3,21 +3,17 @@ package io.github.lazyimmortal.sesame.model.task.antForest;
 import static io.github.lazyimmortal.sesame.util.RandomUtil.getRandomString;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.security.SecureRandom;
+import java.util.*;
 
 import io.github.lazyimmortal.sesame.entity.AlipayVersion;
 import io.github.lazyimmortal.sesame.entity.RpcEntity;
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
-import io.github.lazyimmortal.sesame.util.Log;
+import io.github.lazyimmortal.sesame.hook.RequestManager;
 import io.github.lazyimmortal.sesame.util.RandomUtil;
 import io.github.lazyimmortal.sesame.util.StringUtil;
-import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
-
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.UUID;
-import java.util.Random;
 
 public class AntForestRpcCall {
     
@@ -723,4 +719,43 @@ public class AntForestRpcCall {
         String args = "[{\"queryBizType\":\"" + queryBizType + "\",\"source\":\"SELF_HOME\",\"targetUserId\":\"" + teamId + "\",\"version\":\""+VERSION+"\"}]";
         return ApplicationHook.requestString("alipay.antforest.forest.h5.queryMiscInfo", args);
     }
+
+  /** 查询绿色行动 */
+  public static String ecolifeQueryHomePage() {
+    return RequestManager.requestString("alipay.ecolife.rpc.h5.queryHomePage",
+        "[{\"channel\":\"ALIPAY\",\"source\":\"search_brandbox\"}]");
+  }
+
+  /** 开通绿色行动 */
+  public static String ecolifeOpenEcolife() {
+    return RequestManager.requestString("alipay.ecolife.rpc.h5.openEcolife",
+        "[{\"channel\":\"ALIPAY\",\"source\":\"renwuGD\"}]");
+  }
+
+  /** 执行任务 */
+  public static String ecolifeTick(String actionId, String dayPoint, String source) {
+    String args1 = "[{\"actionId\":\"" + actionId + "\",\"channel\":\"ALIPAY\",\"dayPoint\":\""
+        + dayPoint + "\",\"generateEnergy\":false,\"source\":\"" + source + "\"}]";
+    return RequestManager.requestString("alipay.ecolife.rpc.h5.tick", args1);
+  }
+  /** 查询任务信息 */
+  public static String ecolifeQueryDish(String source, String dayPoint) {
+    return RequestManager.requestString("alipay.ecolife.rpc.h5.queryDish",
+        "[{\"channel\":\"ALIPAY\",\"dayPoint\":\"" + dayPoint
+            + "\",\"source\":\"" + source + "\"}]");
+  }
+
+  /** 上传照片 */
+  public static String ecolifeUploadDishImage(String operateType, String imageId,
+                                              double conf1, double conf2, double conf3, String dayPoint) {
+    return RequestManager.requestString("alipay.ecolife.rpc.h5.uploadDishImage",
+        "[{\"channel\":\"ALIPAY\",\"dayPoint\":\"" + dayPoint +
+            "\",\"source\":\"photo-comparison\",\"uploadParamMap\":{\"AIResult\":[{\"conf\":" + conf1 + ",\"kvPair\":false," +
+            "\"label\":\"other\",\"pos\":[1.0002995,0.22104378,0.0011976048,0.77727276],\"value\":\"\"}," +
+            "{\"conf\":" + conf2 + ",\"kvPair\":false,\"label\":\"guangpan\",\"pos\":[1.0002995,0.22104378,0.0011976048,0.77727276]," +
+            "\"value\":\"\"},{\"conf\":" + conf3 + ",\"kvPair\":false,\"label\":\"feiguangpan\"," +
+            "\"pos\":[1.0002995,0.22104378,0.0011976048,0.77727276],\"value\":\"\"}],\"existAIResult\":true,\"imageId\":\"" +
+            imageId + "\",\"imageUrl\":\"https://mdn.alipayobjects.com/afts/img/" + imageId +
+            "/original?bz=APM_20000067\",\"operateType\":\"" + operateType + "\"}}]");
+  }
 }
