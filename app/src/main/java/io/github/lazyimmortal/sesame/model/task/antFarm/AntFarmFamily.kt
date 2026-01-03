@@ -3,7 +3,12 @@ package io.github.lazyimmortal.sesame.model.task.antFarm
 import io.github.lazyimmortal.sesame.data.modelFieldExt.SelectModelField
 import io.github.lazyimmortal.sesame.entity.AlipayUser
 import io.github.lazyimmortal.sesame.extensions.JSONExtensions.toJSONArray
-import io.github.lazyimmortal.sesame.util.*
+import io.github.lazyimmortal.sesame.util.GlobalThreadPools
+import io.github.lazyimmortal.sesame.util.Log
+import io.github.lazyimmortal.sesame.util.MyUtils
+import io.github.lazyimmortal.sesame.util.RandomUtil
+import io.github.lazyimmortal.sesame.util.ResChecker
+import io.github.lazyimmortal.sesame.util.Status
 import io.github.lazyimmortal.sesame.util.idMap.UserMap
 import org.json.JSONArray
 import org.json.JSONObject
@@ -49,7 +54,7 @@ data object AntFarmFamily {
     try {
       enterFamily(familyOptions, notInviteList)
     } catch (e: Exception) {
-      Log.printStackTrace(TAG, e.message, e)
+      Log.printStackTrace(TAG, e)
     }
   }
 
@@ -117,7 +122,7 @@ data object AntFarmFamily {
         }
       }
     } catch (e: Exception) {
-      Log.printStackTrace(TAG, e.message, e)
+      Log.printStackTrace(TAG,  e)
     }
   }
 
@@ -132,7 +137,7 @@ data object AntFarmFamily {
         Log.farm("家庭任务🏡每日签到")
       }
     } catch (e: Exception) {
-      Log.printStackTrace(TAG, e.message, e)
+      Log.printStackTrace(TAG,  e)
     }
   }
 
@@ -222,7 +227,7 @@ data object AntFarmFamily {
 
         // 如果该用户已经记录今日上限 → 跳过
         if (Status.hasFlagToday(flagKey)) {
-          Log.runtime("[$userId] 今日喂鸡次数已达上限（已记录）🥣，跳过")
+          Log.record("[$userId] 今日喂鸡次数已达上限（已记录）🥣，跳过")
           continue
         }
 
@@ -236,7 +241,7 @@ data object AntFarmFamily {
           if (code == "391") {
             // 记录该用户今日不能再喂
             Status.setFlagToday(flagKey)
-            Log.runtime("[$userId] 今日帮喂次数已达上限🥣，已记录为当日限制")
+            Log.record("[$userId] 今日帮喂次数已达上限🥣，已记录为当日限制")
           } else {
             Log.error(TAG, "喂食失败 user=$userId code=$code msg=${jo.optString("memo")}")
           }
@@ -569,7 +574,7 @@ data object AntFarmFamily {
         return
       }
 
-      Log.runtime(TAG, "inviteList: $inviteList")
+      Log.record(TAG, "inviteList: $inviteList")
 
       val jo = JSONObject(AntFarmRpcCall.inviteFriendVisitFamily(inviteList))
       if (ResChecker.checkRes(TAG, jo)) {
@@ -683,7 +688,8 @@ data object AntFarmFamily {
               val memo = exchangeJo.optString("memo", "返回结果异常")
               Log.error(TAG, "[家庭装扮] 兑换失败: $skuName, 原因: $memo")
             }
-            TimeUtil.sleep(3000)// 兑换间隔，保护账号
+
+            GlobalThreadPools.sleepCompat(3000) // 兑换间隔，保护账号
           }
 
           // 处理翻页
