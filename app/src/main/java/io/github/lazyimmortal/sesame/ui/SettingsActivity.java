@@ -90,25 +90,22 @@ public class SettingsActivity extends BaseActivity {
             ModelConfig modelConfig = configEntry.getValue();
             ModelFields modelFields = modelConfig.getFields();
 
-            tabHost.addTab(tabHost.newTabSpec(modelCode)
-                    .setIndicator(modelConfig.getName())
-                    .setContent(new TabHost.TabContentFactory() {
-                        @Override
-                        public View createTabContent(String tag) {
-                            LinearLayout linearLayout = new LinearLayout(context);
-                            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                            linearLayout.setGravity(Gravity.CENTER_HORIZONTAL);
-                            linearLayout.setOrientation(LinearLayout.VERTICAL);
-                            for (ModelField<?> modelField : modelFields.values()) {
-                                View view = modelField.getView(context);
-                                if (view != null) {
-                                    linearLayout.addView(view);
-                                }
-                            }
-                            return linearLayout;
+            tabHost.addTab(tabHost.newTabSpec(modelCode).setIndicator(modelConfig.getName()).setContent(new TabHost.TabContentFactory() {
+                @Override
+                public View createTabContent(String tag) {
+                    LinearLayout linearLayout = new LinearLayout(context);
+                    linearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    linearLayout.setGravity(Gravity.CENTER_HORIZONTAL);
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    for (ModelField<?> modelField : modelFields.values()) {
+                        View view = modelField.getView(context);
+                        if (view != null) {
+                            linearLayout.addView(view);
                         }
-                    })
-            );
+                    }
+                    return linearLayout;
+                }
+            }));
 
         }
         tabHost.setCurrentTab(0);
@@ -194,26 +191,22 @@ public class SettingsActivity extends BaseActivity {
                 startActivityForResult(importIntent, IMPORT_REQUEST_CODE);
                 break;
             case 3:
-                new AlertDialog.Builder(context)
-                        .setTitle("警告")
-                        .setMessage("确认删除该配置？")
-                        .setPositiveButton(R.string.ok, (dialog, id) -> {
-                            File userConfigDirectoryFile;
-                            if (StringUtil.isEmpty(userId)) {
-                                userConfigDirectoryFile = FileUtil.getDefaultConfigV2File();
-                            } else {
-                                userConfigDirectoryFile = FileUtil.getUserConfigDirectoryFile(userId);
-                            }
-                            if (FileUtil.deleteFile(userConfigDirectoryFile)) {
-                                ToastUtil.show(this, "配置删除成功");
-                            } else {
-                                ToastUtil.show(this, "配置删除失败");
-                            }
-                            finish();
-                        })
-                        .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
-                        .create()
-                        .show();
+                new AlertDialog.Builder(context).setTitle("警告").setMessage("确认删除该配置？").setPositiveButton(R.string.ok, (dialog, id) -> {
+                    File userConfigDirectoryFile;
+                    if (StringUtil.isEmpty(userId)) {
+                        userConfigDirectoryFile = FileUtil.getDefaultConfigV2File();
+                    }
+                    else {
+                        userConfigDirectoryFile = FileUtil.getUserConfigDirectoryFile(userId);
+                    }
+                    if (FileUtil.deleteFile(userConfigDirectoryFile)) {
+                        ToastUtil.show(this, "配置删除成功");
+                    }
+                    else {
+                        ToastUtil.show(this, "配置删除失败");
+                    }
+                    finish();
+                }).setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss()).create().show();
                 break;
             case 4:
                 ListDialog.show(this, "单向好友列表", AlipayUser.getList(user -> user.getFriendStatus() != 1), SelectModelFieldFunc.newMapInstance(), false, ListDialog.ListType.SHOW);
@@ -246,28 +239,33 @@ public class SettingsActivity extends BaseActivity {
                     File configV2File;
                     if (StringUtil.isEmpty(userId)) {
                         configV2File = FileUtil.getDefaultConfigV2File();
-                    } else {
+                    }
+                    else {
                         configV2File = FileUtil.getConfigV2File(userId);
                     }
                     FileInputStream inputStream = new FileInputStream(configV2File);
                     if (FileUtil.streamTo(inputStream, getContentResolver().openOutputStream(data.getData()))) {
                         ToastUtil.show(this, "导出成功！");
-                    } else {
+                    }
+                    else {
                         ToastUtil.show(this, "导出失败！");
                     }
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     Log.printStackTrace(e);
                     ToastUtil.show(this, "导出失败！");
                 }
             }
-        } else if (requestCode == IMPORT_REQUEST_CODE) {
+        }
+        else if (requestCode == IMPORT_REQUEST_CODE) {
             Uri uri = data.getData();
             if (uri != null) {
                 try {
                     File configV2File;
                     if (StringUtil.isEmpty(userId)) {
                         configV2File = FileUtil.getDefaultConfigV2File();
-                    } else {
+                    }
+                    else {
                         configV2File = FileUtil.getConfigV2File(userId);
                     }
                     FileOutputStream outputStream = new FileOutputStream(configV2File);
@@ -278,17 +276,20 @@ public class SettingsActivity extends BaseActivity {
                                 Intent intent = new Intent("com.eg.android.AlipayGphone.sesame.restart");
                                 intent.putExtra("userId", userId);
                                 sendBroadcast(intent);
-                            } catch (Throwable th) {
+                            }
+                            catch (Throwable th) {
                                 Log.printStackTrace(th);
                             }
                         }
                         Intent intent = getIntent();
                         finish();
                         startActivity(intent);
-                    } else {
+                    }
+                    else {
                         ToastUtil.show(this, "导入失败！");
                     }
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     Log.printStackTrace(e);
                     ToastUtil.show(this, "导入失败！");
                 }
@@ -304,7 +305,8 @@ public class SettingsActivity extends BaseActivity {
                     Intent intent = new Intent("com.eg.android.AlipayGphone.sesame.restart");
                     intent.putExtra("userId", userId);
                     sendBroadcast(intent);
-                } catch (Throwable th) {
+                }
+                catch (Throwable th) {
                     Log.printStackTrace(th);
                 }
             }

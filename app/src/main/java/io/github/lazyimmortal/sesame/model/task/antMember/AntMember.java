@@ -21,6 +21,7 @@ import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class AntMember extends ModelTask {
     private static final String TAG = AntMember.class.getSimpleName();
@@ -38,6 +39,7 @@ public class AntMember extends ModelTask {
     private BooleanModelField memberSign;
     private BooleanModelField memberPointExchangeBenefit;
     private SelectModelField memberPointExchangeBenefitList;
+    private BooleanModelField sesameTask;
     private BooleanModelField collectSesame;
     private BooleanModelField promise;
     private SelectModelField promiseList;
@@ -56,6 +58,7 @@ public class AntMember extends ModelTask {
         modelFields.addField(memberSign = new BooleanModelField("memberSign", "会员签到", false));
         modelFields.addField(memberPointExchangeBenefit = new BooleanModelField("memberPointExchangeBenefit", "会员积分 | 兑换权益", false));
         modelFields.addField(memberPointExchangeBenefitList = new SelectModelField("memberPointExchangeBenefitList", "会员积分 | 权益列表", new LinkedHashSet<>(), MemberBenefit::getList));
+        //modelFields.addField(sesameTask = new BooleanModelField("sesameTask", "芝麻信用|芝麻粒信用任务", false));
         modelFields.addField(collectSesame = new BooleanModelField("collectSesame", "芝麻粒 | 领取", false));
         //modelFields.addField(promise = new BooleanModelField("promise", "生活记录 | 坚持做", false));
         //modelFields.addField(promiseList = new SelectModelField("promiseList", "生活记录 | 坚持做列表", new LinkedHashSet<>(), PromiseSimpleTemplate::getList));
@@ -85,16 +88,19 @@ public class AntMember extends ModelTask {
             if (memberSign != null && memberSign.getValue()) {
                 memberSign();
             }
+
+            if (memberPointExchangeBenefit.getValue()) {
             if (memberPointExchangeBenefit != null && memberPointExchangeBenefit.getValue()) {
                 memberPointExchangeBenefit();
             }
             if (collectSesame != null && collectSesame.getValue()) {
+                CheckInTaskRpcManager();
                 collectSesame();
             }
             // 生活记录
-            if (promise != null && promise.getValue()) {
-                promise();
-            }
+            //if (promise != null && promise.getValue()) {
+            //    promise();
+            //}
             // 我的快递任务
             if (KuaiDiFuLiJia != null && KuaiDiFuLiJia.getValue()) {
                 RecommendTask();
@@ -103,9 +109,9 @@ public class AntMember extends ModelTask {
             if (enableGoldTicket != null && enableGoldTicket.getValue()) {
                 goldTicket();
             }
-            if (antInsurance != null && antInsurance.getValue()) {
-                AntInsurance.executeTask(antInsuranceOptions.getValue());
-            }
+            //if (antInsurance != null && antInsurance.getValue()) {
+            //    AntInsurance.executeTask(antInsuranceOptions.getValue());
+            //}
             // 消费金签到
             if (signinCalendar != null && signinCalendar.getValue() && !MyUtils.closeVerification()) {
                 signinCalendar();
@@ -510,44 +516,7 @@ public class AntMember extends ModelTask {
             Log.printStackTrace(TAG, t);
         }
     }
-    
-    private void collectSesame() {
-        try {
-            JSONObject jo = new JSONObject(AntMemberRpcCall.queryHome());
-            if (!MessageUtil.checkResultCode(TAG, jo)) {
-                return;
-            }
-            JSONObject entrance = jo.getJSONObject("entrance");
-            if (!entrance.optBoolean("openApp")) {
-                Log.other("芝麻信用💌未开通");
-                return;
-            }
-            jo = new JSONObject(AntMemberRpcCall.queryCreditFeedback());
-            TimeUtil.sleep(300);
-            if (!MessageUtil.checkResultCode(TAG, jo)) {
-                return;
-            }
-            JSONArray ja = jo.getJSONArray("creditFeedbackVOS");
-            for (int i = 0; i < ja.length(); i++) {
-                jo = ja.getJSONObject(i);
-                if (!"UNCLAIMED".equals(jo.getString("status"))) {
-                    continue;
-                }
-                String title = jo.getString("title");
-                String creditFeedbackId = jo.getString("creditFeedbackId");
-                String potentialSize = jo.getString("potentialSize");
-                jo = new JSONObject(AntMemberRpcCall.collectCreditFeedback(creditFeedbackId));
-                TimeUtil.sleep(300);
-                if (MessageUtil.checkResultCode(TAG, jo)) {
-                    Log.other("收芝麻粒🙇🏻‍♂️领取[" + title + "]奖励[芝麻粒*" + potentialSize + "]");
-                }
-            }
-        }
-        catch (Throwable t) {
-            Log.printStackTrace(TAG, t);
-        }
-    }
-    
+
     // 会员积分兑换
     private void memberPointExchangeBenefit() {
         try {
@@ -603,6 +572,184 @@ public class AntMember extends ModelTask {
         return false;
     }
     
+    private void collectSesame() {
+        try {
+            JSONObject jo = new JSONObject(AntMemberRpcCall.queryHome());
+            if (!MessageUtil.checkResultCode(TAG, jo)) {
+                return;
+            }
+            JSONObject entrance = jo.getJSONObject("entrance");
+            if (!entrance.optBoolean("openApp")) {
+                Log.other("芝麻信用💌未开通");
+                return;
+            }
+
+            jo = new JSONObject(AntMemberRpcCall.CreditAccumulateStrategyRpcManager());
+            TimeUtil.sleep(300);
+            if (!MessageUtil.checkResultCode(TAG, jo)) {
+                return;
+            }
+            if (!jo.has("data")) {
+                return;
+            }
+            JSONObject data = jo.getJSONObject("data");
+            if (!data.has("toCompleteVOS")) {
+                return;
+            }
+            JSONArray toCompleteVOS = data.getJSONArray("toCompleteVOS");
+            for (int i = 0; i < toCompleteVOS.length(); i++) {
+                JSONObject toCompleteVO = toCompleteVOS.getJSONObject(i);
+                String taskTitle = toCompleteVO.has("title") ? toCompleteVO.getString("title") : "未知任务";
+
+                boolean finishFlag = toCompleteVO.optBoolean("finishFlag", false);
+                String actionText = toCompleteVO.optString("actionText", "");
+
+                // 检查任务是否已完成
+                if (finishFlag || "已完成".equals(actionText)) {
+                    continue;
+                }
+
+                // 检查黑名单
+                if (taskTitle.equals("未知任务") || taskTitle.equals("去玩小游戏") || taskTitle.equals("完成旧衣回收得现金") || taskTitle.equals("去订阅芝麻小组件") || taskTitle.equals("0.1元起租会员攒粒") || taskTitle.equals("去雇佣芝麻大表鸽")) {
+                    Log.record("跳过：芝麻信用任务[" + taskTitle + "]");
+                    continue;
+                }
+
+                if (!toCompleteVO.has("templateId")) {
+                    continue;
+                }
+
+                String taskTemplateId = toCompleteVO.getString("templateId");
+                int needCompleteNum = toCompleteVO.has("needCompleteNum") ? toCompleteVO.getInt("needCompleteNum") : 1;
+                int completedNum = toCompleteVO.optInt("completedNum", 0);
+                String s = null;
+                String recordId = null;
+                JSONObject responseObj = null;
+
+                if (toCompleteVO.has("actionUrl") && toCompleteVO.getString("actionUrl").contains("jumpAction")) {
+                    // 跳转APP任务 依赖跳转的APP发送请求鉴别任务完成 仅靠hook支付宝无法完成
+                    continue;
+                }
+
+                if (!toCompleteVO.has("todayFinish")) {
+                    // 领取任务
+                    s = AntMemberRpcCall.joinSesameTask(taskTemplateId);
+                    TimeUtil.sleep(200);
+                    responseObj = new JSONObject(s);
+                    if (!MessageUtil.checkResultCode(TAG, responseObj)) {
+                        Log.error(TAG + "芝麻信用💳领取任务[" + taskTitle + "]失败#" + s);
+                        continue;
+                    }
+                    recordId = responseObj.getJSONObject("data").getString("recordId");
+                }
+                else {
+                    if (!toCompleteVO.has("recordId")) {
+                        Log.error(TAG + "芝麻信用💳任务[" + taskTitle + "未获取到]recordId#" + toCompleteVO);
+                        continue;
+                    }
+                    recordId = toCompleteVO.getString("recordId");
+                }
+
+                // 完成任务
+                for (int j = completedNum; j < needCompleteNum; j++) {
+                    s = AntMemberRpcCall.finishSesameTask(recordId);
+                    TimeUtil.sleep(2000);
+                    responseObj = new JSONObject(s);
+                    if (MessageUtil.checkResultCode(TAG, responseObj)) {
+                        Log.record("芝麻信用💳完成任务[" + taskTitle + "]#(" + (j + 1) + "/" + needCompleteNum + "天)");
+                    }
+                    else {
+                        Log.error("芝麻信用💳完成任务[" + taskTitle + "]失败#" + s);
+                    }
+                }
+
+                jo = new JSONObject(AntMemberRpcCall.queryCreditFeedback());
+                TimeUtil.sleep(300);
+                if (!MessageUtil.checkResultCode(TAG, jo)) {
+                    return;
+                }
+                JSONArray ja = jo.getJSONArray("creditFeedbackVOS");
+                for (int j = 0; j < ja.length(); j++) {
+                    jo = ja.getJSONObject(j);
+                    if (!"UNCLAIMED".equals(jo.getString("status"))) {
+                        continue;
+                    }
+                    //String title = jo.getString("title");
+                    String creditFeedbackId = jo.getString("creditFeedbackId");
+                    String potentialSize = jo.getString("potentialSize");
+                    jo = new JSONObject(AntMemberRpcCall.collectCreditFeedback(creditFeedbackId));
+                    TimeUtil.sleep(300);
+                    if (MessageUtil.checkResultCode(TAG, jo)) {
+                        Log.other("收芝麻粒🙇🏻‍♂️领取[" + taskTitle + "]奖励[芝麻粒*" + potentialSize + "]");
+                    }
+                }
+            }
+            jo = new JSONObject(AntMemberRpcCall.queryCreditFeedback());
+            TimeUtil.sleep(300);
+            if (!MessageUtil.checkResultCode(TAG, jo)) {
+                return;
+            }
+            JSONArray creditFeedbackVOS = jo.getJSONArray("creditFeedbackVOS");
+            if (creditFeedbackVOS.length()!= 0) {
+                jo = new JSONObject(AntMemberRpcCall.collectAllCreditFeedback());
+                if (MessageUtil.checkResultCode(TAG, jo)) {
+                    String resultCode = jo.optString("resultCode");
+                    Log.other("收芝麻粒🙇🏻‍♂️[一键收取]"+resultCode);
+                }
+            }
+
+
+        }
+        catch (Throwable t) {
+            Log.printStackTrace(TAG, t);
+        }
+    }
+
+    private void CheckInTaskRpcManager() {
+        if (Status.hasFlagToday("AntMember::zmlCheckIn")) {
+            return;
+        }
+        try {
+
+            String checkInRes = AntMemberRpcCall.alchemyQueryCheckIn("zml");
+            JSONObject checkInJo = new JSONObject(checkInRes);
+            if (MessageUtil.checkResultCode(TAG, checkInJo)) {
+                JSONObject data = checkInJo.optJSONObject("data");
+                if (data != null) {
+                    JSONObject currentDay = data.optJSONObject("currentDateCheckInTaskVO");
+                    if (currentDay != null) {
+                        String status = currentDay.optString("status");
+                        String checkInDate = currentDay.optString("checkInDate");
+                        if ("CAN_COMPLETE".equals(status) && !checkInDate.isEmpty()) {
+                            String completeRes = AntMemberRpcCall.zmCheckInCompleteTask(checkInDate, "zml");
+                            try {
+                                JSONObject completeJo = new JSONObject(completeRes);
+                                if (MessageUtil.checkResultCode(TAG, completeJo)) {
+                                    JSONObject prize = completeJo.optJSONObject("data");
+                                    int num = 0;
+                                    if (prize != null) {
+                                        num = prize.optInt("zmlNum", prize.optJSONObject("prize") != null ? prize.optJSONObject("prize").optInt("num", 0) : 0);
+                                    }
+                                    Log.other("收芝麻粒🙇🏻‍♂️领取[每日签到成功]#获得" + num + "粒");
+                                }
+                                else {
+                                    Log.error(".doSesameAlchemy#" + "签到失败:" + completeRes);
+                                }
+                            }
+                            catch (Throwable e) {
+                                Log.printStackTrace(TAG + ".doSesameAlchemy.alchemyCheckInComplete", e);
+                            }
+                        }
+                    }
+                }
+            }
+            Status.flagToday("AntMember::zmlCheckIn");
+        }
+        catch (Throwable t) {
+            Log.printStackTrace(TAG + ".doSesameZmlCheckIn", t);
+        }
+    }
+
     // 我的快递任务
     private void RecommendTask() {
         try {

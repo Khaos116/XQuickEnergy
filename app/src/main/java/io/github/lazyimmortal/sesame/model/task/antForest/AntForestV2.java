@@ -159,7 +159,7 @@ public class AntForestV2 extends ModelTask {
     private BooleanModelField doubleCardConstant;
     private ChoiceModelField helpFriendCollectType;
     private SelectModelField helpFriendCollectList;
-    
+
     private IntegerModelField helpFriendCollectListLimit;
     private IntegerModelField returnWater33;
     private IntegerModelField returnWater18;
@@ -169,7 +169,7 @@ public class AntForestV2 extends ModelTask {
     private SelectAndCountModelField waterFriendList;
     private SelectModelField giveEnergyRainList;
     private BooleanModelField vitalityExchangeBenefit;
-    private SelectAndCountModelField vitalityExchangeBenefitList;
+    private SelectAndCountModelField vitality_ExchangeBenefitList;
     private BooleanModelField userPatrol;
     private BooleanModelField collectGiftBox;
     private BooleanModelField medicalHealth;
@@ -247,7 +247,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(helpFriendCollectList = new SelectModelField("helpFriendCollectList", "复活能量 | 好友列表", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(helpFriendCollectListLimit = new IntegerModelField("helpFriendCollectListLimit", "复活好友能量下限(大于该值复活)", 0, 0, 100000));
         modelFields.addField(vitalityExchangeBenefit = new BooleanModelField("vitalityExchangeBenefit", "活力值 | 兑换权益", false));
-        modelFields.addField(vitalityExchangeBenefitList = new SelectAndCountModelField("vitalityExchangeBenefitList", "活力值 | 权益列表", new LinkedHashMap<>(), VitalityBenefit::getList, "请填写兑换次数(每日)"));
+        modelFields.addField(vitality_ExchangeBenefitList = new SelectAndCountModelField("vitality_ExchangeBenefitList", "活力值 | 权益列表", new LinkedHashMap<>(), VitalityBenefit::getList, "请填写兑换次数(每日)"));
         modelFields.addField(closeWhackMole = new BooleanModelField("closeWhackMole", "关闭6秒拼手速(打地鼠)", true));
         modelFields.addField(WhackMoleRoundNum = new IntegerModelField("WhackMoleRoundNum", "打地鼠同时开局数(结算取最高局)", 6, 1, 12));
         modelFields.addField(collectProp = new BooleanModelField("collectProp", "收集道具", false));
@@ -268,7 +268,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(ecoLifeOptions = new SelectModelField("ecoLifeOptions", "绿色行动 | 选项", new LinkedHashSet<>(), CustomOption::getEcoLifeOptions, "光盘行动需要先手动完成一次"));
         modelFields.addField(partnerteamWater = new BooleanModelField("partnerteamWater", "组队合种浇水", false));
         modelFields.addField(partnerteamWaterNum = new IntegerModelField("partnerteamWaterNum", "组队合种浇水" + "(g)", 10, 10, 5000));
-        
+
         modelFields.addField(loveteamWater = new BooleanModelField("loveteamWater", "真爱合种浇水", false));
         modelFields.addField(loveteamWaterNum = new IntegerModelField("loveteamWaterNum", "真爱合种浇水" + "(g)", 20, 20, 10000));
         modelFields.addField(ForestHunt = new BooleanModelField("ForestHunt", "森林寻宝", false));
@@ -277,9 +277,9 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(NORMALForestHuntHelp = new BooleanModelField("NORMALForestHuntHelp", "普通场景强制助力" + "(助力任务不在列表中时使用，如果日志显示失效请关闭)", false));
         modelFields.addField(ACTIVITYForestHuntHelp = new BooleanModelField("ACTIVITYForestHuntHelp", "活动场景强制助力" + "(助力任务不在列表中时使用，如果日志显示失效请关闭)", false));
         modelFields.addField(ForestHuntHelpList = new SelectModelField("ForestHuntHelpList", "点击配置寻宝助力列表" + "(填写shareId中开头的22-24位字符在\"4O7FEYDgn\"前的)", new LinkedHashSet<>(), AlipayForestHunt::getList));
-        modelFields.addField(dress = new BooleanModelField("dress", "装扮保护 | 开启", false));
-        modelFields.addField(dressDetailList = new TextModelField("dressDetailList", "装扮保护 | " + "装扮信息", ""));
-        modelFields.addField(new EmptyModelField("dressDetailListClear", "装扮保护 | 装扮信息清除", () -> dressDetailList.reset()));
+        //modelFields.addField(dress = new BooleanModelField("dress", "装扮保护 | 开启", false));
+        //modelFields.addField(dressDetailList = new TextModelField("dressDetailList", "装扮保护 | " + "装扮信息", ""));
+        //modelFields.addField(new EmptyModelField("dressDetailListClear", "装扮保护 | 装扮信息清除", () -> dressDetailList.reset()));
         return modelFields;
     }
     
@@ -575,13 +575,13 @@ public class AntForestV2 extends ModelTask {
                     // 医疗健康 电子小票 4g*10能量
                     queryForestEnergy("BILL");
                 }
-                if (dress.getValue()) {
-                    dress();
-                }
+                //if (dress.getValue()) {
+                //    dress();
+                //}
                 if (!closeWhackMole.getValue()) {
                     whackMole();
                 }
-                
+
                 ForestEnergyInfo();
             }
         }
@@ -1778,7 +1778,7 @@ public class AntForestV2 extends ModelTask {
     private void vitalityExchangeBenefit() {
         try {
             getAllSkuInfo();
-            Map<String, Integer> exchangeList = vitalityExchangeBenefitList.getValue();
+            Map<String, Integer> exchangeList = vitality_ExchangeBenefitList.getValue();
             for (Map.Entry<String, Integer> entry : exchangeList.entrySet()) {
                 String skuId = entry.getKey();
                 Integer count = entry.getValue();
@@ -2282,7 +2282,7 @@ public class AntForestV2 extends ModelTask {
                             else {
                                 return -1;
                             }*/
-                        
+
                     }
                 }
             }
@@ -3142,16 +3142,16 @@ public class AntForestV2 extends ModelTask {
     
     private void teamCooperateWater() {
         try {
-            
+
             int userDailyTarget = Math.min(Math.max(partnerteamWaterNum.getValue(), 10), 5000);
             int todayUsed = Status.getforestHuntHelpToday("FLAG_TEAM_WATER_DAILY_COUNT");
             int userRemainingQuota = userDailyTarget - todayUsed;
-            
+
             if (userRemainingQuota < 10) {
                 Log.record("组队合种今日已达标 (已浇" + todayUsed + "g / 目标" + userDailyTarget + "g)，跳过");
                 return;
             }
-            
+
             // 获取组队合种基础信息
             String homeStr = AntForestRpcCall.queryHomePage();
             JSONObject homeJo = new JSONObject(homeStr);
@@ -3159,19 +3159,19 @@ public class AntForestV2 extends ModelTask {
                 Log.record("queryHomePage 返回异常");
                 return;
             }
-            
+
             String teamId = homeJo.optJSONObject("teamHomeResult").optJSONObject("teamBaseInfo").optString("teamId", "");
             if (teamId.isEmpty()) {
                 Log.record("未获取到组队合种 TeamID");
                 return;
             }
-            
+
             int currentEnergy = homeJo.optJSONObject("userBaseInfo").optInt("currentEnergy", 0);
             if (currentEnergy < 10) {
                 Log.record("当前能量不足10g (" + currentEnergy + "g)，无法浇水");
                 return;
             }
-            
+
             // 切换团队模式
             boolean needReturn = false;
             if (!isTeam(homeJo)) {
@@ -3179,7 +3179,7 @@ public class AntForestV2 extends ModelTask {
                 updateUserConfig(!needReturn);
                 needReturn = true;
             }
-            
+
             // 获取服务端限制
             String miscStr = AntForestRpcCall.queryMiscInfo("teamCanWaterCount", teamId);
             JSONObject miscJo = new JSONObject(miscStr);
@@ -3190,10 +3190,10 @@ public class AntForestV2 extends ModelTask {
                 }
                 return;
             }
-            
+
             int serverRemaining = miscJo.optJSONObject("combineHandlerVOMap").optJSONObject("teamCanWaterCount").optInt("waterCount", 0);
             Log.record("组队状态检查: 目标剩余" + userRemainingQuota + "g | 官方剩余" + serverRemaining + "g | 背包能量" + currentEnergy + "g");
-            
+
             if (serverRemaining < 10) {
                 Log.record("官方限制今日无可浇水额度，跳过");
                 if (needReturn) {
@@ -3201,7 +3201,7 @@ public class AntForestV2 extends ModelTask {
                 }
                 return;
             }
-            
+
             // 计算最终浇水量
             int finalWaterAmount = Math.min(userRemainingQuota, Math.min(serverRemaining, currentEnergy));
             if (finalWaterAmount < 10) {
@@ -3211,7 +3211,7 @@ public class AntForestV2 extends ModelTask {
                 }
                 return;
             }
-            
+
             // 执行浇水
             String waterStr = AntForestRpcCall.teamWater(teamId, finalWaterAmount);
             JSONObject waterJo = new JSONObject(waterStr);
@@ -3220,7 +3220,7 @@ public class AntForestV2 extends ModelTask {
                 Status.forestHuntHelpToday("FLAG_TEAM_WATER_DAILY_COUNT", todayUsed + finalWaterAmount, UserIdMap.getCurrentUid());
                 Log.record("组队合种今日浇水累计: " + (todayUsed + finalWaterAmount) + "g / " + userDailyTarget + "g");
             }
-            
+
             // 切换回个人模式
             if (needReturn) {
                 updateUserConfig(!needReturn);
@@ -3252,7 +3252,7 @@ public class AntForestV2 extends ModelTask {
         }
         return false;
     }
-    
+
     private static boolean isTeam(JSONObject homeObj) {
         return "Team".equals(homeObj.optString("nextAction", ""));
     }
