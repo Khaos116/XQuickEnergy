@@ -649,6 +649,11 @@ public class AntMember extends ModelTask {
                     recordId = toCompleteVO.getString("recordId");
                 }
 
+                //参数错误  参数[promiseActivityExtCheck]不是有效的入参
+                if ("2026010358596942583".equals(recordId)) {//CHANGE BY KT
+                  continue;
+                }
+
                 // 完成任务
                 for (int j = completedNum; j < needCompleteNum; j++) {
                     s = AntMemberRpcCall.finishSesameTask(recordId);
