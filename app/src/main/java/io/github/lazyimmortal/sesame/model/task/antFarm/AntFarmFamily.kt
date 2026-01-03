@@ -393,7 +393,7 @@ data object AntFarmFamily {
       // 1. 时间窗口控制：仅允许在「早安时间段」内自动发送（06:00 ~ 10:00）
       val now = MyUtils.getInstance()
       val startTime = MyUtils.getInstance().apply {
-        set(Calendar.HOUR_OF_DAY, 2)
+        set(Calendar.HOUR_OF_DAY, 6)
         set(Calendar.MINUTE, 0)
         set(Calendar.SECOND, 0)
         set(Calendar.MILLISECOND, 0)
@@ -405,7 +405,7 @@ data object AntFarmFamily {
         set(Calendar.MILLISECOND, 0)
       }
       if (now.before(startTime) || now.after(endTime)) {
-        Log.farm("家庭任务🏠道早安#当前时间不在 02:00-10:00，跳过")
+        Log.farm("家庭任务🏠道早安#当前时间不在 06:00-10:00，跳过")
         return
       }
 
@@ -434,7 +434,7 @@ data object AntFarmFamily {
         if (taskTips == null || taskTips.length() == 0) {
           // familyTaskTips 为空：要么今天已经完成，要么当前无早安任务
           Log.farm( "家庭任务🏠道早安#远端无 GREETING 任务，可能今日已完成，跳过")
-          Status.setFlagToday("antFarm::deliverMsgSend")
+          //Status.setFlagToday("antFarm::deliverMsgSend")
           return
         }
 
@@ -451,7 +451,7 @@ data object AntFarmFamily {
 
         if (!hasGreetingTodo) {
           Log.farm( "家庭任务🏠道早安#GREETING 任务非 TODO 状态，跳过")
-          Status.setFlagToday("antFarm::deliverMsgSend")
+          //Status.setFlagToday("antFarm::deliverMsgSend")
           return
         }
       } catch (e: Throwable) {
