@@ -89,7 +89,6 @@ public class AntMember extends ModelTask {
                 memberSign();
             }
 
-            if (memberPointExchangeBenefit.getValue()) {
             if (memberPointExchangeBenefit != null && memberPointExchangeBenefit.getValue()) {
                 memberPointExchangeBenefit();
             }
