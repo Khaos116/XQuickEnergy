@@ -393,7 +393,7 @@ data object AntFarmFamily {
       // 1. 时间窗口控制：仅允许在「早安时间段」内自动发送（06:00 ~ 10:00）
       val now = MyUtils.getInstance()
       val startTime = MyUtils.getInstance().apply {
-        set(Calendar.HOUR_OF_DAY, 6)
+        set(Calendar.HOUR_OF_DAY, 2)
         set(Calendar.MINUTE, 0)
         set(Calendar.SECOND, 0)
         set(Calendar.MILLISECOND, 0)
@@ -405,19 +405,19 @@ data object AntFarmFamily {
         set(Calendar.MILLISECOND, 0)
       }
       if (now.before(startTime) || now.after(endTime)) {
-        Log.record(TAG, "家庭任务🏠道早安#当前时间不在 06:00-10:00，跳过")
+        Log.farm("家庭任务🏠道早安#当前时间不在 02:00-10:00，跳过")
         return
       }
 
       // groupId 是 enterFamily 返回的家庭 ID，如果为空说明当前账号未开通家庭
       if (groupId.isEmpty()) {
-        Log.record(TAG, "家庭任务🏠道早安#未检测到家庭 groupId，可能尚未加入家庭，跳过")
+        Log.farm( "家庭任务🏠道早安#未检测到家庭 groupId，可能尚未加入家庭，跳过")
         return
       }
 
       // 本地去重：一天只发送一次，避免重复打扰
       if (Status.hasFlagToday("antFarm::deliverMsgSend")) {
-        Log.record(TAG, "家庭任务🏠道早安#今日已在本地发送过，跳过")
+        Log.farm( "家庭任务🏠道早安#今日已在本地发送过，跳过")
         return
       }
 
@@ -425,6 +425,7 @@ data object AntFarmFamily {
       try {
         val taskTipsRes = JSONObject(AntFarmRpcCall.familyTaskTips(familyAnimals))
         if (!ResChecker.checkRes(TAG, taskTipsRes)) {
+          Log.farm( "家庭任务🏠道早安#familyTaskTips 调用失败，跳过")
           Log.error(TAG, "家庭任务🏠道早安#familyTaskTips 调用失败，跳过")
           return
         }
@@ -432,7 +433,7 @@ data object AntFarmFamily {
         val taskTips = taskTipsRes.optJSONArray("familyTaskTips")
         if (taskTips == null || taskTips.length() == 0) {
           // familyTaskTips 为空：要么今天已经完成，要么当前无早安任务
-          Log.record(TAG, "家庭任务🏠道早安#远端无 GREETING 任务，可能今日已完成，跳过")
+          Log.farm( "家庭任务🏠道早安#远端无 GREETING 任务，可能今日已完成，跳过")
           Status.setFlagToday("antFarm::deliverMsgSend")
           return
         }
@@ -449,12 +450,13 @@ data object AntFarmFamily {
         }
 
         if (!hasGreetingTodo) {
-          Log.record(TAG, "家庭任务🏠道早安#GREETING 任务非 TODO 状态，跳过")
+          Log.farm( "家庭任务🏠道早安#GREETING 任务非 TODO 状态，跳过")
           Status.setFlagToday("antFarm::deliverMsgSend")
           return
         }
       } catch (e: Throwable) {
         // safety：远端任务判断异常时，为了避免误刷，多数情况下选择跳过
+        Log.farm("familyTaskTips 解析失败，出于安全考虑跳过道早安：" + e.message)
         Log.printStackTrace(TAG, "familyTaskTips 解析失败，出于安全考虑跳过道早安：", e)
         return
       }
@@ -463,7 +465,7 @@ data object AntFarmFamily {
       // 先移除当前用户自己的 ID，否则 DeliverMsgSend 等接口会因为参数不合法而报错
       familyUserIds.remove(UserMap.currentUid)
       if (familyUserIds.isEmpty()) {
-        Log.record(TAG, "家庭任务🏠道早安#家庭成员仅自己一人，跳过")
+        Log.farm( "家庭任务🏠道早安#家庭成员仅自己一人，跳过")
         return
       }
 
@@ -476,6 +478,7 @@ data object AntFarmFamily {
       // 4. 确认 AI 隐私协议（OpenAIPrivatePolicy 抓包见看我.txt 中 deliverChickInfoVO.privatePolicyId）
       val resp0 = JSONObject(AntFarmRpcCall.OpenAIPrivatePolicy())
       if (!ResChecker.checkRes(TAG, resp0)) {
+        Log.farm("家庭任务🏠道早安#OpenAIPrivatePolicy 调用失败")
         Log.error(TAG, "家庭任务🏠道早安#OpenAIPrivatePolicy 调用失败")
         return
       }
@@ -483,6 +486,7 @@ data object AntFarmFamily {
       // 5. 请求推荐早安场景（deliverSubjectRecommend）以获取事件上下文
       val resp1 = JSONObject(AntFarmRpcCall.deliverSubjectRecommend(userIds))
       if (!ResChecker.checkRes(TAG, resp1)) {
+        Log.farm("家庭任务🏠道早安#deliverSubjectRecommend 调用失败")
         Log.error(TAG, "家庭任务🏠道早安#deliverSubjectRecommend 调用失败")
         return
       }
@@ -512,6 +516,7 @@ data object AntFarmFamily {
         )
       )
       if (!ResChecker.checkRes(TAG, resp2)) {
+        Log.farm("家庭任务🏠道早安#DeliverContentExpand 调用失败")
         Log.error(TAG, "家庭任务🏠道早安#DeliverContentExpand 调用失败")
         return
       }
@@ -521,6 +526,7 @@ data object AntFarmFamily {
       // 7. 使用 deliverId 再次确认扩展内容，得到最终的早安文案
       val resp3 = JSONObject(AntFarmRpcCall.QueryExpandContent(deliverId))
       if (!ResChecker.checkRes(TAG, resp3)) {
+        Log.farm("家庭任务🏠道早安#QueryExpandContent 调用失败")
         Log.error(TAG, "家庭任务🏠道早安#QueryExpandContent 调用失败")
         return
       }
@@ -532,8 +538,11 @@ data object AntFarmFamily {
       if (ResChecker.checkRes(TAG, resp4)) {
         Log.farm("家庭任务🏠道早安: $content 🌈")
         Status.setFlagToday("antFarm::deliverMsgSend")
+      } else {
+        Log.farm("家庭任务🏠道早安发送早安消息失败")
       }
     } catch (t: Throwable) {
+      Log.farm("家庭任务🏠道早安: deliverMsgSend err:" + t.message)
       Log.printStackTrace(TAG, "deliverMsgSend err:", t)
     }
   }
@@ -575,7 +584,7 @@ data object AntFarmFamily {
         return
       }
 
-      Log.record(TAG, "inviteList: $inviteList")
+      Log.farm( "inviteList: $inviteList")
 
       val jo = JSONObject(AntFarmRpcCall.inviteFriendVisitFamily(inviteList))
       if (ResChecker.checkRes(TAG, jo)) {
@@ -592,7 +601,7 @@ data object AntFarmFamily {
    * 自动兑换家庭装扮装扮
    */
   fun autoExchangeFamilyDecoration() {
-    Log.record(TAG, "[家庭装扮] 开始自动兑换任务...")
+    Log.farm( "[家庭装扮] 开始自动兑换任务...")
     try {
       // 1. 查询家庭装修位置列表
       val decorationRes = AntFarmRpcCall.queryFamilyDecoration()
@@ -605,11 +614,11 @@ data object AntFarmFamily {
 
       val positionList = decorationJo.optJSONArray("familyDecorationPositionList")
       if (positionList == null || positionList.length() == 0) {
-        Log.record(TAG, "[家庭装扮] 未获取到装修位置信息")
+        Log.farm( "[家庭装扮] 未获取到装修位置信息")
         return
       }
 
-      Log.record(TAG, "[家庭装扮] 成功获取 ${positionList.length()} 个装修位置")
+      Log.farm( "[家庭装扮] 成功获取 ${positionList.length()} 个装修位置")
 
       // 遍历所有装修位置 (例如：沙发、地毯、窗帘...)
       for (i in 0 until positionList.length()) {
@@ -619,7 +628,7 @@ data object AntFarmFamily {
         val positionName = position.optString("positionName")
 
         if (mallCode.isEmpty()) {
-          Log.record(TAG, "[家庭装扮] 位置 [$positionName] 的 MALL_CODE 为空，跳过")
+          Log.farm( "[家庭装扮] 位置 [$positionName] 的 MALL_CODE 为空，跳过")
           continue
         }
 
@@ -628,7 +637,7 @@ data object AntFarmFamily {
         var hasMore = true
 
         while (hasMore) {
-          Log.record(TAG, "[家庭装扮] 正在获取 [$positionName] 的商品列表, startIndex: $startIndex")
+          Log.farm( "[家庭装扮] 正在获取 [$positionName] 的商品列表, startIndex: $startIndex")
           val itemListRes = AntFarmRpcCall.getItemList(mallCode, 12, startIndex)
           val itemJo = JSONObject(itemListRes)
 
@@ -640,11 +649,11 @@ data object AntFarmFamily {
           // 获取当前余额
           val accountInfo = itemJo.optJSONObject("mallAccountInfoVO")
           val currentBalance = accountInfo?.optJSONObject("holdingCount")?.optInt("amount") ?: 0
-          Log.record(TAG, "[家庭装扮] 当前余额: $currentBalance")
+          Log.farm( "[家庭装扮] 当前余额: $currentBalance")
 
           val items = itemJo.optJSONArray("itemInfoVOList")
           if (items == null || items.length() == 0) {
-            Log.record(TAG, "[家庭装扮] [$positionName] 分类下无商品")
+            Log.farm( "[家庭装扮] [$positionName] 分类下无商品")
             break
           }
 
@@ -656,14 +665,14 @@ data object AntFarmFamily {
 
             // 余额不足校验
             if (currentBalance < minPrice) {
-              //Log.record(TAG, "[家庭装扮] 余额不足跳过: $spuName (需${minPrice}, 余额${currentBalance})")
+              //Log.farm( "[家庭装扮] 余额不足跳过: $spuName (需${minPrice}, 余额${currentBalance})")
               continue
             }
 
             // 检查状态：如果 itemStatusList 不为空，通常表示已拥有或不可买
             val itemStatusList = item.optJSONArray("itemStatusList")
             if (itemStatusList != null && itemStatusList.length() > 0) {
-              //Log.record(TAG, "[家庭装扮] 商品 [$spuName] 已拥有或不可购买，跳过")
+              //Log.farm( "[家庭装扮] 商品 [$spuName] 已拥有或不可购买，跳过")
               continue
             }
 
@@ -679,7 +688,7 @@ data object AntFarmFamily {
             val skuName = firstSku.getString("skuName")
 
             // 3. 执行兑换
-            Log.record(TAG, "[家庭装扮] 尝试兑换: $skuName (SPU:$spuId, SKU:$skuId)")
+            Log.farm( "[家庭装扮] 尝试兑换: $skuName (SPU:$spuId, SKU:$skuId)")
             val exchangeRes = AntFarmRpcCall.exchangeBenefit(spuId, skuId)
             val exchangeJo = JSONObject(exchangeRes)
 
@@ -704,7 +713,7 @@ data object AntFarmFamily {
           }
         }
       }
-      Log.record(TAG, "[家庭装扮] 自动兑换任务结束")
+      Log.farm( "[家庭装扮] 自动兑换任务结束")
     } catch (t: Throwable) {
       Log.printStackTrace(TAG, "autoExchangeFamilyDecoration 错误",t)
     }
