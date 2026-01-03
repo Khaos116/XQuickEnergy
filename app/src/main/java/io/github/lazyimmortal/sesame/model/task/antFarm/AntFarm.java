@@ -351,7 +351,7 @@ public class AntFarm extends ModelTask {
             
             if (family.getValue()) {
                 //family();
-                AntFarmFamily.INSTANCE.run(familyOptions, notInviteList);
+                AntFarmFamily.run(familyOptions, notInviteList);
             }
             
             // 开宝箱
@@ -2520,12 +2520,7 @@ public class AntFarm extends ModelTask {
             if (canEatTogether && familyOptions.getValue().contains("familyEatTogether") && eatTogetherConfig != null) {
                 familyEatTogether(ownerGroupId, EatTogetherUserIds);
             }
-            
-            // 道早安
-            //if (familyOptions.getValue().contains("deliverMsgSend")) {
-            //deliverMsgSend(familyAnimalsExceptUser,familyUserIds);
-            //}
-            
+
             // 分享给好友
             if (familyOptions.getValue().contains("shareToFriends")) {
                 familyShareToFriends(familyUserIds, notInviteList);
@@ -2641,181 +2636,6 @@ public class AntFarm extends ModelTask {
         }
         catch (Throwable t) {
             Log.i(TAG, "familyEatTogether err:");
-            Log.printStackTrace(TAG, t);
-        }
-    }
-    
-    /**
-     * 家庭「道早安」任务
-     * <p>
-     * <p>
-     * <p>
-     * 1）先通过 familyTaskTips 判断今日是否还有「道早安」任务：
-     * - 请求方法：com.alipay.antfarm.familyTaskTips
-     * - 请求体关键字段：
-     * animals      -> 直接复用 enterFamily 返回的家庭 animals 列表
-     * taskSceneCode-> "ANTFARM_FAMILY_TASK"
-     * sceneCode    -> "ANTFARM"
-     * source       -> "H5"
-     * requestType  -> "NORMAL"
-     * timeZoneId   -> "Asia/Shanghai"
-     * - 响应 familyTaskTips 数组中存在 bizKey="GREETING" 且 taskStatus="TODO" 时，说明可以道早安
-     * <p>
-     * 2）未完成早安任务时，按顺序调用以下 RPC 获取 AI 文案并发送：
-     * a. com.alipay.antfarm.deliverSubjectRecommend
-     * -> 入参：friendUserIds（家庭其他成员 userId 列表），sceneCode="ChickFamily"，source="H5"
-     * -> 取出：ariverRpcTraceId、eventId、eventName、sceneId、sceneName 等上下文
-     * b. com.alipay.antfarm.DeliverContentExpand
-     * -> 入参：上一步取到的 ariverRpcTraceId / eventId / eventName / sceneId / sceneName 等 + friendUserIds
-     * -> 返回：AI 生成的 content 以及 deliverId
-     * c. com.alipay.antfarm.QueryExpandContent
-     * -> 入参：deliverId
-     * -> 用于再次确认 content 与场景（可选安全校验）
-     * d. com.alipay.antfarm.DeliverMsgSend
-     * -> 入参：content、deliverId、friendUserIds、groupId（家庭 groupId）、sceneCode="ANTFARM"、spaceType="ChickFamily" 等
-     * <p>
-     * 额外增加保护：
-     * - 仅在每天 06:00~10:00 之间执行
-     * - 每日仅发送一次（本地 Status 标记 + 远端 familyTaskTips 双重判断）
-     * - 自动从家庭成员列表中移除自己，避免接口报参数错误
-     *
-     * @param familyUserIds 家庭成员 userId 列表（包含自己，方法内部会移除当前账号）
-     */
-    private void deliverMsgSend(JSONArray familyAnimalsExceptUser, List<String> familyUserIds) {
-        try {
-            // 时间窗口控制：仅允许在「早安时间段」内自动发送（06:00 ~ 10:00）
-            Calendar now = MyUtils.getInstance();
-            Calendar startTime = MyUtils.getInstance();
-            startTime.set(Calendar.HOUR_OF_DAY, 6);
-            startTime.set(Calendar.MINUTE, 0);
-            startTime.set(Calendar.SECOND, 0);
-            startTime.set(Calendar.MILLISECOND, 0);
-            
-            Calendar endTime = MyUtils.getInstance();
-            endTime.set(Calendar.HOUR_OF_DAY, 10);
-            endTime.set(Calendar.MINUTE, 0);
-            endTime.set(Calendar.SECOND, 0);
-            endTime.set(Calendar.MILLISECOND, 0);
-            
-            if (now.before(startTime) || now.after(endTime)) {
-                Log.record("家庭任务🏠道早安#当前时间不在 06:00-10:00，跳过");
-                return;
-            }
-            
-            if (StringUtil.isEmpty(ownerGroupId)) {
-                Log.record("家庭任务🏠道早安#未检测到家庭 groupId，可能尚未加入家庭，跳过");
-                return;
-            }
-            
-            // 本地去重：一天只发送一次
-            if (Status.hasFlagToday("antFarm::deliverMsgSend")) {
-                Log.record("家庭任务🏠道早安#今日已在本地发送过，跳过");
-                return;
-            }
-            
-            // 远端任务状态校验
-            try {
-                JSONObject taskTipsRes = new JSONObject(AntFarmRpcCall.familyTaskTips(familyAnimalsExceptUser));
-                if (!MessageUtil.checkMemo(TAG, taskTipsRes)) {
-                    Log.record("家庭任务🏠道早安#familyTaskTips 调用失败，跳过");
-                    return;
-                }
-                
-                JSONArray taskTips = taskTipsRes.optJSONArray("familyTaskTips");
-                if (taskTips == null || taskTips.length() == 0) {
-                    Log.record("家庭任务🏠道早安#远端无 GREETING 任务，可能今日已完成，跳过");
-                    
-                    Status.flagToday("antFarm::deliverMsgSend");
-                    return;
-                }
-                
-                boolean hasGreetingTodo = false;
-                for (int i = 0; i < taskTips.length(); i++) {
-                    JSONObject item = taskTips.getJSONObject(i);
-                    String bizKey = item.optString("bizKey");
-                    String taskStatus = item.optString("taskStatus");
-                    if ("GREETING".equals(bizKey) && "TODO".equals(taskStatus)) {
-                        hasGreetingTodo = true;
-                        break;
-                    }
-                }
-                
-                if (!hasGreetingTodo) {
-                    Log.record("家庭任务🏠道早安#GREETING 任务非 TODO 状态，跳过");
-                    Status.flagToday("antFarm::deliverMsgSend");
-                    return;
-                }
-            }
-            catch (Throwable e) {
-                Log.printStackTrace("familyTaskTips 解析失败，出于安全考虑跳过道早安：", e);
-                return;
-            }
-            
-            // 构建好友 userId 列表（去掉自己）
-            List<String> userIdsCopy = new ArrayList<>(familyUserIds);
-            userIdsCopy.remove(UserIdMap.getCurrentUid());
-            if (userIdsCopy.isEmpty()) {
-                Log.record("家庭任务🏠道早安#家庭成员仅自己一人，跳过");
-                return;
-            }
-            
-            JSONArray userIds = new JSONArray();
-            for (String userId : userIdsCopy) {
-                userIds.put(userId);
-            }
-            
-            // 确认 AI 隐私协议
-            JSONObject resp0 = new JSONObject(AntFarmRpcCall.OpenAIPrivatePolicy());
-            if (!MessageUtil.checkMemo(TAG, resp0)) {
-                Log.record("家庭任务🏠道早安#OpenAIPrivatePolicy 调用失败");
-                return;
-            }
-            
-            // 请求推荐早安场景
-            JSONObject resp1 = new JSONObject(AntFarmRpcCall.deliverSubjectRecommend(userIds));
-            if (!MessageUtil.checkMemo(TAG, resp1)) {
-                Log.record("家庭任务🏠道早安#deliverSubjectRecommend 调用失败");
-                return;
-            }
-            
-            String ariverRpcTraceId = resp1.getString("ariverRpcTraceId");
-            String eventId = resp1.getString("eventId");
-            String eventName = resp1.getString("eventName");
-            String memo = resp1.optString("memo");
-            String resultCode = resp1.optString("resultCode");
-            String sceneId = resp1.getString("sceneId");
-            String sceneName = resp1.getString("sceneName");
-            boolean success = resp1.optBoolean("success", true);
-            
-            // 调用 DeliverContentExpand
-            JSONObject resp2 = new JSONObject(AntFarmRpcCall.deliverContentExpand(ariverRpcTraceId, eventId, eventName, memo, resultCode, sceneId, sceneName, success, userIds));
-            if (!MessageUtil.checkMemo(TAG, resp2)) {
-                Log.record("家庭任务🏠道早安#DeliverContentExpand 调用失败");
-                return;
-            }
-            
-            String deliverId = resp2.getString("deliverId");
-            //String deliverId = System.currentTimeMillis()+UserIdMap.getCurrentUid();
-            
-            // 使用 deliverId 确认扩展内容
-            JSONObject resp3 = new JSONObject(AntFarmRpcCall.QueryExpandContent(deliverId));
-            if (!MessageUtil.checkMemo(TAG, resp3)) {
-                Log.record("家庭任务🏠道早安#QueryExpandContent 调用失败");
-                return;
-            }
-            
-            String content = resp3.getString("content");
-            
-            // 最终发送早安消息
-            JSONObject resp4 = new JSONObject(AntFarmRpcCall.deliverMsgSend(ownerGroupId, userIds, content, deliverId));
-            if (MessageUtil.checkMemo(TAG, resp4)) {
-                Log.farm("家庭任务🏠道早安: " + content + " 🌈");
-                // Status.setFlagToday("antFarm::deliverMsgSend"); // 原代码
-                Status.flagToday("antFarm::deliverMsgSend"); // 修改后
-            }
-        }
-        catch (Throwable t) {
-            Log.i(TAG, "deliverMsgSend err:");
             Log.printStackTrace(TAG, t);
         }
     }

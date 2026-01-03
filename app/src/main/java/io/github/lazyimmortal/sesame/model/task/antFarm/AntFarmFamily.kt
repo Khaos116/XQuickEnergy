@@ -50,6 +50,7 @@ data object AntFarmFamily {
   private var eatTogetherConfig: JSONObject = JSONObject()
 
 
+  @JvmStatic
   fun run(familyOptions: SelectModelField, notInviteList: SelectModelField) {
     try {
       enterFamily(familyOptions, notInviteList)
