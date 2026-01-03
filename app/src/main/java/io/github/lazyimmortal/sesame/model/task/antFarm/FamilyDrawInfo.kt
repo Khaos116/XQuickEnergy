@@ -52,7 +52,7 @@ object FamilyDrawInfo {
         val drawTimes = jo.optInt("familyDrawTimes")
         //碎片个数
         val giftNum = jo.optInt("mengliFragmentCount")
-        if (giftNum >= 20 && !(giftFamilyDrawFragment?.value).isNullOrEmpty()) {
+        if (giftNum >= 20 && !(giftFamilyDrawFragment?.value.isNullOrBlank())) {
           giftFamilyDrawFragment(giftFamilyDrawFragment.value, giftNum)
         }
         for (i in 0..<drawTimes) {
