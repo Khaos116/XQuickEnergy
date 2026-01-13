@@ -17,6 +17,7 @@ import io.github.lazyimmortal.sesame.model.base.TaskCommon;
 import io.github.lazyimmortal.sesame.model.task.antFarm.AntFarm.TaskStatus;
 import io.github.lazyimmortal.sesame.model.task.antForest.AntForestRpcCall;
 import io.github.lazyimmortal.sesame.util.*;
+import io.github.lazyimmortal.sesame.util.idMap.AntOceanAntiepTaskListMap;
 import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
 
 import java.lang.reflect.Method;
@@ -247,7 +248,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void collectEnergy(JSONArray bubbleVOList) {
+    private void collectEnergy(JSONArray bubbleVOList) {
         try {
             for (int i = 0; i < bubbleVOList.length(); i++) {
                 JSONObject bubble = bubbleVOList.getJSONObject(i);
@@ -281,7 +282,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void cleanOcean(String userId, int rubbishNumber) {
+    private void cleanOcean(String userId, int rubbishNumber) {
         try {
             for (int i = 0; i < rubbishNumber; i++) {
                 JSONObject jo = new JSONObject(AntOceanRpcCall.cleanOcean(userId));
@@ -320,7 +321,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void ipOpenSurprise() {
+    private void ipOpenSurprise() {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.ipOpenSurprise());
             if (MessageUtil.checkResultCode(TAG, jo)) {
@@ -334,7 +335,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void combineFish(String fishId) {
+    private void combineFish(String fishId) {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.combineFish(fishId));
             if (MessageUtil.checkResultCode(TAG, jo)) {
@@ -351,7 +352,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void checkReward(JSONArray rewards) {
+    private void checkReward(JSONArray rewards) {
         try {
             for (int i = 0; i < rewards.length(); i++) {
                 JSONObject reward = rewards.getJSONObject(i);
@@ -380,7 +381,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void queryReplicaHome() {
+    private void queryReplicaHome() {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.queryReplicaHome());
             if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -410,7 +411,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void collectReplicaAsset(int canCollectAssetNum) {
+    private void collectReplicaAsset(int canCollectAssetNum) {
         try {
             for (int i = 0; i < canCollectAssetNum; i++) {
                 JSONObject jo = new JSONObject(AntOceanRpcCall.collectReplicaAsset());
@@ -425,7 +426,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void unLockReplicaPhase(String replicaCode, String replicaPhaseCode) {
+    private void unLockReplicaPhase(String replicaCode, String replicaPhaseCode) {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.unLockReplicaPhase(replicaCode, replicaPhaseCode));
             if (MessageUtil.checkResultCode(TAG, jo)) {
@@ -439,7 +440,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void queryReplicaTaskList() {
+    private void queryReplicaTaskList() {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.queryReplicaTaskList());
             if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -464,7 +465,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void receiveReplicaTaskAward(String taskType, String taskTitle) {
+    private void receiveReplicaTaskAward(String taskType, String taskTitle) {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.receiveReplicaTaskAward(taskType));
             if (MessageUtil.checkSuccess(TAG, jo)) {
@@ -478,7 +479,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void queryMiscInfo() {
+    private void queryMiscInfo() {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.queryMiscInfo());
             if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -497,7 +498,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void createSeaAreaExtraCollect() {
+    private void createSeaAreaExtraCollect() {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.querySeaAreaDetailList());
             if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -520,7 +521,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void querySeaAreaDetailList() {
+    private void querySeaAreaDetailList() {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.querySeaAreaDetailList());
             if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -580,7 +581,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void openWAIT_FOR_UNLOCK() {
+    private void openWAIT_FOR_UNLOCK() {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.querySeaAreaDetailList());
             if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -612,7 +613,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void queryOceanPropList() {
+    private void queryOceanPropList() {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.queryOceanPropList());
             if (MessageUtil.checkResultCode(TAG, jo)) {
@@ -625,7 +626,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static void switchOceanChapter() {
+    private void switchOceanChapter() {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.queryOceanChapterList());
             if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -786,7 +787,7 @@ public class AntOcean extends ModelTask {
         return false;
     }
 
-    private static boolean isTargetTask(String taskType) {
+    private boolean isTargetTask(String taskType) {
         // 在这里添加其他任务类型，以便后续扩展
         return "DAOLIU_TAOJINBI".equals(taskType) // 去逛淘金币看淘金仔
                || "DAOLIU_NNYY".equals(taskType) // 逛余额宝新春活动
@@ -797,8 +798,6 @@ public class AntOcean extends ModelTask {
                || "ZHUANHUA_HUIYUN_OZB".equals(taskType); // 一键传球欧洲杯
 
     }
-
-    private static void queryTaskList() {
 
     private void queryTaskList() {
         try {
@@ -832,7 +831,7 @@ public class AntOcean extends ModelTask {
     }
 
     //日常任务
-    private static void receiveTaskAward(String sceneCode, String taskType, String taskTitle) {
+    private void receiveTaskAward(String sceneCode, String taskType, String taskTitle) {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.receiveTaskAward(sceneCode, taskType));
             TimeUtil.sleep(500);
@@ -849,7 +848,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static Boolean finishOceanTask(JSONObject task) {
+    private Boolean finishOceanTask(JSONObject task) {
         try {
             if (task.has("taskProgress")) {
                 return false;
@@ -893,7 +892,7 @@ public class AntOcean extends ModelTask {
     }
 
     // 海洋答题任务
-    private static Boolean answerQuestion() {
+    private Boolean answerQuestion() {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.getQuestion());
             if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -921,7 +920,7 @@ public class AntOcean extends ModelTask {
     }
 
     // 制作万能拼图
-    private static void exchangeUniversalPiece() {
+    private void exchangeUniversalPiece() {
         try {
             // 获取道具兑换列表的JSON数据
             JSONObject jo = new JSONObject(AntOceanRpcCall.queryOceanPropList());
@@ -946,7 +945,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static Boolean exchangeUniversalPiece(int number) {
+    private Boolean exchangeUniversalPiece(int number) {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.exchangeUniversalPiece(number));
             if (MessageUtil.checkResultCode(TAG, jo)) {
@@ -964,7 +963,7 @@ public class AntOcean extends ModelTask {
     }
 
     // 使用万能拼图
-    private static void useUniversalPiece() {
+    private void useUniversalPiece() {
         try {
             // 获取道具使用类型列表的JSON数据
             JSONObject jo = new JSONObject(AntOceanRpcCall.queryOceanPropList("UNIVERSAL_PIECE"));
@@ -1004,7 +1003,7 @@ public class AntOcean extends ModelTask {
         }
     }
 
-    private static int useUniversalPiece(JSONArray fishVOS, int holdsNum) {
+    private int useUniversalPiece(JSONArray fishVOS, int holdsNum) {
         int count = 0;
         try {
             for (int i = 0; i < fishVOS.length() && count < holdsNum; i++) {
@@ -1022,7 +1021,7 @@ public class AntOcean extends ModelTask {
         return count;
     }
 
-    private static int useUniversalPiece(JSONObject fishVO, int holdsNum) {
+    private int useUniversalPiece(JSONObject fishVO, int holdsNum) {
         JSONArray assetsDetails = new JSONArray();
         try {
             int order = fishVO.getInt("order");
@@ -1055,7 +1054,7 @@ public class AntOcean extends ModelTask {
         return 0;
     }
 
-    private static Boolean useUniversalPiece(JSONArray assetsDetails, String name, int holdsNum) {
+    private Boolean useUniversalPiece(JSONArray assetsDetails, String name, int holdsNum) {
         try {
             if (assetsDetails.length() == 0) {
                 return false;
