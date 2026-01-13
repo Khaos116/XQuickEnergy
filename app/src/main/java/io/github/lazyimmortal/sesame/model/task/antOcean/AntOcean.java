@@ -3,12 +3,14 @@ package io.github.lazyimmortal.sesame.model.task.antOcean;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import io.github.lazyimmortal.sesame.data.ConfigV2;
 import io.github.lazyimmortal.sesame.data.ModelFields;
 import io.github.lazyimmortal.sesame.data.ModelGroup;
 import io.github.lazyimmortal.sesame.data.modelFieldExt.BooleanModelField;
 import io.github.lazyimmortal.sesame.data.modelFieldExt.ChoiceModelField;
 import io.github.lazyimmortal.sesame.data.modelFieldExt.SelectModelField;
 import io.github.lazyimmortal.sesame.data.task.ModelTask;
+import io.github.lazyimmortal.sesame.entity.AlipayAntOceanAntiepTaskList;
 import io.github.lazyimmortal.sesame.entity.AlipayUser;
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
@@ -49,6 +51,8 @@ public class AntOcean extends ModelTask {
     }
 
     private BooleanModelField queryTaskList;
+    private BooleanModelField AutoAntOceanAntiepTaskList;
+    private SelectModelField AntOceanAntiepTaskList;
     private ChoiceModelField cleanOceanType;
     private SelectModelField cleanOceanList;
     private BooleanModelField exchangeUniversalPiece;
@@ -59,6 +63,8 @@ public class AntOcean extends ModelTask {
     public ModelFields getFields() {
         ModelFields modelFields = new ModelFields();
         modelFields.addField(queryTaskList = new BooleanModelField("queryTaskList", "海洋任务", false));
+        modelFields.addField(AutoAntOceanAntiepTaskList = new BooleanModelField("AutoAntOceanAntiepTaskList", "海洋任务 | 自动黑白名单", true));
+        modelFields.addField(AntOceanAntiepTaskList = new SelectModelField("AntOceanAntiepTaskList", "海洋任务 | 黑名单列表", new LinkedHashSet<>(), AlipayAntOceanAntiepTaskList::getList));
         modelFields.addField(cleanOceanType = new ChoiceModelField("cleanOceanType", "清理海域 | 动作", CleanOceanType.NONE, CleanOceanType.nickNames));
         modelFields.addField(cleanOceanList = new SelectModelField("cleanOceanList", "清理海域 | 好友列表", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(exchangeUniversalPiece = new BooleanModelField("exchangeUniversalPiece", "万能拼图 | 制作", false));
@@ -82,6 +88,9 @@ public class AntOcean extends ModelTask {
             if (!queryOceanStatus()) {
                 return;
             }
+
+            //初始任务列表
+            initAntOceanAntiepTaskListMap(AutoAntOceanAntiepTaskList.getValue(), queryTaskList.getValue());
 
             queryHomePage();
 
@@ -132,6 +141,78 @@ public class AntOcean extends ModelTask {
             Log.printStackTrace(TAG, t);
         }
         return false;
+    }
+
+    public static void initAntOceanAntiepTaskListMap(boolean AutoAntOceanAntiepTaskList, boolean queryTaskList) {
+        try {
+            //初始化AntOceanAntiepTaskListMap
+            AntOceanAntiepTaskListMap.load();
+            // 1. 定义黑名单（需要添加的任务）和白名单（需要移除的任务）
+            Set<String> blackList = new HashSet<>();
+            blackList.add("随机任务：玩一玩得拼图");
+            // 可继续添加更多黑名单任务
+
+            Set<String> whiteList = new HashSet<>();// 从黑名单中移除该任务
+            //whiteList.add("逛一芝麻树");
+            // 可继续添加更多白名单任务
+            for (String task : blackList) {
+                AntOceanAntiepTaskListMap.add(task, task);
+            }
+
+            if (queryTaskList) {
+                JSONObject jo = new JSONObject(AntOceanRpcCall.queryTaskList());
+                if (MessageUtil.checkResultCode(TAG, jo)) {
+
+                    JSONArray ja = jo.getJSONArray("antOceanTaskVOList");
+                    for (int i = 0; i < ja.length(); i++) {
+                        jo = ja.getJSONObject(i);
+                        JSONObject bizInfo = new JSONObject(jo.getString("bizInfo"));
+                        String taskTitle = bizInfo.optString("taskTitle");
+                        AntOceanAntiepTaskListMap.add(taskTitle, taskTitle);
+                    }
+                }
+                //保存任务到配置文件
+                AntOceanAntiepTaskListMap.save();
+                Log.record("同步任务🉑海洋普通任务列表");
+
+                //自动按模块初始化设定调整黑名单和白名单
+                if (AutoAntOceanAntiepTaskList) {
+                    // 初始化黑白名单（使用集合统一操作）
+                    ConfigV2 config = ConfigV2.INSTANCE;
+                    ModelFields AntOcean = config.getModelFieldsMap().get("AntOcean");
+                    SelectModelField AntOceanAntiepTaskList = (SelectModelField) AntOcean.get("AntOceanAntiepTaskList");
+                    if (AntOceanAntiepTaskList == null) {
+                        return;
+                    }
+
+                    // 2. 批量添加黑名单任务（确保存在）
+                    Set<String> currentValues = AntOceanAntiepTaskList.getValue();//该处直接返回列表地址
+                    if (currentValues != null) {
+                        for (String task : blackList) {
+                            if (!currentValues.contains(task)) {
+                                AntOceanAntiepTaskList.add(task, 0);
+                            }
+                        }
+
+                        // 3. 批量移除白名单任务（从现有列表中删除）
+                        for (String task : whiteList) {
+                            currentValues.remove(task);
+                        }
+                    }
+                    // 4. 保存配置
+                    if (ConfigV2.save(UserIdMap.getCurrentUid(), false)) {
+                        Log.record("黑白名单🈲海洋普通任务自动设置: " + AntOceanAntiepTaskList.getValue());
+                    }
+                    else {
+                        Log.record("神奇海洋普通任务黑白名单设置失败");
+                    }
+                }
+            }
+        }
+        catch (Throwable t) {
+            Log.i(TAG, "initAntOceanAntiepTaskListMap err:");
+            Log.printStackTrace(TAG, t);
+        }
     }
 
     private void queryHomePage() {
@@ -589,7 +670,9 @@ public class AntOcean extends ModelTask {
             if (!MessageUtil.checkResultCode(TAG, jo)) {
                 return;
             }
-            if (Status.hasFlagToday("Ocean::HELP_CLEAN_ALL_FRIEND_LIMIT")) {return;}
+            if (Status.hasFlagToday("Ocean::HELP_CLEAN_ALL_FRIEND_LIMIT")) {
+                return;
+            }
             JSONArray fillFlagVOList = jo.getJSONArray("fillFlagVOList");
             for (int i = 0; i < fillFlagVOList.length(); i++) {
                 JSONObject fillFlag = fillFlagVOList.getJSONObject(i);
@@ -602,13 +685,14 @@ public class AntOcean extends ModelTask {
             JSONArray allRankingList = jo.getJSONArray("allRankingList");
             while (pos < allRankingList.length()) {
                 JSONObject friend = allRankingList.getJSONObject(pos);
-                String userId=friend.optString("userId","");
-                if(userId.equals(UserIdMap.getCurrentUid())||userId.isEmpty())
-                {continue;}
+                String userId = friend.optString("userId", "");
+                if (userId.equals(UserIdMap.getCurrentUid()) || userId.isEmpty()) {
+                    continue;
+                }
                 idList.add(userId);
                 pos++;
                 if (pos % 20 == 0) {
-                    jo=new JSONObject(AntOceanRpcCall.fillUserFlag(new JSONArray(idList).toString()));
+                    jo = new JSONObject(AntOceanRpcCall.fillUserFlag(new JSONArray(idList).toString()));
                     if (!MessageUtil.checkResultCode(TAG, jo)) {
                         return;
                     }
@@ -617,14 +701,16 @@ public class AntOcean extends ModelTask {
                         JSONObject fillFlag = fillFlagVOList.getJSONObject(i);
                         if (cleanOceanType.getValue() != CleanOceanType.NONE) {
                             cleanFriendOcean(fillFlag);
-                            if (Status.hasFlagToday("Ocean::HELP_CLEAN_ALL_FRIEND_LIMIT")) {return;}
+                            if (Status.hasFlagToday("Ocean::HELP_CLEAN_ALL_FRIEND_LIMIT")) {
+                                return;
+                            }
                         }
                     }
                     idList.clear();
                 }
             }
             if (!idList.isEmpty()) {
-                jo=new JSONObject(AntOceanRpcCall.fillUserFlag(new JSONArray(idList).toString()));
+                jo = new JSONObject(AntOceanRpcCall.fillUserFlag(new JSONArray(idList).toString()));
                 if (!MessageUtil.checkResultCode(TAG, jo)) {
                     return;
                 }
@@ -633,7 +719,9 @@ public class AntOcean extends ModelTask {
                     JSONObject fillFlag = fillFlagVOList.getJSONObject(i);
                     if (cleanOceanType.getValue() != CleanOceanType.NONE) {
                         cleanFriendOcean(fillFlag);
-                        if (Status.hasFlagToday("Ocean::HELP_CLEAN_ALL_FRIEND_LIMIT")) {return;}
+                        if (Status.hasFlagToday("Ocean::HELP_CLEAN_ALL_FRIEND_LIMIT")) {
+                            return;
+                        }
                     }
                 }
             }
@@ -643,7 +731,6 @@ public class AntOcean extends ModelTask {
             Log.printStackTrace(TAG, t);
         }
     }
-
 
     private void cleanFriendOcean(JSONObject fillFlag) {
         if (!fillFlag.optBoolean("canClean")) {
@@ -674,11 +761,13 @@ public class AntOcean extends ModelTask {
             if (!MessageUtil.checkResultCode(TAG, jo)) {
                 return false;
             }
-            if (Status.hasFlagToday("Ocean::HELP_CLEAN_ALL_FRIEND_LIMIT")) {return false;}
+            if (Status.hasFlagToday("Ocean::HELP_CLEAN_ALL_FRIEND_LIMIT")) {
+                return false;
+            }
             jo = new JSONObject(AntOceanRpcCall.cleanFriendOcean(userId));
-            if(jo.has("resultDesc")){
-                if(jo.getString("resultDesc").contains("上限")){
-                    Log.record("神奇海洋🐳"+jo.getString("resultDesc"));
+            if (jo.has("resultDesc")) {
+                if (jo.getString("resultDesc").contains("上限")) {
+                    Log.record("神奇海洋🐳" + jo.getString("resultDesc"));
                     Status.flagToday("Ocean::HELP_CLEAN_ALL_FRIEND_LIMIT");
                 }
                 return false;
@@ -710,6 +799,8 @@ public class AntOcean extends ModelTask {
     }
 
     private static void queryTaskList() {
+
+    private void queryTaskList() {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.queryTaskList());
             if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -719,6 +810,10 @@ public class AntOcean extends ModelTask {
             for (int i = 0; i < ja.length(); i++) {
                 jo = ja.getJSONObject(i);
                 String taskStatus = jo.optString("taskStatus");
+                String sceneCode = jo.getString("sceneCode");
+                String taskType = jo.getString("taskType");
+                JSONObject bizInfo = new JSONObject(jo.getString("bizInfo"));
+                String taskTitle = bizInfo.optString("taskTitle");
                 if (TaskStatus.RECEIVED.name().equals(taskStatus)) {
                     continue;
                 }
@@ -726,10 +821,7 @@ public class AntOcean extends ModelTask {
                     continue;
                 }
                 TimeUtil.sleep(500);
-                String sceneCode = jo.getString("sceneCode");
-                String taskType = jo.getString("taskType");
-                JSONObject bizInfo = new JSONObject(jo.getString("bizInfo"));
-                String taskTitle = bizInfo.optString("taskTitle");
+
                 receiveTaskAward(sceneCode, taskType, taskTitle);
             }
         }
@@ -744,6 +836,8 @@ public class AntOcean extends ModelTask {
         try {
             JSONObject jo = new JSONObject(AntOceanRpcCall.receiveTaskAward(sceneCode, taskType));
             TimeUtil.sleep(500);
+            //检查并标记黑名单任务
+            MessageUtil.checkResultCodeAndMarkTaskBlackList("AntOceanAntiepTaskList", taskTitle, jo);
             if (MessageUtil.checkSuccess(TAG, jo)) {
                 String awardCount = jo.optString("incAwardCount");
                 Log.forest("海洋任务🎖️领取[" + taskTitle + "]奖励#获得[" + awardCount + "块拼图]");
@@ -762,6 +856,10 @@ public class AntOcean extends ModelTask {
             }
             JSONObject bizInfo = new JSONObject(task.getString("bizInfo"));
             String taskTitle = bizInfo.optString("taskTitle");
+            //黑名单任务跳过
+            if (AntOceanAntiepTaskList.getValue().contains(taskTitle)) {
+                return false;
+            }
             if (taskTitle.equals("每日任务：答题学海洋知识")) {
                 // 答题操作
                 if (answerQuestion()) {
@@ -779,6 +877,8 @@ public class AntOcean extends ModelTask {
                   return true;
                 }
                 JSONObject jo = new JSONObject(AntOceanRpcCall.finishTask(sceneCode, taskType));
+                //检查并标记黑名单任务
+                MessageUtil.checkResultCodeAndMarkTaskBlackList("AntOceanAntiepTaskList", taskTitle, jo);
                 if (MessageUtil.checkSuccess(TAG, jo)) {
                     Log.forest("海洋任务🧾完成[" + taskTitle + "]");
                     return true;

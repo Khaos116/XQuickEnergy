@@ -24,6 +24,7 @@ import io.github.lazyimmortal.sesame.entity.AlipayNewAncientTree;
 import io.github.lazyimmortal.sesame.entity.AlipayReserve;
 import io.github.lazyimmortal.sesame.entity.AlipayTree;
 import io.github.lazyimmortal.sesame.entity.CooperateUser;
+import io.github.lazyimmortal.sesame.hook.Toast;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
 import io.github.lazyimmortal.sesame.util.*;
 import io.github.lazyimmortal.sesame.util.idMap.*;
@@ -227,6 +228,8 @@ public class ProtectEcology extends ModelTask {
             JSONObject jo = new JSONObject(CooperateRpcCall.cooperateWater(userId, cooperationId, energyCount));
             if (MessageUtil.checkResultCode(TAG, jo)) {
                 Log.forest("合种浇水🚿[" + name + "]#" + jo.optString("barrageText"));
+                Log.forest("合种浇水🚿[" + name + "]#" + jo.getString("barrageText"));
+                Toast.show("合种浇水🚿[" + name + "]#" + jo.getString("barrageText"));
                 return true;
             }
         }

@@ -71,6 +71,16 @@ public class SettingsActivity extends BaseActivity {
         BeachIdMap.load();
         PlantSceneIdMap.load();
         ForestHuntIdMap.load();
+        MemberCreditSesameTaskListMap.load();
+        AntForestVitalityTaskListMap.load();
+        AntForestHuntTaskListMap.load();
+        AntFarmDoFarmTaskListMap.load();
+        AntFarmDrawMachineTaskListMap.load();
+        AntOceanAntiepTaskListMap.load();
+        AntOrchardTaskListMap.load();
+        AntStallTaskListMap.load();
+        AntSportsTaskListMap.load();
+        AntMemberTaskListMap.load();
         WalkPathIdMap.load();
         ConfigV2.load(userId);
         setContentView(R.layout.activity_settings);

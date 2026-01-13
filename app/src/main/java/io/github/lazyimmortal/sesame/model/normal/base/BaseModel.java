@@ -1,6 +1,5 @@
 package io.github.lazyimmortal.sesame.model.normal.base;
 
-import io.github.lazyimmortal.sesame.hook.CaptchaHook;
 import lombok.Getter;
 
 import io.github.lazyimmortal.sesame.data.Model;
@@ -71,6 +70,7 @@ public class BaseModel extends Model {
     public String getEnableFieldName() {
         return "启用模块";
     }
+
     public void boot(ClassLoader classLoader) {
         /*// 配置已加载，更新验证码Hook状态
         try {
@@ -80,6 +80,7 @@ public class BaseModel extends Model {
             Log.printStackTrace("❌ 验证码Hook配置同步失败", t);
         }*/
     }
+
     @Override
     public ModelFields getFields() {
         ModelFields modelFields = new ModelFields();
@@ -111,7 +112,8 @@ public class BaseModel extends Model {
                 TimeUtil.sleep(5000);
                 ProtectEcology.initForest();
                 ProtectEcology.initOcean();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Log.printStackTrace(e);
             }
         }).start();
@@ -131,7 +133,18 @@ public class BaseModel extends Model {
             BeachIdMap.clear();
             PlantSceneIdMap.clear();
             ForestHuntIdMap.clear();
-        } catch (Exception e) {
+            MemberCreditSesameTaskListMap.clear();
+            AntForestVitalityTaskListMap.clear();
+            AntForestHuntTaskListMap.clear();
+            AntFarmDoFarmTaskListMap.clear();
+            AntFarmDrawMachineTaskListMap.clear();
+            AntOceanAntiepTaskListMap.clear();
+            AntOrchardTaskListMap.clear();
+            AntStallTaskListMap.clear();
+            AntSportsTaskListMap.clear();
+            AntMemberTaskListMap.clear();
+        }
+        catch (Exception e) {
             Log.printStackTrace(e);
         }
     }
