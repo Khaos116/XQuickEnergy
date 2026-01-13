@@ -32,6 +32,7 @@ import io.github.lazyimmortal.sesame.hook.Toast;
 import io.github.lazyimmortal.sesame.model.base.TaskCommon;
 import io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandle;
 import io.github.lazyimmortal.sesame.util.*;
+import io.github.lazyimmortal.sesame.util.idMap.AntSportsTaskListMap;
 import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
 
 /**

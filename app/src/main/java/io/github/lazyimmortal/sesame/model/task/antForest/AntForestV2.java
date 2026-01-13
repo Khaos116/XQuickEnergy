@@ -26,8 +26,7 @@ import io.github.lazyimmortal.sesame.rpc.intervallimit.FixedOrRangeIntervalLimit
 import io.github.lazyimmortal.sesame.rpc.intervallimit.RpcIntervalLimit;
 import io.github.lazyimmortal.sesame.ui.ObjReference;
 import io.github.lazyimmortal.sesame.util.*;
-import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
-import io.github.lazyimmortal.sesame.util.idMap.VitalityBenefitIdMap;
+import io.github.lazyimmortal.sesame.util.idMap.*;
 import lombok.Getter;
 
 /**
