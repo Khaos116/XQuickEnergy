@@ -2683,8 +2683,8 @@ public class AntFarm extends ModelTask {
                 familyFeedFriendAnimal(familyAnimals);
             }
 
-            JSONArray familyInteractActions = jo.optJSONArray("familyInteractActions");
-            JSONObject eatTogetherConfig = jo.optJSONObject("eatTogetherConfig");
+            JSONArray familyInteractActions = joenterFamily.optJSONArray("familyInteractActions");
+            JSONObject eatTogetherConfig = joenterFamily.getJSONObject("eatTogetherConfig");
             //家庭请客吃饭
             boolean canEatTogether = true;
             if (familyInteractActions != null) {
@@ -2706,7 +2706,7 @@ public class AntFarm extends ModelTask {
             }
 
           //扭蛋
-          JSONObject familyDrawInfo = jo.optJSONObject("familyDrawInfo");
+          JSONObject familyDrawInfo = joenterFamily.optJSONObject("familyDrawInfo");
           if (familyDrawInfo != null && familyDrawInfo.optBoolean("drawActivitySwitch", false)) {
             if (familyOptions.getValue().contains("familyDrawInfo")) {
               FamilyDrawInfo.familyDrawTask(familyOptions, giftFamilyDrawFragment, familyUserIds, familyDrawInfo);

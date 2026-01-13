@@ -252,7 +252,7 @@ public class MainActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         int state = getPackageManager()
                 .getComponentEnabledSetting(new ComponentName(this, getClass().getCanonicalName() + "Alias"));
-        menu.add(0, 1, 1, R.string.view_record_file);
+        menu.add(0, 1, 1, R.string.other_log);
         menu.add(0, 2, 2, R.string.view_debug_file);
         menu.add(0, 3, 3, R.string.view_error_log_file);
         menu.add(0, 4, 4, R.string.export_error_log_file);
@@ -275,12 +275,11 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 1:
-                String recordData = "file://";
-                recordData += FileUtil.getRecordLogFile().getAbsolutePath();
-                Intent recordIt = new Intent(this, HtmlViewerActivity.class);
-                recordIt.setData(Uri.parse(recordData));
-                recordIt.putExtra("canClear", true);
-                startActivity(recordIt);
+                String data = "file://";
+                data += FileUtil.getOtherLogFile().getAbsolutePath();
+                Intent it = new Intent(this, HtmlViewerActivity.class);
+                it.setData(Uri.parse(data));
+                startActivity(it);
                 break;
 
             case 2:
