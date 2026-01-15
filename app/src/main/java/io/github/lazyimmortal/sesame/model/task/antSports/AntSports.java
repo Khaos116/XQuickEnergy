@@ -758,7 +758,8 @@ public class AntSports extends ModelTask {
 
     private static void parseRewardsByJSONObjectData(JSONObject data) {
         try {
-            JSONArray treasureBoxList = data.getJSONArray("treasureBoxList");
+            JSONArray treasureBoxList = data.optJSONArray("treasureBoxList");
+            if (treasureBoxList == null) return;
             openTreasureBox(treasureBoxList);
             if (data.has("brandRewardVOs")) {
                 JSONArray brandRewardVOs = data.getJSONArray("brandRewardVOs");
@@ -969,8 +970,8 @@ public class AntSports extends ModelTask {
             if (!MessageUtil.checkResultCode(TAG, jo)) {
                 return false;
             }
-            JSONArray userExchangeRecords = jo.getJSONArray("userExchangeRecords");
-            if (userExchangeRecords.length() == 0) {
+            JSONArray userExchangeRecords = jo.optJSONArray("userExchangeRecords");
+            if (userExchangeRecords == null || userExchangeRecords.length() == 0) {
                 return true;
             }
             jo = userExchangeRecords.getJSONObject(0);
@@ -1000,7 +1001,7 @@ public class AntSports extends ModelTask {
                 return;
             }
             //jo = jo.getJSONObject("dailyStepModel");
-            long produceQuantity = jo.getLong("stepLastTime");
+            long produceQuantity = jo.optLong("stepLastTime", 0);
             int hour = Integer.parseInt(Log.getFormatTime().split(":")[0]);
 
             int stepCount = jo.optInt("stepCount");
