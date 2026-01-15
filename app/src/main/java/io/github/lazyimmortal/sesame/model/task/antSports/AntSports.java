@@ -180,19 +180,24 @@ public class AntSports extends ModelTask {
             if (!Status.hasFlagToday("sport::syncStep")) {
                 addChildTask(new ChildModelTask("syncStep", () -> {
                     int step = tmpStepCount();
-                    try {
-                        ClassLoader classLoader = ApplicationHook.getClassLoader();
-                        if ((Boolean) XposedHelpers.callMethod(XposedHelpers.callStaticMethod(classLoader.loadClass("com.alibaba.health.pedometer.intergation.rpc.RpcManager"), "a"), "a", new Object[]{step, Boolean.FALSE, "system"})) {
-                            Toast.show("同步步数🏃🏻‍♂️[" + step + "步]");
-                            Log.other("同步步数🏃🏻‍♂️[" + step + "步]#[" + UserIdMap.getShowName(UserIdMap.getCurrentUid()) + "]");
-                        }
-                        else {
-                            Log.record("同步运动步数失败:" + step);
-                        }
-                        Status.flagToday("sport::syncStep");
-                    }
-                    catch (Throwable t) {
-                        Log.printStackTrace(TAG, t);
+                    //看你没有这个方法哦//CHANGE BY KT
+                    if (MyUtils._关闭不存在的方法调用) {
+                      Log.record("⚠️暂时不反射调用rpc.RpcManager#a()");
+                    } else {
+                      try {
+                          ClassLoader classLoader = ApplicationHook.getClassLoader();
+                          if ((Boolean) XposedHelpers.callMethod(XposedHelpers.callStaticMethod(classLoader.loadClass("com.alibaba.health.pedometer.intergation.rpc.RpcManager"), "a"), "a", new Object[]{step, Boolean.FALSE, "system"})) {
+                              Toast.show("同步步数🏃🏻‍♂️[" + step + "步]");
+                              Log.other("同步步数🏃🏻‍♂️[" + step + "步]#[" + UserIdMap.getShowName(UserIdMap.getCurrentUid()) + "]");
+                          }
+                          else {
+                              Log.record("同步运动步数失败:" + step);
+                          }
+                          Status.flagToday("sport::syncStep");
+                      }
+                      catch (Throwable t) {
+                          Log.printStackTrace(TAG, t);
+                      }
                     }
                 }));
             }
