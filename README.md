@@ -3,7 +3,7 @@
 # Sesame
 
 [![License](https://img.shields.io/github/license/Khaos116/XQuickEnergy.svg?labelColor=fff&color=ec8d16&logo=gnuprivacyguard)](LICENSE)
-[![Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/v1.8.4fix/total?color=000000&labelColor=7A00E6&label=v1.8.4fix下载&logo=github)](../../releases/tag/v1.8.4fix)
+[![Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/null/total?color=000000&labelColor=7A00E6&label=null下载&logo=github)](../../releases/tag/null)
 [![All Releases Download](https://img.shields.io/github/downloads/Khaos116/XQuickEnergy/total.svg??color=169af5&label=总下载&logo=circleci)](../../releases)
 [![Telegram](https://img.shields.io/badge/蚂蚁森林模块Chat-nul?&logo=Telegram&label=Telegram&labelColor=fff&link=https%3A%2F%2Ft.me%2Fmysl_group)](https://t.me/XQE_sesameChat)
 
