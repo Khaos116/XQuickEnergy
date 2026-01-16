@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
@@ -13,6 +14,7 @@ import java.util.*;
 
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
+import io.github.lazyimmortal.sesame.util.idMap.UserMap;
 
 /*
  *  ⭐为了保障您的操作安全，请进行验证后继续：
@@ -52,6 +54,52 @@ public class MyUtils {
   public static final boolean _关闭必弹验证 = true;
   public static final boolean _关闭作弊广告流量 = true;
   public static final boolean _关闭不支持RPC = true;
+  public static final String _访问被拒绝1 = "alipay.mrchservbase.mrchbusiness.sign.transcode.check";
+  public static final String _系统出错正在排查1 = "alipay.mrchservbase.zcj.taskList.query.v2";
+  public static final String _为了保障您的操作安全请进行验证后继续1 = "com.alipay.sportshealth.biz.rpc.SportsHealthCoinTaskRpc.queryCoinTaskPanel";
+  public static final String _为了保障您的操作安全请进行验证后继续2 = "com.alipay.sportshealth.biz.rpc.sportsHealthHomeRpc.queryEnergyBubbleModule";
+
+  public static boolean getSp访问被拒绝(@NonNull String key) {
+    SharedPreferences sp = getMySp();
+    if (sp == null) return true;
+    return sp.getBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), false);
+  }
+
+  public static void setSp访问被拒绝(@NonNull String key, JSONObject jo) {
+    //{"error":1009,"errorMessage":"访问被拒绝","errorNo":3,"errorTip":"1009"}
+    if (jo != null && "访问被拒绝".equals(jo.optString("errorMessage"))) {
+      SharedPreferences sp = getMySp();
+      if (sp != null) sp.edit().putBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), true).apply();
+    }
+  }
+
+  public static boolean getSp系统出错正在排查(@NonNull String key) {
+    SharedPreferences sp = getMySp();
+    if (sp == null) return true;
+    return sp.getBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), false);
+  }
+
+  public static void setSp系统出错正在排查(@NonNull String key, JSONObject jo) {
+    //{"error":1009,"errorMessage":"访问被拒绝","errorNo":3,"errorTip":"1009"}
+    if (jo != null && "系统出错，正在排查".equals(jo.optString("errorMessage"))) {
+      SharedPreferences sp = getMySp();
+      if (sp != null) sp.edit().putBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), true).apply();
+    }
+  }
+
+  public static boolean getSp为了保障您的操作安全请进行验证后继续(@NonNull String key) {
+    SharedPreferences sp = getMySp();
+    if (sp == null) return true;
+    return sp.getBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), false);
+  }
+
+  public static void setSp为了保障您的操作安全请进行验证后继续(@NonNull String key, JSONObject jo) {
+    //{"error":1009,"errorMessage":"访问被拒绝","errorNo":3,"errorTip":"1009"}
+    if (jo != null && "为了保障您的操作安全，请进行验证后继续。".equals(jo.optString("errorMessage"))) {
+      SharedPreferences sp = getMySp();
+      if (sp != null) sp.edit().putBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), true).apply();
+    }
+  }
 
   //是否关闭验证(拼手速、派遣动物、能量雨、赠送道具、部分蚂蚁积分任务、消费金签到 -> 目前发现这些操作会触发验证)
   public static boolean closeVerification() {
@@ -70,17 +118,24 @@ public class MyUtils {
     return BaseModel.getCloseUnRPC().getValue();
   }
 
+  private static @Nullable SharedPreferences getMySp() {
+    Context context = ApplicationHook.getContext();
+    if (context == null) return null;
+    if (mSP == null) mSP = context.getSharedPreferences("XQE_UID", Context.MODE_PRIVATE);
+    return mSP;
+  }
+
   //打印用户切换
-  public static String recordUserName(@Nullable Context context, @Nullable String uid) {
-    if (context == null) return "";
+  public static String recordUserName(@Nullable String uid) {
+    SharedPreferences sp = getMySp();
+    if (sp == null) return "";
     if (TextUtils.isEmpty(uid)) return "";
     String name = mUidMap.get(uid);
-    if (mSP == null) mSP = context.getSharedPreferences("XQE_UID", Context.MODE_PRIVATE);
     if (!TextUtils.isEmpty(name)) {
-      mSP.edit().putString(uid, name).apply();//保存以便下次访问
+      sp.edit().putString(uid, name).apply();//保存以便下次访问
       return ":" + name;
     } else {
-      String spName = mSP.getString(uid, "");
+      String spName = sp.getString(uid, "");
       if (TextUtils.isEmpty(spName)) {
         return ":" + uid;
       } else {

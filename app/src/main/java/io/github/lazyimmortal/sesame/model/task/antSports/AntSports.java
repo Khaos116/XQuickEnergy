@@ -282,8 +282,9 @@ public class AntSports extends ModelTask {
                 AntSportsTaskListMap.add(task, task);
             }
 
-            if (sportsTasks) {
+            if (sportsTasks && !MyUtils.getSp为了保障您的操作安全请进行验证后继续(MyUtils._系统出错正在排查1)) {
                 JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinTaskPanel());
+                MyUtils.setSp为了保障您的操作安全请进行验证后继续(MyUtils._系统出错正在排查1, jo);
                 if (MessageUtil.checkSuccess(TAG, jo)) {
                     jo = jo.getJSONObject("data");
                     if (jo.has("taskList")) {
@@ -346,7 +347,11 @@ public class AntSports extends ModelTask {
     private void sportsTasks() {
         try {
             signInCoinTask();
+            if(MyUtils.getSp为了保障您的操作安全请进行验证后继续(MyUtils._为了保障您的操作安全请进行验证后继续1)) {
+              return;
+            }
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinTaskPanel());
+            MyUtils.setSp为了保障您的操作安全请进行验证后继续(MyUtils._为了保障您的操作安全请进行验证后继续1, jo);
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
             }
@@ -466,7 +471,11 @@ public class AntSports extends ModelTask {
 
     private void receiveCoinAsset() {
         try {
+            if (MyUtils.getSp为了保障您的操作安全请进行验证后继续(MyUtils._为了保障您的操作安全请进行验证后继续2)) {
+              return;
+            }
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinBubbleModule());
+            MyUtils.setSp为了保障您的操作安全请进行验证后继续(MyUtils._为了保障您的操作安全请进行验证后继续2, jo);
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
             }

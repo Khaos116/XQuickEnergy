@@ -265,7 +265,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                                     }
                                     updateDay();
                                     String targetUid = getUserId();
-                                    Log.record("开始执行" + io.github.lazyimmortal.sesame.util.MyUtils.recordUserName(service, targetUid));//CHANGE BY KT
+                                    Log.record("开始执行" + io.github.lazyimmortal.sesame.util.MyUtils.recordUserName(targetUid));//CHANGE BY KT
                                     String currentUid = UserIdMap.getCurrentUid();
                                     if (targetUid == null || currentUid == null) {
                                         Log.record("用户为空，放弃执行");
@@ -660,7 +660,7 @@ public class ApplicationHook implements IXposedHookLoadPackage {
                 Model.initAllModel();
                 Log.record("模块版本：" + modelVersion);
                 //Log.record("开始加载");
-                Log.record("开始加载" + io.github.lazyimmortal.sesame.util.MyUtils.recordUserName(service, userId));//CHANGE BY KT
+                Log.record("开始加载" + io.github.lazyimmortal.sesame.util.MyUtils.recordUserName(userId));//CHANGE BY KT
                 ConfigV2.load(userId);
                 if (!Model.getModel(BaseModel.class).getEnableField().getValue()) {
                     Log.record("芝麻粒已禁用");

@@ -6,22 +6,25 @@ import org.json.JSONObject;
 import java.util.Objects;
 
 import io.github.lazyimmortal.sesame.model.extensions.ExtensionsHandle;
-import io.github.lazyimmortal.sesame.util.Log;
-import io.github.lazyimmortal.sesame.util.MessageUtil;
-import io.github.lazyimmortal.sesame.util.Status;
-import io.github.lazyimmortal.sesame.util.TimeUtil;
+import io.github.lazyimmortal.sesame.util.*;
 
 public class MerchantService {
     private static final String TAG = MerchantService.class.getSimpleName();
 
     public static Boolean transcodeCheck() {
         try {
+            if (MyUtils.getSp访问被拒绝(MyUtils._访问被拒绝1)) {
+              return false;
+            }
             JSONObject jo = new JSONObject(MerchantServiceRpcCall.transcodeCheck());
+            MyUtils.setSp访问被拒绝(MyUtils._访问被拒绝1, jo);
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return false;
-            } jo = jo.getJSONObject("data"); if (jo.optBoolean("isOpened")) {
+            }
+            jo = jo.getJSONObject("data"); if (jo.optBoolean("isOpened")) {
                 return true;
-            } Log.record("商家服务🏪未开通");
+            }
+            Log.record("商家服务🏪未开通");
         } catch (Throwable t) {
             Log.i(TAG, "transcodeCheck err:"); Log.printStackTrace(TAG, t);
         } return false;
@@ -55,7 +58,11 @@ public class MerchantService {
     public static void taskListQueryV2() {
         zcjSignIn(); ExtensionsHandle.handleAlphaRequest("merchantService", "doHideTask", null);
         try {
+            if(MyUtils.getSp系统出错正在排查(MyUtils._系统出错正在排查1)){
+              return;
+            }
             JSONObject jo = new JSONObject(MerchantServiceRpcCall.taskListQueryV2());
+            MyUtils.setSp系统出错正在排查(MyUtils._系统出错正在排查1, jo);
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
             } jo = jo.getJSONObject("data"); JSONArray ja = jo.getJSONArray("moduleList");
