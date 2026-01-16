@@ -80,7 +80,7 @@ public class MyUtils {
   }
 
   public static void setSp系统出错正在排查(@NonNull String key, JSONObject jo) {
-    //{"error":1009,"errorMessage":"访问被拒绝","errorNo":3,"errorTip":"1009"}
+    //{"error":3000,"errorMessage":"系统出错，正在排查","errorNo":3,"errorTip":"3000"}
     if (jo != null && "系统出错，正在排查".equals(jo.optString("errorMessage"))) {
       SharedPreferences sp = getMySp();
       if (sp != null) sp.edit().putBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), true).apply();
@@ -94,7 +94,7 @@ public class MyUtils {
   }
 
   public static void setSp为了保障您的操作安全请进行验证后继续(@NonNull String key, JSONObject jo) {
-    //{"error":1009,"errorMessage":"访问被拒绝","errorNo":3,"errorTip":"1009"}
+    //{"error":1009,"errorMessage":"为了保障您的操作安全，请进行验证后继续。","errorNo":3,"errorTip":"1009"}
     if (jo != null && "为了保障您的操作安全，请进行验证后继续。".equals(jo.optString("errorMessage"))) {
       SharedPreferences sp = getMySp();
       if (sp != null) sp.edit().putBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), true).apply();
