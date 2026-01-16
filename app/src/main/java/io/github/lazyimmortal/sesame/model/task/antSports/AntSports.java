@@ -290,7 +290,7 @@ public class AntSports extends ModelTask {
                         JSONArray taskLists = jo.getJSONArray("taskList");
                         for (int i = 0; i < taskLists.length(); i++) {
                             JSONObject taskList = taskLists.getJSONObject(i);
-                            String taskName = taskList.getString("taskName");
+                            String taskName = taskList.optString("taskName");
                             AntSportsTaskListMap.add(taskName, taskName);
                         }
                     }
@@ -357,14 +357,14 @@ public class AntSports extends ModelTask {
             JSONArray taskList = jo.getJSONArray("taskList");
             for (int i = 0; i < taskList.length(); i++) {
                 jo = taskList.getJSONObject(i);
-                String taskName = jo.getString("taskName");
-                String taskStatus = jo.getString("taskStatus");
+                String taskName = jo.optString("taskName");
+                String taskStatus = jo.optString("taskStatus");
                 if (TaskStatus.HAS_RECEIVED.name().equals(taskStatus)) {
                     return;
                 }
 
                 if (TaskStatus.WAIT_RECEIVE.name().equals(taskStatus)) {
-                    String assetId = jo.getString("assetId");
+                    String assetId = jo.optString("assetId");
                     int prizeAmount = jo.getInt("prizeAmount");
                     if (receiveCoinAsset(assetId, prizeAmount, taskName)) {
                         TimeUtil.sleep(1000);
@@ -379,8 +379,8 @@ public class AntSports extends ModelTask {
                     continue;
                 }
                 if (TaskStatus.WAIT_COMPLETE.name().equals(taskStatus)) {
-                    String taskAction = jo.getString("taskAction");
-                    String taskId = jo.getString("taskId");
+                    String taskAction = jo.optString("taskAction");
+                    String taskId = jo.optString("taskId");
                     if (jo.optBoolean("multiTask")) {
                         int currentNum = jo.getInt("currentNum") + 1;
                         int limitConfigNum = jo.getInt("limitConfigNum");
@@ -448,7 +448,7 @@ public class AntSports extends ModelTask {
                 JSONObject subscribeConfig;
                 if (data.has("subscribeConfig")) {
                     subscribeConfig = data.getJSONObject("subscribeConfig");
-                    Log.other("运动任务🧾[做任务得运动币:签到" + subscribeConfig.getString("subscribeExpireDays") + "天]奖励" + data.getString("toast") + "运动币");
+                    Log.other("运动任务🧾[做任务得运动币:签到" + subscribeConfig.optString("subscribeExpireDays") + "天]奖励" + data.optString("toast") + "运动币");
                 }
                 else {
                     //                        Log.record("没有签到");
@@ -480,7 +480,7 @@ public class AntSports extends ModelTask {
                 if (!data.has("assetId")) {
                     return;
                 }
-                String assetId = jo.getString("assetId");
+                String assetId = jo.optString("assetId");
                 int coinAmount = jo.getInt("coinAmount");
                 String simpleSourceName = jo.optString("simpleSourceName");
                 if (receiveCoinAsset(assetId, coinAmount, simpleSourceName)) {
@@ -543,7 +543,7 @@ public class AntSports extends ModelTask {
             if (jo.optBoolean("dayLimit")) {
                 return true;
             }
-            String pathCompleteStatus = jo.getString("pathCompleteStatus");
+            String pathCompleteStatus = jo.optString("pathCompleteStatus");
             if (PathCompleteStatus.COMPLETED.name().equals(pathCompleteStatus)) {
                 return true;
             }
@@ -568,7 +568,7 @@ public class AntSports extends ModelTask {
             int count = 0;
             for (int i = 0; i < ja.length(); i++) {
                 jo = ja.getJSONObject(i);
-                if (!"SPORTSPROD_GOPATH_AWARD_BOX".equals(jo.getString("templateId"))) {
+                if (!"SPORTSPROD_GOPATH_AWARD_BOX".equals(jo.optString("templateId"))) {
                     continue;
                 }
                 if (!TimeUtil.isToday(jo.getLong("receiveTime"))) {
@@ -616,8 +616,8 @@ public class AntSports extends ModelTask {
             if (useStepCount < minGoStepCount || dayLimit) {
                 return false;
             }
-            String pathId = path.getString("pathId");
-            String pathName = path.getString("name");
+            String pathId = path.optString("pathId");
+            String pathName = path.optString("name");
             return walkGo(pathName, pathId, useStepCount);
         }
         catch (Throwable t) {
@@ -700,7 +700,7 @@ public class AntSports extends ModelTask {
         try {
             for (int i = 0; i < treasureBoxList.length(); i++) {
                 JSONObject treasureBox = treasureBoxList.getJSONObject(i);
-                receiveEvent(treasureBox.getString("boxNo"));
+                receiveEvent(treasureBox.optString("boxNo"));
                 TimeUtil.sleep(1000);
             }
         }
@@ -743,11 +743,11 @@ public class AntSports extends ModelTask {
         try {
             for (int i = 0; i < rewards.length(); i++) {
                 JSONObject jo = rewards.getJSONObject(i);
-                if (jo.has("rewardStatus") && !"SUCCESS".equals(jo.getString("rewardStatus"))) {
+                if (jo.has("rewardStatus") && !"SUCCESS".equals(jo.optString("rewardStatus"))) {
                     // rewardStatus : SUCCESS NOT_HIT
                     continue;
                 }
-                Log.other("行走路线🚶🏻‍♂️收获" + rewardsTypeName + "[" + jo.getString("rewardName") + "*" + jo.getInt("count") + "]");
+                Log.other("行走路线🚶🏻‍♂️收获" + rewardsTypeName + "[" + jo.optString("rewardName") + "*" + jo.getInt("count") + "]");
             }
         }
         catch (Throwable t) {
@@ -808,7 +808,7 @@ public class AntSports extends ModelTask {
             }
             JSONArray cityList = theme.getJSONArray("cityList");
             for (int i = 0; i < cityList.length(); i++) {
-                String cityId = cityList.getJSONObject(i).getString("cityId");
+                String cityId = cityList.getJSONObject(i).optString("cityId");
                 if (cityId.equals("000000") || cityId.equals("232700") || cityId.equals("620900") || cityId.equals("653100") || cityId.equals("710100")) {
                     continue;
                 }
@@ -819,8 +819,8 @@ public class AntSports extends ModelTask {
                 JSONArray cityPathList = city.getJSONArray("cityPathList");
                 for (int j = 0; j < cityPathList.length(); j++) {
                     JSONObject cityPath = cityPathList.getJSONObject(j);
-                    pathId = cityPath.getString("pathId");
-                    String pathCompleteStatus = cityPath.getString("pathCompleteStatus");
+                    pathId = cityPath.optString("pathId");
+                    String pathCompleteStatus = cityPath.optString("pathCompleteStatus");
                     if (!PathCompleteStatus.COMPLETED.name().equals(pathCompleteStatus)) {
                         return pathId;
                     }
@@ -860,7 +860,7 @@ public class AntSports extends ModelTask {
             JSONObject jo = new JSONObject(AntSportsRpcCall.joinPath(pathId));
             if (MessageUtil.checkSuccess(TAG, jo)) {
                 JSONObject pathData = queryPath(pathId);
-                String pathName = pathData.getJSONObject("path").getString("name");
+                String pathName = pathData.getJSONObject("path").optString("name");
                 Log.other("行走路线🚶🏻‍♂️加入[" + pathName + "]#[" + UserIdMap.getShowName(UserIdMap.getCurrentUid()) + "]");
                 return true;
             }
@@ -925,10 +925,10 @@ public class AntSports extends ModelTask {
                     continue;
                 }
                 // footballFieldStatus: OPENING_DONATE DONATE_COMPLETED
-                if ("DONATE_COMPLETED".equals(jo.getString("footballFieldStatus"))) {
+                if ("DONATE_COMPLETED".equals(jo.optString("footballFieldStatus"))) {
                     break;
                 }
-                if (donate(donateCharityCoin, jo.getString("projectId"), jo.getString("title"))) {
+                if (donate(donateCharityCoin, jo.optString("projectId"), jo.optString("title"))) {
                     charityCoinCount -= donateCharityCoin;
                     if (donateCharityCoinType.getValue() != DonateCharityCoinType.ALL) {
                         break;
@@ -1019,9 +1019,9 @@ public class AntSports extends ModelTask {
                     return;
                 }
 
-                String donateToken = walkDonateHomeModel.getString("donateToken");
+                String donateToken = walkDonateHomeModel.optString("donateToken");
                 JSONObject walkCharityActivityModel = walkDonateHomeModel.getJSONObject("walkCharityActivityModel");
-                String activityId = walkCharityActivityModel.getString("activityId");
+                String activityId = walkCharityActivityModel.optString("activityId");
 
                 jo = new JSONObject(AntSportsRpcCall.donateWalkExchange(activityId, stepCount, donateToken));
                 if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -1030,7 +1030,7 @@ public class AntSports extends ModelTask {
                 JSONObject donateExchangeResultModel = jo.getJSONObject("donateExchangeResultModel");
                 int userCount = donateExchangeResultModel.getInt("userCount");
                 double amount = donateExchangeResultModel.getJSONObject("userAmount").getDouble("amount");
-                String donateTitle = donateExchangeResultModel.getString("donateTitle");
+                String donateTitle = donateExchangeResultModel.optString("donateTitle");
                 Log.other("公益捐赠❤️[捐步做公益:" + donateTitle + "]捐赠" + userCount + "步,兑换" + amount + "元公益金");
                 Status.flagToday("sport::donateWalk");
         }
@@ -1051,12 +1051,12 @@ public class AntSports extends ModelTask {
                 JSONArray userTaskList = jo.getJSONArray("userTaskList");
                 for (int i = 0; i < userTaskList.length(); i++) {
                     jo = userTaskList.getJSONObject(i);
-                    if (!"TODO".equals(jo.getString("status"))) {
+                    if (!"TODO".equals(jo.optString("status"))) {
                         continue;
                     }
                     JSONObject taskInfo = jo.getJSONObject("taskInfo");
-                    String bizType = taskInfo.getString("bizType");
-                    String taskId = taskInfo.getString("taskId");
+                    String bizType = taskInfo.optString("bizType");
+                    String taskId = taskInfo.optString("taskId");
                     jo = new JSONObject(AntSportsRpcCall.userTaskComplete(bizType, taskId));
                     if (jo.optBoolean("success")) {
                         String taskName = taskInfo.optString("taskName", taskId);
@@ -1091,7 +1091,7 @@ public class AntSports extends ModelTask {
                     JSONArray dataList = jo.getJSONArray("dataList");
                     for (int i = 0; i < dataList.length(); i++) {
                         jo = dataList.getJSONObject(i);
-                        if (!"P".equals(jo.getString("status"))) {
+                        if (!"P".equals(jo.optString("status"))) {
                             continue;
                         }
                         if (jo.has("userRecord")) {
@@ -1099,7 +1099,7 @@ public class AntSports extends ModelTask {
                         }
                         JSONArray instanceList = jo.getJSONArray("instanceList");
                         int pointOptions = 0;
-                        String roundId = jo.getString("id");
+                        String roundId = jo.optString("id");
                         String InstanceId = null;
                         String ResultId = null;
                         for (int j = instanceList.length() - 1; j >= 0; j--) {
@@ -1108,13 +1108,13 @@ public class AntSports extends ModelTask {
                                 continue;
                             }
                             pointOptions = jo.getInt("pointOptions");
-                            InstanceId = jo.getString("id");
-                            ResultId = jo.getString("instanceResultId");
+                            InstanceId = jo.optString("id");
+                            ResultId = jo.optString("instanceResultId");
                         }
                         jo = new JSONObject(AntSportsRpcCall.participate(pointOptions, InstanceId, ResultId, roundId));
                         if (jo.optBoolean("success")) {
                             jo = jo.getJSONObject("data");
-                            String roundDescription = jo.getString("roundDescription");
+                            String roundDescription = jo.optString("roundDescription");
                             int targetStepCount = jo.getInt("targetStepCount");
                             Log.other("走路挑战🚶🏻‍♂️[" + roundDescription + "]#" + targetStepCount);
                         }
@@ -1143,12 +1143,12 @@ public class AntSports extends ModelTask {
                 JSONArray userTaskList = jo.getJSONArray("userTaskList");
                 for (int i = 0; i < userTaskList.length(); i++) {
                     jo = userTaskList.getJSONObject(i);
-                    if (!"COMPLETED".equals(jo.getString("status"))) {
+                    if (!"COMPLETED".equals(jo.optString("status"))) {
                         continue;
                     }
-                    String userTaskId = jo.getString("userTaskId");
+                    String userTaskId = jo.optString("userTaskId");
                     JSONObject taskInfo = jo.getJSONObject("taskInfo");
-                    String taskId = taskInfo.getString("taskId");
+                    String taskId = taskInfo.optString("taskId");
                     jo = new JSONObject(AntSportsRpcCall.userTaskRightsReceive(taskId, userTaskId));
                     if (jo.optBoolean("success")) {
                         String taskName = taskInfo.optString("taskName", taskId);
@@ -1156,7 +1156,7 @@ public class AntSports extends ModelTask {
                         StringBuilder award = new StringBuilder();
                         for (int j = 0; j < rightsRuleList.length(); j++) {
                             jo = rightsRuleList.getJSONObject(j);
-                            award.append(jo.getString("rightsName")).append("*").append(jo.getInt("baseAwardCount"));
+                            award.append(jo.optString("rightsName")).append("*").append(jo.getInt("baseAwardCount"));
                         }
                         Log.other("领取奖励🎖️[" + taskName + "]#" + award);
                     }
@@ -1183,12 +1183,12 @@ public class AntSports extends ModelTask {
             JSONObject jo = new JSONObject(s);
             if (jo.optBoolean("success")) {
                 JSONObject path = jo.getJSONObject("path");
-                String pathId = path.getString("pathId");
-                String title = path.getString("title");
+                String pathId = path.optString("pathId");
+                String title = path.optString("title");
                 int minGoStepCount = path.getInt("minGoStepCount");
                 if (jo.has("userPath")) {
                     JSONObject userPath = jo.getJSONObject("userPath");
-                    String userPathRecordStatus = userPath.getString("userPathRecordStatus");
+                    String userPathRecordStatus = userPath.optString("userPathRecordStatus");
                     if ("COMPLETED".equals(userPathRecordStatus)) {
                         pathMapHomepage(pathId);
                         pathMapJoin(title, pathId);
@@ -1200,7 +1200,7 @@ public class AntSports extends ModelTask {
                         if (jo.optBoolean("success")) {
                             int canGoStepCount = jo.getInt("canGoStepCount");
                             if (canGoStepCount >= minGoStepCount) {
-                                String userPathRecordId = userPath.getString("userPathRecordId");
+                                String userPathRecordId = userPath.optString("userPathRecordId");
                                 tiyubizGo(countDate, title, canGoStepCount, pathId, userPathRecordId);
                             }
                         }
@@ -1211,7 +1211,7 @@ public class AntSports extends ModelTask {
                 }
             }
             else {
-                Log.i(TAG, jo.getString("resultDesc"));
+                Log.i(TAG, jo.optString("resultDesc"));
             }
         }
         catch (Throwable t) {
@@ -1231,10 +1231,10 @@ public class AntSports extends ModelTask {
                 JSONArray userPathGoRewardList = jo.getJSONArray("userPathGoRewardList");
                 for (int i = 0; i < userPathGoRewardList.length(); i++) {
                     jo = userPathGoRewardList.getJSONObject(i);
-                    if (!"UNRECEIVED".equals(jo.getString("status"))) {
+                    if (!"UNRECEIVED".equals(jo.optString("status"))) {
                         continue;
                     }
-                    String userPathRewardId = jo.getString("userPathRewardId");
+                    String userPathRewardId = jo.optString("userPathRewardId");
                     jo = new JSONObject(AntSportsRpcCall.rewardReceive(pathId, userPathRewardId));
                     if (jo.optBoolean("success")) {
                         jo = jo.getJSONObject("userPathRewardDetail");
@@ -1242,7 +1242,7 @@ public class AntSports extends ModelTask {
                         StringBuilder award = new StringBuilder();
                         for (int j = 0; j < rightsRuleList.length(); j++) {
                             jo = rightsRuleList.getJSONObject(j).getJSONObject("rightsContent");
-                            award.append(jo.getString("name")).append("*").append(jo.getInt("count"));
+                            award.append(jo.optString("name")).append("*").append(jo.getInt("count"));
                         }
                         Log.other("文体宝箱🎁[" + award + "]#[" + UserIdMap.getShowName(UserIdMap.getCurrentUid()) + "]");
                     }
@@ -1288,7 +1288,7 @@ public class AntSports extends ModelTask {
                 jo = jo.getJSONObject("userPath");
                 Log.other("行走线路🚶🏻‍♂️[" + title + "]#前进了" + jo.getInt("userPathRecordForwardStepCount") + "步");
                 pathMapHomepage(pathId);
-                boolean completed = "COMPLETED".equals(jo.getString("userPathRecordStatus"));
+                boolean completed = "COMPLETED".equals(jo.optString("userPathRecordStatus"));
                 if (completed) {
                     Log.other("完成线路🚶🏻‍♂️[" + title + "]");
                     pathFeatureQuery();
@@ -1317,7 +1317,7 @@ public class AntSports extends ModelTask {
             if (mainRoom.has("bubbleList")) {
                 JSONArray bubbleList = mainRoom.getJSONArray("bubbleList");
                 for (int k = 0; k < bubbleList.length(); k++) {
-                    String bubbleId = bubbleList.getJSONObject(k).getString("bubbleId");
+                    String bubbleId = bubbleList.getJSONObject(k).optString("bubbleId");
                     collectBubble(bubbleId, "[买卖]");
                     TimeUtil.sleep(200);
                 }
@@ -1331,13 +1331,13 @@ public class AntSports extends ModelTask {
             for (int i = 0; i < roomList.length(); i++) {
                 // 检查可以购买好友的房号i
                 JSONObject room = roomList.getJSONObject(i);
-                String roomId = room.getString("roomId");
+                String roomId = room.optString("roomId");
 
                 // 收取训练好友能量
                 if (room.has("bubbleList")) {
                     JSONArray roombubbleList = room.getJSONArray("bubbleList");
                     for (int l = 0; l < roombubbleList.length(); l++) {
-                        String bubbleId = roombubbleList.getJSONObject(l).getString("bubbleId");
+                        String bubbleId = roombubbleList.getJSONObject(l).optString("bubbleId");
                         // 收取第i号房间需要收取训练好友的第l个能量球
                         collectBubble(bubbleId, "[训练]");
                         TimeUtil.sleep(200);
@@ -1379,7 +1379,7 @@ public class AntSports extends ModelTask {
             roomListTrain = autoTrain.getJSONArray("roomList");
             for (int j = 0; j < roomListTrain.length(); j++) {
                 JSONObject roomTrain = roomListTrain.getJSONObject(j);
-                String roomId = roomTrain.getString("roomId");
+                String roomId = roomTrain.optString("roomId");
                 if (roomTrain.getJSONArray("memberList").length() != 0) {
                     JSONObject member = roomTrain.getJSONArray("memberList").getJSONObject(0);
                     JSONObject trainInfo = member.getJSONObject("trainInfo");
@@ -1406,7 +1406,7 @@ public class AntSports extends ModelTask {
             JSONObject jo = new JSONObject(AntSportsRpcCall.collectBubble(bubbleId));
             if (jo.optBoolean("success")) {
                 JSONObject ja = jo.getJSONObject("data");
-                String collectCoin = ja.getString("changeAmount");
+                String collectCoin = ja.optString("changeAmount");
                 Log.other("好友大战🧊收取" + bubbleType + "获得[" + collectCoin + "运动能量]" + "#[" + UserIdMap.getShowName(UserIdMap.getCurrentUid()) + "]");
             }
         }
@@ -1419,8 +1419,8 @@ public class AntSports extends ModelTask {
     // 抢好友大战-训练好友
     private void trainMember(JSONObject member) {
         try {
-            String memberId = member.getString("memberId");
-            String originBossId = member.getString("originBossId");
+            String memberId = member.optString("memberId");
+            String originBossId = member.optString("originBossId");
             JSONObject trainInfo = member.getJSONObject("trainInfo");
 
             String userName = UserIdMap.getShowName(originBossId);
@@ -1438,10 +1438,10 @@ public class AntSports extends ModelTask {
 
                 // 可以翻倍训练
                 if (queryTrainItemjo.has("bizId")) {
-                    String bizId = queryTrainItemjo.getString("bizId");
+                    String bizId = queryTrainItemjo.optString("bizId");
                     String taskAction = "SHOW_AD";
                     queryTrainItemjo = queryTrainItemjo.getJSONObject("taskDetail");
-                    String taskId = queryTrainItemjo.getString("taskId");
+                    String taskId = queryTrainItemjo.optString("taskId");
                     JSONObject jo = new JSONObject(AntSportsRpcCall.DoubletrainMember(itemType, bizId, memberId, originBossId));
                     Log.other("好友大战💪训练[" + userName + "]" + name + "[" + UserIdMap.getShowName(UserIdMap.getCurrentUid()) + "]");
                     if (!MessageUtil.checkResultCode(TAG, jo)) {
@@ -1506,8 +1506,8 @@ public class AntSports extends ModelTask {
                 if (price > energyBalance) {
                     continue;
                 }
-                String originBossId = jo.getString("originBossId");
-                String currentBossId = jo.getString("currentBossId");
+                String originBossId = jo.optString("originBossId");
+                String currentBossId = jo.optString("currentBossId");
 
                 // 判断如果老板是当前账号则查找下一个
                 if (currentBossId.equals(UserIdMap.getCurrentUid())) {
@@ -1535,7 +1535,7 @@ public class AntSports extends ModelTask {
                     JSONObject roomTrain = roomListTrain.getJSONObject(j);
                     if (roomTrain.getJSONArray("memberList").length() != 0) {
                         JSONObject member = roomTrain.getJSONArray("memberList").getJSONObject(0);
-                        if (originBossId.equals(member.getString("originBossId"))) {
+                        if (originBossId.equals(member.optString("originBossId"))) {
                             canbuyMember = false;
                         }
                     }
@@ -1556,8 +1556,8 @@ public class AntSports extends ModelTask {
 
     private JSONObject queryClubMember(JSONObject member) {
         try {
-            String memberId = member.getString("memberId");
-            String originBossId = member.getString("originBossId");
+            String memberId = member.optString("memberId");
+            String originBossId = member.optString("originBossId");
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryClubMember(memberId, originBossId));
             if (MessageUtil.checkResultCode(TAG, jo)) {
                 JSONObject priceInfo = jo.getJSONObject("member").getJSONObject("priceInfo");
@@ -1578,10 +1578,10 @@ public class AntSports extends ModelTask {
             return false;
         }
         try {
-            String currentBossId = member.getString("currentBossId");
+            String currentBossId = member.optString("currentBossId");
             String currentBossShowName = UserIdMap.getShowName(currentBossId) != null ? UserIdMap.getShowName(currentBossId) : currentBossId;
-            String memberId = member.getString("memberId");
-            String originBossId = member.getString("originBossId");
+            String memberId = member.optString("memberId");
+            String originBossId = member.optString("originBossId");
             JSONObject priceInfo = member.getJSONObject("priceInfo");
             JSONObject jo = new JSONObject(AntSportsRpcCall.buyMember(currentBossId, memberId, originBossId, priceInfo, roomId));
             if (MessageUtil.checkResultCode(TAG, jo)) {
@@ -1613,7 +1613,7 @@ public class AntSports extends ModelTask {
                 return;
             }
             jo = jo.getJSONObject("itemBaseInfo");
-            String itemTitle = jo.getString("itemTitle");
+            String itemTitle = jo.optString("itemTitle");
             int valueCoinCount = jo.getInt("valueCoinCount");
             jo = new JSONObject(AntSportsRpcCall.exchangeItem(itemId, valueCoinCount));
             if (!MessageUtil.checkSuccess(TAG, jo)) {
@@ -1689,7 +1689,7 @@ public class AntSports extends ModelTask {
             JSONObject jsonResult = new JSONObject(AntSportsRpcCall.neverlandtaskReceive(arg));
 
             if (MessageUtil.checkSuccess(TAG, jsonResult)) {
-                String taskName = task.getString("title");
+                String taskName = task.optString("title");
                 JSONObject data = jsonResult.getJSONObject("data");
                 JSONArray rewards = data.getJSONArray("userItems");
                 ArrayList<String> rewardList = parseRewards(rewards);
@@ -1716,7 +1716,7 @@ public class AntSports extends ModelTask {
             String arg = "[" + task.toString() + "]";
             JSONObject jsonResult = new JSONObject(AntSportsRpcCall.neverlandtaskSend(arg));
             if (MessageUtil.checkSuccess(TAG, jsonResult)) {
-                String taskName = task.getString("title");
+                String taskName = task.optString("title");
                 Log.other("悦动健康🚑️完成任务[" + taskName + "]");
                 TimeUtil.sleep(1000);
                 return true;
@@ -1863,8 +1863,8 @@ public class AntSports extends ModelTask {
                     continue;
                 }
 
-                String unit = "H1".equals(reward.getString("itemId")) ? "g" : "";
-                String name = reward.getString("name");
+                String unit = "H1".equals(reward.optString("itemId")) ? "g" : "";
+                String name = reward.optString("name");
                 rewardList.add(count + unit + name);
             }
         }
@@ -1886,7 +1886,7 @@ public class AntSports extends ModelTask {
             JSONObject jsonResult = new JSONObject(AntSportsRpcCall.neverlandpickBubbleTaskEnergy(recordId));
             if (MessageUtil.checkSuccess(TAG, jsonResult)) {
                 JSONObject data = jsonResult.getJSONObject("data");
-                String energy = data.getString("changeAmount");
+                String energy = data.optString("changeAmount");
                 Log.other("悦动健康🚑️领取奖励[" + rewardName + "]#获得[" + energy + "g健康能量]");
             }
         }
@@ -1913,9 +1913,9 @@ public class AntSports extends ModelTask {
 
             // 处理普通岛能量泵任务
             if (!data.optBoolean("newGame") && WALK_GRID.getValue()) {
-                String branchId = data.getString("branchId");
-                String mapId = data.getString("mapId");
-                String mapName = data.getString("mapName");
+                String branchId = data.optString("branchId");
+                String mapId = data.optString("mapId");
+                String mapName = data.optString("mapName");
                 int walkGridcount = 0;
                 if (canWalkGrid(branchId, mapId) && queryUserEnergy() >= 5 && queryUserEnergy() >= WALK_GRID_LIMIT.getValue()) {
                     while (walkGrid(branchId, mapId, mapName)) {
@@ -1932,9 +1932,9 @@ public class AntSports extends ModelTask {
             }
             // 处理活动岛能量泵任务
             if (data.optBoolean("newGame") && WALK_GRID.getValue()) {
-                String branchId = data.getString("branchId");
-                String mapId = data.getString("mapId");
-                String mapName = data.getString("mapName");
+                String branchId = data.optString("branchId");
+                String mapId = data.optString("mapId");
+                String mapName = data.optString("mapName");
                 int buildcount = 0;
                 if (canBuild(mapId) && queryUserEnergy() >= 5 && queryUserEnergy() >= WALK_GRID_LIMIT.getValue()) {
                     int remainBuildingEnergyProcess = build(branchId, mapId, mapName, 1);
@@ -1968,9 +1968,9 @@ public class AntSports extends ModelTask {
             if (awardspecialActivityReceive.getValue()) {
                 //领取活动岛奖励
                 if (data.optBoolean("newGame")) {
-                    String branchId = data.getString("branchId");
-                    String mapId = data.getString("mapId");
-                    String mapName = data.getString("mapName");
+                    String branchId = data.optString("branchId");
+                    String mapId = data.optString("mapId");
+                    String mapName = data.optString("mapName");
                     jsonResult = new JSONObject(AntSportsRpcCall.queryMapDetail(mapId));
                     if (MessageUtil.checkSuccess(TAG, jsonResult)) {
                         JSONObject dataMapDetail = jsonResult.getJSONObject("data");
@@ -2022,28 +2022,28 @@ public class AntSports extends ModelTask {
                 if (!task.has("bubbleTaskStatus")) {
                     continue;
                 }
-                String title = task.getString("title");
-                String bubbleTaskStatus = task.getString("bubbleTaskStatus");
+                String title = task.optString("title");
+                String bubbleTaskStatus = task.optString("bubbleTaskStatus");
                 
                 if (bubbleTaskStatus.equals("INIT")) {
-                    if ("AD_BALL".equals(task.getString("taskId"))) {
+                    if ("AD_BALL".equals(task.optString("taskId"))) {
                         task.put("lightTaskId", "adBubble");
                         if (receiveBrowseReward(task)) {
                             TimeUtil.sleep(1000);
                             needRetry = true;
                         }
                     }
-                    else if ("STRATEGY_BALL".equals(task.getString("taskId"))) {
-                        receiveSpecialPrize(task.getString("taskId") + "_ACTIVITY", title);
+                    else if ("STRATEGY_BALL".equals(task.optString("taskId"))) {
+                        receiveSpecialPrize(task.optString("taskId") + "_ACTIVITY", title);
                     }
-                    else if ("SIGN_BALL".equals(task.getString("taskId"))) {
+                    else if ("SIGN_BALL".equals(task.optString("taskId"))) {
                         signIn();
                     }
                     break;
                 }
                 if (bubbleTaskStatus.equals("TO_RECEIVE")) {
                     // 已完成任务，领取奖励
-                    receiveBubbleReward(task.getString("medEnergyBallInfoRecordId"), title);
+                    receiveBubbleReward(task.optString("medEnergyBallInfoRecordId"), title);
                     break;
                 }
             }
@@ -2082,19 +2082,19 @@ public class AntSports extends ModelTask {
                 JSONArray items = data.getJSONArray("itemVOList");
                 for (int i = 0; i < items.length(); i++) {
                     JSONObject item = items.getJSONObject(i);
-                    if (!"benefitItem".equals(item.getString("materialType"))) {
+                    if (!"benefitItem".equals(item.optString("materialType"))) {
                         continue;
                     }
                     
-                    String benefitId = item.getString("benefitId");
-                    String itemId = item.getString("itemId");
-                    String itemName = item.getString("itemName");
+                    String benefitId = item.optString("benefitId");
+                    String itemId = item.optString("itemId");
+                    String itemName = item.optString("itemName");
                     int remainCount = item.getInt("remainCount");
-                    int cost = Integer.parseInt(item.getString("salePoint"));
+                    int cost = Integer.parseInt(item.optString("salePoint"));
                     
                     // 检查是否可兑换
                     if (remainCount >= 1 && neverLandBenefitList.contains(itemId) && currentEnergy >= cost) {
-                        if (item.getString("status").equals("ITEM_SALE")) {
+                        if (item.optString("status").equals("ITEM_SALE")) {
                             String exchangeResult = AntSportsRpcCall.createOrder(benefitId, itemId);
                             if (MessageUtil.checkSuccess(TAG, new JSONObject(exchangeResult))) {
                                 Log.other("悦动健康🚑️兑换权益[" + itemName + "]#消耗[" + cost + "g健康能量]");
@@ -2211,14 +2211,14 @@ public class AntSports extends ModelTask {
             
             for (int i = 0; i < tasks.length(); i++) {
                 JSONObject task = tasks.getJSONObject(i);
-                String status = task.getString("taskStatus");
+                String status = task.optString("taskStatus");
                 
                 if ("SIGNUP_COMPLETE".equals(status)) {
-                    String taskType = task.getString("taskType");
+                    String taskType = task.optString("taskType");
                     if ("LIGHT_TASK".equals(taskType)) {
                         if (task.has("logExtMap")) {
                             JSONObject logExtMap = task.getJSONObject("logExtMap");
-                            //if (TaskHelper.checkTaskCompleted(logExtMap.getString("taskType"), logExtMap.getString("bizId"))) {
+                            //if (TaskHelper.checkTaskCompleted(logExtMap.optString("taskType"), logExtMap.optString("bizId"))) {
                             //
                             //    TimeUtil.sleep(1000);
                             //    needRetry = true;
@@ -2297,7 +2297,7 @@ public class AntSports extends ModelTask {
             JSONObject jsonResult = new JSONObject(AntSportsRpcCall.queryUserAccount());
             if (MessageUtil.checkSuccess(TAG, jsonResult)) {
                 JSONObject data = jsonResult.getJSONObject("data");
-                return Integer.parseInt(data.getString("balance"));
+                return Integer.parseInt(data.optString("balance"));
             }
         }
         catch (Exception e) {
@@ -2362,8 +2362,8 @@ public class AntSports extends ModelTask {
                 
                 for (int i = 0; i < mapList.length(); i++) {
                     JSONObject map = mapList.getJSONObject(i);
-                    String mapName = map.getString("mapName");
-                    String status = map.getString("status");
+                    String mapName = map.optString("mapName");
+                    String status = map.optString("status");
                     
                     if (mapName.equals(thismapName) && status.contains("FINISH")) {
                         needSwitch = true;
@@ -2372,10 +2372,10 @@ public class AntSports extends ModelTask {
                 if (needSwitch) {
                     for (int i = 0; i < mapList.length(); i++) {
                         JSONObject map = mapList.getJSONObject(i);
-                        String mapName = map.getString("mapName");
-                        String mapId = map.getString("mapId");
-                        String status = map.getString("status");
-                        String branchId = map.getString("branchId");
+                        String mapName = map.optString("mapName");
+                        String mapId = map.optString("mapId");
+                        String status = map.optString("status");
+                        String branchId = map.optString("branchId");
                         //boolean newIsLandFlg = map.optBoolean("newIsLandFlg");
                         
                         if (!mapName.equals(thismapName)) {
