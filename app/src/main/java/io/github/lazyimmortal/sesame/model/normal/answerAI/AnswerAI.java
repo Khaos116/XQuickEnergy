@@ -20,7 +20,7 @@ public class AnswerAI extends Model {
 
     @Override
     public String getName() {
-        return "AI答";
+        return "AI答题";
     }
 
     @Override
