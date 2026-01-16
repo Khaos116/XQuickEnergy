@@ -346,21 +346,18 @@ public class AntSports extends ModelTask {
     // 运动
     private void sportsTasks() {
         try {
-            signInCoinTask();
-            if(MyUtils.getSp为了保障您的操作安全请进行验证后继续(MyUtils._为了保障您的操作安全请进行验证后继续1)) {
-              return;
-            }
-            JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinTaskPanel());
-            MyUtils.setSp为了保障您的操作安全请进行验证后继续(MyUtils._为了保障您的操作安全请进行验证后继续1, jo);
+          signInCoinTask();
+          if (MyUtils._关闭必弹验证) return;//运动任务查询
+          JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinTaskPanel());
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
             }
-            jo = jo.getJSONObject("data");
-            if (!jo.has("taskList")) {
-                return;
+            jo = jo.optJSONObject("data");
+            if (jo == null || !jo.has("taskList")) {
+              return;
             }
-            JSONArray taskList = jo.getJSONArray("taskList");
-            for (int i = 0; i < taskList.length(); i++) {
+            JSONArray taskList = jo.optJSONArray("taskList");
+            if (taskList != null) for (int i = 0; i < taskList.length(); i++) {
                 jo = taskList.getJSONObject(i);
                 String taskName = jo.optString("taskName");
                 String taskStatus = jo.optString("taskStatus");
@@ -425,6 +422,7 @@ public class AntSports extends ModelTask {
 
     private Boolean completeTask(String taskAction, String taskId, String taskName) {
         try {
+            if (MyUtils._关闭必弹验证 && "SHOW_AD".equals(taskAction) && "AP12300610".equals(taskId)) return false;
             JSONObject jo = new JSONObject(AntSportsRpcCall.completeTask(taskAction, taskId));
             //检查并标记黑名单任务
             MessageUtil.checkResultCodeAndMarkTaskBlackList("AntSportsTaskList", taskName, jo);
@@ -471,16 +469,13 @@ public class AntSports extends ModelTask {
 
     private void receiveCoinAsset() {
         try {
-            if (MyUtils.getSp为了保障您的操作安全请进行验证后继续(MyUtils._为了保障您的操作安全请进行验证后继续2)) {
-              return;
-            }
+            if (MyUtils._关闭必弹验证) return;//收运动币
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinBubbleModule());
-            MyUtils.setSp为了保障您的操作安全请进行验证后继续(MyUtils._为了保障您的操作安全请进行验证后继续2, jo);
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
             }
-            JSONObject data = jo.getJSONObject("data");
-            if (!data.has("recBubbleList")) {
+            JSONObject data = jo.optJSONObject("data");
+            if (data == null || !data.has("recBubbleList")) {
                 return;
             }
             JSONArray ja = data.getJSONArray("recBubbleList");
@@ -1119,6 +1114,12 @@ public class AntSports extends ModelTask {
                             pointOptions = jo.getInt("pointOptions");
                             InstanceId = jo.optString("id");
                             ResultId = jo.optString("instanceResultId");
+                        }
+                        //ERROR: new rpc response | id: 208117859 | method: alipay.tiyubiz.wenti.walk.participate
+                        //args: [{"bettingPoints":100,"guessInstanceId":"2025052011001031000501605799","guessResultId":"2025052011001031007301610705","newParticipant":false,"roundId":"2025052011001031006001566329","stepTimeZone":"Asia/Shanghai"}]
+                        //data: {"error":3000,"errorMessage":"系统出错，正在排查","errorNo":3,"errorTip":"3000"}
+                        if (MyUtils.closeErrorFunction() && "2025052011001031006001566329".equals(roundId)) {
+                          continue;//2025-08-07 发现执行会出现"系统出错，正在排查"
                         }
                         jo = new JSONObject(AntSportsRpcCall.participate(pointOptions, InstanceId, ResultId, roundId));
                         if (jo.optBoolean("success")) {
