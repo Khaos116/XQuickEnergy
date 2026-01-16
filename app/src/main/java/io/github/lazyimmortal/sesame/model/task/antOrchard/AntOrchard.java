@@ -696,7 +696,7 @@ public class AntOrchard extends ModelTask {
                 return false;
             }
             String title = task.getJSONObject("taskDisplayConfig").getString("title");
-            if (MyUtils._关闭不支持RPC && TextUtils.equals("逛一逛一淘", title)) {//CHANGE BY KT
+            if (MyUtils._关闭不支持RPC2 && TextUtils.equals("逛一逛一淘", title)) {//CHANGE BY KT
                 return false;
             }
             String actionType = task.getString("actionType");

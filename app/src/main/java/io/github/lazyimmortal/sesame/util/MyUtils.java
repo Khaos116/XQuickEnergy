@@ -50,54 +50,42 @@ public class MyUtils {
   public static final boolean _关闭人气太旺 = true;
   public static final boolean _关闭不存在的方法调用 = true;
   public static final boolean _关闭首页弹窗 = true;
-  public static final boolean _关闭访问被拒绝 = true;
-  public static final boolean _关闭必弹验证 = true;
+  public static final boolean _关闭必弹验证1 = true;
+  public static final boolean _关闭必弹验证2 = true;
+  public static final boolean _关闭必弹验证3 = true;
+  public static final boolean _关闭必弹验证4 = true;
   public static final boolean _关闭作弊广告流量 = true;
-  public static final boolean _关闭不支持RPC = true;
-  public static final String _访问被拒绝1 = "alipay.mrchservbase.mrchbusiness.sign.transcode.check";
-  public static final String _系统出错正在排查1 = "alipay.mrchservbase.zcj.taskList.query.v2";
-  public static final String _为了保障您的操作安全请进行验证后继续1 = "com.alipay.sportshealth.biz.rpc.SportsHealthCoinTaskRpc.queryCoinTaskPanel";
-  public static final String _为了保障您的操作安全请进行验证后继续2 = "com.alipay.sportshealth.biz.rpc.sportsHealthHomeRpc.queryEnergyBubbleModule";
+  public static final boolean _关闭不支持RPC1 = true;
+  public static final boolean _关闭不支持RPC2 = true;
+  public static final String _访问被拒绝1 = "alipay.mrchservbase.mrchbusiness.sign.transcode.check_1";
+  public static final String _访问被拒绝2 = "alipay.mobile.ipsponsorprod.consume.gold.task.signin.calendar_2";
+  public static final String _访问被拒绝3 = "alipay.mobile.ipsponsorprod.consume.gold.task.signin.calendar_3";
+  public static final String _系统出错正在排查1 = "alipay.mrchservbase.zcj.taskList.query.v2_1";
 
-  public static boolean getSp访问被拒绝(@NonNull String key) {
+  public static boolean getSp功能异常(@NonNull String key) {
     SharedPreferences sp = getMySp();
     if (sp == null) return true;
     return sp.getBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), false);
   }
 
-  public static void setSp访问被拒绝(@NonNull String key, JSONObject jo) {
+  public static void setSp功能异常(@NonNull String key, JSONObject jo) {
+    if (jo == null) return;
     //{"error":1009,"errorMessage":"访问被拒绝","errorNo":3,"errorTip":"1009"}
-    if (jo != null && "访问被拒绝".equals(jo.optString("errorMessage"))) {
-      SharedPreferences sp = getMySp();
-      if (sp != null) sp.edit().putBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), true).apply();
-    }
-  }
-
-  public static boolean getSp系统出错正在排查(@NonNull String key) {
-    SharedPreferences sp = getMySp();
-    if (sp == null) return true;
-    return sp.getBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), false);
-  }
-
-  public static void setSp系统出错正在排查(@NonNull String key, JSONObject jo) {
     //{"error":3000,"errorMessage":"系统出错，正在排查","errorNo":3,"errorTip":"3000"}
-    if (jo != null && "系统出错，正在排查".equals(jo.optString("errorMessage"))) {
-      SharedPreferences sp = getMySp();
-      if (sp != null) sp.edit().putBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), true).apply();
+    String errorMessage = jo.optString("errorMessage", "");
+    boolean isError = false;
+    if (errorMessage.contains("访问被拒绝")) {
+      isError = true;
+    } else if (errorMessage.contains("系统出错")) {
+      isError = true;
     }
-  }
-
-  public static boolean getSp为了保障您的操作安全请进行验证后继续(@NonNull String key) {
-    SharedPreferences sp = getMySp();
-    if (sp == null) return true;
-    return sp.getBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), false);
-  }
-
-  public static void setSp为了保障您的操作安全请进行验证后继续(@NonNull String key, JSONObject jo) {
-    //{"error":1009,"errorMessage":"为了保障您的操作安全，请进行验证后继续。","errorNo":3,"errorTip":"1009"}
-    if (jo != null && "为了保障您的操作安全，请进行验证后继续。".equals(jo.optString("errorMessage"))) {
+    if (isError) {
       SharedPreferences sp = getMySp();
-      if (sp != null) sp.edit().putBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), true).apply();
+      if (sp != null) {
+        sp.edit()
+            .putBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid() + "_" + ApplicationHook.getModelVersion(), true)
+            .apply();
+      }
     }
   }
 

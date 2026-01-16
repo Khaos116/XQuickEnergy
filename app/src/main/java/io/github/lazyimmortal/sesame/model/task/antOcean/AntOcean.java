@@ -872,7 +872,7 @@ public class AntOcean extends ModelTask {
                 String sceneCode = task.getString("sceneCode");
                 String taskType = task.getString("taskType");
                 //[{"outBizNo":"mokuai_senlin_hydrw_0.2913546844220295","requestType":"RPC","sceneCode":"ANTOCEAN_TASK","source":"ANTFOCEAN","taskType":"mokuai_senlin_hydrw","uniqueId":"1767460371318492722387988273949"}]
-                if (MyUtils._关闭不支持RPC && "ANTOCEAN_TASK".equals(sceneCode) && "mokuai_senlin_hydrw".equals(taskType)) {
+                if (MyUtils._关闭不支持RPC1 && "ANTOCEAN_TASK".equals(sceneCode) && "mokuai_senlin_hydrw".equals(taskType)) {
                   return true;
                 }
                 JSONObject jo = new JSONObject(AntOceanRpcCall.finishTask(sceneCode, taskType));

@@ -282,9 +282,8 @@ public class AntSports extends ModelTask {
                 AntSportsTaskListMap.add(task, task);
             }
 
-            if (sportsTasks && !MyUtils.getSp为了保障您的操作安全请进行验证后继续(MyUtils._系统出错正在排查1)) {
+            if (sportsTasks && !MyUtils._关闭必弹验证1) {
                 JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinTaskPanel());
-                MyUtils.setSp为了保障您的操作安全请进行验证后继续(MyUtils._系统出错正在排查1, jo);
                 if (MessageUtil.checkSuccess(TAG, jo)) {
                     jo = jo.getJSONObject("data");
                     if (jo.has("taskList")) {
@@ -347,7 +346,7 @@ public class AntSports extends ModelTask {
     private void sportsTasks() {
         try {
           signInCoinTask();
-          if (MyUtils._关闭必弹验证) return;//运动任务查询
+          if (MyUtils._关闭必弹验证2) return;//运动任务查询
           JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinTaskPanel());
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
@@ -422,7 +421,7 @@ public class AntSports extends ModelTask {
 
     private Boolean completeTask(String taskAction, String taskId, String taskName) {
         try {
-            if (MyUtils._关闭必弹验证 && "SHOW_AD".equals(taskAction) && "AP12300610".equals(taskId)) return false;
+            if (MyUtils._关闭必弹验证3 && "SHOW_AD".equals(taskAction) && "AP12300610".equals(taskId)) return false;
             JSONObject jo = new JSONObject(AntSportsRpcCall.completeTask(taskAction, taskId));
             //检查并标记黑名单任务
             MessageUtil.checkResultCodeAndMarkTaskBlackList("AntSportsTaskList", taskName, jo);
@@ -469,7 +468,7 @@ public class AntSports extends ModelTask {
 
     private void receiveCoinAsset() {
         try {
-            if (MyUtils._关闭必弹验证) return;//收运动币
+            if (MyUtils._关闭必弹验证4) return;//收运动币
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinBubbleModule());
             if (!MessageUtil.checkSuccess(TAG, jo)) {
                 return;
