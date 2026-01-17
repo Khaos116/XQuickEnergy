@@ -65,7 +65,7 @@ public class MyUtils {
   public static boolean getSp功能异常(@NonNull String key) {
     SharedPreferences sp = getMySp();
     if (sp == null) return true;
-    return sp.getBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid() + "_" + ApplicationHook.getModelVersion(), false);
+    return sp.getBoolean(key + "_" + ApplicationHook.getModelVersion(), false);
   }
 
   public static void setSp功能异常(@NonNull String key, JSONObject jo) {
@@ -83,7 +83,7 @@ public class MyUtils {
       SharedPreferences sp = getMySp();
       if (sp != null) {
         sp.edit()
-            .putBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid() + "_" + ApplicationHook.getModelVersion(), true)
+            .putBoolean(key + "_" + ApplicationHook.getModelVersion(), true)
             .apply();
       }
     }
@@ -223,6 +223,7 @@ public class MyUtils {
       String taskMode = jo.optString("taskMode", "");
       String desc = jo.optString("desc", "");
       boolean canDoTask = TextUtils.equals("VIEW", taskMode);
+      if (!canDoTask) canDoTask = TextUtils.equals("COUNT_DOWN", taskMode);
       if (!canDoTask) canDoTask = !TextUtils.isEmpty(taskId) && TextUtils.equals("TRIGGER", taskMode) && TextUtils.equals(taskId, bizKey);
       if (TextUtils.equals("ONLINE_PAY", bizKey) || TextUtils.equals("OFFLINE_PAY", bizKey)) {//线上和线下支付
         canDoTask = false;//不执行支付任务
@@ -232,7 +233,7 @@ public class MyUtils {
         canDoTask = false;//不执行捐赠任务
       } else if ((desc.contains("捐") && desc.contains("元")) || (desc.contains("捐") && desc.contains("金额"))) {//额外判断捐赠
         canDoTask = false;//不执行捐赠任务
-      } else if (bizKey.toLowerCase().contains("xiadan")) {
+      } else if (bizKey.toLowerCase().contains("xiadan") && !bizKey.equals("LSHS_xiadan_202509")) {
         canDoTask = false;//不执行下单任务
       }
       if (canDoTask) {
@@ -251,7 +252,7 @@ public class MyUtils {
           return false;
         }
       } else {
-        Log.farm("KT-庄园任务🈲[" + title + "]");
+        Log.farm("KT-庄园任务🈲[" + title + "]，taskMode=" + taskMode + ",bizKey=" + bizKey);
       }
     } catch (Exception e) {
       e.printStackTrace();
