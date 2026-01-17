@@ -199,7 +199,7 @@ public class AntMember extends ModelTask {
                     if (!MessageUtil.checkResultCode(TAG, jo)) {
                         break;
                     }
-                    hasNextPage = jo.getBoolean("hasNextPage");
+                    hasNextPage = jo.optBoolean("hasNextPage");
                     page++;
                     JSONArray jaCertList = jo.getJSONArray("certList");
                     for (int i = 0; i < jaCertList.length(); i++) {
@@ -379,7 +379,7 @@ public class AntMember extends ModelTask {
                 JSONObject jo = new JSONObject(AntMemberRpcCall.queryMemberSigninCalendar());
                 TimeUtil.sleep(500);
                 if (MessageUtil.checkResultCode(TAG, jo)) {
-                    if (jo.getBoolean("autoSignInSuccess")) {
+                    if (jo.optBoolean("autoSignInSuccess")) {
                         Log.other("会员任务📅签到[坚持" + jo.getString("signinSumDay") + "天]#获得[" + jo.getString("signinPoint") + "积分]");
                     }
                     Status.flagToday("member::sign");
@@ -399,7 +399,7 @@ public class AntMember extends ModelTask {
             if (!MessageUtil.checkResultCode(TAG, jo)) {
                 return;
             }
-            boolean hasNextPage = jo.getBoolean("hasNextPage");
+            boolean hasNextPage = jo.optBoolean("hasNextPage");
             JSONArray jaCertList = jo.getJSONArray("certList");
             for (int i = 0; i < jaCertList.length(); i++) {
                 jo = jaCertList.getJSONObject(i);
@@ -589,7 +589,7 @@ public class AntMember extends ModelTask {
         try {
             for (int i = 0; i < taskList.length(); i++) {
                 JSONObject task = taskList.getJSONObject(i);
-                if (task.getBoolean("hybrid")) {
+                if (task.optBoolean("hybrid")) {
                     int periodCurrentCount = Integer.parseInt(task.getJSONObject("extInfo").getString("PERIOD_CURRENT_COUNT"));
                     int periodTargetCount = Integer.parseInt(task.getJSONObject("extInfo").getString("PERIOD_TARGET_COUNT"));
                     int count = periodTargetCount > periodCurrentCount ? periodTargetCount - periodCurrentCount : 0;
@@ -1256,7 +1256,7 @@ public class AntMember extends ModelTask {
                 String triggerResponse = AntMemberRpcCall.trigger(taskId);
                 JSONObject triggerResult = new JSONObject(triggerResponse);
                 // 检查 success 字段
-                boolean success = triggerResult.getBoolean("success");
+                boolean success = triggerResult.optBoolean("success");
                 if (success) {
                     // 从 triggerResponse 中获取 prizeSendInfo 数组
                     JSONArray prizeSendInfo = triggerResult.getJSONArray("prizeSendInfo");
@@ -1283,7 +1283,7 @@ public class AntMember extends ModelTask {
             String response = AntMemberRpcCall.queryOrdinaryTask();
             JSONObject jsonResponse = new JSONObject(response);
             // 检查是否请求成功
-            if (jsonResponse.getBoolean("success")) {
+            if (jsonResponse.optBoolean("success")) {
                 // 获取任务详细列表
                 JSONArray taskDetailList = jsonResponse.getJSONArray("taskDetailList");
                 // 遍历任务详细列表
@@ -1303,7 +1303,7 @@ public class AntMember extends ModelTask {
                         // 解析 sendtriggerResponse
                         JSONObject sendTriggerJson = new JSONObject(sendtriggerResponse);
                         // 判断任务是否成功
-                        if (sendTriggerJson.getBoolean("success")) {
+                        if (sendTriggerJson.optBoolean("success")) {
                             // 从 sendtriggerResponse 中获取 prizeSendInfo 数组
                             JSONArray prizeSendInfo = sendTriggerJson.getJSONArray("prizeSendInfo");
                             // 获取 prizeName
