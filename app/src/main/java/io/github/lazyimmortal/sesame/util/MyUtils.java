@@ -65,7 +65,7 @@ public class MyUtils {
   public static boolean getSp功能异常(@NonNull String key) {
     SharedPreferences sp = getMySp();
     if (sp == null) return true;
-    return sp.getBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid(), false);
+    return sp.getBoolean(key + "_" + UserMap.INSTANCE.getCurrentUid() + "_" + ApplicationHook.getModelVersion(), false);
   }
 
   public static void setSp功能异常(@NonNull String key, JSONObject jo) {
