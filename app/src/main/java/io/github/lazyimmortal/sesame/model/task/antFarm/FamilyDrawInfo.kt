@@ -46,7 +46,7 @@ object FamilyDrawInfo {
         }
         GlobalThreadPools.sleepCompat(1000)
       }
-      val jo = JSONObject(AntFarmRpcCall.queryFamilyDrawActivity())
+      val jo = JSONObject(AntFarmRpcCall2.queryFamilyDrawActivity())
       if (ResChecker.checkRes(TAG, jo)) {
         GlobalThreadPools.sleepCompat(1000)
         val drawTimes = jo.optInt("familyDrawTimes")
@@ -89,7 +89,7 @@ object FamilyDrawInfo {
       }
       val activityId = familyDrawInfo.optString("activityId")
       val sceneCode = "ANTFARM_FD_VISIT_$activityId"
-      var jo = JSONObject(AntFarmRpcCall.familyShareP2PPanelInfo(sceneCode))
+      var jo = JSONObject(AntFarmRpcCall2.familyShareP2PPanelInfo(sceneCode))
       if (ResChecker.checkRes(TAG, jo)) {
         val p2PFriendVOList = jo.getJSONArray("p2PFriendVOList")
         if (Objects.isNull(p2PFriendVOList) || p2PFriendVOList.length() <= 0) {
@@ -110,7 +110,7 @@ object FamilyDrawInfo {
             break
           }
         }
-        jo = JSONObject(AntFarmRpcCall.familyBatchInviteP2P(inviteP2PVOList, sceneCode))
+        jo = JSONObject(AntFarmRpcCall2.familyBatchInviteP2P(inviteP2PVOList, sceneCode))
         if (ResChecker.checkRes(TAG, jo)) {
           Log.farm("亲密家庭🏠提交任务[好友串门送扭蛋]")
           Status.setFlagToday("antFarm::familyBatchInviteP2P")
@@ -128,7 +128,7 @@ object FamilyDrawInfo {
 
   private fun familyDrawSignReceiveFarmTaskAward(taskId: String?, title: String?) {
     try {
-      val jo = JSONObject(AntFarmRpcCall.familyDrawSignReceiveFarmTaskAward(taskId))
+      val jo = JSONObject(AntFarmRpcCall2.familyDrawSignReceiveFarmTaskAward(taskId))
       if (ResChecker.checkRes(TAG, jo)) {
         Log.farm("亲密家庭🏠扭蛋任务#$title#奖励领取成功")
       }
@@ -143,7 +143,7 @@ object FamilyDrawInfo {
 
   private fun giftFamilyDrawFragment(giftUserId: String?, giftNum: Int) {
     try {
-      val jo = JSONObject(AntFarmRpcCall.giftFamilyDrawFragment(giftUserId, giftNum))
+      val jo = JSONObject(AntFarmRpcCall2.giftFamilyDrawFragment(giftUserId, giftNum))
       if (ResChecker.checkRes(TAG, jo)) {
         Log.farm("亲密家庭🏠赠送扭蛋碎片#" + giftNum + "个#" + giftUserId)
       }
@@ -154,7 +154,7 @@ object FamilyDrawInfo {
 
   private fun familyDrawListFarmTask(): JSONArray? {
     try {
-      val jo = JSONObject(AntFarmRpcCall.familyDrawListFarmTask())
+      val jo = JSONObject(AntFarmRpcCall2.familyDrawListFarmTask())
       if (ResChecker.checkRes(TAG, jo)) {
         return jo.getJSONArray("farmTaskList")
       }
@@ -170,7 +170,7 @@ object FamilyDrawInfo {
    */
   private fun familyDraw(): Boolean {
     try {
-      val jo = JSONObject(AntFarmRpcCall.familyDraw())
+      val jo = JSONObject(AntFarmRpcCall2.familyDraw())
       if (ResChecker.checkRes(TAG, jo)) {
         val familyDrawPrize = jo.getJSONObject("familyDrawPrize")
         val title = familyDrawPrize.optString("title")

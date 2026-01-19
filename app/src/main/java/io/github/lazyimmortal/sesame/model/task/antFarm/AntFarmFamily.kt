@@ -337,7 +337,7 @@ data object AntFarmFamily {
    */
   fun queryRecentFarmFood(queryNum: Int): JSONArray? {
     try {
-      val jo = JSONObject(AntFarmRpcCall.queryRecentFarmFood(queryNum))
+      val jo = JSONObject(AntFarmRpcCall2.queryRecentFarmFood(queryNum))
       if (!ResChecker.checkRes(TAG, jo)) {
         return null
       }
@@ -590,7 +590,7 @@ data object AntFarmFamily {
 
       Log.record(TAG, "inviteList: $inviteList")
 
-      val jo = JSONObject(AntFarmRpcCall.inviteFriendVisitFamily(inviteList))
+      val jo = JSONObject(AntFarmRpcCall2.inviteFriendVisitFamily(inviteList))
       if (ResChecker.checkRes(TAG, jo)) {
         Log.farm("家庭任务🏠分享好友")
         Status.setFlagToday("antFarm::familyShareToFriends")
@@ -631,7 +631,7 @@ data object AntFarmFamily {
         Log.record(TAG, "[家庭装扮] 正在检查分类: ${if (label.isEmpty()) "新品" else label}")
 
         while (hasMore) {
-          val itemListRes = AntFarmRpcCall.getFitmentItemList(activityId, 10, label, startIndex)
+          val itemListRes = AntFarmRpcCall2.getFitmentItemList(activityId, 10, label, startIndex)
           val itemJo = JSONObject(itemListRes)
           if (!ResChecker.checkRes(TAG, itemJo)) break
 
@@ -657,7 +657,7 @@ data object AntFarmFamily {
                 val skuId = skuList.getJSONObject(0).getString("skuId")
                 Log.record(TAG, "[家庭装扮] 发现未拥有家具: $spuName")
 
-                val exchangeRes = AntFarmRpcCall.exchangeBenefit(spuId, skuId, activityId)
+                val exchangeRes = AntFarmRpcCall2.exchangeBenefit(spuId, skuId, activityId)
                 val exchangeJo = JSONObject(exchangeRes)
 
                 if (ResChecker.checkRes(TAG, exchangeJo)) {
