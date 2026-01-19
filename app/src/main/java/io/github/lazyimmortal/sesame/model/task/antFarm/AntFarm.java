@@ -188,6 +188,7 @@ public class AntFarm extends ModelTask {
     public void run() {
         try {
             if (enterFarm() == null) {
+                Log.farm("进入庄园失败");
                 return;
             }
 
@@ -385,6 +386,8 @@ public class AntFarm extends ModelTask {
             if (family.getValue()) {
                 //family();
                 AntFarmFamily.run(familyOptions, notInviteList);
+            } else {
+                Log.farm("家庭权限未开启");
             }
             
             // 开宝箱

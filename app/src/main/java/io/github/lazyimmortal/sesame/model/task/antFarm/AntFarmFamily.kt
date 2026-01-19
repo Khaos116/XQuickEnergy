@@ -55,6 +55,7 @@ data object AntFarmFamily {
     try {
       enterFamily(familyOptions, notInviteList)
     } catch (e: Exception) {
+      Log.farm("进入家庭异常1:" + e.message)
       Log.printStackTrace(TAG, e)
     }
   }
@@ -113,6 +114,8 @@ data object AntFarmFamily {
 
         if (familyOptions.value.contains("deliverMsgSend")) {
           deliverMsgSend(familyUserIds)
+        } else {
+          Log.farm("未开启道早安选项")
         }
 
         if (familyOptions.value.contains("shareToFriends")) {
@@ -123,6 +126,7 @@ data object AntFarmFamily {
         }
       }
     } catch (e: Exception) {
+      Log.farm("进入家庭异常2:" + e.message)
       Log.printStackTrace(TAG,  e)
     }
   }
