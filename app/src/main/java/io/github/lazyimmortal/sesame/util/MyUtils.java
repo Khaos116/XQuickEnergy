@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
@@ -61,10 +60,19 @@ public class MyUtils {
   public static final String _访问被拒绝3 = "alipay.mobile.ipsponsorprod.consume.gold.task.signin.calendar_3";
   public static final String _系统出错正在排查1 = "alipay.mrchservbase.zcj.taskList.query.v2_1";
 
+  //不想每次更新版本都去执行访问被拒绝和系统出错的访问，就关闭监测(第一次打开还是会执行)
+  private static String get功能异常Key(@NonNull String key) {
+    if (BaseModel.getNewModelCheckError().getValue()) {
+      return key + "_" + ApplicationHook.getModelVersion();
+    } else {
+      return key;
+    }
+  }
+
   public static boolean getSp功能异常(@NonNull String key) {
     SharedPreferences sp = getMySp();
     if (sp == null) return true;
-    return sp.getBoolean(key + "_" + ApplicationHook.getModelVersion(), false);
+    return sp.getBoolean(get功能异常Key(key), false);
   }
 
   public static void setSp功能异常(@NonNull String key, JSONObject jo) {
@@ -82,7 +90,7 @@ public class MyUtils {
       SharedPreferences sp = getMySp();
       if (sp != null) {
         sp.edit()
-            .putBoolean(key + "_" + ApplicationHook.getModelVersion(), true)
+            .putBoolean(get功能异常Key(key), true)
             .apply();
       }
     }
@@ -154,11 +162,6 @@ public class MyUtils {
   //解密
   public static String decryptData(String data) {
     return data;
-  }
-
-  //去除SO调用
-  public static boolean libraryCheckFarmTaskStatus(JSONObject task) {
-    return true;
   }
 
   //APP名称后缀

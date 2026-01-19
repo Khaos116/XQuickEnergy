@@ -55,6 +55,8 @@ public class BaseModel extends Model {
     private static final BooleanModelField closeErrorFunction = new BooleanModelField("closeErrorFunction", "关闭可能异常功能", false);
     @Getter
     private static final BooleanModelField closeUnRPC = new BooleanModelField("closeUnRPC", "关闭不支持RPC功能", false);
+    @Getter
+    private static final BooleanModelField newModelCheckError= new BooleanModelField("newModelCheckError", "新版本打开异常检测", false);
 
     @Override
     public String getName() {
@@ -103,6 +105,7 @@ public class BaseModel extends Model {
         modelFields.addField(closeVerification);
         modelFields.addField(closeErrorFunction);
         modelFields.addField(closeUnRPC);
+        modelFields.addField(newModelCheckError);
         return modelFields;
     }
 
