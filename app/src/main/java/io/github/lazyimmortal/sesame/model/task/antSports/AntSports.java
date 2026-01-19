@@ -51,6 +51,7 @@ public class AntSports extends ModelTask {
     private IntegerModelField donateCharityCoinAmount;
     private BooleanModelField coinExchangeDoubleCard;
     private IntegerModelField minExchangeCount;
+    private IntegerModelField earliestSyncStepTime;
     private IntegerModelField latestExchangeTime;
     private IntegerModelField syncStepCount;
     private BooleanModelField tiyubiz;
@@ -118,11 +119,11 @@ public class AntSports extends ModelTask {
         modelFields.addField(clubTradeMemberType = new ChoiceModelField("clubTradeMemberType", "抢好友 | 抢购动作", TradeMemberType.NONE, TradeMemberType.nickNames));
         modelFields.addField(clubTradeMemberList = new SelectModelField("clubTradeMemberList", "抢好友 | 好友列表", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(tiyubiz = new BooleanModelField("tiyubiz", "文体中心", false));
-        modelFields.addField(minExchangeCount = new IntegerModelField("minExchangeCount", "行走捐 | 最小捐步步数", 10));
+        modelFields.addField(syncStepCount = new IntegerModelField("syncStepCount", "同步步数 | 自定义", 22000));
+        modelFields.addField(earliestSyncStepTime = new IntegerModelField("earliestSyncStepTime", "同步步数 | 最早同步时间(24小时制)", 0, 0, 22));
         modelFields.addField(latestExchangeTime = new IntegerModelField("latestExchangeTime", "行走捐 | 最晚捐步时间(24小时制)", 22));
-        modelFields.addField(syncStepCount = new IntegerModelField("syncStepCount", "自定义同步步数", 22000));
+        modelFields.addField(minExchangeCount = new IntegerModelField("minExchangeCount", "行走捐 | 最小捐步步数", 10));
         modelFields.addField(neverLand = new BooleanModelField("neverLand", "健康岛 | 开启", false));
-        //modelFields.addField(energyStrategy = new ChoiceModelField("energyStrategy", "能量策略", EnergyStrategy.NONE, EnergyStrategy.nickNames));
         modelFields.addField(QUERY_SIGN = new BooleanModelField("QUERY_SIGN", "健康岛 | 每日签到", false));
         modelFields.addField(QUERY_TASK_CENTER = new BooleanModelField("QUERY_TASK_CENTER", "健康岛 | 做任务 加能量", false));
         modelFields.addField(QUERY_BUBBLE_TASK = new BooleanModelField("QUERY_BUBBLE_TASK", "健康岛 | 领取能量球奖励", false));
@@ -132,11 +133,6 @@ public class AntSports extends ModelTask {
         modelFields.addField(WALK_GRID_LIMIT = new IntegerModelField("WALK_GRID_LIMIT", "健康岛 | 使用能量泵剩余能量值(低于该值停止使用)", 10000));
         modelFields.addField(MapListSwitch = new BooleanModelField("MapListSwitch", "健康岛 | 自动切岛", false));
         modelFields.addField(awardspecialActivityReceive = new BooleanModelField("awardspecialActivityReceive", "健康岛 | 领取活动岛奖励", false));
-
-        //modelFields.addField(neverLandOptions = new SelectModelField("neverLandOptions", "健康岛 | 选项", new LinkedHashSet<>(), neverLandOptionsList::getList));
-        //需要修改AlipayUser::getList
-        //modelFields.addField(neverLandBenefitList = new SelectModelField("neverLandBenefitList", "健康岛 | 权益列表", new LinkedHashSet<>(), AlipayUser::getList));
-
         return modelFields;
     }
 
@@ -176,8 +172,9 @@ public class AntSports extends ModelTask {
     @Override
     public void run() {
         try {
-            // if (!Status.hasFlagToday("sport::syncStep") && TimeUtil.isNowAfterOrCompareTimeStr("0600")) {
-            if (!Status.hasFlagToday("sport::syncStep")) {
+            int hour = Integer.parseInt(Log.getFormatTime().split(":")[0]);
+            if (!Status.hasFlagToday("sport::syncStep") && hour >= earliestSyncStepTime.getValue()) {
+                //if (!Status.hasFlagToday("sport::syncStep")) {
                 addChildTask(new ChildModelTask("syncStep", () -> {
                     int step = tmpStepCount();
                     //看你没有这个方法哦//CHANGE BY KT
@@ -1004,7 +1001,7 @@ public class AntSports extends ModelTask {
                 return;
             }
             //jo = jo.getJSONObject("dailyStepModel");
-            //long produceQuantity = jo.optLong("stepLastTime", 0);
+            //long stepLastTime = jo.optLong("stepLastTime", 0);
             int hour = Integer.parseInt(Log.getFormatTime().split(":")[0]);
 
             int stepCount = jo.optInt("stepCount");
