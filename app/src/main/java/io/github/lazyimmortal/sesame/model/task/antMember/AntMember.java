@@ -644,8 +644,8 @@ public class AntMember extends ModelTask {
                     bizParam = targetBusinessArray[1];
                     bizSubType = targetBusinessArray[0];
                 }
-                if (!MyUtils.antMemberSupportBizSubType(bizSubType)) {//CHANGE BY KT
-                    continue;
+                if (MyUtils._NO_SUPPORT_ANTMEMBER_NGFE_TAG__PTR3O4ERIU.equals(bizSubType)) {//CHANGE BY KT
+                  continue;
                 }
                 jo = new JSONObject(AntMemberRpcCall.executeTask(bizParam, bizSubType));
                 TimeUtil.sleep(300);

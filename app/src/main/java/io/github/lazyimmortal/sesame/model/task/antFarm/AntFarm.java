@@ -1324,7 +1324,8 @@ public class AntFarm extends ModelTask {
         try {
             String title = task.getString("title");
             String bizKey = task.getString("bizKey");
-            if (bizKey.equals("TAO_GOLDEN_V2")) return false;
+            if (bizKey.equals(MyUtils._NO_SUPPORT_ANTFARM_CHOUCHOULECHOUKUAN)) return false;
+            if (bizKey.equals(MyUtils._NO_SUPPORT_ANTFARM_TAO_GOLDEN_V2)) return false;
             if (bizKey.contains("HEART_DONAT") || bizKey.equals("BAIDUJS_202512") || bizKey.equals("BABAFARM_TB")) {
                 return false;
             }
