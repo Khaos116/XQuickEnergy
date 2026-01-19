@@ -59,6 +59,7 @@ public class MyUtils {
   public static final String _访问被拒绝2 = "alipay.mobile.ipsponsorprod.consume.gold.task.signin.calendar_2";
   public static final String _访问被拒绝3 = "alipay.mobile.ipsponsorprod.consume.gold.task.signin.calendar_3";
   public static final String _系统出错正在排查1 = "alipay.mrchservbase.zcj.taskList.query.v2_1";
+  public static final String _不是有效的入参1 = "2026010358596942583";
 
   //不想每次更新版本都去执行访问被拒绝和系统出错的访问，就关闭监测(第一次打开还是会执行)
   private static String get功能异常Key(@NonNull String key) {
