@@ -484,7 +484,7 @@ public class AntFarm extends ModelTask {
             if (drawMachine) {
                 jo = new JSONObject(AntFarmRpcCall.queryLoveCabin(UserIdMap.getCurrentUid()));
                 if (MessageUtil.checkMemo(TAG, jo)) {
-                    jo = new JSONObject(AntFarmRpcCall2.listFarmDrawTask("ANTFARM_DAILY_DRAW_TASK"));
+                    jo = new JSONObject(AntFarmRpcCall.listFarmDrawTask("ANTFARM_DAILY_DRAW_TASK"));
                     if (MessageUtil.checkMemo(TAG, jo)) {
                         JSONArray farmTaskList = jo.getJSONArray("farmTaskList");
                         for (int i = 0; i < farmTaskList.length(); i++) {
@@ -492,11 +492,11 @@ public class AntFarm extends ModelTask {
                             String title = jo.getString("title");
                             AntFarmDrawMachineTaskListMap.add(title, title);
                         }
-                        JSONObject queryDrawMachineActivityjo = new JSONObject(AntFarmRpcCall2.queryDrawMachineActivity("ipDrawMachine", "dailyDrawMachine"));
+                        JSONObject queryDrawMachineActivityjo = new JSONObject(AntFarmRpcCall.queryDrawMachineActivity("ipDrawMachine", "dailyDrawMachine"));
                         if (MessageUtil.checkMemo(TAG, queryDrawMachineActivityjo)) {
                             if (queryDrawMachineActivityjo.has("otherDrawMachineActivityIds")) {
                                 if (queryDrawMachineActivityjo.getJSONArray("otherDrawMachineActivityIds").length() > 0) {
-                                    jo = new JSONObject(AntFarmRpcCall2.listFarmDrawTask("ANTFARM_IP_DRAW_TASK"));
+                                    jo = new JSONObject(AntFarmRpcCall.listFarmDrawTask("ANTFARM_IP_DRAW_TASK"));
                                     if (MessageUtil.checkMemo(TAG, jo)) {
                                         farmTaskList = jo.getJSONArray("farmTaskList");
                                         for (int i = 0; i < farmTaskList.length(); i++) {
@@ -791,7 +791,7 @@ public class AntFarm extends ModelTask {
     
     private void syncAnimalStatus(String farmId) {
         try {
-            String s = AntFarmRpcCall2.syncAnimalStatus(farmId);
+            String s = AntFarmRpcCall.syncAnimalStatus(farmId);
             parseSyncAnimalStatusResponse(s);
         }
         catch (Throwable t) {
@@ -1060,7 +1060,7 @@ public class AntFarm extends ModelTask {
     
     private int getProjectDonationNum(String projectId) {
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall2.getProjectInfo(projectId));
+            JSONObject jo = new JSONObject(AntFarmRpcCall.getProjectInfo(projectId));
             if (!MessageUtil.checkMemo(TAG, jo)) {
                 return 0;
             }
@@ -1078,7 +1078,7 @@ public class AntFarm extends ModelTask {
             return false;
         }
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall2.getCharityAccount(ownerUserId));
+            JSONObject jo = new JSONObject(AntFarmRpcCall.getCharityAccount(ownerUserId));
             if (!MessageUtil.checkMemo(TAG, jo)) {
                 return false;
             }
@@ -1864,7 +1864,7 @@ public class AntFarm extends ModelTask {
             int cookTimesAllowed = jo.getInt("cookTimesAllowed");
             if (cookTimesAllowed > 0) {
                 for (int i = 0; i < cookTimesAllowed; i++) {
-                    jo = new JSONObject(AntFarmRpcCall.cook(userId, "VILLA"));
+                    jo = new JSONObject(AntFarmRpcCall2.cook(userId, "VILLA"));
                     if (MessageUtil.checkMemo(TAG, jo)) {
                         JSONObject cuisineVO = jo.getJSONObject("cuisineVO");
                         Log.farm("小鸡厨房👨🏻‍🍳制作[" + cuisineVO.getString("name") + "]");
@@ -1992,7 +1992,7 @@ public class AntFarm extends ModelTask {
     
     private void visitFriend(String userId, int countLimit) {
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall2.enterFarm(userId));
+            JSONObject jo = new JSONObject(AntFarmRpcCall.enterFarm(userId));
             //方法: com.alipay.antfarm.enterFarm
             //参数: [{"queryLastRecordNum":true,"recall":false,"requestType":"NORMAL","sceneCode":"ANTFARM","source":"H5","userId":"2088642642387040"}]
             //数据: {"ariverRpcTraceId":"2184aa8a17545054778948193e9221","memo":"非好友","resultCode":"302","success":false}
@@ -2187,7 +2187,7 @@ public class AntFarm extends ModelTask {
     private JSONArray getGameCenterMallItemList(String bizType) {
         JSONArray mallItemSimpleList = null;
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall2.getMallHome(bizType));
+            JSONObject jo = new JSONObject(AntFarmRpcCall.getMallHome(bizType));
             if (MessageUtil.checkSuccess(TAG, jo)) {
                 mallItemSimpleList = jo.optJSONArray("mallItemSimpleList");
             }
@@ -2338,7 +2338,7 @@ public class AntFarm extends ModelTask {
             if (MessageUtil.checkMemo(TAG, jo)) {
                 drawMachine("ANTFARM_DAILY_DRAW_TASK", "dailyDrawMachine", "ipDrawMachine");
 
-                JSONObject queryDrawMachineActivityjo = new JSONObject(AntFarmRpcCall.queryDrawMachineActivity_New("ipDrawMachine", "dailyDrawMachine"));
+                JSONObject queryDrawMachineActivityjo = new JSONObject(AntFarmRpcCall2.queryDrawMachineActivity_New("ipDrawMachine", "dailyDrawMachine"));
                 if (MessageUtil.checkMemo(TAG, queryDrawMachineActivityjo)) {
                     if (!queryDrawMachineActivityjo.has("otherDrawMachineActivityIds")) {
                         return;
@@ -2358,7 +2358,7 @@ public class AntFarm extends ModelTask {
     private void drawMachine(String taskSceneCode, String scene, String otherScenes) {
         doFarmDrawTask(taskSceneCode);
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall.queryDrawMachineActivity_New(otherScenes, scene));
+            JSONObject jo = new JSONObject(AntFarmRpcCall2.queryDrawMachineActivity_New(otherScenes, scene));
             int drawTimes = jo.optInt("drawTimes", 0);
             for (int i = 0; i < drawTimes; i++) {
                 if (!drawMachine(scene)) {
@@ -2375,7 +2375,7 @@ public class AntFarm extends ModelTask {
 
     private void doFarmDrawTask(String taskSceneCode) {
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall2.listFarmDrawTask(taskSceneCode));
+            JSONObject jo = new JSONObject(AntFarmRpcCall.listFarmDrawTask(taskSceneCode));
             if (!MessageUtil.checkMemo(TAG, jo)) {
                 return;
             }
@@ -2406,7 +2406,7 @@ public class AntFarm extends ModelTask {
 
                     if (jo.optString("taskId").contains("EXCHANGE") || jo.optString("taskId").contains("FKDWChuodong") || jo.optString("taskId").contains("GYG2") || jo.optString("taskId").equals("jiatingdongrirongrongwu")) {
                         for (int j = 0; j < (rightsTimesLimit - rightsTimes); j++) {
-                            JSONObject jodoFarmTask = new JSONObject(AntFarmRpcCall2.doFarmTask(jo.optString("bizKey"), taskSceneCode));
+                            JSONObject jodoFarmTask = new JSONObject(AntFarmRpcCall.doFarmTask(jo.optString("bizKey"), taskSceneCode));
                             //检查并标记黑名单任务
                             MessageUtil.checkResultCodeAndMarkTaskBlackList("AntFarmDrawMachineTaskList", title, jodoFarmTask);
                         }
@@ -2414,7 +2414,7 @@ public class AntFarm extends ModelTask {
                     }
                     if (jo.optString("taskId").contains("SHANGYEHUA") || jo.optString("taskId").contains("30s")) {
                         for (int j = 0; j < (rightsTimesLimit - rightsTimes); j++) {
-                            JSONObject jofinishTask = new JSONObject(AntFarmRpcCall2.finishTask(jo.optString("taskId"), taskSceneCode));
+                            JSONObject jofinishTask = new JSONObject(AntFarmRpcCall.finishTask(jo.optString("taskId"), taskSceneCode));
                             //检查并标记黑名单任务
                             MessageUtil.checkResultCodeAndMarkTaskBlackList("AntFarmDrawMachineTaskList", title, jofinishTask);
                         }
@@ -2436,7 +2436,7 @@ public class AntFarm extends ModelTask {
 
     private void receiveFarmDrawTaskAward(String taskId, String title, String awardType, String taskSceneCode) {
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall2.receiveFarmDrawTimesTaskAward(taskId, awardType, taskSceneCode));
+            JSONObject jo = new JSONObject(AntFarmRpcCall.receiveFarmDrawTimesTaskAward(taskId, awardType, taskSceneCode));
             if (MessageUtil.checkMemo(TAG, jo)) {
                 Log.farm("装扮抽奖🎖️领取[" + title + "]奖励");
             }
@@ -2449,7 +2449,7 @@ public class AntFarm extends ModelTask {
 
     private Boolean drawMachine(String scene) {
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall2.drawMachine(scene));
+            JSONObject jo = new JSONObject(AntFarmRpcCall.drawMachine(scene));
             if (MessageUtil.checkMemo(TAG, jo)) {
                 if (!jo.has("title")) {
                     jo = jo.optJSONObject("drawMachinePrize");
@@ -3055,7 +3055,7 @@ public class AntFarm extends ModelTask {
             //JSONObject jo = new JSONObject(AntFarmRpcCall.inviteFriendVisitFamily(inviteList));
             for (int i = 0; i < inviteList.length(); i++) {
                 String inviteUID = inviteList.getString(i);
-                JSONObject jo = new JSONObject(AntFarmRpcCall2.batchInviteP2P(ownerGroupId, inviteUID));
+                JSONObject jo = new JSONObject(AntFarmRpcCall.batchInviteP2P(ownerGroupId, inviteUID));
                 if (MessageUtil.checkResultCode(TAG, jo)) {
                     Log.farm("家庭任务🏠分享给好友[" + UserIdMap.getShowName(inviteUID) + "]");
                 }
@@ -3142,7 +3142,7 @@ public class AntFarm extends ModelTask {
 
     private Boolean familySleep(String groupId) {
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall2.familySleep(groupId));
+            JSONObject jo = new JSONObject(AntFarmRpcCall.familySleep(groupId));
             if (MessageUtil.checkMemo(TAG, jo)) {
                 Log.farm("亲密家庭🏠小鸡睡觉");
                 syncFamilyStatus(groupId);
@@ -3158,7 +3158,7 @@ public class AntFarm extends ModelTask {
 
     private Boolean familyWakeUp() {
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall2.familyWakeUp());
+            JSONObject jo = new JSONObject(AntFarmRpcCall.familyWakeUp());
             if (MessageUtil.checkMemo(TAG, jo)) {
                 Log.farm("亲密家庭🏠小鸡起床");
                 return true;
@@ -3223,7 +3223,7 @@ public class AntFarm extends ModelTask {
 
     private JSONArray queryRecentFarmFood(int needCount) {
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall2.syncAnimalStatus(ownerFarmId));
+            JSONObject jo = new JSONObject(AntFarmRpcCall.syncAnimalStatus(ownerFarmId));
             if (!MessageUtil.checkMemo(TAG, jo)) {
                 return null;
             }
