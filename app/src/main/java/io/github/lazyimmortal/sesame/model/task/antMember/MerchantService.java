@@ -70,7 +70,7 @@ public class MerchantService {
                 jo = ja.getJSONObject(i); if (!Objects.equals("MORE", jo.getString("planCode"))) {
                     // planCode: SERVICE MORE
                     continue;
-                } taskListProcessing(jo.getJSONArray("taskList"));
+                } taskListProcessing(jo.optJSONArray(MyUtils._OPT_TASKLIST));
             }
         } catch (Throwable t) {
             Log.i(TAG, "taskListQueryV2 err:"); Log.printStackTrace(TAG, t);
@@ -78,6 +78,7 @@ public class MerchantService {
     }
 
     private static void taskListProcessing(JSONArray taskList) {
+        if (taskList == null) return;
         try {
             for (int i = 0; i < taskList.length(); i++) {
                 JSONObject task = taskList.getJSONObject(i);

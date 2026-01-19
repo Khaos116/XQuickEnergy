@@ -75,7 +75,7 @@ data object AntFarmFamily {
         val familyAwardNum: Int = enterRes.optInt("familyAwardNum", 0)//奖励数量
         val familySignTips: Boolean = enterRes.optBoolean("familySignTips", false)//签到
         val assignFamilyMemberInfo: JSONObject? = enterRes.optJSONObject("assignFamilyMemberInfo")//分配成员信息-顶梁柱
-        familyAnimals = enterRes.getJSONArray("animals")//家庭动物列表
+        familyAnimals = enterRes.optJSONArray(MyUtils._OPT_ANIMALS) ?: JSONArray()//家庭动物列表
         familyUserIds = (0..<familyAnimals.length())
           .map { familyAnimals.getJSONObject(it).getString("userId") }
           .toMutableList()

@@ -694,7 +694,7 @@ public class AntFarm extends ModelTask {
             if (!MessageUtil.checkMemo(TAG, jo)) {
                 return false;
             }
-            jo = jo.optJSONObject("sleepNotifyInfo");
+            jo = jo.optJSONObject(MyUtils._OPT_SLEEP_NOTIFY_INFO);
             if (jo == null) return true;
             return jo.optBoolean("hasSleepToday", false);
         }
@@ -711,8 +711,8 @@ public class AntFarm extends ModelTask {
             if (!MessageUtil.checkMemo(TAG, jo)) {
                 return false;
             }
-            JSONObject sleepNotifyInfo = jo.getJSONObject("sleepNotifyInfo");
-            if (!sleepNotifyInfo.optBoolean(MyUtils.NO_SLEEP, false)) {//CHANGE BY KT
+            JSONObject sleepNotifyInfo = jo.optJSONObject(MyUtils._OPT_SLEEP_NOTIFY_INFO);
+            if (sleepNotifyInfo == null || !sleepNotifyInfo.optBoolean(MyUtils.NO_SLEEP, false)) {
                 Log.record("小鸡无需睡觉🛌");
                 return false;
             }
@@ -804,8 +804,8 @@ public class AntFarm extends ModelTask {
                 return;
             }
             jo = jo.getJSONObject("farmVO").getJSONObject("subFarmVO");
-            JSONArray jaAnimals = jo.getJSONArray("animals");
-            for (int i = 0; i < jaAnimals.length(); i++) {
+            JSONArray jaAnimals = jo.optJSONArray(MyUtils._OPT_ANIMALS);
+            if(jaAnimals != null) for (int i = 0; i < jaAnimals.length(); i++) {
                 jo = jaAnimals.getJSONObject(i);
                 if (jo.getString("masterFarmId").equals(ownerFarmId)) {
                     Animal newOwnerAnimal = new Animal();
@@ -1338,7 +1338,7 @@ public class AntFarm extends ModelTask {
             else {
                 // 检查library是否可用
                 try {
-                    isDoTask = LibraryUtil.doFarmTask(task);
+                    isDoTask = MyUtils.libraryDoFarmTask(task);
                     return isDoTask;//防止重复打印 //CHANGE BY KT
                 }
                 catch (UnsatisfiedLinkError e) {
@@ -1541,7 +1541,7 @@ public class AntFarm extends ModelTask {
                 }
                 jo = jo.getJSONObject("farmVO").getJSONObject("subFarmVO");
                 String friendFarmId = jo.optString("farmId","");
-                JSONArray jaAnimals = jo.optJSONArray("animals");
+                JSONArray jaAnimals = jo.optJSONArray(MyUtils._OPT_ANIMALS);
                 if (jaAnimals != null) for (int j = 0; j < jaAnimals.length(); j++) {
                     jo = jaAnimals.getJSONObject(j);
                     String masterFarmId = jo.getString("masterFarmId");
@@ -1652,8 +1652,8 @@ public class AntFarm extends ModelTask {
                         }
                         jo = jo.getJSONObject("farmVO").getJSONObject("subFarmVO");
                         String friendFarmId = jo.getString("farmId");
-                        JSONArray jaAnimals = jo.getJSONArray("animals");
-                        for (int j = 0; j < jaAnimals.length(); j++) {
+                        JSONArray jaAnimals = jo.optJSONArray(MyUtils._OPT_ANIMALS);
+                        if (jaAnimals != null) for (int j = 0; j < jaAnimals.length(); j++) {
                             jo = jaAnimals.getJSONObject(j);
                             String animalId = jo.getString("animalId");
                             String masterFarmId = jo.getString("masterFarmId");
@@ -1748,7 +1748,8 @@ public class AntFarm extends ModelTask {
                     }
                 }
             }
-            JSONArray jaAnimals = subFarmVO.getJSONArray("animals");
+            JSONArray jaAnimals = subFarmVO.optJSONArray(MyUtils._OPT_ANIMALS);
+            if (jaAnimals == null) jaAnimals = new JSONArray();
             animals = new Animal[jaAnimals.length()];
             for (int i = 0; i < animals.length; i++) {
                 Animal animal = new Animal();
@@ -2555,7 +2556,8 @@ public class AntFarm extends ModelTask {
             }
             jo = jo.getJSONObject("farmVO").getJSONObject("subFarmVO");
             String farmId = jo.getString("farmId");
-            JSONArray animals = jo.getJSONArray("animals");
+            JSONArray animals = jo.optJSONArray(MyUtils._OPT_ANIMALS);
+            if (animals == null) animals = new JSONArray();
             for (int i = 0, len = animals.length(); i < len; i++) {
                 JSONObject animal = animals.getJSONObject(i);
                 if (Objects.equals(animal.getJSONObject("masterUserInfoVO").getString("userId"), userId)) {
@@ -2801,7 +2803,8 @@ public class AntFarm extends ModelTask {
             boolean familySignTips = joenterFamily.getBoolean("familySignTips");
             JSONObject assignFamilyMemberInfo = joenterFamily.optJSONObject("assignFamilyMemberInfo");
             boolean feedFriendLimit = joenterFamily.optBoolean("feedFriendLimit", false);
-            JSONArray familyAnimals = joenterFamily.getJSONArray("animals");
+            JSONArray familyAnimals = joenterFamily.optJSONArray(MyUtils._OPT_ANIMALS);
+            if (familyAnimals == null) familyAnimals = new JSONArray();
             JSONArray EatTogetherUserIds = new JSONArray();
             JSONArray familyAnimalsExceptUser = familyAnimals;
             for (int i = familyAnimalsExceptUser.length() - 1; i >= 0; i--) {

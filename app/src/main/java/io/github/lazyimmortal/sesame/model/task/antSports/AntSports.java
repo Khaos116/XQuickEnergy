@@ -284,7 +284,8 @@ public class AntSports extends ModelTask {
                 if (MessageUtil.checkSuccess(TAG, jo)) {
                     jo = jo.getJSONObject("data");
                     if (jo.has("taskList")) {
-                        JSONArray taskLists = jo.getJSONArray("taskList");
+                        JSONArray taskLists = jo.optJSONArray(MyUtils._OPT_TASKLIST);
+                        if (taskLists == null) taskLists = new JSONArray();
                         for (int i = 0; i < taskLists.length(); i++) {
                             JSONObject taskList = taskLists.getJSONObject(i);
                             String taskName = taskList.optString("taskName");
@@ -352,8 +353,9 @@ public class AntSports extends ModelTask {
             if (jo == null || !jo.has("taskList")) {
               return;
             }
-            JSONArray taskList = jo.optJSONArray("taskList");
-            if (taskList != null) for (int i = 0; i < taskList.length(); i++) {
+            JSONArray taskList = jo.optJSONArray(MyUtils._OPT_TASKLIST);
+            if (taskList == null) taskList = new JSONArray();
+            for (int i = 0; i < taskList.length(); i++) {
                 jo = taskList.getJSONObject(i);
                 String taskName = jo.optString("taskName");
                 String taskStatus = jo.optString("taskStatus");
@@ -970,7 +972,7 @@ public class AntSports extends ModelTask {
             if (!MessageUtil.checkResultCode(TAG, jo)) {
                 return false;
             }
-            JSONArray userExchangeRecords = jo.optJSONArray("userExchangeRecords");
+            JSONArray userExchangeRecords = jo.optJSONArray(MyUtils._OPT_USER_EXCHANGE_RECORDS);
             if (userExchangeRecords == null || userExchangeRecords.length() == 0) {
                 return true;
             }

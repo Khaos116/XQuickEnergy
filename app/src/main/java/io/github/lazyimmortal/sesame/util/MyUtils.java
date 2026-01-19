@@ -14,7 +14,6 @@ import java.util.*;
 
 import io.github.lazyimmortal.sesame.hook.ApplicationHook;
 import io.github.lazyimmortal.sesame.model.normal.base.BaseModel;
-import io.github.lazyimmortal.sesame.util.idMap.UserMap;
 
 /*
  *  ⭐为了保障您的操作安全，请进行验证后继续：
@@ -138,48 +137,14 @@ public class MyUtils {
     return true;
   }
 
-  //处理可能为空
-  public static @Nullable JSONArray antSportTaskListMaybeNull(JSONObject jo) {
-    return jo.optJSONArray("taskList");
-  }
-
-  //处理可能为空
-  public static @Nullable JSONArray antSportUserExchangeRecordsMaybeNull(JSONObject jo) {
-    return jo.optJSONArray("userExchangeRecords");
-  }
-
-  //处理可能为空
-
-  public static @Nullable JSONArray antFarmAnimalsMaybeNull(JSONObject jo) {
-    return jo.optJSONArray("animals");
-  }
-
-  //处理可能为空
-  public static @Nullable JSONObject antFarmSleepNotifyInfoMaybeNull(JSONObject jo) {
-    return jo.optJSONObject("sleepNotifyInfo");
-  }
-
-  //处理可能为空
-  public static long antForestV2NowMaybeNull(JSONObject jo) {
-    long time = jo.optLong("now");
-    if (time == 0) {
-      return System.currentTimeMillis();
-    } else {
-      return time;
-    }
-  }
-
-  //发现有不支持的BizSubType
-  public static boolean antMemberSupportBizSubType(String subType) {
-    if (TextUtils.isEmpty(subType)) return false;
-    return !TextUtils.equals(subType, "ngfe_tag__ptr3o4eriu");
-  }
-
-  //发现有不支持的BizKey
-  public static boolean antFarmSupportBizKey(String bizKey) {
-    if (TextUtils.isEmpty(bizKey)) return false;
-    return !bizKey.contains("_chouchoulechoukuan");
-  }
+  public static final String _OPT_TASKLIST = "taskList";
+  public static final String _OPT_USER_EXCHANGE_RECORDS = "userExchangeRecords";
+  public static final String _OPT_ANIMALS = "animals";
+  public static final String _OPT_NOW = "now";
+  public static final String _OPT_SLEEP_NOTIFY_INFO = "sleepNotifyInfo";
+  public static final String _NO_SUPPORT_ANTFARM_CHOUCHOULECHOUKUAN = "_chouchoulechoukuan";
+  public static final String _NO_SUPPORT_ANTFARM_TAO_GOLDEN_V2 = "TAO_GOLDEN_V2";
+  public static final String _NO_SUPPORT_ANTMEMBER_NGFE_TAG__PTR3O4ERIU = "ngfe_tag__ptr3o4eriu";
 
   //加密
   public static String encryptData(String data) {

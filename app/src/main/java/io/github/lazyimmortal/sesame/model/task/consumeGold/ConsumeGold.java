@@ -61,7 +61,8 @@ public class ConsumeGold extends ModelTask {
             String s = ConsumeGoldRpcCall.taskV2Index(taskSceneCode);
             JSONObject jo = new JSONObject(s);
             if (jo.optBoolean("success")) {
-                JSONArray taskList = jo.getJSONArray("taskList");
+                JSONArray taskList = jo.optJSONArray(MyUtils._OPT_TASKLIST);
+                if (taskList == null) taskList = new JSONArray();
                 for (int i = 0; i < taskList.length(); i++) {
                     jo = taskList.getJSONObject(i);
                     JSONObject extInfo = jo.getJSONObject("extInfo");

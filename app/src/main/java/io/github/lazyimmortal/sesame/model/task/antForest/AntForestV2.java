@@ -795,8 +795,7 @@ public class AntForestV2 extends ModelTask {
             long start = System.currentTimeMillis();
             userHomeObject = new JSONObject(AntForestRpcCall.queryHomePage());
             long end = System.currentTimeMillis();
-            //long serverTime = userHomeObject.getLong("now");
-            long serverTime = MyUtils.antForestV2NowMaybeNull(userHomeObject);//CHANGE BY KT
+            long serverTime = userHomeObject.optLong(MyUtils._OPT_NOW, System.currentTimeMillis());
             int offsetTime = offsetTimeMath.nextInteger((int) ((start + end) / 2 - serverTime));
             Log.i("服务器时间：" + serverTime + "，本地与服务器时间差：" + offsetTime);
         }
@@ -812,8 +811,7 @@ public class AntForestV2 extends ModelTask {
             long start = System.currentTimeMillis();
             userHomeObject = new JSONObject(AntForestRpcCall.queryFriendHomePage(userId));
             long end = System.currentTimeMillis();
-            //long serverTime = userHomeObject.getLong("now");
-            long serverTime = MyUtils.antForestV2NowMaybeNull(userHomeObject);//CHANGE BY KT
+            long serverTime = userHomeObject.optLong(MyUtils._OPT_NOW, System.currentTimeMillis());
             int offsetTime = offsetTimeMath.nextInteger((int) ((start + end) / 2 - serverTime));
             Log.i("服务器时间：" + serverTime + "，本地与服务器时间差：" + offsetTime);
         }
@@ -876,7 +874,7 @@ public class AntForestV2 extends ModelTask {
                 return userHomeObject;
             }
             
-            long serverTime = userHomeObject.getLong("now");
+            long serverTime = userHomeObject.optLong(MyUtils._OPT_NOW, System.currentTimeMillis());
             boolean isSelf = Objects.equals(userId, selfId);
             String userName;
             boolean isCollectEnergy;
