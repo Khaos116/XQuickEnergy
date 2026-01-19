@@ -1280,8 +1280,12 @@ public class AntMember extends ModelTask {
                 if (MyUtils._不是有效的入参1.equals(recordId)) {//CHANGE BY KT
                   continue;
                 }
+                Log.record("芝麻信用💳任务[" + taskTitle + "]id:" + recordId);
+                //参数错误  参数[promiseActivityExtCheck]不是有效的入参
+                if ("去玩一局斗地主".equals(taskTitle) || "去逛一逛消消乐".equals(taskTitle)) {
+                  continue;
+                }
 
-                Log.error("芝麻信用💳任务[" + taskTitle + "]id:" + recordId);
                 // 完成任务
                 for (int j = completedNum; j < needCompleteNum; j++) {
                     s = AntMemberRpcCall.finishSesameTask(recordId);
