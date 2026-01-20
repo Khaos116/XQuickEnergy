@@ -8,7 +8,7 @@ class WebSettingsActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     MyUtils.CHANGE_KT5.trim()
-    val intent = Intent(this, WebSettingsActivity::class.java)
+    val intent = Intent(this, SettingActivity::class.java)
     intent.putExtra("userId", intent.getStringExtra("userId"))
     intent.putExtra("userName", intent.getStringExtra("userName"))
     finish()
