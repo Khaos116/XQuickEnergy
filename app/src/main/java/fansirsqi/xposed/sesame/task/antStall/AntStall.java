@@ -33,6 +33,7 @@ import fansirsqi.xposed.sesame.data.Status;
 import fansirsqi.xposed.sesame.util.StringUtil;
 import fansirsqi.xposed.sesame.util.TimeUtil;
 import fansirsqi.xposed.sesame.util.TimeCounter;
+import fansirsqi.xposed.sesame.util.MyUtils;
 /**
  * @author Constanline
  * @since 2023/08/22
@@ -620,6 +621,9 @@ public class AntStall extends ModelTask {
 //                            AntStallRpcCall.taskList();
                             break;
                         case "ANTSTALL_XLIGHT_VARIABLE_AWARD":
+                            if (MyUtils.get_关闭作弊广告流量()) {
+                              continue;
+                            }
                             //【木兰市集】逛精选好物
                             s = AntStallRpcCall.xlightPlugin();
                             jo = new JSONObject(s);
