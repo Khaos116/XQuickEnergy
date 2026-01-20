@@ -23,6 +23,7 @@ import fansirsqi.xposed.sesame.util.CoroutineUtils
 import fansirsqi.xposed.sesame.util.GlobalThreadPools
 import fansirsqi.xposed.sesame.util.Log
 import fansirsqi.xposed.sesame.util.Log.record
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.ResChecker
 import fansirsqi.xposed.sesame.util.TaskBlacklist
 import fansirsqi.xposed.sesame.util.TimeUtil
@@ -316,7 +317,11 @@ class AntMember : ModelTask() {
 
                 if (merchantSign!!.value || merchantKmdk!!.value || merchantMoreTask!!.value) {
                     deferredTasks.add(async(Dispatchers.IO) {
+                        if (MyUtils.getSp功能异常(MyUtils._访问被拒绝1)) {
+                          return@async
+                        }
                         val jo = JSONObject(AntMemberRpcCall.transcodeCheck())
+                        MyUtils.setSp功能异常(MyUtils._访问被拒绝1, jo)
                         if (!ResChecker.checkRes(TAG, jo)) {
                             return@async
                         }
