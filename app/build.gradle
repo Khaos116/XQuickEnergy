@@ -28,8 +28,8 @@ android {
         //Android15.0       35
         //noinspection EditedTargetSdkVersion,OldTargetApi
         targetSdk 34
-        versionCode 1388
-        versionName "v1.8.8fix"//需要带上fix，不然自动发布会有判断问题
+        versionCode 1389
+        versionName "v1.8.9fix"//需要带上fix，不然自动发布会有判断问题
 
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
         //resConfigs "zh-rCN", "zh-rTW", "zh-rHK", "en-rUS", "en-rGB"
