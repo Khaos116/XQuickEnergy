@@ -1864,7 +1864,7 @@ public class AntFarm extends ModelTask {
             int cookTimesAllowed = jo.getInt("cookTimesAllowed");
             if (cookTimesAllowed > 0) {
                 for (int i = 0; i < cookTimesAllowed; i++) {
-                    jo = new JSONObject(AntFarmRpcCall.cook(userId, "VILLA"));
+                    jo = new JSONObject(AntFarmRpcCall.cook(userId));
                     if (MessageUtil.checkMemo(TAG, jo)) {
                         JSONObject cuisineVO = jo.getJSONObject("cuisineVO");
                         Log.farm("小鸡厨房👨🏻‍🍳制作[" + cuisineVO.getString("name") + "]");
@@ -2338,7 +2338,7 @@ public class AntFarm extends ModelTask {
             if (MessageUtil.checkMemo(TAG, jo)) {
                 drawMachine("ANTFARM_DAILY_DRAW_TASK", "dailyDrawMachine", "ipDrawMachine");
 
-                JSONObject queryDrawMachineActivityjo = new JSONObject(AntFarmRpcCall.queryDrawMachineActivity_New("ipDrawMachine", "dailyDrawMachine"));
+                JSONObject queryDrawMachineActivityjo = new JSONObject(AntFarmRpcCall.queryDrawMachineActivity("ipDrawMachine", "dailyDrawMachine"));
                 if (MessageUtil.checkMemo(TAG, queryDrawMachineActivityjo)) {
                     if (!queryDrawMachineActivityjo.has("otherDrawMachineActivityIds")) {
                         return;
@@ -2355,10 +2355,10 @@ public class AntFarm extends ModelTask {
         }
     }
 
-    private void drawMachine(String taskSceneCode, String scene, String otherScenes) {
+      private void drawMachine(String taskSceneCode, String scene, String otherScenes) {
         doFarmDrawTask(taskSceneCode);
         try {
-            JSONObject jo = new JSONObject(AntFarmRpcCall.queryDrawMachineActivity_New(otherScenes, scene));
+            JSONObject jo = new JSONObject(AntFarmRpcCall.queryDrawMachineActivity(otherScenes, scene));
             int drawTimes = jo.optInt("drawTimes", 0);
             for (int i = 0; i < drawTimes; i++) {
                 if (!drawMachine(scene)) {
