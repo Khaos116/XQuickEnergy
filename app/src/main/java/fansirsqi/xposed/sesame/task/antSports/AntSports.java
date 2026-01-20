@@ -188,14 +188,12 @@ public class AntSports extends ModelTask {
             // 运动任务
             if (!Status.hasFlagToday("sport::dailyTasks") && sportsTasks.getValue()) {
                 // 先执行原有运动任务面板逻辑
-                //sportsTasks();
-                MyUtils.CHANGE_KT6.trim();
+                sportsTasks();
             }
 
             // 运动球任务
             if (sportsEnergyBubble.getValue()) {
-                //sportsEnergyBubbleTask();
-                MyUtils.CHANGE_KT7.trim();
+                sportsEnergyBubbleTask();
             }
 
             ClassLoader loader = ApplicationHook.classLoader;
@@ -261,6 +259,7 @@ public class AntSports extends ModelTask {
     // 运动
     private void sportsTasks() {
         try {
+            if (MyUtils.get_关闭必弹验证1()) return;
             sportsCheck_in();
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryCoinTaskPanel());
 
@@ -447,6 +446,7 @@ public class AntSports extends ModelTask {
      */
     private void sportsEnergyBubbleTask() {
         try {
+            if (MyUtils.get_关闭必弹验证2()) return;
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryEnergyBubbleModule());
             if (!ResChecker.checkRes(TAG,jo)) {
                 Log.error(TAG, "queryEnergyBubbleModule fail: " + jo);
