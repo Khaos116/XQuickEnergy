@@ -1355,7 +1355,7 @@ class AntFarm : ModelTask() {
             var jo = JSONObject(s)
             if (ResChecker.checkRes(TAG, jo)) {
                 val sleepNotifyInfo = jo.getJSONObject("sleepNotifyInfo")
-                if (sleepNotifyInfo.optBoolean("canSleep", false)) {
+                if (sleepNotifyInfo.optBoolean(MyUtils.NO_SLEEP, false)) {
                     val groupId = jo.optString("groupId")
                     s = if (groupId.isNotEmpty()) {
                         AntFarmRpcCall.sleep(groupId)
@@ -1386,7 +1386,7 @@ class AntFarm : ModelTask() {
             var jo = JSONObject(s)
             if (ResChecker.checkRes(TAG, jo)) {
                 val sleepNotifyInfo = jo.getJSONObject("sleepNotifyInfo")
-                if (!sleepNotifyInfo.optBoolean("canSleep", true)) {
+                if (!sleepNotifyInfo.optBoolean(MyUtils.NO_SLEEP, true)) {
                     s = AntFarmRpcCall.wakeUp()
                     jo = JSONObject(s)
                     if (ResChecker.checkRes(TAG, jo)) {
