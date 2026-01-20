@@ -37,9 +37,9 @@ object MyUtils {
   const val CHANGE_KT16 = "16"
   const val CHANGE_KT17 = "17"
   const val CHANGE_KT18 = "18"
+  const val CHANGE_KT19 = "19"
 
   //还未使用的
-  const val CHANGE_KT19 = "19"
   const val CHANGE_KT20 = "20"
   const val CHANGE_KT21 = "21"
   const val CHANGE_KT22 = "22"
@@ -99,18 +99,20 @@ object MyUtils {
     }
   }
 
-  fun getSp当天是否验证(key: String): Boolean {
+  fun getSp当天是否执行(key: String): Boolean {
     val sp: SharedPreferences = getMySp() ?: return true
     val today = ZonedDateTime.now(ZoneId.of("GMT+8")).format(DateTimeFormatter.ofPattern("yyyyMMdd"))
     return sp.getBoolean(key + "_" + today + "_" + (UserMap.currentUid ?: ""), false)
   }
 
-  fun setSp当天是否验证(key: String, jo: JSONObject?) {
+  fun setSp当天是否执行(key: String, jo: JSONObject?) {
     if (jo == null) return
     //{"error":1009,"errorMessage":"为了保障您的操作安全，请进行验证后继续。","errorNo":3,"errorTip":"1009"}
     val errorMessage = jo.optString("errorMessage", "")
     var isError = false
     if (errorMessage.contains("验证后继续")) {
+      isError = true
+    } else if (errorMessage.contains("已经签到")) {
       isError = true
     }
     if (isError) {

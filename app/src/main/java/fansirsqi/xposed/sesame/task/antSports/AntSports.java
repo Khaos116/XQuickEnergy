@@ -1695,6 +1695,10 @@ public class AntSports extends ModelTask {
                     String errorCode = jo.optString("errorCode", "");
                     if ("ALREADY_SIGN_IN".equals(errorCode) || "已签到".equals(jo.optString("errorMsg", ""))) {
                         Status.setFlagToday("AntSports::neverlandDoSign::已签到");
+                    } else if ("已经签到".equals(jo.optString("errorMsg", ""))) {
+                      MyUtils.CHANGE_KT19.trim();
+                      //{"ariverRpcTraceId":"21bb716817689077425904737ead5a","errorCode":"ALREADY_SIGN_IN","errorMsg":"已经签到","retryable":false,"success":false}
+                      Status.setFlagToday("AntSports::neverlandDoSign::已签到");
                     }
                     return;
                 }
