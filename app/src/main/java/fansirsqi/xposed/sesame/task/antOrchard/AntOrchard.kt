@@ -421,6 +421,10 @@ class AntOrchard : ModelTask() {
                     "未知任务"
                 }
 
+                if ("逛一逛一淘" == title && MyUtils._关闭不支持RPC1) {
+                  continue
+                }
+
                 // 黑名单任务：后端不支持 finishTask 或需要端内实际跳转
                 if (TaskBlacklist.isTaskInBlacklist(groupId)) {
                     Log.record(TAG, "跳过黑名单任务[$title] groupId=$groupId")
@@ -453,6 +457,10 @@ class AntOrchard : ModelTask() {
                     }
 
                     for (cnt in 0 until timesToDo) {
+                        //[{"outBizNo":"mokuai_senlin_hydrw_0.2913546844220295","requestType":"RPC","sceneCode":"ANTOCEAN_TASK","source":"ANTFOCEAN","taskType":"mokuai_senlin_hydrw","uniqueId":"1767460371318492722387988273949"}]
+                        if (MyUtils._关闭不支持RPC2 && "ANTOCEAN_TASK" == sceneCode && "mokuai_senlin_hydrw" == taskId) {
+                          continue
+                        }
                         val finishResponse = JSONObject(AntOrchardRpcCall.finishTask(userId, sceneCode, taskId))
                         if (ResChecker.checkRes(TAG, finishResponse)) {
                             Log.farm("农场广告任务📺[$title] 第${rightsTimes + cnt + 1}次")
