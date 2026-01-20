@@ -25,7 +25,7 @@
     <application
         android:name=".SesameApplication"
         android:description="@string/xposed_description"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
