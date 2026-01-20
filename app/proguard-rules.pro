@@ -3,14 +3,6 @@
 -keep class io.github.libxposed.service.** { *; }
 -dontwarn io.github.libxposed.service.**
 
-# ---------- Shizuku ----------
--keep class dev.rikka.shizuku.** { *; }
--dontwarn dev.rikka.shizuku.**
-
-# ---------- cmd-android ----------
--keep class com.niki.** { *; }
--dontwarn com.niki.**
-
 
 # ---------- 日志 ----------
 -keep class ch.qos.logback.** { *; }
@@ -31,3 +23,25 @@
 -keepnames class * implements java.io.Serializable
 -keepclassmembers class * implements java.io.Serializable { *; }
 -dontwarn java.beans.ConstructorProperties, java.beans.Transient
+
+# ---------- DexKit (极其重要，防止 Zip 损坏) ----------
+-keep class io.github.luckypray.dexkit.** { *; }
+-keep class com.github.panpf.shell.** { *; }
+-dontwarn io.github.luckypray.dexkit.**
+
+# ---------- Rikka & Shizuku (反射隐藏 API 必备) ----------
+-keep class dev.rikka.** { *; }
+-keep class rikka.** { *; }
+-dontwarn dev.rikka.**
+
+# ---------- NanoHTTPD ----------
+-keep class fi.iki.elonen.** { *; }
+
+# ---------- 资源压缩保护 (配合 isShrinkResources 使用) ----------
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+
+-obfuscationdictionary proguard-sxbk.txt
+-classobfuscationdictionary proguard-sxbk.txt
+-packageobfuscationdictionary proguard-sxbk.txt
