@@ -4,7 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import fansirsqi.xposed.sesame.hook.ApplicationHook
+import fansirsqi.xposed.sesame.util.maps.UserMap
 import org.json.JSONObject
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -33,6 +37,7 @@ object MyUtils {
   const val CHANGE_KT16 = "16"
   const val CHANGE_KT17 = "17"
   const val CHANGE_KT18 = "18"
+
   //还未使用的
   const val CHANGE_KT19 = "19"
   const val CHANGE_KT20 = "20"
@@ -90,6 +95,28 @@ object MyUtils {
     if (isError) {
       getMySp()?.edit {
         putBoolean(key, true)
+      }
+    }
+  }
+
+  fun getSp当天是否验证(key: String): Boolean {
+    val sp: SharedPreferences = getMySp() ?: return true
+    val today = ZonedDateTime.now(ZoneId.of("GMT+8")).format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+    return sp.getBoolean(key + "_" + today + "_" + (UserMap.currentUid ?: ""), false)
+  }
+
+  fun setSp当天是否验证(key: String, jo: JSONObject?) {
+    if (jo == null) return
+    //{"error":1009,"errorMessage":"为了保障您的操作安全，请进行验证后继续。","errorNo":3,"errorTip":"1009"}
+    val errorMessage = jo.optString("errorMessage", "")
+    var isError = false
+    if (errorMessage.contains("验证后继续")) {
+      isError = true
+    }
+    if (isError) {
+      val today = ZonedDateTime.now(ZoneId.of("GMT+8")).format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+      getMySp()?.edit {
+        putBoolean(key + "_" + today + "_" + (UserMap.currentUid ?: ""), true)
       }
     }
   }
