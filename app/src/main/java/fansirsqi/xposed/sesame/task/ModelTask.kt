@@ -8,6 +8,7 @@ import fansirsqi.xposed.sesame.model.ModelFields
 import fansirsqi.xposed.sesame.model.ModelType
 import fansirsqi.xposed.sesame.task.antForest.AntForest
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.Notify.setStatusTextExec
 import fansirsqi.xposed.sesame.util.Notify.updateNextExecText
 import fansirsqi.xposed.sesame.util.StringUtil
@@ -252,6 +253,8 @@ abstract class ModelTask : Model() {
                     return@withLock
                 }
                 try {
+                    MyUtils.CHANGE_KT3.trim()
+                    Log.other("▶️开始执行模块[${getName()}]🔜")
                     isRunning = true
                     addRunCents()
                     setStatusTextExec(getName())
@@ -263,6 +266,8 @@ abstract class ModelTask : Model() {
                     Log.printStackTrace("startTask err: ${getName()}", e)
                 } finally {
                     isRunning = false
+                    MyUtils.CHANGE_KT4.trim()
+                    Log.other("🟥模块[${getName()}]执行完毕🔚")
                     updateNextExecText(-1)
                 }
             }

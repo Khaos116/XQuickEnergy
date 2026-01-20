@@ -92,7 +92,7 @@ public class TimeUtil {
 
     public static Integer isCompareTimeStr(Long timeMillis, String compareTimeStr) {
         try {
-            Calendar timeCalendar = Calendar.getInstance();
+            Calendar timeCalendar = MyUtils.getInstance();
             timeCalendar.setTimeInMillis(timeMillis);
             Calendar compareCalendar = getTodayCalendarByTimeStr(compareTimeStr);
             if (compareCalendar != null) {
@@ -149,7 +149,7 @@ public class TimeUtil {
     }
 
     public static Calendar getCalendarByTimeMillis(Long timeMillis) {
-        Calendar timeCalendar = Calendar.getInstance();
+        Calendar timeCalendar = MyUtils.getInstance();
         if (timeMillis != null) {
             timeCalendar.setTimeInMillis(timeMillis);
         }
@@ -193,7 +193,7 @@ public class TimeUtil {
      * @return 格式：yyyy年*M月*d日
      */
     public static String getDateStr(int plusDay) {
-        Calendar c = Calendar.getInstance();
+        Calendar c = MyUtils.getInstance();
         if (plusDay != 0) {
             c.add(Calendar.DATE, plusDay);
         }
@@ -216,7 +216,7 @@ public class TimeUtil {
      * @return yyyy-MM-dd
      */
     public static String getDateStr2(int plusDay) {
-        Calendar c = Calendar.getInstance();
+        Calendar c = MyUtils.getInstance();
         if (plusDay != 0) {
             c.add(Calendar.DATE, plusDay);
         }
@@ -228,7 +228,7 @@ public class TimeUtil {
     }
 
     public static Calendar getToday() {
-        Calendar c = Calendar.getInstance();
+        Calendar c = MyUtils.getInstance();
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
@@ -237,7 +237,7 @@ public class TimeUtil {
     }
 
     public static Calendar getNow() {
-        return Calendar.getInstance();
+        return MyUtils.getInstance();
     }
 
 
@@ -255,7 +255,7 @@ public class TimeUtil {
      * @return 当前年的第几周
      */
     public static int getWeekNumber(Date dateTime) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = MyUtils.getInstance();
         calendar.setTime(dateTime);
         // 设置周的第一天为周一
         calendar.setFirstDayOfWeek(Calendar.MONDAY);
@@ -423,7 +423,7 @@ public class TimeUtil {
      * @return 格式化后的时间字符串
      */
     public static String getFormatTime(int offset, String format) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = MyUtils.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, offset);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.format(calendar.getTime());

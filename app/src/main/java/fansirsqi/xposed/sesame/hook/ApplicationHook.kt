@@ -3,25 +3,15 @@ package fansirsqi.xposed.sesame.hook
 import android.annotation.SuppressLint
 import android.app.Application
 import android.app.Service
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.PackageInfo
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import androidx.core.content.ContextCompat
-import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XSharedPreferences
-import de.robv.android.xposed.XposedBridge
-import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 import fansirsqi.xposed.sesame.BuildConfig
 import fansirsqi.xposed.sesame.SesameApplication
-import fansirsqi.xposed.sesame.data.Config
-import fansirsqi.xposed.sesame.data.General
-import fansirsqi.xposed.sesame.data.Status
+import fansirsqi.xposed.sesame.data.*
 import fansirsqi.xposed.sesame.data.Status.Companion.load
 import fansirsqi.xposed.sesame.data.Status.Companion.save
 import fansirsqi.xposed.sesame.entity.AlipayVersion
@@ -33,10 +23,7 @@ import fansirsqi.xposed.sesame.hook.internal.SecurityBodyHelper
 import fansirsqi.xposed.sesame.hook.keepalive.SmartSchedulerManager
 import fansirsqi.xposed.sesame.hook.keepalive.SmartSchedulerManager.cleanup
 import fansirsqi.xposed.sesame.hook.keepalive.SmartSchedulerManager.schedule
-import fansirsqi.xposed.sesame.hook.rpc.bridge.NewRpcBridge
-import fansirsqi.xposed.sesame.hook.rpc.bridge.OldRpcBridge
-import fansirsqi.xposed.sesame.hook.rpc.bridge.RpcBridge
-import fansirsqi.xposed.sesame.hook.rpc.bridge.RpcVersion
+import fansirsqi.xposed.sesame.hook.rpc.bridge.*
 import fansirsqi.xposed.sesame.hook.rpc.debug.DebugRpc
 import fansirsqi.xposed.sesame.hook.rpc.intervallimit.RpcIntervalLimit.clearIntervalLimit
 import fansirsqi.xposed.sesame.hook.server.ModuleHttpServerManager.startIfNeeded
@@ -56,40 +43,29 @@ import fansirsqi.xposed.sesame.task.MainTask
 import fansirsqi.xposed.sesame.task.MainTask.Companion.newInstance
 import fansirsqi.xposed.sesame.task.ModelTask.Companion.stopAllTask
 import fansirsqi.xposed.sesame.task.TaskRunnerAdapter
-import fansirsqi.xposed.sesame.task.customTasks.CustomTask
-import fansirsqi.xposed.sesame.task.customTasks.ManualTask
-import fansirsqi.xposed.sesame.task.customTasks.ManualTaskModel
+import fansirsqi.xposed.sesame.task.customTasks.*
+import fansirsqi.xposed.sesame.util.*
 import fansirsqi.xposed.sesame.util.AssetUtil.checkerDestFile
 import fansirsqi.xposed.sesame.util.AssetUtil.copyStorageSoFileToPrivateDir
 import fansirsqi.xposed.sesame.util.AssetUtil.dexkitDestFile
 import fansirsqi.xposed.sesame.util.DataStore.init
-import fansirsqi.xposed.sesame.util.Detector
 import fansirsqi.xposed.sesame.util.Detector.loadLibrary
-import fansirsqi.xposed.sesame.util.Files
 import fansirsqi.xposed.sesame.util.GlobalThreadPools.execute
 import fansirsqi.xposed.sesame.util.GlobalThreadPools.shutdownAndRestart
-import fansirsqi.xposed.sesame.util.Log
 import fansirsqi.xposed.sesame.util.Log.error
 import fansirsqi.xposed.sesame.util.Log.printStackTrace
 import fansirsqi.xposed.sesame.util.Log.record
-import fansirsqi.xposed.sesame.util.ModuleStatus
-import fansirsqi.xposed.sesame.util.Notify
 import fansirsqi.xposed.sesame.util.Notify.stop
 import fansirsqi.xposed.sesame.util.Notify.updateStatusText
-import fansirsqi.xposed.sesame.util.PermissionUtil
 import fansirsqi.xposed.sesame.util.PermissionUtil.checkBatteryPermissions
 import fansirsqi.xposed.sesame.util.StatusManager.updateStatus
-import fansirsqi.xposed.sesame.util.TimeUtil
 import fansirsqi.xposed.sesame.util.maps.UserMap
 import fansirsqi.xposed.sesame.util.maps.UserMap.currentUid
 import io.github.libxposed.api.XposedInterface
 import io.github.libxposed.api.XposedModuleInterface.PackageLoadedParam
-import org.luckypray.dexkit.DexKitBridge
 import java.io.File
 import java.lang.AutoCloseable
-import java.lang.reflect.InvocationTargetException
-import java.lang.reflect.Member
-import java.lang.reflect.Method
+import java.lang.reflect.*
 import java.util.Calendar
 import java.util.Objects
 import kotlin.concurrent.Volatile
@@ -297,17 +273,17 @@ class ApplicationHook {
                     service = appService
                     appContext = appService.applicationContext
                     ensureScheduler()
-
-                    if (Detector.isLegitimateEnvironment(appContext!!)) {
-                        Detector.dangerous(appContext!!)
-                        return
-                    }
-
-                    DexKitBridge.create(apkPath).use { _ ->
-                        record(TAG, "Hook DexKit successfully")
-                    }
+                    MyUtils.CHANGE_KT1.trim()
+                    //if (Detector.isLegitimateEnvironment(appContext!!)) {
+                    //    Detector.dangerous(appContext!!)
+                    //    return
+                    //}
+                    //
+                    //DexKitBridge.create(apkPath).use { _ ->
+                    //    record(TAG, "Hook DexKit successfully")
+                    //}
                     mainTask = newInstance("主任务") { runMainTaskLogic() }
-                    dayCalendar = Calendar.getInstance()
+                    dayCalendar = MyUtils.getInstance()
                     if (initHandler()) {
                         init = true
                     }
@@ -534,7 +510,7 @@ class ApplicationHook {
         private val deoptimizeMethod: Method?
 
         init {
-            dayCalendar = Calendar.getInstance()
+            dayCalendar = MyUtils.getInstance()
             resetToMidnight(dayCalendar!!)
             var m: Method? = null
             try {
@@ -682,6 +658,8 @@ class ApplicationHook {
                 val successMsg = "Loaded SesameTk " + BuildConfig.VERSION_NAME + "✨"
                 record(successMsg)
                 show(successMsg)
+                MyUtils.CHANGE_KT9.trim()
+                record(TAG, "编译时间：" + BuildConfig.BUILD_DATE + " " + BuildConfig.BUILD_TIME)
 
                 offline = false
                 init = true
@@ -761,7 +739,7 @@ class ApplicationHook {
         }
 
         fun updateDay() {
-            val now = Calendar.getInstance()
+            val now = MyUtils.getInstance()
             if (dayCalendar == null || dayCalendar!!.get(Calendar.DAY_OF_MONTH) != now.get(Calendar.DAY_OF_MONTH)) {
                 dayCalendar = now.clone() as Calendar
                 resetToMidnight(dayCalendar!!)
@@ -825,7 +803,7 @@ class ApplicationHook {
             if (wakenAtTimeList != null && wakenAtTimeList.contains("-1")) return
 
             // 1. 每日0点
-            val calendar = Calendar.getInstance()
+            val calendar = MyUtils.getInstance()
             calendar.add(Calendar.DAY_OF_MONTH, 1)
             resetToMidnight(calendar)
             val delayToMidnight = calendar.getTimeInMillis() - System.currentTimeMillis()
@@ -841,7 +819,7 @@ class ApplicationHook {
 
             // 2. 自定义时间
             if (wakenAtTimeList != null) {
-                val now = Calendar.getInstance()
+                val now = MyUtils.getInstance()
                 for (timeStr in wakenAtTimeList) {
                     try {
                         val target = TimeUtil.getTodayCalendarByTimeStr(timeStr)

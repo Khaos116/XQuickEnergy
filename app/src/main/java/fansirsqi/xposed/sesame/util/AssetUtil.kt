@@ -104,7 +104,8 @@ object AssetUtil {
     fun copyStorageSoFileToPrivateDir(context: Context, sourceFile: File): File? {
         try {
             if (!sourceFile.exists()) {
-                Log.error(TAG, "SO file not exists: " + sourceFile.absolutePath)
+                MyUtils.CHANGE_KT16.trim()
+                //Log.error(TAG, "SO file not exists: " + sourceFile.absolutePath)
                 return null
             }
             val targetDir = context.getDir("sesame_libs", Context.MODE_PRIVATE)

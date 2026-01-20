@@ -2,6 +2,7 @@ package fansirsqi.xposed.sesame.task.antForest
 
 import android.annotation.SuppressLint
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import java.util.Calendar
 
 /**
@@ -22,7 +23,7 @@ object TaskTimeChecker {
         try {
             val time = timeStr?.takeIf { it.isNotBlank() } ?: defaultTime
             
-            val calendar = Calendar.getInstance()
+            val calendar = MyUtils.getInstance()
             val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
             val currentMinute = calendar.get(Calendar.MINUTE)
             
@@ -153,7 +154,7 @@ object TaskTimeChecker {
      */
     @SuppressLint("DefaultLocale")
     fun getCurrentTime(): String {
-        val calendar = Calendar.getInstance()
+        val calendar = MyUtils.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
         return String.format("%02d%02d", hour, minute)

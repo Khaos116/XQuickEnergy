@@ -17,6 +17,7 @@ import fansirsqi.xposed.sesame.util.FansirsqiUtil
 import fansirsqi.xposed.sesame.util.Files
 import fansirsqi.xposed.sesame.util.IconManager
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.StatusManager
 import fansirsqi.xposed.sesame.util.maps.UserMap
 import kotlinx.coroutines.Dispatchers
@@ -102,7 +103,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch(Dispatchers.IO) {
             initEnvironment()
-            copyAssets()
+            MyUtils.CHANGE_KT14.trim()
+            //copyAssets()
 
             // 加载初始数据
             reloadUserConfigs()

@@ -2,6 +2,7 @@ package fansirsqi.xposed.sesame.task.antForest
 
 import fansirsqi.xposed.sesame.data.Status
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -129,7 +130,7 @@ object Privilege {
     }
 
     private fun isSignInTimeValid(): Boolean {
-        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        val hour = MyUtils.getInstance().get(Calendar.HOUR_OF_DAY)
         return hour >= SIGN_START_HOUR
     }
 
@@ -158,7 +159,7 @@ object Privilege {
 
     private fun executeStudentSignIn() {
         try {
-            val tag = if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < SIGN_END_HOUR) "double" else "single"
+            val tag = if (MyUtils.getInstance().get(Calendar.HOUR_OF_DAY) < SIGN_END_HOUR) "double" else "single"
             val response = AntForestRpcCall.studentCheckin()
             val result = JSONObject(response)
             handleSignInResult(result, tag)

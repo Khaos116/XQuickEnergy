@@ -48,14 +48,14 @@ object IconManager {
     }
 
     private fun isChristmasTime(): Boolean {
-        val calendar = Calendar.getInstance()
+        val calendar = MyUtils.getInstance()
         val month = calendar.get(Calendar.MONTH) + 1
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         return month == 12 && (day in 25..25)
     }
 
     private fun inDateRange(mon: Int, start: Int, end: Int): Boolean {
-        val calendar = Calendar.getInstance()
+        val calendar = MyUtils.getInstance()
         val month = calendar.get(Calendar.MONTH) + 1
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         return mon == month && (day in start..end)

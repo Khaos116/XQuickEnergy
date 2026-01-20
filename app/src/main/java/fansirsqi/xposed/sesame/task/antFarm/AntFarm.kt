@@ -34,6 +34,7 @@ import fansirsqi.xposed.sesame.util.DataStore
 import fansirsqi.xposed.sesame.util.JsonUtil
 import fansirsqi.xposed.sesame.util.ListUtil
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.RandomUtil
 import fansirsqi.xposed.sesame.util.ResChecker
 import fansirsqi.xposed.sesame.util.StringUtil
@@ -4646,17 +4647,17 @@ class AntFarm : ModelTask() {
                 }
             }
             var periodName = ""
-            val currentTime = Calendar.getInstance()
+            val currentTime = MyUtils.getInstance()
             for (i in 0..<periodItemList.length()) {
                 val periodItem = periodItemList.getJSONObject(i)
                 val startHour = periodItem.optInt("startHour")
                 val startMinute = periodItem.optInt("startMinute")
                 val endHour = periodItem.optInt("endHour")
                 val endMinute = periodItem.optInt("endMinute")
-                val startTime = Calendar.getInstance()
+                val startTime = MyUtils.getInstance()
                 startTime.set(Calendar.HOUR_OF_DAY, startHour)
                 startTime.set(Calendar.MINUTE, startMinute)
-                val endTime = Calendar.getInstance()
+                val endTime = MyUtils.getInstance()
                 endTime.set(Calendar.HOUR_OF_DAY, endHour)
                 endTime.set(Calendar.MINUTE, endMinute)
                 if (currentTime.after(startTime) && currentTime.before(endTime)) {

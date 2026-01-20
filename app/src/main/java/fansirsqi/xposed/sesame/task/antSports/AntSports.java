@@ -15,7 +15,7 @@ import fansirsqi.xposed.sesame.data.StatusFlags;
 import fansirsqi.xposed.sesame.entity.AlipayUser;
 import fansirsqi.xposed.sesame.hook.ApplicationHook;
 import fansirsqi.xposed.sesame.model.BaseModel;
-import fansirsqi.xposed.sesame.util.DataStore;
+import fansirsqi.xposed.sesame.util.*;
 import fansirsqi.xposed.sesame.model.ModelFields;
 import fansirsqi.xposed.sesame.model.ModelGroup;
 import fansirsqi.xposed.sesame.model.modelFieldExt.BooleanModelField;
@@ -23,13 +23,8 @@ import fansirsqi.xposed.sesame.model.modelFieldExt.ChoiceModelField;
 import fansirsqi.xposed.sesame.model.modelFieldExt.IntegerModelField;
 import fansirsqi.xposed.sesame.model.modelFieldExt.SelectModelField;
 import fansirsqi.xposed.sesame.model.modelFieldExt.StringModelField;
-import fansirsqi.xposed.sesame.util.TaskBlacklist;
 import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.task.TaskCommon;
-import fansirsqi.xposed.sesame.util.Log;
-import fansirsqi.xposed.sesame.util.RandomUtil;
-import fansirsqi.xposed.sesame.util.ResChecker;
-import fansirsqi.xposed.sesame.util.TimeUtil;
 import fansirsqi.xposed.sesame.util.maps.UserMap;
 
 import static fansirsqi.xposed.sesame.util.GlobalThreadPools.sleepCompat;
@@ -162,44 +157,45 @@ public class AntSports extends ModelTask {
                 handler.runNeverland();
                 Log.record(TAG, "健康岛结束");
             }
-
-            if (!Status.hasFlagToday("sport::syncStep") && TimeUtil.isNowAfterOrCompareTimeStr("0600")) {
-                addChildTask(new ChildModelTask("syncStep", () -> {
-                    int step = tmpStepCount();
-                    try {
-                        ClassLoader classLoader = ApplicationHook.classLoader;
-                        Object rpcManager = XposedHelpers.callStaticMethod(
-                                classLoader.loadClass("com.alibaba.health.pedometer.intergation.rpc.RpcManager"),
-                                "a"
-                        );
-                        boolean success = (Boolean) XposedHelpers.callMethod(
-                                rpcManager,
-                                "a",
-                                step, Boolean.FALSE, "system"
-                        );
-
-                        if (success) {
-                            Log.other("同步步数🏃🏻‍♂️[" + step + "步]");
-                        } else {
-                            Log.error(TAG, "同步运动步数失败:" + step);
-                        }
-                        Status.setFlagToday("sport::syncStep");
-                    } catch (Throwable t) {
-                        Log.printStackTrace(TAG, t);
-                    }
-                }));
-            }
+            MyUtils.CHANGE_KT8.trim();
+            //if (!Status.hasFlagToday("sport::syncStep") && TimeUtil.isNowAfterOrCompareTimeStr("0600")) {
+            //    addChildTask(new ChildModelTask("syncStep", () -> {
+            //        int step = tmpStepCount();
+            //        try {
+            //            ClassLoader classLoader = ApplicationHook.classLoader;
+            //            Object rpcManager = XposedHelpers.callStaticMethod(
+            //                    classLoader.loadClass("com.alibaba.health.pedometer.intergation.rpc.RpcManager"),
+            //                    "a"
+            //            );
+            //            boolean success = (Boolean) XposedHelpers.callMethod(
+            //                    rpcManager,
+            //                    "a",
+            //                    step, Boolean.FALSE, "system"
+            //            );
+            //
+            //            if (success) {
+            //                Log.other("同步步数🏃🏻‍♂️[" + step + "步]");
+            //            } else {
+            //                Log.error(TAG, "同步运动步数失败:" + step);
+            //            }
+            //            Status.setFlagToday("sport::syncStep");
+            //        } catch (Throwable t) {
+            //            Log.printStackTrace(TAG, t);
+            //        }
+            //    }));
+            //}
 
             // 运动任务
             if (!Status.hasFlagToday("sport::dailyTasks") && sportsTasks.getValue()) {
                 // 先执行原有运动任务面板逻辑
-                sportsTasks();
-
+                //sportsTasks();
+                MyUtils.CHANGE_KT6.trim();
             }
 
             // 运动球任务
             if (sportsEnergyBubble.getValue()) {
-                sportsEnergyBubbleTask();
+                //sportsEnergyBubbleTask();
+                MyUtils.CHANGE_KT7.trim();
             }
 
             ClassLoader loader = ApplicationHook.classLoader;
@@ -270,7 +266,10 @@ public class AntSports extends ModelTask {
 
             if (ResChecker.checkRes(TAG,jo)) {
                 JSONObject data = jo.getJSONObject("data");
-                JSONArray taskList = data.getJSONArray("taskList");
+                MyUtils.CHANGE_KT11.trim();
+                JSONArray taskList = data.optJSONArray("taskList");
+                if (taskList == null) taskList = new JSONArray();
+
 
                 int totalTasks = 0;
                 int completedTasks = 0;
@@ -535,7 +534,9 @@ public class AntSports extends ModelTask {
 
                 // 如果整体未签到，遍历签到配置列表查找今日签到项
                 if (!isSigned) {
-                    JSONArray signConfigList = data.getJSONArray("signConfigList");
+                    MyUtils.CHANGE_KT12.trim();
+                    JSONArray signConfigList = data.optJSONArray("signConfigList");
+                    if (signConfigList == null) signConfigList = new JSONArray();
                     // 遍历所有签到配置项
                     for (int i = 0; i < signConfigList.length(); i++) {
                         JSONObject configItem = signConfigList.getJSONObject(i);
@@ -618,7 +619,8 @@ public class AntSports extends ModelTask {
                 Log.error(TAG,"查询用户失败: " + user);
                 return;
             }
-            String joinedPathId = user.getJSONObject("data").getString("joinedPathId");
+            MyUtils.CHANGE_KT13.trim();
+            String joinedPathId = user.getJSONObject("data").optString("joinedPathId", "");
             JSONObject path = queryPath(joinedPathId);
             JSONObject userPathStep = path.getJSONObject("userPathStep");
             if ("COMPLETED".equals(userPathStep.getString("pathCompleteStatus"))) {
@@ -701,7 +703,9 @@ public class AntSports extends ModelTask {
             JSONObject jo = new JSONObject(AntSportsRpcCall.queryPath(sdf.format(date), pathId));
             if (ResChecker.checkRes(TAG, jo)) {
                 path = jo.getJSONObject("data");
-                JSONArray ja = jo.getJSONObject("data").getJSONArray("treasureBoxList");
+                MyUtils.CHANGE_KT10.trim();
+                JSONArray ja = jo.getJSONObject("data").optJSONArray("treasureBoxList");
+                if (ja == null) ja = new JSONArray();
                 //如果有宝箱则收取宝箱
                 for (int i = 0; i < ja.length(); i++) {
                     JSONObject treasureBox = ja.getJSONObject(i);

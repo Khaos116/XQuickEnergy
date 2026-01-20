@@ -8,12 +8,8 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import fansirsqi.xposed.sesame.util.Files;
-import fansirsqi.xposed.sesame.util.JsonUtil;
-import fansirsqi.xposed.sesame.util.Log;
+import fansirsqi.xposed.sesame.util.*;
 import fansirsqi.xposed.sesame.util.maps.UserMap;
-import fansirsqi.xposed.sesame.util.StringUtil;
-import fansirsqi.xposed.sesame.util.TimeUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -148,9 +144,9 @@ public class FriendWatch extends MapperEntity {
         if (last == 0L) {
             return true;
         }
-        Calendar cLast = Calendar.getInstance();
+        Calendar cLast = MyUtils.getInstance();
         cLast.setTimeInMillis(last);
-        Calendar cNow = Calendar.getInstance();
+        Calendar cNow = MyUtils.getInstance();
         if (cLast.get(Calendar.DAY_OF_YEAR) == cNow.get(Calendar.DAY_OF_YEAR)) {
             return false;
         }

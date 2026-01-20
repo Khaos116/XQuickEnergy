@@ -28,6 +28,7 @@ import fansirsqi.xposed.sesame.util.Detector
 import fansirsqi.xposed.sesame.util.Files
 import fansirsqi.xposed.sesame.util.IconManager
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.PermissionUtil
 import fansirsqi.xposed.sesame.util.ToastUtil
 import kotlinx.coroutines.delay
@@ -154,7 +155,10 @@ class MainActivity : ComponentActivity() {
             MainUiEvent.OpenFarmLog -> openLogFile(Files.getFarmLogFile())
             MainUiEvent.OpenOtherLog -> openLogFile(Files.getOtherLogFile())
             MainUiEvent.OpenGithub -> openUrl("https://github.com/Fansirsqi/Sesame-TK")
-            MainUiEvent.OpenErrorLog -> executeWithVerification { openLogFile(Files.getErrorLogFile()) }
+            MainUiEvent.OpenErrorLog -> {
+              MyUtils.CHANGE_KT17.trim()
+              openLogFile(Files.getErrorLogFile())
+            }
             MainUiEvent.OpenAllLog -> openLogFile(Files.getRecordLogFile())
             MainUiEvent.OpenDebugLog -> openLogFile(Files.getDebugLogFile())
             is MainUiEvent.ToggleIconHidden -> {

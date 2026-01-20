@@ -6,6 +6,7 @@ import fansirsqi.xposed.sesame.task.antForest.AntForest
 import fansirsqi.xposed.sesame.util.Files
 import fansirsqi.xposed.sesame.util.JsonUtil
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.StringUtil
 import fansirsqi.xposed.sesame.util.TimeUtil
 import fansirsqi.xposed.sesame.util.maps.UserMap
@@ -95,7 +96,7 @@ class Status {
         @JvmStatic
         val currentDayTimestamp: Long
             get() {
-                val calendar = Calendar.getInstance()
+                val calendar = MyUtils.getInstance()
                 calendar.set(Calendar.HOUR_OF_DAY, 0)
                 calendar.set(Calendar.MINUTE, 0)
                 calendar.set(Calendar.SECOND, 0)
@@ -497,7 +498,7 @@ class Status {
 
         @Synchronized
         @JvmStatic
-        fun save(nowCalendar: Calendar = Calendar.getInstance()) {
+        fun save(nowCalendar: Calendar = MyUtils.getInstance()) {
             val currentUid = UserMap.currentUid
             if (StringUtil.isEmpty(currentUid)) {
                 Log.record(TAG, "用户为空，状态保存失败")

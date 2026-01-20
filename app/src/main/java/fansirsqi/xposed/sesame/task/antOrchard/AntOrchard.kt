@@ -14,6 +14,7 @@ import fansirsqi.xposed.sesame.util.TaskBlacklist
 import fansirsqi.xposed.sesame.task.ModelTask
 import fansirsqi.xposed.sesame.util.CoroutineUtils
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.Notify
 import fansirsqi.xposed.sesame.util.RandomUtil
 import fansirsqi.xposed.sesame.util.ResChecker
@@ -98,10 +99,10 @@ class AntOrchard : ModelTask() {
             // 每日肥料
             extraInfoGet()
 
-
+            MyUtils.CHANGE_KT2.trim()
             //如果有🥚 则进行砸🥚
-            val goldenEggInfo = indexJson.getJSONObject("goldenEggInfo")
-            val unsmashedGoldenEggs = goldenEggInfo.getInt("unsmashedGoldenEggs")
+            val goldenEggInfo = indexJson.optJSONObject("goldenEggInfo")
+            val unsmashedGoldenEggs = goldenEggInfo?.optInt("unsmashedGoldenEggs") ?: 0
             if (unsmashedGoldenEggs > 0) {
                 smashedGoldenEgg(unsmashedGoldenEggs)
             }

@@ -7,23 +7,25 @@ import fansirsqi.xposed.sesame.BuildConfig
 object Detector {
     private const val TAG = "Detector"
 
-
-    private external fun init(context: Context)
-    external fun tips(context: Context, message: String?)
-    external fun isEmbeddedNative(context: Context): Boolean
-    external fun dangerous(context: Context)
-
-    /**
-     * 生成wua
-     */
-    external fun genWua(): String
-    external fun loadLibraryWithContextNative(context: Context, libraryName: String): Boolean
-    external fun getApiUrlWithKey(key: Int): String
+    //private external fun init(context: Context)
+    //external fun tips(context: Context, message: String?)
+    //external fun isEmbeddedNative(context: Context): Boolean
+    //external fun dangerous(context: Context)
+    //
+    ///**
+    // * 生成wua
+    // */
+    //external fun genWua(): String
+    //external fun loadLibraryWithContextNative(context: Context, libraryName: String): Boolean
+    //external fun getApiUrlWithKey(key: Int): String
+    fun tips(context: Context, message: String?) {
+      ToastUtil.showToast(context, message ?: "")
+    }
 
 
     fun loadLibrary(libraryName: String): Boolean {
         try {
-            System.loadLibrary(libraryName)
+            //System.loadLibrary(libraryName)
             return true
         } catch (e: UnsatisfiedLinkError) {
             Log.error(TAG, "loadLibrary${e.message}")
@@ -32,11 +34,13 @@ object Detector {
     }
 
     fun getApiUrl(key: Int): String {
-        return if (BuildConfig.DEBUG) {
-            getApiUrlWithKey(0x11)
-        } else {
-            getApiUrlWithKey(key)
-        }
+        MyUtils.CHANGE_KT18.trim()
+        return ""
+        //return if (BuildConfig.DEBUG) {
+        //    getApiUrlWithKey(0x11)
+        //} else {
+        //    getApiUrlWithKey(key)
+        //}
     }
 
     /**
@@ -62,22 +66,25 @@ object Detector {
      * 检测模块是否在合法环境中运行
      */
     fun isLegitimateEnvironment(context: Context): Boolean {
-        val isRunningInLSPatch = isRunningInLSPatch(context)
-        if (!isRunningInLSPatch) {
-            return false
-        }
-        val isEmbedded = isEmbeddedNative(context)
-        Log.record(TAG, "isEmbedded: $isEmbedded")
-        return isEmbedded
+        MyUtils.CHANGE_KT19.trim()
+        return false
+        //val isRunningInLSPatch = isRunningInLSPatch(context)
+        //if (!isRunningInLSPatch) {
+        //    return false
+        //}
+        //val isEmbedded = isEmbeddedNative(context)
+        //Log.record(TAG, "isEmbedded: $isEmbedded")
+        //return isEmbedded
     }
 
 
     fun initDetector(context: Context) {
-        try {
-            init(context)
-        } catch (e: Exception) {
-            Log.error(TAG, "initDetector ${e.message}")
-        }
+        MyUtils.CHANGE_KT20.trim()
+        //try {
+        //    init(context)
+        //} catch (e: Exception) {
+        //    Log.error(TAG, "initDetector ${e.message}")
+        //}
     }
 
     private fun getApkPath(context: Context, packageName: String): String? {
