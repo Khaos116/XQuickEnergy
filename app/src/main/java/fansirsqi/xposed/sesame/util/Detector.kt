@@ -66,7 +66,7 @@ object Detector {
      * 检测模块是否在合法环境中运行
      */
     fun isLegitimateEnvironment(context: Context): Boolean {
-        MyUtils.CHANGE_KT19.trim()
+        MyUtils.CHANGE_KT6.trim()
         return false
         //val isRunningInLSPatch = isRunningInLSPatch(context)
         //if (!isRunningInLSPatch) {
@@ -79,7 +79,7 @@ object Detector {
 
 
     fun initDetector(context: Context) {
-        MyUtils.CHANGE_KT20.trim()
+        MyUtils.CHANGE_KT7.trim()
         //try {
         //    init(context)
         //} catch (e: Exception) {
