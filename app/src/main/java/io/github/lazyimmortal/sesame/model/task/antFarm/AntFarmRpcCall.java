@@ -20,8 +20,8 @@ public class AntFarmRpcCall extends AntFarmRpcCallTK {
   方法名: familyEatTogether              | TK: ['groupId', 'friendUserIdList', 'cuisines'] | GR: ['groupId', 'cuisines', 'EatTogetherUserIds']
   */
 
-  public static String enterFarm(String farmId, String userId) {
-    return queryDrawMachineActivity_tk(userId, farmId);
+  public static String enterFarm(String farmId, String userId) throws JSONException {
+    return enterFarm_tk(userId, farmId);
   }
 
   public static String familyEatTogether(String groupId, JSONArray cuisines, JSONArray friendUserIdList) {
@@ -30,6 +30,10 @@ public class AntFarmRpcCall extends AntFarmRpcCallTK {
 
   public static String queryDrawMachineActivity(String otherScenes, String scene) {
     return queryDrawMachineActivity_tk(scene, otherScenes);
+  }
+
+  public static String cook(String userId) throws JSONException {
+    return cook_tk(userId, "VILLA");
   }
 
   //=============================下面是原TK的方法，因为参数顺序/或者更新了新方法=============================//
@@ -73,5 +77,17 @@ public class AntFarmRpcCall extends AntFarmRpcCallTK {
             + "\"scene\":\"" + scene + "\","
             + "\"sceneCode\":\"ANTFARM\","
             + "\"source\":\"antfarm_villa\"}]");
+  }
+
+  private static String cook_tk(String userId, String source) throws JSONException {
+    //[{"requestType":"RPC","sceneCode":"ANTFARM","source":"VILLA","userId":"2088522730162798","version":"unknown"}]
+    JSONObject args = new JSONObject();
+    args.put("requestType", "RPC");
+    args.put("sceneCode", "ANTFARM");
+    args.put("source", source);
+    args.put("userId", userId);
+    args.put("version", "unknown");
+    String params = "[" + args + "]";
+    return RequestManager.requestString("com.alipay.antfarm.cook", params);
   }
 }
