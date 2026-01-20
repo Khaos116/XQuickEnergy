@@ -205,7 +205,7 @@ class CommandService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(NOTIFICATION_TITLE)
             .setContentText(NOTIFICATION_CONTENT)
-            .setSmallIcon(R.drawable.title_logo)
+            .setSmallIcon(R.drawable.ic_launcher)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOngoing(true) // 禁止用户侧滑删除
