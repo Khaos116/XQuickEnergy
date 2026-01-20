@@ -104,6 +104,10 @@ public class AntForestV2 extends ModelTask {
     private IntegerModelField tryCount;
     private IntegerModelField retryInterval;
     private SelectModelField dontCollectList;
+    
+    private ChoiceModelField CollectSelfEnergyType;
+    
+    private IntegerModelField CollectSelfEnergyThreshold;
     private IntegerModelField collectRobExpandEnergy;
     private BooleanModelField collectWateringBubble;
     private BooleanModelField batchRobEnergy;
@@ -136,6 +140,8 @@ public class AntForestV2 extends ModelTask {
     private SelectModelField AntForestVitalityTaskList;
     private ChoiceModelField waterFriendType;
     private SelectAndCountModelField waterFriendList;
+    
+    private BooleanModelField doubleWaterFriendEnergy;
     private SelectModelField giveEnergyRainList;
     private BooleanModelField vitalityExchangeBenefit;
     private SelectAndCountModelField vitality_ExchangeBenefitList;
@@ -210,8 +216,10 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(tryCount = new IntegerModelField("tryCount", "尝试收取(次数)", 1, 0, 10));
         modelFields.addField(retryInterval = new IntegerModelField("retryInterval", "重试间隔(毫秒)", 1000, 0, 10000));
         modelFields.addField(dontCollectList = new SelectModelField("dontCollectList", "不收取能量列表", new LinkedHashSet<>(), AlipayUser::getList));
+        modelFields.addField(CollectSelfEnergyType = new ChoiceModelField("CollectSelfEnergyType", "收自己单个能量球 | " + "方式", CollectSelfType.ALL, CollectSelfType.nickNames));
+        modelFields.addField(CollectSelfEnergyThreshold = new IntegerModelField("CollectSelfEnergyThreshold", "收自己单个能量球阈值", 0, 0, 10000));
         modelFields.addField(CollectBombEnergyLimit = new IntegerModelField("CollectBombEnergyLimit", "单个炸弹能量大于该值收取", 0, 0, 100000));
-        modelFields.addField(continuousUseCardOptions = new SelectModelField("continuousUseCardOptions", "【连续】兑换使用道具卡片 | 选项", new LinkedHashSet<>(), CustomOption::getContinuousUseCardOptions, "光盘行动需要先手动完成一次"));
+        modelFields.addField(continuousUseCardOptions = new SelectModelField("continuousUseCardOptions", "连续兑换使用道具卡片 | 选项", new LinkedHashSet<>(), CustomOption::getContinuousUseCardOptions, "光盘行动需要先手动完成一次"));
         modelFields.addField(doubleClickType = new ChoiceModelField("doubleClickType", "双击卡 | " + "自动使用", UsePropType.CLOSE, UsePropType.nickNames));
         modelFields.addField(doubleCountLimit = new IntegerModelField("doubleCountLimit", "双击卡 | " + "使用次数", 6));
         modelFields.addField(doubleCardTime = new ListModelField.ListJoinCommaToStringModelField("doubleCardTime", "双击卡 | 使用时间(范围)", ListUtil.newArrayList("0700" + "-0730")));
@@ -221,6 +229,7 @@ public class AntForestV2 extends ModelTask {
         modelFields.addField(returnWater33 = new IntegerModelField("returnWater33", "返水 | 33克需收能量" + "(关闭:0)", 0));
         modelFields.addField(waterFriendType = new ChoiceModelField("waterFriendType", "浇水 | 动作", WaterFriendType.WATER_00, WaterFriendType.nickNames));
         modelFields.addField(waterFriendList = new SelectAndCountModelField("waterFriendList", "浇水 | 好友列表", new LinkedHashMap<>(), AlipayUser::getList, "请填写浇水次数(每日)"));
+        modelFields.addField(doubleWaterFriendEnergy = new BooleanModelField("doubleWaterFriendEnergy", "浇水 | 强制重复一次浇水", false));
         modelFields.addField(helpFriendCollectType = new ChoiceModelField("helpFriendCollectType", "复活能量 | 动作", HelpFriendCollectType.NONE, HelpFriendCollectType.nickNames));
         modelFields.addField(helpFriendCollectList = new SelectModelField("helpFriendCollectList", "复活能量 | 好友列表", new LinkedHashSet<>(), AlipayUser::getList));
         modelFields.addField(helpFriendCollectListLimit = new IntegerModelField("helpFriendCollectListLimit", "复活好友能量下限(大于该值复活)", 0, 0, 100000));
@@ -492,6 +501,13 @@ public class AntForestV2 extends ModelTask {
                             break;
                         }
                     }
+                }
+                //强制重复浇水一次
+                if (doubleWaterFriendEnergy.getValue()) {
+                    if (!Status.hasFlagToday("Forest::doubleWaterFriendEnergy")) {
+                        doubleWaterFriendEnergy();
+                    }
+                    
                 }
                 
                 waterFriendEnergy();
@@ -965,10 +981,29 @@ public class AntForestV2 extends ModelTask {
                 List<Long> bubbleIdList = new ArrayList<>();
                 for (int i = 0; i < jaBubbles.length(); i++) {
                     JSONObject bubble = jaBubbles.getJSONObject(i);
+                    int remainEnergy = bubble.optInt("remainEnergy");
                     long bubbleId = bubble.getLong("id");
                     switch (CollectStatus.valueOf(bubble.optString("collectStatus"))) {
                         case AVAILABLE:
-                            bubbleIdList.add(bubbleId);
+                            //如果是自己，用阈值判断单个能量球需收取情况
+                            if (isSelf) {
+                                if (CollectSelfEnergyType.getValue() == CollectSelfType.OVER_THRESHOLD) {
+                                    if (remainEnergy >= CollectSelfEnergyThreshold.getValue()) {
+                                        bubbleIdList.add(bubbleId);
+                                    }
+                                }
+                                else if (CollectSelfEnergyType.getValue() == CollectSelfType.BELOW_THRESHOLD) {
+                                    if (remainEnergy <= CollectSelfEnergyThreshold.getValue()) {
+                                        bubbleIdList.add(bubbleId);
+                                    }
+                                }
+                                else {
+                                    bubbleIdList.add(bubbleId);
+                                }
+                            }
+                            else {
+                                bubbleIdList.add(bubbleId);
+                            }
                             break;
                         case WAITING:
                             long produceTime = bubble.getLong("produceTime");
@@ -985,7 +1020,8 @@ public class AntForestV2 extends ModelTask {
                             break;
                     }
                 }
-                if (batchRobEnergy.getValue()) {
+                //不是自己或者是自己全收的情况
+                if (batchRobEnergy.getValue() && (!isSelf || (CollectSelfEnergyType.getValue() == CollectSelfType.ALL))) {
                     Iterator<Long> iterator = bubbleIdList.iterator();
                     List<Long> batchBubbleIdList = new ArrayList<>();
                     while (iterator.hasNext()) {
@@ -1952,6 +1988,45 @@ public class AntForestV2 extends ModelTask {
             return 40;
         }
         return 39;
+    }
+    
+    private void doubleWaterFriendEnergy() {
+        String taskUid = UserIdMap.getCurrentUid();
+        int waterEnergy = WaterFriendType.waterEnergy[waterFriendType.getValue()];
+        if (waterEnergy == 0) {
+            return;
+        }
+        boolean reSet = true;
+        Map<String, Integer> friendMap = waterFriendList.getValue();
+        for (Map.Entry<String, Integer> friendEntry : friendMap.entrySet()) {
+            String uid = friendEntry.getKey();
+            if (selfId.equals(uid)) {
+                continue;
+            }
+            Integer waterCount = friendEntry.getValue();
+            if (waterCount == null || waterCount <= 0) {
+                continue;
+            }
+            if (Status.canWaterFriendToday(uid, 3)) {
+                reSet=false;
+            }
+        }
+        if(reSet){
+            for (Map.Entry<String, Integer> friendEntry : friendMap.entrySet()) {
+                String uid = friendEntry.getKey();
+                if (selfId.equals(uid)) {
+                    continue;
+                }
+                Integer waterCount = friendEntry.getValue();
+                if (waterCount == null || waterCount <= 0) {
+                    continue;
+                }
+                //重置浇水次数
+                Status.waterFriendToday(uid, 0, taskUid);
+            }
+            Log.record("好友浇水🚿今日给好友浇水状态已重置！");
+            Status.flagToday("Forest::doubleWaterFriendEnergy");
+        }
     }
     
     private void forestExtensions() {
@@ -3755,5 +3830,13 @@ public class AntForestV2 extends ModelTask {
         int ONLY_LIMIT_TIME = 2;
         
         String[] nickNames = {"关闭", "所有道具", "限时道具"};
+    }
+    
+    public interface CollectSelfType {
+        int ALL = 0;
+        int OVER_THRESHOLD = 1;
+        int BELOW_THRESHOLD = 2;
+        
+        String[] nickNames = {"所有", "大于阈值", "小于阈值"};
     }
 }
