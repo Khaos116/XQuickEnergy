@@ -17,7 +17,7 @@ import io.github.lazyimmortal.sesame.util.idMap.UserIdMap;
  * https://github.com/Dragon813/Sesame-GR/blob/main/app/src/main/java/io/github/lazyimmortal/sesame/model/task/antFarm/AntFarmRpcCall.java
  */
 public class AntFarmRpcCallGR {
-  protected static final String VERSION = "1.8.2302070202.46";
+  public static final String VERSION = "1.8.2302070202.46";
 
   public static String enterFarm(String userId) {
     String args = "[{\"queryLastRecordNum\":true,\"recall\":false,\"requestType\":\"NORMAL\"," + "\"sceneCode" + "\":\"ANTFARM\",\"source\":\"H5\",\"userId\":\"" + userId + "\"}]";
@@ -229,13 +229,17 @@ public class AntFarmRpcCallGR {
   public static int RandomScore(String str) {
     if ("starGame".equals(str)) {
       return RandomUtil.nextInt(300, 400);
-    } else if ("jumpGame".equals(str)) {
+    }
+    else if ("jumpGame".equals(str)) {
       return RandomUtil.nextInt(250, 270) * 10;
-    } else if ("flyGame".equals(str)) {
+    }
+    else if ("flyGame".equals(str)) {
       return RandomUtil.nextInt(4000, 8000);
-    } else if ("hitGame".equals(str)) {
+    }
+    else if ("hitGame".equals(str)) {
       return RandomUtil.nextInt(80, 120);
-    } else {
+    }
+    else {
       return 210;
     }
   }
@@ -280,7 +284,8 @@ public class AntFarmRpcCallGR {
 
       // 标准的md5加密后的结果
       return buffer.toString();
-    } catch (NoSuchAlgorithmException e) {
+    }
+    catch (NoSuchAlgorithmException e) {
       e.printStackTrace();
       return "";
     }
@@ -561,18 +566,16 @@ public class AntFarmRpcCallGR {
     String args = "[{\"content\":\"" + escapedContent + "\",\"deliverId\":\"" + deliverId + "\",\"groupId\":\"" + groupId + "\",\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"userIds\":" + userIds.toString() + "}]";
     return ApplicationHook.requestString("com.alipay.antfarm.deliverMsgSend", args);
   }
-
   /*
   public static String inviteFriendVisitFamily(JSONArray inviteList) {
       String args = "[{\"inviteList\":" + inviteList.toString() + ",\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\"}]";
       return ApplicationHook.requestString("com.alipay.antfarm.inviteFriendVisitFamily", args);
   }
   */
-  public static String batchInviteP2P(String ownerGroupId, String inviteUID) {
-    String args = "[{\"inviteP2PVOList\":[{\"beInvitedUserId\":\"" + inviteUID + "\",\"bizTraceId\":\"\"}],\"invitedBizExtendInfo\":{\"familyId\":\"" + ownerGroupId + "\",\"inviteSceneCode\":\"ANTFARM_FAMILY_INVITE\"},\"linkParams\":{\"groupId\":\"" + ownerGroupId + "\",\"inviteSceneCode\":\"ANTFARM_FAMILY_INVITE\",\"inviteUserId\":\"" + UserIdMap.getCurrentUid() + "\",\"source\":\"familyInvite\"},\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM_FAMILY_INVITE\",\"source\":\"antfarm\"}]";
+  public static String batchInviteP2P(String ownerGroupId,String inviteUID) {
+    String args = "[{\"inviteP2PVOList\":[{\"beInvitedUserId\":\""+inviteUID+"\",\"bizTraceId\":\"\"}],\"invitedBizExtendInfo\":{\"familyId\":\""+ownerGroupId+"\",\"inviteSceneCode\":\"ANTFARM_FAMILY_INVITE\"},\"linkParams\":{\"groupId\":\""+ownerGroupId+"\",\"inviteSceneCode\":\"ANTFARM_FAMILY_INVITE\",\"inviteUserId\":\""+UserIdMap.getCurrentUid()+"\",\"source\":\"familyInvite\"},\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM_FAMILY_INVITE\",\"source\":\"antfarm\"}]";
     return ApplicationHook.requestString("com.alipay.antiep.batchInviteP2P", args);
   }
-
   public static String assignFamilyMember(String assignAction, String beAssignUser) {
     String args = "[{\"assignAction\":\"" + assignAction + "\",\"beAssignUser\":\"" + beAssignUser + "\",\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\"}]";
     return ApplicationHook.requestString("com.alipay.antfarm.assignFamilyMember", args);
