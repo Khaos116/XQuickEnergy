@@ -322,7 +322,8 @@ data object AntFarmFamily {
         Log.record("查询最近的几份美食为空,无法请客")
         return
       }
-      val jo = JSONObject(AntFarmRpcCall.familyEatTogether(groupId, familyUserIds.toJSONArray(), array))
+      //val jo = JSONObject(AntFarmRpcCall.familyEatTogether(groupId, familyUserIds.toJSONArray(), array))
+      val jo = JSONObject(AntFarmRpcCall.familyEatTogether(groupId, array, familyUserIds.toJSONArray()))
       if (ResChecker.checkRes(TAG, jo)) {
         Log.farm("家庭任务🏠请客" + periodName + "#消耗美食" + familyUserIds.size + "份")
       }
