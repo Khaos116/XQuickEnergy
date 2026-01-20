@@ -1,5 +1,10 @@
 package fansirsqi.xposed.sesame.util
 
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.edit
+import fansirsqi.xposed.sesame.hook.ApplicationHook
+import org.json.JSONObject
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -28,10 +33,9 @@ object MyUtils {
   const val CHANGE_KT16 = "16"
   const val CHANGE_KT17 = "17"
   const val CHANGE_KT18 = "18"
+  //还未使用的
   const val CHANGE_KT19 = "19"
   const val CHANGE_KT20 = "20"
-
-  //还未使用的
   const val CHANGE_KT21 = "21"
   const val CHANGE_KT22 = "22"
   const val CHANGE_KT23 = "23"
@@ -42,8 +46,57 @@ object MyUtils {
   const val CHANGE_KT28 = "28"
   const val CHANGE_KT29 = "29"
 
+  const val _访问被拒绝1 = "alipay.mrchservbase.mrchbusiness.sign.transcode.check_1"
+  const val NO_SLEEP: String = "canSleepXXX"
+
+  @JvmStatic
+  var _关闭必弹验证1: Boolean = System.currentTimeMillis() > 0
+
+  @JvmStatic
+  var _关闭必弹验证2: Boolean = System.currentTimeMillis() > 0
+
+  @JvmStatic
+  var _关闭不支持RPC1: Boolean = System.currentTimeMillis() > 0
+
+  @JvmStatic
+  var _关闭不支持RPC2: Boolean = System.currentTimeMillis() > 0
+
+  @JvmStatic
+  var _关闭作弊广告流量: Boolean = System.currentTimeMillis() > 0
+
   @JvmStatic
   fun getInstance(): Calendar {
-    return Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+    return Calendar.getInstance(TimeZone.getTimeZone("GMT+8"))
+  }
+
+  var mSP: SharedPreferences? = null
+
+  fun getSp功能异常(key: String): Boolean {
+    val sp: SharedPreferences = getMySp() ?: return true
+    return sp.getBoolean(key, false)
+  }
+
+  fun setSp功能异常(key: String, jo: JSONObject?) {
+    if (jo == null) return
+    //{"error":1009,"errorMessage":"访问被拒绝","errorNo":3,"errorTip":"1009"}
+    //{"error":3000,"errorMessage":"系统出错，正在排查","errorNo":3,"errorTip":"3000"}
+    val errorMessage = jo.optString("errorMessage", "")
+    var isError = false
+    if (errorMessage.contains("访问被拒绝")) {
+      isError = true
+    } else if (errorMessage.contains("系统出错")) {
+      isError = true
+    }
+    if (isError) {
+      getMySp()?.edit {
+        putBoolean(key, true)
+      }
+    }
+  }
+
+  private fun getMySp(): SharedPreferences? {
+    val context: Context = ApplicationHook.appContext ?: return null
+    if (mSP == null) mSP = context.getSharedPreferences("XQE_UID", Context.MODE_PRIVATE)
+    return mSP
   }
 }
