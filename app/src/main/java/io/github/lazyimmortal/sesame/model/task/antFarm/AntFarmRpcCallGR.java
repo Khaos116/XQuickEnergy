@@ -1,6 +1,7 @@
 package io.github.lazyimmortal.sesame.model.task.antFarm;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,7 +25,7 @@ public class AntFarmRpcCallGR {
     return ApplicationHook.requestString("com.alipay.antfarm.enterFarm", args);
   }
 
-  public static String enterFarm(String farmId, String userId) {
+  public static String enterFarm(String farmId, String userId) throws JSONException {
     return ApplicationHook.requestString("com.alipay.antfarm.enterFarm",
         "[{\"animalId\":\"\",\"farmId\":\"" + farmId + "\",\"gotoneScene\":\"\",\"gotoneTemplateId\":\"\"," + "\"masterFarmId\":\"\",\"queryLastRecordNum\":true,\"recall\":false," + "\"requestType\":\"NORMAL\"," + "\"sceneCode" + "\":\"ANTFARM\",\"source\":\"ANTFOREST\"," +
             "\"touchRecordId\":\"\"," + "\"userId\":\"" + userId + "\",\"version\":\"" + VERSION + "\"}]");
@@ -168,7 +169,7 @@ public class AntFarmRpcCallGR {
     return ApplicationHook.requestString("com.alipay.antfarm.receiveToolTaskReward", args1);
   }
 
-  public static String feedAnimal(String farmId) {
+  public static String feedAnimal(String farmId) throws JSONException {
     String args1 = "[{\"animalType\":\"CHICK\",\"canMock\":true,\"farmId\":\"" + farmId + "\",\"requestType" + "\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\"" + VERSION + "\"}]";
     return ApplicationHook.requestString("com.alipay.antfarm.feedAnimal", args1);
   }
@@ -193,12 +194,12 @@ public class AntFarmRpcCallGR {
     return ApplicationHook.requestString("com.alipay.antfarm.notifyFriend", args1);
   }
 
-  public static String feedFriendAnimal(String friendFarmId) {
+  public static String feedFriendAnimal(String friendFarmId) throws JSONException {
     String args = "[{\"friendFarmId\":\"" + friendFarmId + "\",\"requestType\":\"NORMAL\"," + "\"sceneCode" + "\":\"ANTFARM\",\"source\":\"H5\"}]";
     return ApplicationHook.requestString("com.alipay.antfarm.feedFriendAnimal", args);
   }
 
-  public static String feedFriendAnimal(String friendFarmId, String groupId) {
+  public static String feedFriendAnimal(String friendFarmId, String groupId) throws JSONException  {
     if (StringUtil.isEmpty(groupId)) {
       return feedFriendAnimal(friendFarmId);
     }
@@ -293,7 +294,7 @@ public class AntFarmRpcCallGR {
 
   /* 小鸡厨房 */
 
-  public static String enterKitchen(String userId) {
+  public static String enterKitchen(String userId) throws JSONException {
     return ApplicationHook.requestString("com.alipay.antfarm.enterKitchen", "[{\"requestType\":\"RPC\"," + "\"sceneCode\":\"ANTFARM\",\"source\":\"antfarmzuofanrw\",\"userId\":\"" + userId + "\",\"version" + "\":\"unknown\"}]");
   }
 
@@ -313,7 +314,7 @@ public class AntFarmRpcCallGR {
     return ApplicationHook.requestString("com.alipay.antorchard.farmFoodMaterialCollect", "[{\"collect\":true," + "\"requestType\":\"RPC\",\"sceneCode\":\"ORCHARD\",\"source\":\"VILLA\"," + "\"version\":\"unknown\"}]");
   }
 
-  public static String cook(String userId) {
+  public static String cook(String userId) throws JSONException {
     return ApplicationHook.requestString("com.alipay.antfarm.cook", "[{\"requestType\":\"RPC\"," + "\"sceneCode" + "\":\"ANTFARM\",\"source\":\"antfarmzuofanrw\"," + "\"userId\":\"" + userId + "\",\"version" + "\":\"unknown\"}]");
   }
 
@@ -539,7 +540,7 @@ public class AntFarmRpcCallGR {
       String args = "[{\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\"}]";
       return ApplicationHook.requestString("com.alipay.antfarm.OpenAIPrivatePolicy", args);
   }*/
-  public static String OpenAIPrivatePolicy() {
+  public static String OpenAIPrivatePolicy() throws JSONException {
     String args = "[{\"privatePolicyIdList\":[\"AI_CHICK_PRIVATE_POLICY\"],\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\"" + VERSION + "\"}]";
     return ApplicationHook.requestString("com.alipay.antfarm.OpenPrivatePolicy", args);
   }
@@ -549,18 +550,18 @@ public class AntFarmRpcCallGR {
     return ApplicationHook.requestString("com.alipay.antfarm.deliverSubjectRecommend", args);
   }
 
-  public static String deliverContentExpand(String ariverRpcTraceId, String eventId, String eventName, String memo, String resultCode, String sceneId, String sceneName, boolean success, JSONArray userIds) {
+  public static String deliverContentExpand(String ariverRpcTraceId, String eventId, String eventName, String memo, String resultCode, String sceneId, String sceneName, boolean success, JSONArray userIds) throws JSONException {
     String args = "[{\"ariverRpcTraceId\":\"" + ariverRpcTraceId + "\",\"eventId\":\"" + eventId + "\",\"eventName\":\"" + eventName + "\",\"friendUserIds\":" + userIds.toString() + ",\"memo\":\"" + memo + "\",\"requestType\":\"NORMAL\",\"resultCode\":\"" + resultCode + "\",\"sceneCode" +
         "\":\"ANTFARM\",\"sceneId\":\"" + sceneId + "\",\"sceneName\":\"" + sceneName + "\",\"source\":\"H5\",\"success\":" + success + "}]";
     return ApplicationHook.requestString("com.alipay.antfarm.deliverContentExpand", args);
   }
 
-  public static String QueryExpandContent(String deliverId) {
+  public static String QueryExpandContent(String deliverId) throws JSONException {
     String args = "[{\"deliverId\":\"" + deliverId + "\",\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\"}]";
     return ApplicationHook.requestString("com.alipay.antfarm.QueryExpandContent", args);
   }
 
-  public static String deliverMsgSend(String groupId, JSONArray userIds, String content, String deliverId) {
+  public static String deliverMsgSend(String groupId, JSONArray userIds, String content, String deliverId) throws JSONException {
     // 注意转义 content 中的特殊字符
     String escapedContent = content.replace("\"", "\\\"");
     String args = "[{\"content\":\"" + escapedContent + "\",\"deliverId\":\"" + deliverId + "\",\"groupId\":\"" + groupId + "\",\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"userIds\":" + userIds.toString() + "}]";
