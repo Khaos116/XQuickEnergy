@@ -28,6 +28,10 @@ public class AntFarmRpcCall extends AntFarmRpcCallTK {
     return familyEatTogether_tk(groupId, friendUserIdList, cuisines);
   }
 
+  /**
+   * 如果是ipDraw，则scene为ipDrawMachine，otherScenes为dailyDrawMachine
+   * 反之，如果不是ipDraw，则scene为dailyDrawMachine，otherScenes为ipDrawMachine
+   */
   public static String queryDrawMachineActivity(String otherScenes, String scene) {
     return queryDrawMachineActivity_tk(scene, otherScenes);
   }
