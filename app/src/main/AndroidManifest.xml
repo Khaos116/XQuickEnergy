@@ -97,7 +97,7 @@
             android:name=".ui.MainActivityAliasChristmas"
             android:enabled="false"
             android:exported="true"
-            android:icon="@drawable/ic_launcher_christmas"
+            android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
             android:targetActivity="fansirsqi.xposed.sesame.ui.MainActivity">
             <intent-filter>
