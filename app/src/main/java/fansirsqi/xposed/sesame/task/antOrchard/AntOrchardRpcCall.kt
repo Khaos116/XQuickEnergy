@@ -25,10 +25,11 @@ object AntOrchardRpcCall {
         )
     }
 
+    // 修改：增加 LIMITED_TIME_CHALLENGE 和 LOTTERY_PLUS 类型
     fun querySubplotsActivity(treeLevel: String): String {
         return RequestManager.requestString(
             "com.alipay.antorchard.querySubplotsActivity",
-            "[{\"activityType\":[\"WISH\",\"BATTLE\",\"HELP_FARMER\",\"DEFOLIATION\",\"CAMP_TAKEOVER\"],\"inHomepage\":false,\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"treeLevel\":\"$treeLevel\",\"version\":\"$VERSION\"}]"
+            "[{\"activityType\":[\"WISH\",\"BATTLE\",\"HELP_FARMER\",\"DEFOLIATION\",\"CAMP_TAKEOVER\",\"LIMITED_TIME_CHALLENGE\",\"LOTTERY_PLUS\"],\"inHomepage\":false,\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"treeLevel\":\"$treeLevel\",\"version\":\"$VERSION\"}]"
         )
     }
 
@@ -153,7 +154,6 @@ object AntOrchardRpcCall {
             requestParams
         )
     }
-
 
     fun orchardSyncIndex(Wua: String): String {
         val jsonArgs = """
