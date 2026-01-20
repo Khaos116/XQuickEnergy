@@ -234,7 +234,8 @@ abstract class ModelTask : Model() {
      */
     fun startTask(
         force: Boolean = false,
-        rounds: Int = 2
+        rounds: Int = 2,
+        index: Int = -1,
     ): Job {
         ensureTaskScope()
         
@@ -254,7 +255,7 @@ abstract class ModelTask : Model() {
                 }
                 try {
                     MyUtils.CHANGE_KT3.trim()
-                    Log.other("▶️开始执行模块[${getName()}]🔜")
+                    Log.other("▶️开始执行模块${if (index >= 0) "$index" else ""}[${getName()}]🔜")
                     isRunning = true
                     addRunCents()
                     setStatusTextExec(getName())
@@ -267,7 +268,7 @@ abstract class ModelTask : Model() {
                 } finally {
                     isRunning = false
                     MyUtils.CHANGE_KT4.trim()
-                    Log.other("🟥模块[${getName()}]执行完毕🔚")
+                    Log.other("🟥模块[${getName()}]${if (index >= 0) "$index" else ""}执行完毕🔚")
                     updateNextExecText(-1)
                 }
             }

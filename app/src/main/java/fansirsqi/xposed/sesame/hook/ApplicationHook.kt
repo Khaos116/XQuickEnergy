@@ -396,9 +396,11 @@ class ApplicationHook {
                                 record(TAG, "❌ 无效的任务指令: $taskName")
                             }
                         } else {
+                            var index = 0
                             for (model in Model.modelArray) {
                                 if (model is ManualTaskModel) {
-                                    model.startTask(true, 1)
+                                    index++
+                                    model.startTask(true, 1, index)
                                     break
                                 }
                             }
