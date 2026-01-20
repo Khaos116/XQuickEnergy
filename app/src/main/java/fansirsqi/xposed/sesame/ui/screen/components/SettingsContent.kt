@@ -2,6 +2,7 @@ package fansirsqi.xposed.sesame.ui.screen.components
 
 import SettingsSwitchItem
 import android.content.Intent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -76,7 +77,19 @@ fun SettingsContent(
                     Text(
                         text = "暂无已载入的用户配置。",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.outline
+                        color = MaterialTheme.colorScheme.outline,
+                        modifier = Modifier.clickable {
+                          onNavigateToSettings(
+                            UserEntity(
+                              userId = "0",
+                              account = "0",
+                              friendStatus = 0,
+                              realName = "模拟用户",
+                              nickName = "模拟用户",
+                              remarkName = "模拟用户",
+                            )
+                          )
+                        }
                     )
                 }
             } else {
