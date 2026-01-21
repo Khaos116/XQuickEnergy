@@ -1277,7 +1277,7 @@ public class AntMember extends ModelTask {
                 }
 
                 //参数错误  参数[promiseActivityExtCheck]不是有效的入参
-                if (MyUtils._不是有效的入参1.equals(recordId)) {//CHANGE BY KT
+                if (MyUtils._不是有效的入参.contains(recordId)) {//CHANGE BY KT
                   continue;
                 }
                 Log.record("芝麻信用💳任务[" + taskTitle + "]id:" + recordId);

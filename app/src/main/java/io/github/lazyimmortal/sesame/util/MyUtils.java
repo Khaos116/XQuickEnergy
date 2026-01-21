@@ -59,7 +59,19 @@ public class MyUtils {
   public static final String _访问被拒绝2 = "alipay.mobile.ipsponsorprod.consume.gold.task.signin.calendar_2";
   public static final String _访问被拒绝3 = "alipay.mobile.ipsponsorprod.consume.gold.task.signin.calendar_3";
   public static final String _系统出错正在排查1 = "alipay.mrchservbase.zcj.taskList.query.v2_1";
-  public static final String _不是有效的入参1 = "2026010358596942583";
+  //任务[0.1元起租会员攒粒]id:2026012058541320399
+  //任务[去雇佣芝麻大表鸽]id:2026012058542045915
+  //任务[坚持看直播领福利]id:2026012058542176083
+  //任务[完成旧衣回收得现金]id:2026012058543269012
+  //任务[去玩小游戏]id:2026012058542511985
+  public static final List<String> _不是有效的入参 = new ArrayList<>(Arrays.asList(
+      "2026010358596942583",
+      "2026012058541320399",
+      "2026012058542045915",
+      "2026012058542176083",
+      "2026012058543269012",
+      "2026012058542511985"
+  ));
 
   //不想每次更新版本都去执行访问被拒绝和系统出错的访问，就关闭监测(第一次打开还是会执行)
   private static String get功能异常Key(@NonNull String key) {
