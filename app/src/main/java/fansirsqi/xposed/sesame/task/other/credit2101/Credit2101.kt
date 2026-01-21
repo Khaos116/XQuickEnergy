@@ -353,7 +353,7 @@ object Credit2101 {
             }
 
             // ================== 所有任务结束后检查是否合成 ==================
-            if (!isTaskInBlacklist(StatusFlags.FLAG_Credit2101_ChapterTask_Done)) {
+            if (!isTaskInBlacklist(StatusFlags.FLAG_CREDIT2101_CHAPTER_TASK_DONE)) {
                 handleChapterTasks()
             }
             Log.record(TAG, "执行结束 信用2101")
@@ -1855,7 +1855,7 @@ object Credit2101 {
             // 最终检查：只有所有章节都处于 CLAIMED 状态
             if (allFinished) {
                 Log.record(TAG, "信用2101🎨[图鉴] 检查完毕：所有图鉴奖励均已领取完毕")
-                autoAddToBlacklist(StatusFlags.FLAG_Credit2101_ChapterTask_Done, "信用2101🎨[图鉴]合成完毕", "1337")
+                autoAddToBlacklist(StatusFlags.FLAG_CREDIT2101_CHAPTER_TASK_DONE, "信用2101🎨[图鉴]合成完毕", "1337")
             }
 
         } catch (e: Throwable) {

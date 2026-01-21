@@ -18,9 +18,10 @@ class LogViewerActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val path = intent.data?.path ?: ""
         setContent {
-            // 使用暗色主题，因为 LogViewerScreen 的背景硬编码为了深色 (0xFF1E1E1E)
             val isDynamicColor by ThemeManager.isDynamicColor.collectAsStateWithLifecycle()
-            AppTheme(dynamicColor = isDynamicColor) {
+            AppTheme(
+                dynamicColor = isDynamicColor,
+            ) {
                 WatermarkLayer {
                     LogViewerScreen(
                         filePath = path,

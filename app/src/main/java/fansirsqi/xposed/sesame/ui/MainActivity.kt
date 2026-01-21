@@ -175,7 +175,7 @@ class MainActivity : ComponentActivity() {
                 if (Files.delFile(Files.CONFIG_DIR)) {
                     ToastUtil.showToast(this, "🙂 清空配置成功")
                     // 可选：重载配置或刷新 UI
-                    viewModel.reloadUserConfigs()
+                    viewModel.refreshUserConfigs()
                 } else {
                     ToastUtil.showToast(this, "😭 清空配置失败")
                 }
@@ -194,7 +194,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (hasPermissions) viewModel.reloadUserConfigs()
+        if (hasPermissions) viewModel.refreshUserConfigs()
     }
 
     override fun onDestroy() {

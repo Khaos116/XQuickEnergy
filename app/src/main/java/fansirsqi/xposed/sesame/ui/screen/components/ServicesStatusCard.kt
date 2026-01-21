@@ -27,12 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fansirsqi.xposed.sesame.ui.viewmodel.MainViewModel
+import fansirsqi.xposed.sesame.util.CommandUtil.ServiceStatus
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ServicesStatusCard(
-    status: MainViewModel.ServiceStatus, // 使用新定义的状态
+    status: ServiceStatus, // 使用新定义的状态
     expanded: Boolean,
     onClick: () -> Unit
 ) {
@@ -43,9 +43,12 @@ fun ServicesStatusCard(
             .padding(horizontal = 8.dp, vertical = 4.dp), // 稍微调整间距
         colors = CardDefaults.elevatedCardColors(
             containerColor = when (status) {
-                is MainViewModel.ServiceStatus.Active -> MaterialTheme.colorScheme.secondaryContainer
-                is MainViewModel.ServiceStatus.Inactive -> MaterialTheme.colorScheme.errorContainer
-                is MainViewModel.ServiceStatus.Loading -> MaterialTheme.colorScheme.surfaceVariant
+                is ServiceStatus.Active -> MaterialTheme.colorScheme.secondaryContainer
+                is ServiceStatus.Inactive -> MaterialTheme.colorScheme.errorContainer
+                is ServiceStatus.Loading -> MaterialTheme.colorScheme.surfaceVariant
+                else -> {
+                    MaterialTheme.colorScheme.surfaceVariant
+                }
             }
         ),
     ) {
@@ -55,7 +58,7 @@ fun ServicesStatusCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 when (status) {
-                    is MainViewModel.ServiceStatus.Active -> {
+                    is ServiceStatus.Active -> {
                         Icon(Icons.Outlined.CheckCircle, "已授权")
                         Column(Modifier.padding(start = 20.dp)) {
                             Text(text = "滑块验证服务正常", style = MaterialTheme.typography.titleMedium)
@@ -65,7 +68,7 @@ fun ServicesStatusCard(
                         }
                     }
 
-                    is MainViewModel.ServiceStatus.Inactive -> {
+                    is ServiceStatus.Inactive -> {
                         Icon(Icons.Outlined.Warning, "未授权")
                         Column(Modifier.padding(start = 20.dp)) {
                             Text(text = "滑块验证服务不可用", style = MaterialTheme.typography.titleMedium)
@@ -73,7 +76,14 @@ fun ServicesStatusCard(
                         }
                     }
 
-                    is MainViewModel.ServiceStatus.Loading -> {
+                    is ServiceStatus.Loading -> {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                        Column(Modifier.padding(start = 20.dp)) {
+                            Text(text = "正在检查服务权限...", style = MaterialTheme.typography.titleMedium)
+                        }
+                    }
+
+                    else -> {
                         CircularProgressIndicator(modifier = Modifier.size(24.dp))
                         Column(Modifier.padding(start = 20.dp)) {
                             Text(text = "正在检查服务权限...", style = MaterialTheme.typography.titleMedium)

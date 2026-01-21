@@ -11,10 +11,14 @@ object AntOrchardRpcCall {
                     + VERSION + "\"}]");
     }
 
-    fun extraInfoGet(): String {
+    /**
+     * 获取额外信息（包含每日肥料、施肥礼盒）
+     * @param from 来源：entry(首页), water(施肥后)
+     */
+    fun extraInfoGet(from: String = "entry"): String {
         return RequestManager.requestString(
             "com.alipay.antorchard.extraInfoGet",
-            "[{\"from\":\"entry\",\"requestType\":\"NORMAL\",\"sceneCode\":\"FUGUO\",\"source\":\"ch_alipaysearch__chsub_normal\",\"version\":\"$VERSION\"}]"
+            "[{\"from\":\"$from\",\"requestType\":\"NORMAL\",\"sceneCode\":\"FUGUO\",\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\"$VERSION\"}]"
         )
     }
 
@@ -56,15 +60,27 @@ object AntOrchardRpcCall {
     }
 
     /**
+     * 切换种植场景
+     * @param plantScene main(果树) 或 yeb(摇钱树)
+     */
+    fun switchPlantScene(plantScene: String): String {
+        return RequestManager.requestString(
+            "com.alipay.antorchard.switchPlantScene",
+            "[{\"plantScene\":\"$plantScene\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\"$VERSION\"}]"
+        )
+    }
+
+    /**
      * 施肥
      * @param wua 用户标识
      * @param source 来源标识，可自定义
      * @param useBatchSpread 一键5次
+     * @param plantScene 场景：main 或 yeb
      */
-    fun orchardSpreadManure(wua: String, source: String,useBatchSpread : Boolean=false): String {
+    fun orchardSpreadManure(wua: String, source: String, useBatchSpread: Boolean = false, plantScene: String = "main"): String {
         return RequestManager.requestString(
             "com.alipay.antfarm.orchardSpreadManure",
-            "[{\"plantScene\":\"main\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"$source\",\"useBatchSpread\":$useBatchSpread,\"version\":$VERSION,\"wua\":\"$wua\"}]"
+            "[{\"plantScene\":\"$plantScene\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"$source\",\"useBatchSpread\":$useBatchSpread,\"version\":\"$VERSION\",\"wua\":\"$wua\"}]"
         )
     }
 
@@ -122,14 +138,6 @@ object AntOrchardRpcCall {
             jsonArgs
         )
     }
-
-   /* //收取回访奖励 小组件的
-    fun receiveOrchardVisitAward(): String {
-        return RequestManager.requestString(
-            "com.alipay.antorchard.receiveOrchardVisitAward",
-            "[{\"diversionSource\":\"widget\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"widget_shoufei\",\"version\":\"$VERSION\"}]"
-        )
-    }*/
 
     /**
      * 收取果园回访奖励

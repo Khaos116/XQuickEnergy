@@ -565,7 +565,6 @@ fun LogLineItem(line: String, searchQuery: String, fontSize: TextUnit, textColor
     )
 }
 
-// DraggableScrollbar 保持不变
 @Composable
 fun DraggableScrollbar(listState: LazyListState, totalItems: Int, modifier: Modifier = Modifier) {
     if (totalItems <= 0) return

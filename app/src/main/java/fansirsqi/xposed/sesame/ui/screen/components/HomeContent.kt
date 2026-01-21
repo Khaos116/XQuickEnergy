@@ -25,12 +25,13 @@ import androidx.compose.ui.unit.dp
 import fansirsqi.xposed.sesame.ui.MainActivity
 import fansirsqi.xposed.sesame.ui.screen.DeviceInfoCard
 import fansirsqi.xposed.sesame.ui.viewmodel.MainViewModel
+import fansirsqi.xposed.sesame.util.CommandUtil.ServiceStatus
 import fansirsqi.xposed.sesame.util.ToastUtil
 
 @Composable
 fun HomeContent(
     moduleStatus: MainViewModel.ModuleStatus,
-    serviceStatus: MainViewModel.ServiceStatus,
+    serviceStatus: ServiceStatus,
     deviceInfoMap: Map<String, String>?,
     oneWord: String,
     isOneWordLoading: Boolean,
@@ -81,7 +82,7 @@ fun HomeContent(
                 status = serviceStatus,
                 expanded = isServiceCardExpanded,
                 onClick = {
-                    if (serviceStatus is MainViewModel.ServiceStatus.Inactive) {
+                    if (serviceStatus is ServiceStatus.Inactive) {
                         isServiceCardExpanded = !isServiceCardExpanded //此处不可省略
                     }
                 }
