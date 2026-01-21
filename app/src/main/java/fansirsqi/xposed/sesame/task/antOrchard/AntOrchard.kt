@@ -15,6 +15,7 @@ import fansirsqi.xposed.sesame.util.TaskBlacklist
 import fansirsqi.xposed.sesame.task.ModelTask
 import fansirsqi.xposed.sesame.util.CoroutineUtils
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.RandomUtil
 import fansirsqi.xposed.sesame.util.ResChecker
 import fansirsqi.xposed.sesame.util.maps.UserMap
@@ -453,6 +454,10 @@ class AntOrchard : ModelTask() {
                     "未知任务"
                 }
 
+                if ("逛一逛一淘" == title && MyUtils._关闭不支持RPC1) {
+                  continue
+                }
+
                 if (TaskBlacklist.isTaskInBlacklist(groupId)) {
                     Log.record(TAG, "跳过黑名单任务[$title] groupId=$groupId")
                     continue
@@ -481,6 +486,10 @@ class AntOrchard : ModelTask() {
                     }
 
                     for (cnt in 0 until timesToDo) {
+                        //[{"outBizNo":"mokuai_senlin_hydrw_0.2913546844220295","requestType":"RPC","sceneCode":"ANTOCEAN_TASK","source":"ANTFOCEAN","taskType":"mokuai_senlin_hydrw","uniqueId":"1767460371318492722387988273949"}]
+                        if (MyUtils._关闭不支持RPC2 && "ANTOCEAN_TASK" == sceneCode && "mokuai_senlin_hydrw" == taskId) {
+                          continue
+                        }
                         val finishResponse = JSONObject(AntOrchardRpcCall.finishTask(userId, sceneCode, taskId))
                         if (ResChecker.checkRes(TAG, finishResponse)) {
                             Log.farm("农场广告任务📺[$title] 第${rightsTimes + cnt + 1}次")

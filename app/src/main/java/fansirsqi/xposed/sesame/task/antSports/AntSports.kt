@@ -285,10 +285,11 @@ class AntSports : ModelTask() {
             }
 
             // 步数同步
-            if (!Status.hasFlagToday(StatusFlags.FLAG_ANTSPORTS_SYNC_STEP_DONE) &&
-                TimeUtil.isNowAfterOrCompareTimeStr("0600")) {
-                syncStepTask()
-            }
+            MyUtils.CHANGE_KT8.trim()
+            //if (!Status.hasFlagToday(StatusFlags.FLAG_ANTSPORTS_SYNC_STEP_DONE) &&
+            //    TimeUtil.isNowAfterOrCompareTimeStr("0600")) {
+            //    syncStepTask()
+            //}
 
             // 运动任务
             if (!Status.hasFlagToday(StatusFlags.FLAG_ANTSPORTS_DAILY_TASKS_DONE) &&
@@ -425,12 +426,14 @@ class AntSports : ModelTask() {
      */
     private fun sportsTasks() {
         try {
+            if (MyUtils._关闭必弹验证1) return
             sportsCheckIn()
             val jo = JSONObject(AntSportsRpcCall.queryCoinTaskPanel())
 
             if (ResChecker.checkRes(TAG, jo)) {
                 val data = jo.getJSONObject("data")
-                val taskList = data.getJSONArray("taskList")
+                MyUtils.CHANGE_KT11.trim()
+                val taskList = data.optJSONArray("taskList") ?: JSONArray()
 
                 var totalTasks = 0
                 var completedTasks = 0
@@ -617,6 +620,7 @@ class AntSports : ModelTask() {
      */
     private fun sportsEnergyBubbleTask() {
         try {
+            if (MyUtils._关闭必弹验证2) return
             val jo = JSONObject(AntSportsRpcCall.queryEnergyBubbleModule())
             if (!ResChecker.checkRes(TAG, jo)) {
                 Log.error(TAG, "queryEnergyBubbleModule fail: $jo")
@@ -692,7 +696,8 @@ class AntSports : ModelTask() {
                 val isSigned = data.getBoolean("signed")
 
                 if (!isSigned) {
-                    val signConfigList = data.getJSONArray("signConfigList")
+                    MyUtils.CHANGE_KT12.trim()
+                    val signConfigList = data.optJSONArray("signConfigList") ?: JSONArray()
                     for (i in 0 until signConfigList.length()) {
                         val configItem = signConfigList.getJSONObject(i)
                         val toDay = configItem.getBoolean("toDay")
@@ -1425,6 +1430,11 @@ class AntSports : ModelTask() {
                             instanceId = inst.getString("id")
                             resultId = inst.getString("instanceResultId")
                         }
+                        //{"error":3000,"errorMessage":"系统出错，正在排查","errorNo":3,"errorTip":"3000"}
+                        val key = "${pointOptions}_${instanceId}_${resultId}_${roundId}"
+                        if (MyUtils.getSp功能异常(key)) {
+                          return
+                        }
                         val res = JSONObject(
                             AntSportsRpcCall.participate(
                                 pointOptions,
@@ -1433,6 +1443,7 @@ class AntSports : ModelTask() {
                                 roundId
                             )
                         )
+                        MyUtils.setSp功能异常(key, res)
                         if (ResChecker.checkRes(TAG, res)) {
                             val data = res.getJSONObject("data")
                             val roundDescription = data.getString("roundDescription")
@@ -1969,7 +1980,9 @@ class AntSports : ModelTask() {
                     jo.optJSONObject("data") == null
                 ) {
                     val errorCode = jo.optString("errorCode", "")
-                    if ("ALREADY_SIGN_IN" == errorCode ||
+                    MyUtils.CHANGE_KT19.trim()
+                    if ("已经签到" == jo.optString("errorMsg", "") ||
+                      "ALREADY_SIGN_IN" == errorCode ||
                         "已签到" == jo.optString("errorMsg", "")
                     ) {
                         Status.setFlagToday("AntSports::neverlandDoSign::已签到")
