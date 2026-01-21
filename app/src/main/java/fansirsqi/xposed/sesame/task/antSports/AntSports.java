@@ -1152,7 +1152,13 @@ public class AntSports extends ModelTask {
                             InstanceId = jo.getString("id");
                             ResultId = jo.getString("instanceResultId");
                         }
+                        //{"error":3000,"errorMessage":"系统出错，正在排查","errorNo":3,"errorTip":"3000"}
+                        String key = pointOptions + "_" + InstanceId + "_" + ResultId + "_" + roundId;
+                        if (MyUtils.INSTANCE.getSp功能异常(key)) {
+                          return;
+                        }
                         jo = new JSONObject(AntSportsRpcCall.participate(pointOptions, InstanceId, ResultId, roundId));
+                        MyUtils.INSTANCE.setSp功能异常(key, jo);
                         if (ResChecker.checkRes(TAG, jo)) {
                             jo = jo.getJSONObject("data");
                             String roundDescription = jo.getString("roundDescription");

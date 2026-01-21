@@ -114,6 +114,8 @@ object MyUtils {
       isError = true
     } else if (errorMessage.contains("已经签到")) {
       isError = true
+    } else if (errorMessage.contains("操作存在异常")) {
+      isError = true
     }
     if (isError) {
       val today = ZonedDateTime.now(ZoneId.of("GMT+8")).format(DateTimeFormatter.ofPattern("yyyyMMdd"))
