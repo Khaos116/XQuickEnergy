@@ -3938,6 +3938,11 @@ class AntForest : ModelTask(), EnergyCollectCallback {
         }
         try {
             Log.record(TAG, "刷新背包...")
+            //[{"onlyGive":"","source":"chInfo_ch_appcenter__chsub_9patch","version":"20250813"}]
+            //{"error":6666,"errorMessage":"系统出错，正在排查","errorNo":3,"errorTip":"6666"}
+            if (MyUtils.getSp当天是否执行(MyUtils._系统出错1)) {
+              return null
+            }
             val response = AntForestRpcCall.queryPropList(false)
             // 检查响应是否为空，避免解析空字符串导致异常
             if (response.isNullOrBlank()) {
@@ -3945,6 +3950,7 @@ class AntForest : ModelTask(), EnergyCollectCallback {
                 return null
             }
             val bagObject = JSONObject(response)
+            MyUtils.setSp当天是否执行(MyUtils._系统出错1, bagObject)
             if (bagObject.optBoolean("success")) {
                 cachedBagObject = bagObject
                 lastQueryPropListTime = now

@@ -52,6 +52,7 @@ object MyUtils {
   const val CHANGE_KT29 = "29"
 
   const val _访问被拒绝1 = "alipay.mrchservbase.mrchbusiness.sign.transcode.check_1"
+  const val _系统出错1 = "alipay.antforest.forest.h5.queryPropList_1"
   const val NO_SLEEP: String = "canSleepXXX"
 
   @JvmStatic
@@ -115,6 +116,8 @@ object MyUtils {
     } else if (errorMessage.contains("已经签到")) {
       isError = true
     } else if (errorMessage.contains("操作存在异常")) {
+      isError = true
+    } else if (errorMessage.contains("系统出错")) {
       isError = true
     }
     if (isError) {
