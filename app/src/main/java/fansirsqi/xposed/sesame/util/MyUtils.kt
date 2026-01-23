@@ -136,7 +136,7 @@ object MyUtils {
     return mSP
   }
 
-  fun myJSONObject(s: String?): JSONObject {
+  fun myJSONObject(s: String? = null): JSONObject {
     if (s != null && s.startsWith("{") && s.endsWith("}")) return JSONObject(s)
     return JSONObject("{}")
   }
