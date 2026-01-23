@@ -283,7 +283,7 @@ class AntMember : ModelTask() {
 
 
                 //保障金
-                if (collectInsuredGold!!.value) {
+                if (collectInsuredGold!!.value && !MyUtils._关闭网络错误1) {
                     deferredTasks.add(async(Dispatchers.IO) { collectInsuredGold() })
                 }
 

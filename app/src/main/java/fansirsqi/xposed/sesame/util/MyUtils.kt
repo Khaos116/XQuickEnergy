@@ -61,8 +61,15 @@ object MyUtils {
 
   @JvmStatic
   var _关闭必弹验证2: Boolean = System.currentTimeMillis() > 0
+
+  @JvmStatic
   var _关闭可能验证1: Boolean = System.currentTimeMillis() > 0
+
+  @JvmStatic
   var _关闭可能验证2: Boolean = System.currentTimeMillis() > 0
+
+  @JvmStatic
+  var _关闭网络错误1: Boolean = System.currentTimeMillis() > 0 // "com.alipay.insgiftbff.insgiftMain.gainMyAndFamilySumInsured_1"
 
   @JvmStatic
   var _关闭不支持RPC1: Boolean = System.currentTimeMillis() > 0
