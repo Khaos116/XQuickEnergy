@@ -2737,13 +2737,15 @@ class AntFarm : ModelTask() {
                 // 智能冲突避免：如果是自己的账号
                 if (userId == UserMap.currentUid) {
                     if (feedAnimal!!.value) {
+                        MyUtils.CHANGE_KT19.trim()
+                        Log.other("帮喂小鸡跳过自己，建议不要在列表中添加自己")
                         // 已开启"自动喂小鸡" → 优先使用蹲点机制（更精准），跳过好友列表喂食
-                        Toast.show(
-                            "⚠️ 配置冲突提醒\n" +
-                                    "已开启「自动喂小鸡」，将使用蹲点机制（精准时间）\n" +
-                                    "好友列表中的自己（配置${maxDailyCount}次）已被忽略\n" +
-                                    "建议：无需在好友列表中添加自己"
-                        )
+                        //Toast.show(
+                        //    "⚠️ 配置冲突提醒\n" +
+                        //            "已开启「自动喂小鸡」，将使用蹲点机制（精准时间）\n" +
+                        //            "好友列表中的自己（配置${maxDailyCount}次）已被忽略\n" +
+                        //            "建议：无需在好友列表中添加自己"
+                        //)
                         continue
                     } else {
                         // 未开启"自动喂小鸡" → 使用好友列表机制（尊重次数限制）
