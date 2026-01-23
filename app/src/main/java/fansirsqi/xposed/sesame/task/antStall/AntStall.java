@@ -23,6 +23,7 @@ import fansirsqi.xposed.sesame.model.modelFieldExt.IntegerModelField;
 import fansirsqi.xposed.sesame.model.modelFieldExt.SelectModelField;
 import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.task.TaskCommon;
+import fansirsqi.xposed.sesame.task.antOrchard.AntOrchard;
 import fansirsqi.xposed.sesame.util.GlobalThreadPools;
 import fansirsqi.xposed.sesame.util.JsonUtil;
 import fansirsqi.xposed.sesame.util.Log;
@@ -153,7 +154,8 @@ public class AntStall extends ModelTask {
                     settleReceivable();
                     tc.countDebug("收金币");
                 }
-                if (stallThrowManure.getValue()) {
+                //芭芭农场开启了才能丢肥料
+                if (stallThrowManure.getValue() && MyUtils.modelIsOpen(AntOrchard.class)) {
                     throwManure();
                     tc.countDebug("丢肥料");
                 }

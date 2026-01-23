@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import fansirsqi.xposed.sesame.hook.ApplicationHook
+import fansirsqi.xposed.sesame.model.Model
 import fansirsqi.xposed.sesame.util.maps.UserMap
 import org.json.JSONObject
 import java.time.ZoneId
@@ -140,5 +141,16 @@ object MyUtils {
   fun myJSONObject(s: String? = null): JSONObject {
     if (s != null && s.startsWith("{") && s.endsWith("}")) return JSONObject(s)
     return JSONObject("{}")
+  }
+
+  @JvmStatic
+  fun modelIsOpen(cls: Class<*>?): Boolean {
+    if (cls == null) return false
+    for (model in Model.getModelArray()) {
+      if (model.name == cls.name) {
+        return model.enableField.getValue()
+      }
+    }
+    return false
   }
 }
