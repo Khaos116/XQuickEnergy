@@ -699,10 +699,11 @@ class ApplicationHook {
                 load(userId)
                 updateDay()
 
-                val successMsg = "芝麻粒TK加载成功:" + BuildConfig.VERSION_NAME + "✨"
+                MyUtils.CHANGE_KT9.trim()
+                val showName = UserMap.get(userId)?.showName ?: ""
+                val successMsg = "芝麻粒TK加载成功:" + BuildConfig.VERSION_NAME + "✨${showName}"
                 record(successMsg)
                 show(successMsg)
-                MyUtils.CHANGE_KT9.trim()
                 Log.other(successMsg)
                 record(TAG, "编译时间：" + BuildConfig.BUILD_DATE + " " + BuildConfig.BUILD_TIME)
                 Log.other(TAG, "编译时间：" + BuildConfig.BUILD_DATE + " " + BuildConfig.BUILD_TIME)
