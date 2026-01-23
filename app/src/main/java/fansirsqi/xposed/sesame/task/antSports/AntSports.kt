@@ -336,7 +336,7 @@ class AntSports : ModelTask() {
             }
 
             // 抢好友大战
-            if (battleForFriends.value) {
+            if (battleForFriends.value && !MyUtils._关闭可能验证1) {
                 queryClubHome()
                 queryTrainItem()
                 buyMember()
@@ -743,6 +743,7 @@ class AntSports : ModelTask() {
      */
     private fun receiveCoinAsset() {
         try {
+            if (MyUtils._关闭可能验证2) return
             val s = AntSportsRpcCall.queryCoinBubbleModule()
             var jo = JSONObject(s)
             if (ResChecker.checkRes(TAG, jo)) {

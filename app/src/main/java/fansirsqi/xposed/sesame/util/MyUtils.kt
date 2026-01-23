@@ -60,6 +60,8 @@ object MyUtils {
 
   @JvmStatic
   var _关闭必弹验证2: Boolean = System.currentTimeMillis() > 0
+  var _关闭可能验证1: Boolean = System.currentTimeMillis() > 0
+  var _关闭可能验证2: Boolean = System.currentTimeMillis() > 0
 
   @JvmStatic
   var _关闭不支持RPC1: Boolean = System.currentTimeMillis() > 0
@@ -132,5 +134,10 @@ object MyUtils {
     val context: Context = ApplicationHook.appContext ?: return null
     if (mSP == null) mSP = context.getSharedPreferences("XQE_UID", Context.MODE_PRIVATE)
     return mSP
+  }
+
+  fun myJSONObject(s: String?): JSONObject {
+    if (s != null && s.startsWith("{") && s.endsWith("}")) return JSONObject(s)
+    return JSONObject("{}")
   }
 }
