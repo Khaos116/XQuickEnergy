@@ -9,15 +9,16 @@ import fansirsqi.xposed.sesame.hook.internal.SecurityBodyHelper
 import fansirsqi.xposed.sesame.model.ModelFields
 import fansirsqi.xposed.sesame.model.ModelGroup
 import fansirsqi.xposed.sesame.model.modelFieldExt.BooleanModelField
+import fansirsqi.xposed.sesame.model.modelFieldExt.ChoiceModelField
 import fansirsqi.xposed.sesame.model.modelFieldExt.IntegerModelField
 import fansirsqi.xposed.sesame.model.modelFieldExt.SelectModelField
-import fansirsqi.xposed.sesame.util.TaskBlacklist
 import fansirsqi.xposed.sesame.task.ModelTask
 import fansirsqi.xposed.sesame.util.CoroutineUtils
 import fansirsqi.xposed.sesame.util.Log
 import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.RandomUtil
 import fansirsqi.xposed.sesame.util.ResChecker
+import fansirsqi.xposed.sesame.util.TaskBlacklist
 import fansirsqi.xposed.sesame.util.maps.UserMap
 import org.json.JSONObject
 
@@ -35,15 +36,11 @@ class AntOrchard : ModelTask() {
     private lateinit var receiveOrchardTaskAward: BooleanModelField
     private lateinit var orchardSpreadManureCount: IntegerModelField
     private lateinit var assistFriendList: SelectModelField
-    //模式选择
-    private lateinit var plantModeField: SelectModelField
+    // 模式选择
+    private lateinit var plantModeField: ChoiceModelField
 
-    private class ModeOption(key: String, label: String) : MapperEntity() {
-        init {
-            this.id = key
-            this.name = label
-        }
-    }
+    // 定义模式名称数组
+    private val plantModeNames = arrayOf("种果树", "种摇钱树", "混合模式(先摇钱树后果树)")
 
     override fun getName(): String = "农场"
 
@@ -54,17 +51,13 @@ class AntOrchard : ModelTask() {
     override fun getFields(): ModelFields {
         val modelFields = ModelFields()
 
-        // 构建种植模式选项
-        val modeOptions = mutableListOf<MapperEntity>(
-            ModeOption("MAIN", "种果树(Main)"),
-            ModeOption("YEB", "种摇钱树(Yeb)"),
-            ModeOption("HYBRID", "混合模式(先摇钱树后果树)")
-        )
-
+        // 修改为 ChoiceModelField，默认值为 0 (Main)
         modelFields.addField(
-            SelectModelField("plantMode", "种植模式",
-                mutableSetOf("MAIN"),
-                modeOptions
+            ChoiceModelField(
+                "plantMode",
+                "种植模式",
+                0,
+                plantModeNames
             ).also { plantModeField = it }
         )
 
@@ -189,24 +182,34 @@ class AntOrchard : ModelTask() {
             var loopCount = 0
             var totalWatered = Status.getIntFlagToday(StatusFlags.FLAG_ANTORCHARD_SPREAD_MANURE_COUNT) ?: 0
 
-            // 1. 解析模式
-            val modeSet = plantModeField.value
-            val mode = when {
-                modeSet.contains("YEB") -> "YEB"
-                modeSet.contains("HYBRID") -> "HYBRID"
+            // 1. 解析模式 (从 ChoiceModelField 的 int 值映射)
+            val modeIndex = plantModeField.value
+            // 逻辑判断用的代号
+            val mode = when (modeIndex) {
+                1 -> "YEB"
+                2 -> "HYBRID"
                 else -> "MAIN"
+            }
+            // 日志输出用的中文名
+            val modeName = when (modeIndex) {
+                1 -> "种摇钱树"
+                2 -> "混合模式"
+                else -> "种果树"
             }
 
             // 2. 初始化目标场景
             var targetScene = if (mode == "YEB" || mode == "HYBRID") "yeb" else "main"
             var isYebFull = false // 摇钱树是否已满标记
 
+            // 辅助函数：获取场景中文名
+            fun getSceneName(scene: String) = if (scene == "yeb") "摇钱树" else "果树"
+
             if (totalWatered >= orchardSpreadManureCount.value) {
                 Log.record(TAG, "今日已完成施肥目标：$totalWatered/${orchardSpreadManureCount.value}")
                 return
             }
 
-            Log.record(TAG, "开始施肥任务，模式: $mode, 首选场景: $targetScene")
+            Log.record(TAG, "开始施肥任务，模式: $modeName, 首选场景: ${getSceneName(targetScene)}")
 
             do {
                 try {
@@ -263,21 +266,24 @@ class AntOrchard : ModelTask() {
                     val spreadJson = JSONObject(spreadResponse)
                     val resultCode = spreadJson.optString("resultCode")
 
-                    // 7. 错误处理与模式切换 (P14 = 摇钱树上限)
-                    if (resultCode == "P14") {
-                        Log.record(TAG, "摇钱树(Yeb)施肥已达持仓金额上限")
-                        if (mode == "HYBRID") {
-                            Log.record(TAG, "混合模式：切换至果树(Main)继续")
+                    // 7. 错误处理与模式切换
+                    if (resultCode != "100") {
+                        val resultDesc = spreadJson.optString("resultDesc")
+
+                        // 混合模式下，摇钱树遇到任何阻碍（上限P14、锁异常P11、扣减异常P26、余额不足H06等），都尝试切回普通果树
+                        if (mode == "HYBRID" && targetScene == "yeb") {
+                            Log.record(TAG, "混合模式：摇钱树施肥中止($resultCode|$resultDesc)，切换至果树继续")
                             isYebFull = true
                             continue // 立即重试，切换到 Main
-                        } else if (mode == "YEB") {
-                            Log.record(TAG, "摇钱树模式：已满，任务结束")
+                        }
+
+                        // 单纯摇钱树模式遇到上限则结束
+                        if (mode == "YEB" && resultCode == "P14") {
+                            Log.record(TAG, "种摇钱树：已达持仓金额上限(P14)，任务结束")
                             return
                         }
-                    }
 
-                    if (resultCode != "100") {
-                        Log.error(TAG, "施肥失败($targetScene): ${spreadJson.optString("resultDesc")}")
+                        Log.error(TAG, "施肥失败(${getSceneName(targetScene)}): $resultDesc ($resultCode)")
                         return
                     }
 
@@ -297,12 +303,12 @@ class AntOrchard : ModelTask() {
                         Status.setIntFlagToday(StatusFlags.FLAG_ANTORCHARD_SPREAD_MANURE_COUNT, totalWatered)
 
                         val stageText = spreadTaobaoData.optJSONObject("currentStage")?.optString("stageText") ?: ""
-                        Log.farm("施肥💩[$targetScene] $stageText|累计:$totalWatered")
+                        Log.farm("施肥💩[${getSceneName(targetScene)}] $stageText|累计:$totalWatered")
                     } else {
                         // 兜底
                         totalWatered += actualWaterTimes
                         Status.setIntFlagToday(StatusFlags.FLAG_ANTORCHARD_SPREAD_MANURE_COUNT, totalWatered)
-                        Log.farm("施肥💩[$targetScene] 成功|累计:$totalWatered")
+                        Log.farm("施肥💩[${getSceneName(targetScene)}] 成功|累计:$totalWatered")
                     }
 
                     // 9. 施肥后检测肥料礼盒

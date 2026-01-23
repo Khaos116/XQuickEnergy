@@ -18,7 +18,6 @@ import kotlinx.coroutines.sync.withLock
 import lombok.Setter
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.coroutines.coroutineContext
 
 /**
  * 基于协程的抽象任务模型类
