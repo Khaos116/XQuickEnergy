@@ -253,7 +253,7 @@ abstract class ModelTask : Model() {
                 }
                 try {
                     MyUtils.CHANGE_KT3.trim()
-                    Log.other("▶️开始执行模块 ${if (index >= 0) "➡️${index}⬅️" else ""} [${getName()}]🔜")
+                    Log.other("▶️模块 ${if (index >= 0) "➡️${index}⬅️" else ""} 开始执行 [${getName()}]🔜")
                     isRunning = true
                     addRunCents()
                     setStatusTextExec(getName())
@@ -266,7 +266,7 @@ abstract class ModelTask : Model() {
                 } finally {
                     isRunning = false
                     MyUtils.CHANGE_KT4.trim()
-                    Log.other("🈴模块 ${if (index >= 0) "➡️${index}⬅️" else ""} [${getName()}]执行完毕🔚")
+                    Log.other("🈴模块 ${if (index >= 0) "👉${index}👈" else ""} 执行完毕 [${getName()}]🔚")
                     updateNextExecText(-1)
                 }
             }
