@@ -49,7 +49,7 @@ data object AntFarmFamily {
     /**
      * 美食配置对象
      */
-    private var eatTogetherConfig: JSONObject = JSONObject()
+    private var eatTogetherConfig: JSONObject = MyUtils.myJSONObject()
 
 
     fun run(familyOptions: SelectModelField, notInviteList: SelectModelField) {
@@ -65,7 +65,7 @@ data object AntFarmFamily {
      */
     fun enterFamily(familyOptions: SelectModelField, notInviteList: SelectModelField) {
         try {
-            val enterRes = JSONObject(AntFarmRpcCall.enterFamily());
+            val enterRes = MyUtils.myJSONObject(AntFarmRpcCall.enterFamily());
             if (ResChecker.checkRes(TAG, enterRes)) {
                 if (!enterRes.has("groupId")) {
                     Log.farm("请先开通小鸡家庭");
@@ -134,7 +134,7 @@ data object AntFarmFamily {
     fun familySign() {
         try {
             if (Status.hasFlagToday("farmfamily::dailySign")) return
-            val res = JSONObject(AntFarmRpcCall.familyReceiveFarmTaskAward("FAMILY_SIGN_TASK"))
+            val res = MyUtils.myJSONObject(AntFarmRpcCall.familyReceiveFarmTaskAward("FAMILY_SIGN_TASK"))
             if (ResChecker.checkRes(TAG, res)) {
                 Log.farm("家庭任务🏡每日签到")
             }
@@ -148,7 +148,7 @@ data object AntFarmFamily {
      */
     fun familyClaimRewardList() {
         try {
-            var jo = JSONObject(AntFarmRpcCall.familyAwardList())
+            var jo = MyUtils.myJSONObject(AntFarmRpcCall.familyAwardList())
             if (ResChecker.checkRes(TAG, jo)) {
                 val ja = jo.getJSONArray("familyAwardRecordList")
                 for (i in 0..<ja.length()) {
@@ -163,7 +163,7 @@ data object AntFarmFamily {
                     val rightId = jo.getString("rightId")
                     val awardName = jo.getString("awardName")
                     val count = jo.optInt("count", 1)
-                    val receveRes = JSONObject(AntFarmRpcCall.receiveFamilyAward(rightId))
+                    val receveRes = MyUtils.myJSONObject(AntFarmRpcCall.receiveFamilyAward(rightId))
                     if (ResChecker.checkRes(TAG, receveRes)) {
                         Log.farm("家庭奖励🏆: $awardName x $count")
                     }
@@ -188,10 +188,10 @@ data object AntFarmFamily {
             //随机获取一个任务类型
             val assignConfigList = jsonObject.getJSONArray("assignConfigList")
             val assignConfig = assignConfigList.getJSONObject(RandomUtil.nextInt(0, assignConfigList.length() - 1))
-            val jo = JSONObject(AntFarmRpcCall.assignFamilyMember(assignConfig.getString("assignAction"), beAssignUser))
+            val jo = MyUtils.myJSONObject(AntFarmRpcCall.assignFamilyMember(assignConfig.getString("assignAction"), beAssignUser))
             if (ResChecker.checkRes(TAG, jo)) {
                 Log.farm("家庭任务🏡[使用顶梁柱特权] ${assignConfig.getString("assignDesc")}")
-//                val sendRes = JSONObject(AntFarmRpcCall.sendChat(assignConfig.getString("chatCardType"), beAssignUser))
+//                val sendRes = MyUtils.myJSONObject(AntFarmRpcCall.sendChat(assignConfig.getString("chatCardType"), beAssignUser))
             }
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, t)
@@ -234,7 +234,7 @@ data object AntFarmFamily {
                 }
 
                 // 调用 RPC
-                val jo = JSONObject(AntFarmRpcCall.feedFriendAnimal(farmId, groupId))
+                val jo = MyUtils.myJSONObject(AntFarmRpcCall.feedFriendAnimal(farmId, groupId))
 
                 // 统一错误码检查
                 if (!jo.optBoolean("success", false)) {
@@ -319,7 +319,7 @@ data object AntFarmFamily {
                 Log.record("查询最近的几份美食为空,无法请客")
                 return
             }
-            val jo = JSONObject(AntFarmRpcCall.familyEatTogether(groupId, familyUserIds.toJSONArray(), array))
+            val jo = MyUtils.myJSONObject(AntFarmRpcCall.familyEatTogether(groupId, familyUserIds.toJSONArray(), array))
             if (ResChecker.checkRes(TAG, jo)) {
                 Log.farm("家庭任务🏠请客" + periodName + "#消耗美食" + familyUserIds.size + "份")
             }
@@ -334,7 +334,7 @@ data object AntFarmFamily {
      */
     fun queryRecentFarmFood(queryNum: Int): JSONArray? {
         try {
-            val jo = JSONObject(AntFarmRpcCall.queryRecentFarmFood(queryNum))
+            val jo = MyUtils.myJSONObject(AntFarmRpcCall.queryRecentFarmFood(queryNum))
             if (!ResChecker.checkRes(TAG, jo)) {
                 return null
             }
@@ -424,7 +424,7 @@ data object AntFarmFamily {
 
             // 2. 远端任务状态校验：确认「道早安」任务是否仍为 TODO
             try {
-                val taskTipsRes = JSONObject(AntFarmRpcCall.familyTaskTips(familyAnimals))
+                val taskTipsRes = MyUtils.myJSONObject(AntFarmRpcCall.familyTaskTips(familyAnimals))
                 if (!ResChecker.checkRes(TAG, taskTipsRes)) {
                     Log.error(TAG, "家庭任务🏠道早安#familyTaskTips 调用失败，跳过")
                     return
@@ -475,14 +475,14 @@ data object AntFarmFamily {
             }
 
             // 4. 确认 AI 隐私协议（OpenAIPrivatePolicy 抓包见看我.txt 中 deliverChickInfoVO.privatePolicyId）
-            val resp0 = JSONObject(AntFarmRpcCall.OpenAIPrivatePolicy())
+            val resp0 = MyUtils.myJSONObject(AntFarmRpcCall.OpenAIPrivatePolicy())
             if (!ResChecker.checkRes(TAG, resp0)) {
                 Log.error(TAG, "家庭任务🏠道早安#OpenAIPrivatePolicy 调用失败")
                 return
             }
 
             // 5. 请求推荐早安场景（deliverSubjectRecommend）以获取事件上下文
-            val resp1 = JSONObject(AntFarmRpcCall.deliverSubjectRecommend(userIds))
+            val resp1 = MyUtils.myJSONObject(AntFarmRpcCall.deliverSubjectRecommend(userIds))
             if (!ResChecker.checkRes(TAG, resp1)) {
                 Log.error(TAG, "家庭任务🏠道早安#deliverSubjectRecommend 调用失败")
                 return
@@ -499,7 +499,7 @@ data object AntFarmFamily {
             val success = resp1.optBoolean("success", true)
 
             // 6. 调用 DeliverContentExpand，实际向 AI 请求生成完整早安文案
-            val resp2 = JSONObject(
+            val resp2 = MyUtils.myJSONObject(
                 AntFarmRpcCall.deliverContentExpand(
                     ariverRpcTraceId,
                     eventId,
@@ -520,7 +520,7 @@ data object AntFarmFamily {
             val deliverId = resp2.getString("deliverId")
 
             // 7. 使用 deliverId 再次确认扩展内容，得到最终的早安文案
-            val resp3 = JSONObject(AntFarmRpcCall.QueryExpandContent(deliverId))
+            val resp3 = MyUtils.myJSONObject(AntFarmRpcCall.QueryExpandContent(deliverId))
             if (!ResChecker.checkRes(TAG, resp3)) {
                 Log.error(TAG, "家庭任务🏠道早安#QueryExpandContent 调用失败")
                 return
@@ -529,7 +529,7 @@ data object AntFarmFamily {
             val content = resp3.getString("content")
 
             // 8. 最终发送早安消息：DeliverMsgSend
-            val resp4 = JSONObject(AntFarmRpcCall.deliverMsgSend(groupId, userIds, content, deliverId))
+            val resp4 = MyUtils.myJSONObject(AntFarmRpcCall.deliverMsgSend(groupId, userIds, content, deliverId))
             if (ResChecker.checkRes(TAG, resp4)) {
                 Log.farm("家庭任务🏠道早安: $content 🌈")
                 Status.setFlagToday("antFarm::deliverMsgSend")
@@ -578,7 +578,7 @@ data object AntFarmFamily {
 
             Log.record(TAG, "inviteList: $inviteList")
 
-            val jo = JSONObject(AntFarmRpcCall.inviteFriendVisitFamily(inviteList))
+            val jo = MyUtils.myJSONObject(AntFarmRpcCall.inviteFriendVisitFamily(inviteList))
             if (ResChecker.checkRes(TAG, jo)) {
                 Log.farm("家庭任务🏠分享好友")
                 Status.setFlagToday("antFarm::familyShareToFriends")
@@ -597,7 +597,7 @@ data object AntFarmFamily {
         try {
             // 获取活动 ID
             val familyRes = AntFarmRpcCall.enterFamily()
-            val familyJo = JSONObject(familyRes)
+            val familyJo = MyUtils.myJSONObject(familyRes)
             if (!ResChecker.checkRes(TAG, familyJo)) return
 
             val activityId = familyJo.optString("decorationCoinActivityId", "20250808")
@@ -620,7 +620,7 @@ data object AntFarmFamily {
 
                 while (hasMore) {
                     val itemListRes = AntFarmRpcCall.getFitmentItemList(activityId, 10, label, startIndex)
-                    val itemJo = JSONObject(itemListRes)
+                    val itemJo = MyUtils.myJSONObject(itemListRes)
                     if (!ResChecker.checkRes(TAG, itemJo)) break
 
                     // 解析实时装修金余额
@@ -646,7 +646,7 @@ data object AntFarmFamily {
                                 Log.record(TAG, "[家庭装扮] 发现未拥有家具: $spuName")
 
                                 val exchangeRes = AntFarmRpcCall.exchangeBenefit(spuId, skuId, activityId)
-                                val exchangeJo = JSONObject(exchangeRes)
+                                val exchangeJo = MyUtils.myJSONObject(exchangeRes)
 
                                 if (ResChecker.checkRes(TAG, exchangeJo)) {
                                     Log.farm("家庭装扮💸#成功购买[$spuName]#消耗[${price/100}装修金]")
