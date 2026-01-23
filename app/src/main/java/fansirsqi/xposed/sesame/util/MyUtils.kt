@@ -153,11 +153,6 @@ object MyUtils {
   @JvmStatic
   fun modelIsOpen(cls: Class<*>?): Boolean {
     if (cls == null) return false
-    for (model in Model.getModelArray()) {
-      if (model.name == cls.name) {
-        return model.enableField.getValue()
-      }
-    }
-    return false
+    return Model.getModelArray()?.any { it.javaClass == cls && it.enableField.getValue() } ?: false
   }
 }
