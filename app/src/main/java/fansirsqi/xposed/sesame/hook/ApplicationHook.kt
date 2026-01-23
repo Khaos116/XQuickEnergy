@@ -76,6 +76,7 @@ import fansirsqi.xposed.sesame.util.Log.error
 import fansirsqi.xposed.sesame.util.Log.printStackTrace
 import fansirsqi.xposed.sesame.util.Log.record
 import fansirsqi.xposed.sesame.util.ModuleStatus
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.Notify
 import fansirsqi.xposed.sesame.util.Notify.stop
 import fansirsqi.xposed.sesame.util.Notify.updateStatusText
@@ -303,16 +304,17 @@ class ApplicationHook {
                     appContext = appService.applicationContext
                     ensureScheduler()
 
-                    if (Detector.isLegitimateEnvironment(appContext!!)) {
-                        Detector.dangerous(appContext!!)
-                        return
-                    }
-
-                    DexKitBridge.create(apkPath).use { _ ->
-                        record(TAG, "Hook DexKit successfully")
-                    }
+                    //MyUtils.CHANGE_KT1.trim()
+                    //if (Detector.isLegitimateEnvironment(appContext!!)) {
+                    //    Detector.dangerous(appContext!!)
+                    //    return
+                    //}
+                    //
+                    //DexKitBridge.create(apkPath).use { _ ->
+                    //    record(TAG, "Hook DexKit successfully")
+                    //}
                     mainTask = newInstance("主任务") { runMainTaskLogic() }
-                    dayCalendar = Calendar.getInstance()
+                    dayCalendar = MyUtils.getInstance()
                     if (initHandler()) {
                         init = true
                     }
@@ -554,7 +556,7 @@ class ApplicationHook {
         private val deoptimizeMethod: Method?
 
         init {
-            dayCalendar = Calendar.getInstance()
+            dayCalendar = MyUtils.getInstance()
             resetToMidnight(dayCalendar!!)
             var m: Method? = null
             try {
@@ -698,9 +700,13 @@ class ApplicationHook {
                 load(userId)
                 updateDay()
 
-                val successMsg = "Loaded SesameTk " + BuildConfig.VERSION_NAME + "✨"
+                val successMsg = "芝麻粒TK加载成功:" + BuildConfig.VERSION_NAME + "✨"
                 record(successMsg)
                 show(successMsg)
+                MyUtils.CHANGE_KT9.trim()
+                Log.other(successMsg)
+                record(TAG, "编译时间：" + BuildConfig.BUILD_DATE + " " + BuildConfig.BUILD_TIME)
+                Log.other(TAG, "编译时间：" + BuildConfig.BUILD_DATE + " " + BuildConfig.BUILD_TIME)
 
                 offline = false
                 init = true
@@ -780,7 +786,7 @@ class ApplicationHook {
         }
 
         fun updateDay() {
-            val now = Calendar.getInstance()
+            val now = MyUtils.getInstance()
             if (dayCalendar == null || dayCalendar!!.get(Calendar.DAY_OF_MONTH) != now.get(Calendar.DAY_OF_MONTH)) {
                 dayCalendar = now.clone() as Calendar
                 resetToMidnight(dayCalendar!!)
@@ -844,7 +850,7 @@ class ApplicationHook {
             if (wakenAtTimeList != null && wakenAtTimeList.contains("-1")) return
 
             // 1. 每日0点
-            val calendar = Calendar.getInstance()
+            val calendar = MyUtils.getInstance()
             calendar.add(Calendar.DAY_OF_MONTH, 1)
             resetToMidnight(calendar)
             val delayToMidnight = calendar.getTimeInMillis() - System.currentTimeMillis()
@@ -860,7 +866,7 @@ class ApplicationHook {
 
             // 2. 自定义时间
             if (wakenAtTimeList != null) {
-                val now = Calendar.getInstance()
+                val now = MyUtils.getInstance()
                 for (timeStr in wakenAtTimeList) {
                     try {
                         val target = TimeUtil.getTodayCalendarByTimeStr(timeStr)
