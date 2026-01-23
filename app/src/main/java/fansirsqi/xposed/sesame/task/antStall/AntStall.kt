@@ -11,9 +11,11 @@ import fansirsqi.xposed.sesame.model.modelFieldExt.ChoiceModelField
 import fansirsqi.xposed.sesame.model.modelFieldExt.IntegerModelField
 import fansirsqi.xposed.sesame.model.modelFieldExt.SelectModelField
 import fansirsqi.xposed.sesame.task.ModelTask
+import fansirsqi.xposed.sesame.task.antOrchard.AntOrchard
 import fansirsqi.xposed.sesame.util.GlobalThreadPools
 import fansirsqi.xposed.sesame.util.JsonUtil
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.RandomUtil
 import fansirsqi.xposed.sesame.util.ResChecker
 import fansirsqi.xposed.sesame.util.TimeCounter
@@ -229,7 +231,7 @@ class AntStall : ModelTask() {
             Log.record(TAG, "执行开始-$name")
 
             val homeResponse = AntStallRpcCall.home()
-            val homeJson = JSONObject(homeResponse)
+            val homeJson = MyUtils.myJSONObject(homeResponse)
 
             if (!ResChecker.checkRes(TAG, homeJson)) {
                 Log.record(TAG, "home err: $homeResponse")
@@ -250,7 +252,7 @@ class AntStall : ModelTask() {
             }
 
             // 丢肥料
-            if (stallThrowManure.value) {
+            if (stallThrowManure.value && MyUtils.modelIsOpen(AntOrchard::class.java)) {
                 throwManure()
                 tc.countDebug("丢肥料")
             }
@@ -331,7 +333,7 @@ class AntStall : ModelTask() {
     ) {
         try {
             val preResponse = AntStallRpcCall.shopSendBackPre(billNo, seatId, shopId, shopUserId)
-            val preJson = JSONObject(preResponse)
+            val preJson = MyUtils.myJSONObject(preResponse)
 
             if (!ResChecker.checkRes(TAG, preJson)) {
                 Log.error(TAG, "sendBackPre err: $preResponse")
@@ -342,7 +344,7 @@ class AntStall : ModelTask() {
             val amount = income.getDouble("amount").toInt()
 
             val sendBackResponse = AntStallRpcCall.shopSendBack(seatId)
-            val sendBackJson = JSONObject(sendBackResponse)
+            val sendBackJson = MyUtils.myJSONObject(sendBackResponse)
 
             if (ResChecker.checkRes(TAG, sendBackJson)) {
                 val amountText = if (amount > 0) "获得金币$amount" else ""
@@ -366,7 +368,7 @@ class AntStall : ModelTask() {
     private fun inviteOpen(seatId: String, sentUserId: MutableSet<String>) {
         try {
             val response = AntStallRpcCall.rankInviteOpen()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (!ResChecker.checkRes(TAG, json)) {
                 Log.error(TAG, "inviteOpen err: $response")
@@ -376,7 +378,7 @@ class AntStall : ModelTask() {
             val friendRankList = json.getJSONArray("friendRankList")
             for (i in 0 until friendRankList.length()) {
                 val friend = friendRankList.getJSONObject(i)
-                val friendUserId = friend.getString("userId")
+                val friendUserId = friend.optString("userId")
 
                 var isInviteShop = stallInviteShopList.value.contains(friendUserId)
                 if (stallInviteShopType.value == StallInviteShopType.DONT_INVITE) {
@@ -394,7 +396,7 @@ class AntStall : ModelTask() {
                         continue
                     }
 
-                    val inviteJson = JSONObject(inviteResponse)
+                    val inviteJson = MyUtils.myJSONObject(inviteResponse)
                     if (ResChecker.checkRes(TAG, inviteJson)) {
                         Log.farm("蚂蚁新村⛪邀请[${UserMap.getMaskName(friendUserId)}]开店成功")
                         sentUserId.add(friendUserId)
@@ -424,7 +426,7 @@ class AntStall : ModelTask() {
             // 记录已占用的用户
             for (i in 1..2) {
                 val seat = seatsMap.getJSONObject("GUEST_0$i")
-                if (seat.getString("status") == "BUSY") {
+                if (seat.optString("status") == "BUSY") {
                     val rentLastUser = seat.optString("rentLastUser")
                     if (rentLastUser.isNotEmpty()) {
                         sentUserId.add(rentLastUser)
@@ -435,10 +437,10 @@ class AntStall : ModelTask() {
             // 处理每个摊位
             for (i in 1..2) {
                 val seat = seatsMap.getJSONObject("GUEST_0$i")
-                val seatId = seat.getString("seatId")
+                val seatId = seat.optString("seatId")
 
                 // 摊位空闲时尝试邀请
-                if (seat.getString("status") == "FREE") {
+                if (seat.optString("status") == "FREE") {
                     if (stallInviteShop.value) {
                         Log.record(TAG, "摊位[$i]空闲,尝试邀请好友...")
                         inviteOpen(seatId, sentUserId)
@@ -464,8 +466,8 @@ class AntStall : ModelTask() {
                     continue
                 }
 
-                val rentLastBill = seat.getString("rentLastBill")
-                val rentLastShop = seat.getString("rentLastShop")
+                val rentLastBill = seat.optString("rentLastBill")
+                val rentLastShop = seat.optString("rentLastShop")
 
                 // 黑名单直接赶走
                 if (stallBlackList.value.contains(rentLastUser)) {
@@ -517,13 +519,13 @@ class AntStall : ModelTask() {
 
             val coinsMap = seat.getJSONObject("coinsMap")
             val master = coinsMap.getJSONObject("MASTER")
-            val assetId = master.getString("assetId")
+            val assetId = master.optString("assetId")
             val settleCoin = master.getJSONObject("money").getDouble("amount").toInt()
             val fullShow = master.getBoolean("fullShow")
 
             if (fullShow || settleCoin > 100) {
                 val response = AntStallRpcCall.settle(assetId, settleCoin)
-                val json = JSONObject(response)
+                val json = MyUtils.myJSONObject(response)
                 if (ResChecker.checkRes(TAG, json)) {
                     Log.farm("蚂蚁新村⛪[收取金币]#$settleCoin")
                 } else {
@@ -541,7 +543,7 @@ class AntStall : ModelTask() {
     private fun closeShop() {
         try {
             val response = AntStallRpcCall.shopList()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (!ResChecker.checkRes(TAG, json)) {
                 Log.error(TAG, "closeShop err: $response")
@@ -558,14 +560,14 @@ class AntStall : ModelTask() {
 
             for (i in 0 until astUserShopList.length()) {
                 val shop = astUserShopList.getJSONObject(i)
-                if (shop.getString("status") != "OPEN") continue
+                if (shop.optString("status") != "OPEN") continue
 
                 val rentLastEnv = shop.getJSONObject("rentLastEnv")
                 val gmtLastRent = rentLastEnv.getLong("gmtLastRent")
                 val shopTime = gmtLastRent + stallSelfOpenTime.value * 60 * 1000L
-                val shopId = shop.getString("shopId")
-                val rentLastBill = shop.getString("rentLastBill")
-                val rentLastUser = shop.getString("rentLastUser")
+                val shopId = shop.optString("shopId")
+                val rentLastBill = shop.optString("rentLastBill")
+                val rentLastUser = shop.optString("rentLastUser")
 
                 if (System.currentTimeMillis() > shopTime) {
                     Log.record(TAG, "小摊[$shopId]摆摊时间已到,执行收摊。")
@@ -597,7 +599,7 @@ class AntStall : ModelTask() {
     private fun openShop() {
         try {
             val response = AntStallRpcCall.shopList()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (!ResChecker.checkRes(TAG, json)) {
                 Log.error(TAG, "openShop err: $response")
@@ -609,8 +611,8 @@ class AntStall : ModelTask() {
 
             for (i in 0 until astUserShopList.length()) {
                 val shop = astUserShopList.getJSONObject(i)
-                if (shop.getString("status") == "FREE") {
-                    shopIds.add(shop.getString("shopId"))
+                if (shop.optString("status") == "FREE") {
+                    shopIds.add(shop.optString("shopId"))
                 }
             }
 
@@ -633,7 +635,7 @@ class AntStall : ModelTask() {
     private fun rankCoinDonate(shopIds: Queue<String>) {
         try {
             val response = AntStallRpcCall.rankCoinDonate()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (!ResChecker.checkRes(TAG, json)) {
                 Log.error(TAG, "rankCoinDonate err: $response")
@@ -647,7 +649,7 @@ class AntStall : ModelTask() {
                 val friendRank = friendRankList.getJSONObject(i)
                 if (!friendRank.getBoolean("canOpenShop")) continue
 
-                val userId = friendRank.getString("userId")
+                val userId = friendRank.optString("userId")
                 var isStallOpen = stallOpenList.value.contains(userId)
                 if (stallOpenType.value == StallOpenType.CLOSE) {
                     isStallOpen = !isStallOpen
@@ -672,7 +674,7 @@ class AntStall : ModelTask() {
     private fun openShop(seatId: String, userId: String, shopId: String) {
         try {
             val response = AntStallRpcCall.shopOpen(seatId, userId, shopId)
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (json.optString("resultCode") == "SUCCESS") {
                 Log.farm("蚂蚁新村⛪在[${UserMap.getMaskName(userId)}]家摆摊")
@@ -695,7 +697,7 @@ class AntStall : ModelTask() {
 
             try {
                 val response = AntStallRpcCall.friendHome(userId)
-                val json = JSONObject(response)
+                val json = MyUtils.myJSONObject(response)
 
                 if (json.optString("resultCode") != "SUCCESS") {
                     Log.error(TAG, "新村摆摊失败: $response")
@@ -717,9 +719,9 @@ class AntStall : ModelTask() {
 
                 // 尝试在第一个摊位开店
                 if (guest1.getBoolean("canOpenShop")) {
-                    openShop(guest1.getString("seatId"), userId, shopId)
+                    openShop(guest1.optString("seatId"), userId, shopId)
                 } else if (guest2.getBoolean("canOpenShop")) {
-                    openShop(guest2.getString("seatId"), userId, shopId)
+                    openShop(guest2.optString("seatId"), userId, shopId)
                 }
 
             } catch (t: Throwable) {
@@ -734,7 +736,7 @@ class AntStall : ModelTask() {
     private fun shopClose(shopId: String, billNo: String, userId: String) {
         try {
             val preResponse = AntStallRpcCall.preShopClose(shopId, billNo)
-            val preJson = JSONObject(preResponse)
+            val preJson = MyUtils.myJSONObject(preResponse)
 
             if (!ResChecker.checkRes(TAG, preJson)) {
                 Log.error(TAG, "shopClose err: $preResponse")
@@ -743,12 +745,12 @@ class AntStall : ModelTask() {
 
             val income = preJson.getJSONObject("astPreviewShopSettleVO").getJSONObject("income")
             val closeResponse = AntStallRpcCall.shopClose(shopId)
-            val closeJson = JSONObject(closeResponse)
+            val closeJson = MyUtils.myJSONObject(closeResponse)
 
             if (ResChecker.checkRes(TAG, closeJson)) {
                 Log.farm(
                     "蚂蚁新村⛪收取在[${UserMap.getMaskName(userId)}]的摊位获得${
-                        income.getString(
+                        income.optString(
                             "amount"
                         )
                     }"
@@ -768,7 +770,7 @@ class AntStall : ModelTask() {
     private fun taskList() {
         try {
             val response = AntStallRpcCall.taskList()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (!ResChecker.checkRes(TAG, json)) {
                 Log.error(TAG, "taskList err: $response")
@@ -788,8 +790,8 @@ class AntStall : ModelTask() {
             for (i in 0 until taskModels.length()) {
                 try {
                     val task = taskModels.getJSONObject(i)
-                    val taskStatus = task.getString("taskStatus")
-                    val taskType = task.getString("taskType")
+                    val taskStatus = task.optString("taskStatus")
+                    val taskType = task.optString("taskType")
 
                     // 已完成的任务领取奖励
                     if (taskStatus == "FINISHED") {
@@ -800,9 +802,9 @@ class AntStall : ModelTask() {
 
                     if (taskStatus != "TODO") continue
 
-                    val bizInfo = JSONObject(task.getString("bizInfo"))
+                    val bizInfo = MyUtils.myJSONObject(task.optString("bizInfo"))
                     val title = bizInfo.optString("title", taskType)
-                    val actionType = bizInfo.getString("actionType")
+                    val actionType = bizInfo.optString("actionType")
 
                     // 自动完成任务
                     if (actionType == "VISIT_AUTO_FINISH" || taskType in TASK_TYPE_LIST) {
@@ -847,9 +849,12 @@ class AntStall : ModelTask() {
      * @brief 处理X-light任务
      */
     private fun handleXlightTask() {
+        if (MyUtils._关闭作弊广告流量) {
+          return
+        }
         try {
             val response = AntStallRpcCall.xlightPlugin()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (!json.has("playingResult")) {
                 Log.error(TAG, "taskList.xlightPlugin err: ${json.optString("resultDesc")}")
@@ -857,7 +862,7 @@ class AntStall : ModelTask() {
             }
 
             val playingResult = json.getJSONObject("playingResult")
-            val pid = playingResult.getString("playingBizId")
+            val pid = playingResult.optString("playingBizId")
             val eventList = JsonUtil.getValueByPathObject(
                 playingResult,
                 "eventRewardDetail.eventRewardInfoList"
@@ -872,7 +877,7 @@ class AntStall : ModelTask() {
                     Log.record("延时5S 木兰市集")
                     GlobalThreadPools.sleepCompat(5000)
 
-                    val finishJson = JSONObject(finishResponse)
+                    val finishJson = MyUtils.myJSONObject(finishResponse)
                     if (!finishJson.optBoolean("success")) {
                         Log.error(TAG, "taskList.finish err: ${finishJson.optString("resultDesc")}")
                     }
@@ -891,7 +896,7 @@ class AntStall : ModelTask() {
     private fun signToday() {
         try {
             val response = AntStallRpcCall.signToday()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (ResChecker.checkRes(TAG, json)) {
                 Log.farm("蚂蚁新村⛪[签到成功]")
@@ -911,7 +916,7 @@ class AntStall : ModelTask() {
 
         try {
             val response = AntStallRpcCall.receiveTaskAward(taskType)
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (json.optBoolean("success")) {
                 Log.farm("蚂蚁新村⛪[领取奖励]")
@@ -932,7 +937,7 @@ class AntStall : ModelTask() {
                 "${taskType}_${System.currentTimeMillis()}",
                 taskType
             )
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (json.optBoolean("success")) {
                 return true
@@ -953,7 +958,7 @@ class AntStall : ModelTask() {
 
         try {
             val response = AntStallRpcCall.rankInviteRegister()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (!ResChecker.checkRes(TAG, json)) {
                 Log.error(TAG, "rankInviteRegister err: $response")
@@ -967,18 +972,18 @@ class AntStall : ModelTask() {
                 val friend = friendRankList.getJSONObject(i)
 
                 if (!friend.optBoolean("canInviteRegister", false) ||
-                    friend.getString("userStatus") != "UNREGISTER"
+                    friend.optString("userStatus") != "UNREGISTER"
                 ) {
                     continue
                 }
 
-                val userId = friend.getString("userId")
+                val userId = friend.optString("userId")
                 if (!stallInviteRegisterList.value.contains(userId)) {
                     continue
                 }
 
                 val inviteResponse = AntStallRpcCall.friendInviteRegister(userId)
-                val inviteJson = JSONObject(inviteResponse)
+                val inviteJson = MyUtils.myJSONObject(inviteResponse)
 
                 if (ResChecker.checkRes(TAG, inviteJson)) {
                     Log.farm("蚂蚁新村⛪邀请好友[${UserMap.getMaskName(userId)}]#开通新村")
@@ -999,10 +1004,10 @@ class AntStall : ModelTask() {
     private fun shareP2P(): String? {
         try {
             val response = AntStallRpcCall.shareP2P()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (json.optBoolean("success")) {
-                val shareId = json.getString("shareId")
+                val shareId = json.optString("shareId")
                 Log.record(TAG, "蚂蚁新村⛪[分享助力]")
                 return shareId
             } else {
@@ -1039,11 +1044,11 @@ class AntStall : ModelTask() {
                 )
 
                 val response = AntStallRpcCall.achieveBeShareP2P(shareId)
-                val json = JSONObject(response)
+                val json = MyUtils.myJSONObject(response)
                 val name = UserMap.getMaskName(uid)
 
                 if (!json.optBoolean("success")) {
-                    when (json.getString("code")) {
+                    when (json.optString("code")) {
                         "600000028" -> {
                             Log.record(TAG, "新村助力🮐被助力次数上限[$name]")
                             continue
@@ -1079,7 +1084,7 @@ class AntStall : ModelTask() {
     private fun donate() {
         try {
             val response = AntStallRpcCall.projectList()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (json.optString("resultCode", "") != "SUCCESS") return
 
@@ -1105,12 +1110,12 @@ class AntStall : ModelTask() {
 
                     // 获取项目详情
                     val detailResponse = AntStallRpcCall.projectDetail(projectId)
-                    val detailJson = JSONObject(detailResponse)
+                    val detailJson = MyUtils.myJSONObject(detailResponse)
 
                     if (detailJson.optString("resultCode", "") == "SUCCESS") {
                         // 执行捐赠
                         val donateResponse = AntStallRpcCall.projectDonate(projectId)
-                        val donateJson = JSONObject(donateResponse)
+                        val donateJson = MyUtils.myJSONObject(donateResponse)
 
                         val astProjectVO = donateJson.optJSONObject("astProjectVO")
                         if (astProjectVO != null) {
@@ -1135,7 +1140,7 @@ class AntStall : ModelTask() {
     private fun roadmap() {
         try {
             val response = AntStallRpcCall.roadmap()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (!ResChecker.checkRes(TAG, json)) return
 
@@ -1145,10 +1150,10 @@ class AntStall : ModelTask() {
             for (i in 0 until roadList.length()) {
                 val road = roadList.getJSONObject(i)
 
-                if (road.getString("status") != "NEW") continue
+                if (road.optString("status") != "NEW") continue
 
                 hasNewVillage = true
-                val villageName = road.getString("villageName")
+                val villageName = road.optString("villageName")
                 val flagKey = "stall::roadmap::$villageName"
 
                 if (Status.hasFlagToday(flagKey)) {
@@ -1176,7 +1181,7 @@ class AntStall : ModelTask() {
     private fun collectManure() {
         try {
             val response = AntStallRpcCall.queryManureInfo()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (!json.optBoolean("success")) {
                 Log.error(TAG, "collectManure err: $response")
@@ -1187,7 +1192,7 @@ class AntStall : ModelTask() {
             if (astManureInfoVO.optBoolean("hasManure")) {
                 val manure = astManureInfoVO.getInt("manure")
                 val collectResponse = AntStallRpcCall.collectManure()
-                val collectJson = JSONObject(collectResponse)
+                val collectJson = MyUtils.myJSONObject(collectResponse)
 
                 if (ResChecker.checkRes(TAG, collectJson)) {
                     Log.farm("蚂蚁新村⛪获得肥料${manure}g")
@@ -1212,7 +1217,7 @@ class AntStall : ModelTask() {
 
         try {
             val response = AntStallRpcCall.throwManure(dynamicList)
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             // 先于ResChecker判断特定业务错误码
             val resultCode = json.optString("resultCode")
@@ -1240,7 +1245,7 @@ class AntStall : ModelTask() {
     private fun throwManure() {
         try {
             val response = AntStallRpcCall.dynamicLoss()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (!ResChecker.checkRes(TAG, json)) {
                 Log.error(TAG, "throwManure err: $response")
@@ -1255,7 +1260,7 @@ class AntStall : ModelTask() {
 
                 if (lossDynamic.has("specialEmojiVO")) continue
 
-                val objectId = lossDynamic.getString("objectId")
+                val objectId = lossDynamic.optString("objectId")
                 var isThrowManure = stallThrowManureList.value.contains(objectId)
 
                 if (stallThrowManureType.value == StallThrowManureType.DONT_THROW) {
@@ -1264,9 +1269,9 @@ class AntStall : ModelTask() {
 
                 if (!isThrowManure) continue
 
-                val dynamic = JSONObject().apply {
-                    put("bizId", lossDynamic.getString("bizId"))
-                    put("bizType", lossDynamic.getString("bizType"))
+                val dynamic = MyUtils.myJSONObject().apply {
+                    put("bizId", lossDynamic.optString("bizId"))
+                    put("bizType", lossDynamic.optString("bizType"))
                 }
                 dynamicList.put(dynamic)
 
@@ -1291,7 +1296,7 @@ class AntStall : ModelTask() {
     private fun settleReceivable() {
         try {
             val response = AntStallRpcCall.settleReceivable()
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
 
             if (ResChecker.checkRes(TAG, json)) {
                 Log.farm("蚂蚁新村⛪收取应收金币")
@@ -1316,7 +1321,7 @@ class AntStall : ModelTask() {
             while (true) {
                 try {
                     val response = AntStallRpcCall.nextTicketFriend()
-                    val json = JSONObject(response)
+                    val json = MyUtils.myJSONObject(response)
 
                     if (!json.optBoolean("success")) {
                         Log.error(
@@ -1347,7 +1352,7 @@ class AntStall : ModelTask() {
 
                     // 访问好友主页
                     val homeResponse = AntStallRpcCall.friendHome(friendId)
-                    val homeJson = JSONObject(homeResponse)
+                    val homeJson = MyUtils.myJSONObject(homeResponse)
 
                     if (!homeJson.optBoolean("success")) {
                         Log.error(
@@ -1370,22 +1375,22 @@ class AntStall : ModelTask() {
                             }
 
                             if (propertyValue.getBoolean("canOpenShop") ||
-                                propertyValue.getString("status") != "BUSY" ||
+                                propertyValue.optString("status") != "BUSY" ||
                                 !propertyValue.getBoolean("overTicketProtection")
                             ) {
                                 continue
                             }
 
-                            val rentLastUser = propertyValue.getString("rentLastUser")
+                            val rentLastUser = propertyValue.optString("rentLastUser")
                             val ticketResponse = AntStallRpcCall.ticket(
-                                propertyValue.getString("rentLastBill"),
-                                propertyValue.getString("seatId"),
-                                propertyValue.getString("rentLastShop"),
+                                propertyValue.optString("rentLastBill"),
+                                propertyValue.optString("seatId"),
+                                propertyValue.optString("rentLastShop"),
                                 rentLastUser,
-                                propertyValue.getString("userId")
+                                propertyValue.optString("userId")
                             )
 
-                            val ticketJson = JSONObject(ticketResponse)
+                            val ticketJson = MyUtils.myJSONObject(ticketResponse)
                             if (!ticketJson.optBoolean("success")) {
                                 Log.error(
                                     TAG,
