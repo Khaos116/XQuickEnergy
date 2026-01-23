@@ -38,9 +38,9 @@ object MyUtils {
   const val CHANGE_KT16 = "16"
   const val CHANGE_KT17 = "17"
   const val CHANGE_KT18 = "18"
-  const val CHANGE_KT19 = "19"
 
   //还未使用的
+  const val CHANGE_KT19 = "19"
   const val CHANGE_KT20 = "20"
   const val CHANGE_KT21 = "21"
   const val CHANGE_KT22 = "22"

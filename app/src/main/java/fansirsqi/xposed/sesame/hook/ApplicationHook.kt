@@ -303,8 +303,7 @@ class ApplicationHook {
                     service = appService
                     appContext = appService.applicationContext
                     ensureScheduler()
-
-                    //MyUtils.CHANGE_KT1.trim()
+                    MyUtils.CHANGE_KT1.trim()
                     //if (Detector.isLegitimateEnvironment(appContext!!)) {
                     //    Detector.dangerous(appContext!!)
                     //    return

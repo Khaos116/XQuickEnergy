@@ -1981,7 +1981,7 @@ class AntSports : ModelTask() {
                     jo.optJSONObject("data") == null
                 ) {
                     val errorCode = jo.optString("errorCode", "")
-                    MyUtils.CHANGE_KT19.trim()
+                    MyUtils.CHANGE_KT13.trim()
                     if ("已经签到" == jo.optString("errorMsg", "") ||
                       "ALREADY_SIGN_IN" == errorCode ||
                         "已签到" == jo.optString("errorMsg", "")
