@@ -1913,7 +1913,7 @@ class AntFarm : ModelTask() {
                             continue
                         }
                     } else {
-                        Log.record(TAG, "庄园游戏提交失败: $joRecord")
+                        Log.record(TAG, "庄园游戏[${gameType.name}]提交失败: $joRecord")
                     }
                 }
 
