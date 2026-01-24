@@ -7,7 +7,7 @@ plugins {
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.rikka.tools.refine)
 }
-val mVersionName = "0.1.0"
+val mVersionName = "1.0.0"
 android {
   namespace = "fansirsqi.xposed.sesame"
   compileSdk = 36
@@ -22,7 +22,7 @@ android {
     val buildTime = SimpleDateFormat("HH:mm:ss", Locale.CHINA).apply {
       timeZone = TimeZone.getTimeZone("GMT+8")
     }.format(Date())
-    versionCode = mVersionName.replace(".", "").toInt()
+    versionCode = "${buildDate.replace("-", "").takeLast(6)}${buildTime.replace(":", "").take(3)}".toInt()
     versionName = mVersionName
     buildConfigField("String", "BUILD_DATE", "\"$buildDate\"")
     buildConfigField("String", "BUILD_TIME", "\"$buildTime\"")
@@ -139,7 +139,6 @@ dependencies {
   implementation(libs.cmd.android)
   implementation(libs.androidx.ui.text.google.fonts)
   implementation(libs.material3) // 用于通过 Shizuku 执行命令
-
 
   // Compose 相关依赖 - 现代化 UI 框架
   val composeBom = platform("androidx.compose:compose-bom:2025.12.00")  // Compose BOM 版本管理

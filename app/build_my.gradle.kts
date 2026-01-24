@@ -7,7 +7,7 @@ plugins {
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.rikka.tools.refine)
 }
-val mVersionName = "0.8.8"
+val mVersionName = "1.0.0"
 android {
   namespace = "fansirsqi.xposed.sesame"
   compileSdk = 36
@@ -22,7 +22,7 @@ android {
     val buildTime = SimpleDateFormat("HH:mm:ss", Locale.CHINA).apply {
       timeZone = TimeZone.getTimeZone("GMT+8")
     }.format(Date())
-    versionCode = mVersionName.replace(".", "").toInt()
+    versionCode = "${buildDate.replace("-", "").takeLast(6)}${buildTime.replace(":", "").take(3)}".toInt()
     versionName = mVersionName
     buildConfigField("String", "BUILD_DATE", "\"$buildDate\"")
     buildConfigField("String", "BUILD_TIME", "\"$buildTime\"")
