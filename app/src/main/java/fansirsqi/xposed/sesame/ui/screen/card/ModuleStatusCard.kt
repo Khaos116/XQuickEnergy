@@ -1,4 +1,4 @@
-package fansirsqi.xposed.sesame.ui.screen.components
+package fansirsqi.xposed.sesame.ui.screen.card
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -26,8 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import fansirsqi.xposed.sesame.BuildConfig
+import fansirsqi.xposed.sesame.ui.screen.components.HtmlText
 import fansirsqi.xposed.sesame.ui.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +45,7 @@ fun ModuleStatusCard(
         colors = CardDefaults.elevatedCardColors(
             containerColor =
                 when (status) {
-                    is MainViewModel.ModuleStatus.Activated -> MaterialTheme.colorScheme.secondaryContainer
+                    is MainViewModel.ModuleStatus.Activated -> MaterialTheme.colorScheme.primary
                     is MainViewModel.ModuleStatus.NotActivated -> MaterialTheme.colorScheme.errorContainer
                     is MainViewModel.ModuleStatus.Loading -> MaterialTheme.colorScheme.surfaceVariant
                 }
@@ -70,9 +70,10 @@ fun ModuleStatusCard(
                     is MainViewModel.ModuleStatus.NotActivated -> {
                         Icon(Icons.Outlined.Warning, "未激活")
                         Column(Modifier.padding(start = 20.dp)) {
-                            Text(text = "如果你是非root用户,请忽略此状态", style = MaterialTheme.typography.titleMedium)
+                            Text(text = "模块未激活", style = MaterialTheme.typography.titleMedium)
                             Spacer(Modifier.height(4.dp))
-                            Text(text = "点击展开帮助", style = MaterialTheme.typography.bodyMedium)
+                            Text(text = "请尝试在Ls/Xposed中激活", style = MaterialTheme.typography.bodyMedium)
+                            Text(text = "点击展开帮助", style = MaterialTheme.typography.bodySmall)
                         }
                     }
 
@@ -93,11 +94,10 @@ fun ModuleStatusCard(
                 Column(modifier = Modifier.padding(top = 16.dp)) {
                     Text(text = "故障排查指南", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "请确认您已在 LSPosed Manager (或类似框架) 中：\n1. 启用了本模块。\n2. 在作用域中勾选了目标应用。\n3. 重启了目标应用进程。",
-                        style = MaterialTheme.typography.bodyMedium,
-                        lineHeight = 20.sp
+                    HtmlText(
+                        html = "查看帮助 <a href=\"https://github.com/Fansirsqi/Sesame-TK/wiki/%E6%97%A0Root\">免Root食用指南</a>"
                     )
+                    Text(text = "Lspatch/Npatch/FPA/Opatch 请忽略此状态", style = MaterialTheme.typography.titleSmall)
                 }
             }
         }

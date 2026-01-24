@@ -1,4 +1,4 @@
-package fansirsqi.xposed.sesame.ui.screen.components
+package fansirsqi.xposed.sesame.ui.screen.card
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable

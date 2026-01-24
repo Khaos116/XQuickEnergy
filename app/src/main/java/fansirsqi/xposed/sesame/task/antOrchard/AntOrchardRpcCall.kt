@@ -205,4 +205,12 @@ object AntOrchardRpcCall {
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM_ORCHARD_SHARE_P2P\",\"shareId\":\"$shareId\",\"source\":\"share\",\"version\":\"$VERSION\"}]"
         )
     }
+
+    /* 摇钱树收余额奖励 */
+    fun moneyTreeTrigger(): String {
+        return RequestManager.requestString(
+            "com.alipay.yebbffweb.needle.yebHome.moneyTree.trigger",
+            "[{\"sceneType\":\"default\",\"type\":\"trigger\"}]"
+        )
+    }
 }

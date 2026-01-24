@@ -1,6 +1,7 @@
 package fansirsqi.xposed.sesame.task.antForest
 
 import fansirsqi.xposed.sesame.hook.Toast
+import fansirsqi.xposed.sesame.util.GameTask
 import fansirsqi.xposed.sesame.util.Log
 import fansirsqi.xposed.sesame.util.ResChecker
 import fansirsqi.xposed.sesame.util.maps.UserMap
@@ -77,7 +78,18 @@ object EnergyRainCoroutine {
                 }
 
                 val canPlayToday = joEnergyRainHome.optBoolean("canPlayToday", false)
+                val canPlayGame = joEnergyRainHome.optBoolean("canPlayGame", false)
                 val canGrantStatus = joEnergyRainHome.optBoolean("canGrantStatus", false)
+
+                if (canPlayGame) {
+                    checkAndDoEndGameTask()//检查能量雨 游戏任务
+                    randomDelay(3000, 5000) // 随机延迟3-5秒
+
+                    playedCount++
+
+                    continue
+                }
+
 
                 if (canPlayToday) {
                     startEnergyRain()
@@ -139,7 +151,7 @@ object EnergyRainCoroutine {
      */
     private suspend fun startEnergyRain() {
         try {
-            Log.forest("开始执行能量雨🌧️")
+            Log.record("开始执行能量雨🌧️")
             val joStart = JSONObject(AntForestRpcCall.startEnergyRain())
 
             if (ResChecker.checkRes(TAG, joStart)) {
@@ -173,6 +185,69 @@ object EnergyRainCoroutine {
         }
     }
 
+    /**
+     * 检查并领取能量雨后的额外游戏任务
+     */
+    @JvmStatic
+    private suspend fun checkAndDoEndGameTask() {
+        try {
+            // 1. 查询当前是否有可接或已接的游戏任务
+            val response = AntForestRpcCall.queryEnergyRainEndGameList()
+            val jo = JSONObject(response)
+
+            if (!ResChecker.checkRes(TAG, jo)) {
+                //Log.error(TAG, "查询能量雨游戏任务失败 $jo")
+                return
+            }
+
+            // 2. 先处理“有新任务可以接”的情况
+            if (jo.optBoolean("needInitTask", false)) {
+               // Log.record(TAG, "检测到新任务，准备接入[森林救援队]...")
+                val initRes = JSONObject(AntForestRpcCall.initTask("GAME_DONE_SLJYD"))
+                if (ResChecker.checkRes(TAG, initRes)) {
+                   // Log.record(TAG, "[森林救援队] 任务接入成功")
+                    // 接入后需要重新请求一次列表来获取最新的 taskStatus，或者直接去执行
+                }
+            }
+
+            // 3. 核心逻辑：遍历任务列表，检查是否有处于 TO DO 状态的任务
+            val groupTask = jo.optJSONObject("energyRainEndGameGroupTask")
+            val taskInfoList = groupTask?.optJSONArray("taskInfoList")
+
+            if (taskInfoList != null && taskInfoList.length() > 0) {
+                for (i in 0 until taskInfoList.length()) {
+                    val task = taskInfoList.getJSONObject(i)
+                    val baseInfo = task.optJSONObject("taskBaseInfo") ?: continue
+
+                    val taskType = baseInfo.optString("taskType")
+                    val taskStatus = baseInfo.optString("taskStatus") // 关键状态
+
+                    // 只有当任务是我们要的救援队，且状态是 to do 或还没开始触发时
+                    if (taskType == "GAME_DONE_SLJYD") {
+                        if (taskStatus == "TODO" || taskStatus == "NOT_TRIGGER") {
+                           // Log.record(TAG, "发现待完成任务[$taskType]，当前状态: $taskStatus，开始执行...")
+
+                            // 执行上报逻辑
+                            GameTask.Forest_sljyd.report(1)
+
+                            // 完成后可以根据需要决定是否 break，或者继续检查其他
+                            break
+                        } else if (taskStatus == "FINISHED" || taskStatus == "DONE") {
+                           // Log.record(TAG, "任务[$taskType]已完成，无需重复执行")
+                        }
+                    }
+                }
+            } else {
+                // 如果列表为空且 needInitTask 也是 false，说明真没任务了
+                if (!jo.optBoolean("needInitTask", false)) {
+                    //Log.error(TAG, "当前无任何能量雨附加任务[$jo]")
+                }
+            }
+
+        } catch (th: Throwable) {
+            //Log.printStackTrace(TAG, "执行能量雨后续任务出错:", th)
+        }
+    }
     /**
      * 兼容Java调用的包装方法
      */

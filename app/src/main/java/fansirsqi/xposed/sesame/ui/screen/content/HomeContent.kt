@@ -1,4 +1,4 @@
-package fansirsqi.xposed.sesame.ui.screen.components
+package fansirsqi.xposed.sesame.ui.screen.content
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +24,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fansirsqi.xposed.sesame.ui.MainActivity
 import fansirsqi.xposed.sesame.ui.screen.DeviceInfoCard
+import fansirsqi.xposed.sesame.ui.screen.card.ModuleStatusCard
+import fansirsqi.xposed.sesame.ui.screen.card.OneWordCard
+import fansirsqi.xposed.sesame.ui.screen.card.ServicesStatusCard
 import fansirsqi.xposed.sesame.ui.viewmodel.MainViewModel
 import fansirsqi.xposed.sesame.util.CommandUtil.ServiceStatus
 import fansirsqi.xposed.sesame.util.ToastUtil

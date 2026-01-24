@@ -332,7 +332,7 @@ public class AntFarmRpcCall {
             // 标准的md5加密后的结果
             return buffer.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Log.printStackTrace(e);
             return "";
         }
     }
@@ -551,7 +551,7 @@ public class AntFarmRpcCall {
         args.put("sceneCode", "ANTFARM");
         args.put("source", source);
         args.put("version", VERSION);
-        return RequestManager.requestString("com.alipay.antfarm.hireAnimal", "[" + args.toString() + "]");
+        return RequestManager.requestString("com.alipay.antfarm.hireAnimal", "[" + args + "]");
     }
 
     /**
@@ -568,7 +568,7 @@ public class AntFarmRpcCall {
         args.put("sendType", "NORMAL");
         args.put("source", "H5");
         args.put("version", VERSION);
-        return RequestManager.requestString("com.alipay.antfarm.sendBackAnimal", "[" + args.toString() + "]");
+        return RequestManager.requestString("com.alipay.antfarm.sendBackAnimal", "[" + args + "]");
     }
 
     /**
@@ -594,14 +594,44 @@ public class AntFarmRpcCall {
 
 
 
-    public static String drawGameCenterAward() {
+    /**
+     * 领取蚂蚁庄园游戏中心奖励 (开宝箱)
+     * @param drawTimes 开启次数
+     */
+    public static String drawGameCenterAward(int drawTimes) {
         return RequestManager.requestString("com.alipay.antfarm.drawGameCenterAward",
-                "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\"" + VERSION + "\"}]");
+                "[{" +
+                        "  \"drawTimes\": " + drawTimes + "," +
+                        "  \"requestType\": \"NORMAL\"," +
+                        "  \"sceneCode\": \"ANTFARM\"," +
+                        "  \"source\": \"H5\"," +
+                        "  \"version\": \"" + VERSION + "\"" +
+                        "}]");
     }
 
+
+    /**
+     * 查询游戏列表 (如：蚂蚁农场、庄园等)
+     * 对应 methodName: com.alipay.charitygamecenter.queryGameList
+     */
     public static String queryGameList() {
-        return RequestManager.requestString("com.alipay.antfarm.queryGameList",
-                "[{\"commonDegradeResult\":{\"deviceLevel\":\"high\",\"resultReason\":0,\"resultType\":0},\"platform\":\"Android\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\"" + VERSION + "\"}]");
+        // 按照你提供的 JSON 结构进行字符串拼接
+        // 注意：requestData 是一个数组，内部包含一个对象
+        String data = "[{" +
+                "\"bizType\":\"ANTFARM\"," +
+                "\"commonDegradeFilterRequest\":{" +
+                "\"deviceLevel\":\"high\"," +
+                "\"platform\":\"Android\"," +
+                "\"unityDeviceLevel\":\"high\"" +
+                "}," +
+                "\"recentAppRecordList\":[]," +
+                "\"requestType\":\"NORMAL\"," +
+                "\"sceneCode\":\"ANTFARM\"," +
+                "\"source\":\"H5\"," +
+                "\"version\":\"" + VERSION + "\"" +
+                "}]";
+
+        return RequestManager.requestString("com.alipay.charitygamecenter.queryGameList", data);
     }
 
     // 小鸡换装

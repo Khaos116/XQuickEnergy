@@ -1,4 +1,4 @@
-package fansirsqi.xposed.sesame.ui.screen.components
+package fansirsqi.xposed.sesame.ui.screen.card
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -43,7 +43,7 @@ fun ServicesStatusCard(
             .padding(horizontal = 8.dp, vertical = 4.dp), // 稍微调整间距
         colors = CardDefaults.elevatedCardColors(
             containerColor = when (status) {
-                is ServiceStatus.Active -> MaterialTheme.colorScheme.secondaryContainer
+                is ServiceStatus.Active -> MaterialTheme.colorScheme.primary
                 is ServiceStatus.Inactive -> MaterialTheme.colorScheme.errorContainer
                 is ServiceStatus.Loading -> MaterialTheme.colorScheme.surfaceVariant
                 else -> {

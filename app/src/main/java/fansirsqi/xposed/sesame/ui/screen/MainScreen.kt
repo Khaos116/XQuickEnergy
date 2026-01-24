@@ -32,9 +32,9 @@ import fansirsqi.xposed.sesame.SesameApplication.Companion.PREFERENCES_KEY
 import fansirsqi.xposed.sesame.entity.UserEntity
 import fansirsqi.xposed.sesame.ui.MainActivity
 import fansirsqi.xposed.sesame.ui.navigation.BottomNavItem
-import fansirsqi.xposed.sesame.ui.screen.components.HomeContent
-import fansirsqi.xposed.sesame.ui.screen.components.LogsContent
-import fansirsqi.xposed.sesame.ui.screen.components.SettingsContent
+import fansirsqi.xposed.sesame.ui.screen.content.HomeContent
+import fansirsqi.xposed.sesame.ui.screen.content.LogsContent
+import fansirsqi.xposed.sesame.ui.screen.content.SettingsContent
 import fansirsqi.xposed.sesame.ui.theme.ThemeManager
 import fansirsqi.xposed.sesame.ui.viewmodel.MainViewModel
 import fansirsqi.xposed.sesame.util.CommandUtil.serviceStatus

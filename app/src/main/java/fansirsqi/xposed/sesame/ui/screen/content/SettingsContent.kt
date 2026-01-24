@@ -1,8 +1,9 @@
-package fansirsqi.xposed.sesame.ui.screen.components
+package fansirsqi.xposed.sesame.ui.screen.content
 
 import SettingsSwitchItem
 import android.content.Intent
 import androidx.compose.foundation.clickable
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,6 +41,8 @@ import fansirsqi.xposed.sesame.ui.ManualTaskActivity
 import fansirsqi.xposed.sesame.ui.RpcDebugActivity
 import fansirsqi.xposed.sesame.ui.compose.CommonAlertDialog
 import fansirsqi.xposed.sesame.ui.extension.joinQQGroup
+import fansirsqi.xposed.sesame.ui.screen.components.SettingsItem
+import fansirsqi.xposed.sesame.ui.screen.components.UserItemCard
 
 
 @Composable
@@ -149,7 +152,7 @@ fun SettingsContent(
                 }
             }
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 item {
                     SettingsSwitchItem(
                         title = "动态取色",

@@ -33,7 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import fansirsqi.xposed.sesame.ui.screen.components.RpcDialogHandler
-import fansirsqi.xposed.sesame.ui.screen.components.RpcItemCard
+import fansirsqi.xposed.sesame.ui.screen.card.RpcItemCard
 import fansirsqi.xposed.sesame.ui.viewmodel.RpcDebugViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

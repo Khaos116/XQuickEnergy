@@ -14,6 +14,7 @@ import fansirsqi.xposed.sesame.model.modelFieldExt.IntegerModelField
 import fansirsqi.xposed.sesame.model.modelFieldExt.SelectModelField
 import fansirsqi.xposed.sesame.task.ModelTask
 import fansirsqi.xposed.sesame.util.CoroutineUtils
+import fansirsqi.xposed.sesame.util.GameTask
 import fansirsqi.xposed.sesame.util.Log
 import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.RandomUtil
@@ -21,10 +22,13 @@ import fansirsqi.xposed.sesame.util.ResChecker
 import fansirsqi.xposed.sesame.util.TaskBlacklist
 import fansirsqi.xposed.sesame.util.maps.UserMap
 import org.json.JSONObject
+import java.util.Calendar
 
 class AntOrchard : ModelTask() {
     companion object {
         private val TAG = AntOrchard::class.java.simpleName
+        private const val STATUS_YEB_WATER_COUNT = "ANTORCHARD_SPREAD_MANURE_COUNT_YEB"
+        private const val STATUS_MONEY_TREE_COLLECTED = "ANTORCHARD_MONEY_TREE_COLLECTED"
     }
 
     private var userId: String? = UserMap.currentUid
@@ -36,11 +40,10 @@ class AntOrchard : ModelTask() {
     private lateinit var receiveOrchardTaskAward: BooleanModelField
     private lateinit var orchardSpreadManureCount: IntegerModelField
     private lateinit var assistFriendList: SelectModelField
-    // 模式选择
+    //模式选择
     private lateinit var plantModeField: ChoiceModelField
 
-    // 定义模式名称数组
-    private val plantModeNames = arrayOf("种果树", "种摇钱树", "混合模式(先摇钱树后果树)")
+
 
     override fun getName(): String = "农场"
 
@@ -51,13 +54,14 @@ class AntOrchard : ModelTask() {
     override fun getFields(): ModelFields {
         val modelFields = ModelFields()
 
-        // 修改为 ChoiceModelField，默认值为 0 (Main)
+
         modelFields.addField(
             ChoiceModelField(
                 "plantMode",
                 "种植模式",
-                0,
-                plantModeNames
+                PlantModeType.MAIN,
+                PlantModeType.nickNames,
+                "选择森林自动种植的优先策略"
             ).also { plantModeField = it }
         )
 
@@ -128,9 +132,18 @@ class AntOrchard : ModelTask() {
             // 砸金蛋
             val goldenEggInfo = indexJson.optJSONObject("goldenEggInfo")
             if (goldenEggInfo != null) {
-                val unsmashedGoldenEggs = goldenEggInfo.optInt("unsmashedGoldenEggs")
-                if (unsmashedGoldenEggs > 0) {
-                    smashedGoldenEgg(unsmashedGoldenEggs)
+                val unsmashed = goldenEggInfo.optInt("unsmashedGoldenEggs")
+                val limit = goldenEggInfo.optInt("goldenEggLimit")
+                val smashed = goldenEggInfo.optInt("smashedGoldenEggs")
+
+                if (unsmashed > 0) {
+                    // 现成的蛋先砸了
+                    smashedGoldenEgg(unsmashed)
+                } else {
+                    val remain = limit - smashed
+                    if (remain > 0) {
+                        GameTask.Orchard_ncscc.report(remain)
+                    }
                 }
             }
 
@@ -139,6 +152,9 @@ class AntOrchard : ModelTask() {
                 doOrchardDailyTask(userId!!)
                 triggerTbTask()
             }
+
+            // 摇钱树余额奖励 (每天7点后)
+            receiveMoneyTreeReward()
 
             // 回访奖励
             if (!Status.hasFlagToday(StatusFlags.FLAG_ANTORCHARD_WIDGET_DAILY_AWARD)) {
@@ -149,16 +165,16 @@ class AntOrchard : ModelTask() {
 
             // 施肥逻辑
             val orchardSpreadManureCountValue = orchardSpreadManureCount.value
-            val watered = Status.getIntFlagToday(StatusFlags.FLAG_ANTORCHARD_SPREAD_MANURE_COUNT) ?: 0
-            if (orchardSpreadManureCountValue > 0 && watered < 200) {
+            if (orchardSpreadManureCountValue > 0) {
                 CoroutineUtils.sleepCompat(200)
                 orchardSpreadManure()
             }
 
-            // 许愿
-            if (orchardSpreadManureCountValue in 3..<10) {
+            // 许愿 (仅根据果树计数判断，或者可以改为独立配置，此处保持原逻辑使用果树计数)
+            val wateredMain = Status.getIntFlagToday(StatusFlags.FLAG_ANTORCHARD_SPREAD_MANURE_COUNT) ?: 0
+            if (wateredMain in 3..<10) {
                 querySubplotsActivity(3)
-            } else if (orchardSpreadManureCountValue >= 10) {
+            } else if (wateredMain >= 10) {
                 querySubplotsActivity(10)
             }
 
@@ -172,163 +188,177 @@ class AntOrchard : ModelTask() {
         }
     }
 
-    private suspend fun orchardSpreadManure() {
+    private fun orchardSpreadManure() {
         try {
-            val sourceList = listOf(
-                "DNHZ_NC_zhimajingnangSF",
-                "widget_shoufei",
-                "ch_appcenter__chsub_9patch"
-            )
-            var loopCount = 0
-            var totalWatered = Status.getIntFlagToday(StatusFlags.FLAG_ANTORCHARD_SPREAD_MANURE_COUNT) ?: 0
+            val modeSet = plantModeField.value
+            val targetLimit = orchardSpreadManureCount.value
 
-            // 1. 解析模式 (从 ChoiceModelField 的 int 值映射)
-            val modeIndex = plantModeField.value
-            // 逻辑判断用的代号
-            val mode = when (modeIndex) {
-                1 -> "YEB"
-                2 -> "HYBRID"
-                else -> "MAIN"
-            }
-            // 日志输出用的中文名
-            val modeName = when (modeIndex) {
-                1 -> "种摇钱树"
-                2 -> "混合模式"
-                else -> "种果树"
+
+            // 1. 如果是 摇钱树模式(YEB) 或者 混合模式(HYBRID)
+            if (modeSet == PlantModeType.YEB || modeSet == PlantModeType.HYBRID) {
+                waterTree("yeb", targetLimit)
             }
 
-            // 2. 初始化目标场景
-            var targetScene = if (mode == "YEB" || mode == "HYBRID") "yeb" else "main"
-            var isYebFull = false // 摇钱树是否已满标记
-
-            // 辅助函数：获取场景中文名
-            fun getSceneName(scene: String) = if (scene == "yeb") "摇钱树" else "果树"
-
-            if (totalWatered >= orchardSpreadManureCount.value) {
-                Log.record(TAG, "今日已完成施肥目标：$totalWatered/${orchardSpreadManureCount.value}")
-                return
+            // 2. 如果是 果树模式(MAIN) 或者 混合模式(HYBRID)
+            if (modeSet == PlantModeType.MAIN || modeSet == PlantModeType.HYBRID) {
+                waterTree("main", targetLimit)
             }
-
-            Log.record(TAG, "开始施肥任务，模式: $modeName, 首选场景: ${getSceneName(targetScene)}")
-
-            do {
-                try {
-                    loopCount++
-                    /*
-                    *神说要有爱
-                    if (loopCount > 30) {
-                        Log.record(TAG, "循环次数达到上限 $loopCount")
-                        return
-                    }
-                     */
-
-                    // 3. 混合模式动态切换
-                    if (mode == "HYBRID") {
-                        targetScene = if (isYebFull) "main" else "yeb"
-                    }
-
-                    // 4. 切换场景 (服务端状态同步)
-                    try {
-                        AntOrchardRpcCall.switchPlantScene(targetScene)
-                    } catch (ignore: Throwable) {}
-
-                    // 5. 获取肥料余量
-                    val orchardIndexData = JSONObject(AntOrchardRpcCall.orchardIndex())
-                    if (orchardIndexData.optString("resultCode") != "100") break
-
-                    val taobaoDataStr = orchardIndexData.optString("taobaoData")
-                    if (taobaoDataStr.isEmpty()) break
-
-                    val gameInfo = JSONObject(taobaoDataStr).optJSONObject("gameInfo")
-                    val accountInfo = gameInfo?.optJSONObject("accountInfo")
-
-                    if (accountInfo != null) {
-                        val happyPoint = accountInfo.optInt("happyPoint", 0)
-                        val wateringCost = 600 // 默认
-
-                        if (happyPoint < wateringCost) {
-                            Log.record(TAG, "肥料不足: 当前 $happyPoint < 消耗 $wateringCost")
-                            return
-                        }
-                    }
-
-                    val remainingTarget = orchardSpreadManureCount.value - totalWatered
-                    if (remainingTarget <= 0) return
-
-                    // 6. 执行施肥
-                    val wua = SecurityBodyHelper.getSecurityBodyData(4).toString()
-                    val randomSource = sourceList.random()
-                    val useQuickWater = false
-                    val actualWaterTimes = 1
-
-                    // 关键调用：传入 plantScene
-                    val spreadResponse = AntOrchardRpcCall.orchardSpreadManure(wua, randomSource, useQuickWater, targetScene)
-                    val spreadJson = JSONObject(spreadResponse)
-                    val resultCode = spreadJson.optString("resultCode")
-
-                    // 7. 错误处理与模式切换
-                    if (resultCode != "100") {
-                        val resultDesc = spreadJson.optString("resultDesc")
-
-                        // 混合模式下，摇钱树遇到任何阻碍（上限P14、锁异常P11、扣减异常P26、余额不足H06等），都尝试切回普通果树
-                        if (mode == "HYBRID" && targetScene == "yeb") {
-                            Log.record(TAG, "混合模式：摇钱树施肥中止($resultCode|$resultDesc)，切换至果树继续")
-                            isYebFull = true
-                            continue // 立即重试，切换到 Main
-                        }
-
-                        // 单纯摇钱树模式遇到上限则结束
-                        if (mode == "YEB" && resultCode == "P14") {
-                            Log.record(TAG, "种摇钱树：已达持仓金额上限(P14)，任务结束")
-                            return
-                        }
-
-                        Log.error(TAG, "施肥失败(${getSceneName(targetScene)}): $resultDesc ($resultCode)")
-                        return
-                    }
-
-                    // 8. 成功处理
-                    val spreadTaobaoDataStr = spreadJson.optString("taobaoData")
-                    if (spreadTaobaoDataStr.isNotEmpty()) {
-                        val spreadTaobaoData = JSONObject(spreadTaobaoDataStr)
-                        var dailyCount = 0
-
-                        if (spreadTaobaoData.has("statistics")) {
-                            dailyCount = spreadTaobaoData.getJSONObject("statistics").optInt("dailyAppWateringCount")
-                        }
-                        // 如果是摇钱树，数据结构可能不同，视情况兼容
-
-                        totalWatered += actualWaterTimes
-                        if (dailyCount > 0) totalWatered = dailyCount
-                        Status.setIntFlagToday(StatusFlags.FLAG_ANTORCHARD_SPREAD_MANURE_COUNT, totalWatered)
-
-                        val stageText = spreadTaobaoData.optJSONObject("currentStage")?.optString("stageText") ?: ""
-                        Log.farm("施肥💩[${getSceneName(targetScene)}] $stageText|累计:$totalWatered")
-                    } else {
-                        // 兜底
-                        totalWatered += actualWaterTimes
-                        Status.setIntFlagToday(StatusFlags.FLAG_ANTORCHARD_SPREAD_MANURE_COUNT, totalWatered)
-                        Log.farm("施肥💩[${getSceneName(targetScene)}] 成功|累计:$totalWatered")
-                    }
-
-                    // 9. 施肥后检测肥料礼盒
-                    CoroutineUtils.sleepCompat(500)
-                    checkFertilizerBox(targetScene)
-
-                } finally {
-                    CoroutineUtils.sleepCompat(executeIntervalInt.toLong())
-                }
-            } while (totalWatered < orchardSpreadManureCount.value)
-
-            Log.record(TAG, "施肥任务完成，总计: $totalWatered")
 
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "orchardSpreadManure err:", t)
         }
     }
 
-    // 修复：添加检测礼盒的辅助方法
-    private suspend fun checkFertilizerBox(currentPlantScene: String) {
+    private fun waterTree(targetScene: String, targetLimit: Int) {
+        val isMain = targetScene == "main"
+        val sceneName = if (isMain) "种果树" else "种摇钱树"
+        // 独立计数：果树使用原Flag，摇钱树使用新Key
+        val statusKey = if (isMain) StatusFlags.FLAG_ANTORCHARD_SPREAD_MANURE_COUNT else STATUS_YEB_WATER_COUNT
+
+        var totalWatered = Status.getIntFlagToday(statusKey) ?: 0
+
+        if (totalWatered >= targetLimit) {
+            Log.record(TAG, "$sceneName: 今日已完成施肥目标 $totalWatered/$targetLimit")
+            return
+        }
+
+        Log.record(TAG, "开始 $sceneName 任务，当前进度: $totalWatered")
+
+        // 切换场景
+        try {
+            AntOrchardRpcCall.switchPlantScene(targetScene)
+            CoroutineUtils.sleepCompat(500)
+        } catch (ignore: Throwable) {}
+
+        val sourceList = listOf(
+            "DNHZ_NC_zhimajingnangSF",
+            "widget_shoufei",
+            "ch_appcenter__chsub_9patch"
+        )
+
+        do {
+            try {
+                // 检查肥料余额
+                val orchardIndexData = JSONObject(AntOrchardRpcCall.orchardIndex())
+                if (orchardIndexData.optString("resultCode") != "100") break
+
+                val taobaoDataStr = orchardIndexData.optString("taobaoData")
+                if (taobaoDataStr.isEmpty()) break
+
+                val gameInfo = JSONObject(taobaoDataStr).optJSONObject("gameInfo")
+                val accountInfo = gameInfo?.optJSONObject("accountInfo")
+
+                if (accountInfo != null) {
+                    val happyPoint = accountInfo.optInt("happyPoint", 0)
+                    val wateringCost = 600 // 默认消耗
+
+                    if (happyPoint < wateringCost) {
+                        Log.record(TAG, "$sceneName 肥料不足: 当前 $happyPoint < 消耗 $wateringCost")
+                        return
+                    }
+                }
+
+                // 核心逻辑：果树施肥到199次时，强制开启5连，突破200次限制到204次
+                var useBatchSpread = false
+                var actualWaterTimes = 1
+
+                if (isMain && totalWatered == 199) {
+                    useBatchSpread = true
+                    actualWaterTimes = 5 // 预期增加5次
+                    Log.record(TAG, "$sceneName 触发199次临界点，开启5连施肥模式以突破限制")
+                }
+
+                val wua = SecurityBodyHelper.getSecurityBodyData(4).toString()
+                val randomSource = sourceList.random()
+
+                // 执行施肥请求
+                val spreadResponse = AntOrchardRpcCall.orchardSpreadManure(wua, randomSource, useBatchSpread, targetScene)
+                val spreadJson = JSONObject(spreadResponse)
+                val resultCode = spreadJson.optString("resultCode")
+
+                // 摇钱树特有逻辑：达到上限停止 (P14)
+                if (resultCode == "P14" && !isMain) {
+                    Log.record(TAG, "$sceneName 已达持仓金额上限，停止施肥")
+                    return
+                }
+
+                if (resultCode != "100") {
+                    Log.error(TAG, "$sceneName 施肥失败: ${spreadJson.optString("resultDesc")}")
+                    return
+                }
+
+                // 更新计数
+                val spreadTaobaoDataStr = spreadJson.optString("taobaoData")
+                if (spreadTaobaoDataStr.isNotEmpty()) {
+                    val spreadTaobaoData = JSONObject(spreadTaobaoDataStr)
+
+                    // 尝试从服务端获取今日次数，如果不准确(或服务端没返回)则手动累加
+                    // 注意：摇钱树模式下 taobaoData 结构可能不同，这里主要针对果树统计
+                    var dailyCount = 0
+                    if (isMain && spreadTaobaoData.has("statistics")) {
+                        dailyCount = spreadTaobaoData.getJSONObject("statistics").optInt("dailyAppWateringCount")
+                    }
+
+                    if (dailyCount > 0) {
+                        totalWatered = dailyCount
+                    } else {
+                        totalWatered += actualWaterTimes
+                    }
+
+                    Status.setIntFlagToday(statusKey, totalWatered)
+
+                    val stageText = spreadTaobaoData.optJSONObject("currentStage")?.optString("stageText") ?: ""
+                    Log.farm("施肥💩[$sceneName] $stageText|累计:$totalWatered")
+                } else {
+                    // 兜底逻辑
+                    totalWatered += actualWaterTimes
+                    Status.setIntFlagToday(statusKey, totalWatered)
+                    Log.farm("施肥💩[$sceneName] 成功|累计:$totalWatered")
+                }
+
+                CoroutineUtils.sleepCompat(500)
+                // 检查施肥后礼盒
+                checkFertilizerBox(targetScene)
+
+            } finally {
+                CoroutineUtils.sleepCompat(executeIntervalInt.toLong())
+            }
+        } while (totalWatered < targetLimit)
+
+        Log.record(TAG, "$sceneName 施肥结束，最终累计: $totalWatered")
+    }
+
+    private fun receiveMoneyTreeReward() {
+        try {
+            val cal = Calendar.getInstance()
+            val hour = cal.get(Calendar.HOUR_OF_DAY)
+            // 每天7点后尝试领取
+            if (hour >= 7 && !Status.hasFlagToday(STATUS_MONEY_TREE_COLLECTED)) {
+                Log.record(TAG, "检测到7点已过，尝试领取摇钱树余额奖励...")
+                val res = AntOrchardRpcCall.moneyTreeTrigger()
+                val json = JSONObject(res)
+                if (json.optBoolean("success")) {
+                    val result = json.optJSONObject("result")
+                    val awardInfo = result?.optJSONObject("awardInfo")
+                    val amount = awardInfo?.optString("totalAmount", "0") ?: "0"
+
+                    if (amount != "0") {
+                        Log.farm("摇钱树💰[获得余额]#$amount 元")
+                    } else {
+                        Log.record(TAG, "摇钱树暂无奖励可领")
+                    }
+                    Status.setFlagToday(STATUS_MONEY_TREE_COLLECTED)
+                } else {
+                    Log.record(TAG, "摇钱树奖励领取失败: ${json.toString()}")
+                }
+            }
+        } catch (t: Throwable) {
+            Log.printStackTrace(TAG, "receiveMoneyTreeReward err:", t)
+        }
+    }
+
+    // 辅助方法：施肥后检测肥料礼盒
+    private fun checkFertilizerBox(currentPlantScene: String) {
         extraInfoGet(from = "water")
     }
 
@@ -336,7 +366,7 @@ class AntOrchard : ModelTask() {
      * 获取额外信息（包含每日肥料、施肥礼盒）
      * @param from "entry" 或 "water"
      */
-    private suspend fun extraInfoGet(from: String = "entry") {
+    private fun extraInfoGet(from: String = "entry") {
         try {
             val response = AntOrchardRpcCall.extraInfoGet(from)
             val jo = JSONObject(response)
@@ -361,7 +391,7 @@ class AntOrchard : ModelTask() {
         }
     }
 
-    private suspend fun checkLotteryPlus() {
+    private fun checkLotteryPlus() {
         try {
             if (treeLevel == null) return
             val response = AntOrchardRpcCall.querySubplotsActivity(treeLevel!!)
@@ -385,7 +415,7 @@ class AntOrchard : ModelTask() {
         }
     }
 
-    private suspend fun drawLotteryPlus(lotteryPlusInfo: JSONObject) {
+    private fun drawLotteryPlus(lotteryPlusInfo: JSONObject) {
         try {
             if (!lotteryPlusInfo.has("userSevenDaysGiftsItem")) return
 
@@ -426,7 +456,7 @@ class AntOrchard : ModelTask() {
         }
     }
 
-    private suspend fun doOrchardDailyTask(userId: String) {
+    private fun doOrchardDailyTask(userId: String) {
         try {
             val response = AntOrchardRpcCall.orchardListTask()
             val responseJson = JSONObject(response)
@@ -525,7 +555,7 @@ class AntOrchard : ModelTask() {
         }
     }
 
-    private suspend fun orchardSign(signTaskInfo: JSONObject) {
+    private fun orchardSign(signTaskInfo: JSONObject) {
         try {
             val currentSignItem = signTaskInfo.getJSONObject("currentSignItem")
             if (!currentSignItem.getBoolean("signed")) {
@@ -546,7 +576,7 @@ class AntOrchard : ModelTask() {
         }
     }
 
-    private suspend fun smashedGoldenEgg(count: Int) {
+    private fun smashedGoldenEgg(count: Int) {
         try {
             val response = AntOrchardRpcCall.smashedGoldenEgg(count)
             val jo = JSONObject(response)
@@ -567,7 +597,7 @@ class AntOrchard : ModelTask() {
         }
     }
 
-    private suspend fun triggerTbTask() {
+    private fun triggerTbTask() {
         try {
             val response = AntOrchardRpcCall.orchardListTask()
             val jo = JSONObject(response)
@@ -740,7 +770,7 @@ class AntOrchard : ModelTask() {
         }
     }
 
-    private suspend fun querySubplotsActivity(taskRequire: Int) {
+    private fun querySubplotsActivity(taskRequire: Int) {
         try {
             val response = AntOrchardRpcCall.querySubplotsActivity(treeLevel!!)
             val jo = JSONObject(response)
@@ -796,7 +826,7 @@ class AntOrchard : ModelTask() {
         }
     }
 
-    private suspend fun orchardAssistFriend() {
+    private fun orchardAssistFriend() {
         try {
             if (!Status.canAntOrchardAssistFriendToday()) {
                 Log.record(TAG, "今日已助力，跳过农场助力")
@@ -830,5 +860,17 @@ class AntOrchard : ModelTask() {
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "orchardAssistFriend err:", t)
         }
+    }
+    object PlantModeType {
+        const val MAIN = 0
+        const val YEB = 1
+        const val HYBRID = 2
+
+        @JvmField
+        val nickNames = arrayOf(
+            "种果树(Main)",
+            "种摇钱树(Yeb)",
+            "混合模式(先摇钱树后果树)"
+        )
     }
 }
