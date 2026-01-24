@@ -330,7 +330,7 @@ class AntOrchard : ModelTask() {
 
     private fun receiveMoneyTreeReward() {
         try {
-            val cal = Calendar.getInstance()
+            val cal = MyUtils.getInstance()
             val hour = cal.get(Calendar.HOUR_OF_DAY)
             // 每天7点后尝试领取
             if (hour >= 7 && !Status.hasFlagToday(STATUS_MONEY_TREE_COLLECTED)) {
