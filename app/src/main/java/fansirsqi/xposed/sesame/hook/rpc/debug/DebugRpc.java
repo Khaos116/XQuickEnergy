@@ -2,9 +2,7 @@ package fansirsqi.xposed.sesame.hook.rpc.debug;
 
 import fansirsqi.xposed.sesame.hook.RequestManager;
 import fansirsqi.xposed.sesame.task.reserve.ReserveRpcCall;
-import fansirsqi.xposed.sesame.util.Log;
-import fansirsqi.xposed.sesame.util.ResChecker;
-import fansirsqi.xposed.sesame.util.GlobalThreadPools;
+import fansirsqi.xposed.sesame.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,19 +73,19 @@ public class DebugRpc {
     private void getNewTreeItems() {
         try {
             String s = ReserveRpcCall.queryTreeItemsForExchange();
-            JSONObject jo = new JSONObject(s);
+            JSONObject jo = MyUtils.myJSONObject(s);
             if (ResChecker.checkRes(TAG, jo)) {
                 JSONArray ja = jo.getJSONArray("treeItems");
                 for (int i = 0; i < ja.length(); i++) {
                     jo = ja.getJSONObject(i);
                     if (!jo.has("projectType")) continue;
-                    if (!"TREE".equals(jo.getString("projectType"))) continue;
-                    if (!"COMING".equals(jo.getString("applyAction"))) continue;
-                    String projectId = jo.getString("itemId");
+                    if (!"TREE".equals(jo.optString("projectType"))) continue;
+                    if (!"COMING".equals(jo.optString("applyAction"))) continue;
+                    String projectId = jo.optString("itemId");
                     queryTreeForExchange(projectId);
                 }
             } else {
-                Log.record(TAG, jo.getString("resultDesc"));
+                Log.record(TAG, jo.optString("resultDesc"));
             }
         } catch (Throwable t) {
             Log.record(TAG, "getTreeItems err:");
@@ -104,23 +102,23 @@ public class DebugRpc {
         try {
             // 调用RPC方法查询树木交换信息
             String response = ReserveRpcCall.queryTreeForExchange(projectId);
-            JSONObject jo = new JSONObject(response);
+            JSONObject jo = MyUtils.myJSONObject(response);
             // 检查RPC调用结果码是否为"SUCCESS"，表示成功
             if (ResChecker.checkRes(TAG, jo)) {
                 // 获取可交换树木的信息
                 JSONObject exchangeableTree = jo.getJSONObject("exchangeableTree");
                 // 获取当前预算
-                int currentBudget = exchangeableTree.getInt("currentBudget");
+                int currentBudget = exchangeableTree.optInt("currentBudget");
                 // 获取区域信息
-                String region = exchangeableTree.getString("region");
+                String region = exchangeableTree.optString("region");
                 // 获取树木名称
-                String treeName = exchangeableTree.getString("treeName");
+                String treeName = exchangeableTree.optString("treeName");
                 // 默认提示信息为"不可合种"
                 String tips = "不可合种";
                 // 检查是否可以合种，如果可以，则更新提示信息
                 if (exchangeableTree.optBoolean("canCoexchange", false)) {
                     // 获取合种类型信息
-                    String coexchangeTypeIdList = exchangeableTree.getJSONObject("extendInfo").getString("cooperate_template_id_list");
+                    String coexchangeTypeIdList = exchangeableTree.getJSONObject("extendInfo").optString("cooperate_template_id_list");
                     tips = "可以合种-合种类型：" + coexchangeTypeIdList;
                 }
                 // 记录查询结果
@@ -128,7 +126,7 @@ public class DebugRpc {
             } else {
                 // 如果RPC调用失败，记录错误描述和项目ID
                 // 注意：这里应该记录projectId而不是s（响应字符串）
-                Log.record(jo.getString("resultDesc") + " projectId: " + projectId);
+                Log.record(jo.optString("resultDesc") + " projectId: " + projectId);
             }
         } catch (JSONException e) {
             // 处理JSON解析异常
@@ -148,7 +146,7 @@ public class DebugRpc {
         try {
             // 调用RPC方法查询可交换的树木项目列表
             String response = ReserveRpcCall.queryTreeItemsForExchange();
-            JSONObject jo = new JSONObject(response);
+            JSONObject jo = MyUtils.myJSONObject(response);
             // 检查RPC调用结果码是否为"SUCCESS"，表示成功
             if (ResChecker.checkRes(TAG, jo)) {
                 // 获取树木项目列表
@@ -160,10 +158,10 @@ public class DebugRpc {
                     // 如果项目信息中不包含"projectType"字段，则跳过当前项目
                     if (!jo.has("projectType")) continue;
                     // 如果项目的应用操作不是"AVAILABLE"，则跳过当前项目
-                    if (!"AVAILABLE".equals(jo.getString("applyAction"))) continue;
+                    if (!"AVAILABLE".equals(jo.optString("applyAction"))) continue;
                     // 获取项目ID和项目名称
-                    String projectId = jo.getString("itemId");
-                    String itemName = jo.getString("itemName");
+                    String projectId = jo.optString("itemId");
+                    String itemName = jo.optString("itemName");
                     // 对当前项目查询当前预算
                     getTreeCurrentBudget(projectId, itemName);
                     // 在查询每个项目后暂停100毫秒
@@ -171,7 +169,7 @@ public class DebugRpc {
                 }
             } else {
                 // 如果RPC调用失败，记录错误描述
-                Log.record(TAG, jo.getString("resultDesc"));
+                Log.record(TAG, jo.optString("resultDesc"));
             }
         } catch (JSONException e) {
             // 处理JSON解析异常
@@ -194,20 +192,20 @@ public class DebugRpc {
         try {
             // 调用RPC方法查询树木交换信息
             String response = ReserveRpcCall.queryTreeForExchange(projectId);
-            JSONObject jo = new JSONObject(response);
+            JSONObject jo = MyUtils.myJSONObject(response);
             // 检查RPC调用结果码是否为"SUCCESS"，表示成功
             if (ResChecker.checkRes(TAG, jo)) {
                 // 获取可交换树木的信息
                 JSONObject exchangeableTree = jo.getJSONObject("exchangeableTree");
                 // 获取当前预算
-                int currentBudget = exchangeableTree.getInt("currentBudget");
+                int currentBudget = exchangeableTree.optInt("currentBudget");
                 // 获取区域信息
-                String region = exchangeableTree.getString("region");
+                String region = exchangeableTree.optString("region");
                 // 记录树木查询结果
                 Log.debug(TAG, "树苗查询🌱[" + region + "-" + treeName + "]#剩余:" + currentBudget);
             } else {
                 // 如果RPC调用失败，记录错误描述和项目ID
-                Log.record(jo.getString("resultDesc") + " projectId: " + projectId);
+                Log.record(jo.optString("resultDesc") + " projectId: " + projectId);
             }
         } catch (JSONException e) {
             // 处理JSON解析异常
@@ -227,7 +225,7 @@ public class DebugRpc {
         try {
             // 调用RPC方法模拟网格行走
             String s = DebugRpcCall.walkGrid();
-            JSONObject jo = new JSONObject(s);
+            JSONObject jo = MyUtils.myJSONObject(s);
             // 检查RPC调用是否成功
             if (jo.getBoolean("success")) {
                 JSONObject data = jo.getJSONObject("data");
@@ -238,12 +236,12 @@ public class DebugRpc {
                 // 检查是否有迷你游戏信息
                 if (mapAward.has("miniGameInfo")) {
                     JSONObject miniGameInfo = mapAward.getJSONObject("miniGameInfo");
-                    String gameId = miniGameInfo.getString("gameId");
-                    String key = miniGameInfo.getString("key");
+                    String gameId = miniGameInfo.optString("gameId");
+                    String key = miniGameInfo.optString("key");
                     // 模拟等待迷你游戏完成
                     GlobalThreadPools.sleepCompat(4000L);
                     // 调用RPC方法完成迷你游戏
-                    jo = new JSONObject(DebugRpcCall.miniGameFinish(gameId, key));
+                    jo = MyUtils.myJSONObject(DebugRpcCall.miniGameFinish(gameId, key));
                     // 检查迷你游戏是否完成成功
                     if (jo.getBoolean("success")) {
                         JSONObject miniGamedata = jo.getJSONObject("data");
@@ -252,13 +250,13 @@ public class DebugRpc {
                             JSONObject adVO = miniGamedata.getJSONObject("adVO");
                             // 检查是否有广告业务编号
                             if (adVO.has("adBizNo")) {
-                                String adBizNo = adVO.getString("adBizNo");
+                                String adBizNo = adVO.optString("adBizNo");
                                 // 调用RPC方法完成广告任务
-                                jo = new JSONObject(DebugRpcCall.taskFinish(adBizNo));
+                                jo = MyUtils.myJSONObject(DebugRpcCall.taskFinish(adBizNo));
                                 // 检查广告任务是否完成成功
                                 if (jo.getBoolean("success")) {
                                     // 查询广告任务是否真的完成
-                                    jo = new JSONObject(DebugRpcCall.queryAdFinished(adBizNo, "NEVERLAND_DOUBLE_AWARD_AD"));
+                                    jo = MyUtils.myJSONObject(DebugRpcCall.queryAdFinished(adBizNo, "NEVERLAND_DOUBLE_AWARD_AD"));
                                     // 检查查询结果是否成功
                                     if (jo.getBoolean("success")) {
                                         Log.farm("完成双倍奖励🎁");
@@ -269,7 +267,7 @@ public class DebugRpc {
                     }
                 }
                 // 获取剩余行走次数
-                int leftCount = data.getInt("leftCount");
+                int leftCount = data.optInt("leftCount");
                 // 如果还有剩余次数，继续行走
                 if (leftCount > 0) {
                     GlobalThreadPools.sleepCompat(3000L);
@@ -277,7 +275,7 @@ public class DebugRpc {
                 }
             } else {
                 // 如果RPC调用失败，记录错误信息
-                Log.record(jo.getString("errorMsg") + s);
+                Log.record(jo.optString("errorMsg") + s);
             }
         } catch (JSONException e) {
             // 处理JSON解析异常
@@ -292,7 +290,7 @@ public class DebugRpc {
 
     private void queryAreaTrees() {
         try {
-            JSONObject jo = new JSONObject(ReserveRpcCall.queryAreaTrees());
+            JSONObject jo = MyUtils.myJSONObject(ReserveRpcCall.queryAreaTrees());
             if (!ResChecker.checkRes(TAG, jo)) {
                 return;
             }
@@ -315,7 +313,7 @@ public class DebugRpc {
 
     private void getUnlockTreeItems() {
         try {
-            JSONObject jo = new JSONObject(ReserveRpcCall.queryTreeItemsForExchange("", "project"));
+            JSONObject jo = MyUtils.myJSONObject(ReserveRpcCall.queryTreeItemsForExchange("", "project"));
             if (!ResChecker.checkRes(TAG, jo)) {
                 return;
             }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import fansirsqi.xposed.sesame.util.Log;
+import fansirsqi.xposed.sesame.util.MyUtils;
 import lombok.Getter;
 import lombok.Setter;
 import okhttp3.MediaType;
@@ -106,10 +107,10 @@ public class GeminiAI implements AnswerAIInterface {
                     Log.record(TAG, "Gemini接口异常：" + json);
                     return result;
                 }
-                JSONObject jsonObject = new JSONObject(json);
+                JSONObject jsonObject = MyUtils.myJSONObject(json);
                 result = getValueByPath(jsonObject, JSON_PATH);
             }
-        } catch (IOException | org.json.JSONException e) {
+        } catch (Exception e) {
             Log.printStackTrace(TAG, e);
         }
         return result;

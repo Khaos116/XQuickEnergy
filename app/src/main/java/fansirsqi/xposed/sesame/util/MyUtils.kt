@@ -14,6 +14,15 @@ import java.util.Calendar
 import java.util.TimeZone
 
 /**
+ * 替换：
+ *     JSONObject\(   ->    MyUtils.myJSONObject(
+ *    new JSONObject\(    ->    MyUtils.myJSONObject(
+ *    \.getString\(   ->    .optString(
+ *    \.getInt\(      ->    .optInt(
+ *    \.getLong\(     ->    .optLong(
+ *    \.getString\(\"propName\"\)   ->    .optString("propName","")
+ *    \.optString\(\"propName\"\)   ->    .optString("propName","")
+ *    Calendar\.getInstance\(\)   ->    MyUtils.getInstance()
  * Author:Khaos116
  * Date:2026/1/20
  * Time:15:41
@@ -148,6 +157,11 @@ object MyUtils {
   fun myJSONObject(s: String? = null): JSONObject {
     if (s != null && s.startsWith("{") && s.endsWith("}")) return JSONObject(s)
     return JSONObject("{}")
+  }
+
+  @JvmStatic
+  fun myJSONObject(): JSONObject {
+    return myJSONObject("")
   }
 
   @JvmStatic

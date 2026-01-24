@@ -99,7 +99,7 @@ object Privilege {
 
     private fun handleYouthTaskAward(taskType: String, taskName: String, results: MutableList<String>) {
         try {
-            val response = JSONObject(AntForestRpcCall.receiveTaskAwardV2(taskType))
+            val response = MyUtils.myJSONObject(AntForestRpcCall.receiveTaskAwardV2(taskType))
             val resultDesc = response.optString("desc")
             results.add(resultDesc)
 
@@ -161,7 +161,7 @@ object Privilege {
         try {
             val tag = if (MyUtils.getInstance().get(Calendar.HOUR_OF_DAY) < SIGN_END_HOUR) "double" else "single"
             val response = AntForestRpcCall.studentCheckin()
-            val result = JSONObject(response)
+            val result = MyUtils.myJSONObject(response)
             handleSignInResult(result, tag)
         } catch (e: JSONException) {
             Log.error(TAG, "学生签到失败：${e.message}")

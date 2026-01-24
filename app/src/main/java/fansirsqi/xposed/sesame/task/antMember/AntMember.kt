@@ -1036,13 +1036,13 @@ class AntMember : ModelTask() {
                 val jo = MyUtils.myJSONObject(s)
                 if (ResChecker.checkRes(TAG + "会员签到失败:", jo)) {
                     Log.other(
-                        "会员签到📅[" + jo.getString("signinPoint") + "积分]#已签到" + jo.getString(
+                        "会员签到📅[" + jo.optString("signinPoint") + "积分]#已签到" + jo.optString(
                             "signinSumDay"
                         ) + "天"
                     )
                     memberSignInToday(UserMap.currentUid)
                 } else {
-                    record(jo.getString("resultDesc"))
+                    record(jo.optString("resultDesc"))
                     record(s)
                 }
             }
@@ -1063,7 +1063,7 @@ class AntMember : ModelTask() {
             val jsonObject = MyUtils.myJSONObject(str)
             if (!ResChecker.checkRes(TAG, jsonObject)) {
                 Log.error(
-                    "$TAG.doAllMemberAvailableTask", "会员任务响应失败: " + jsonObject.getString("resultDesc")
+                    "$TAG.doAllMemberAvailableTask", "会员任务响应失败: " + jsonObject.optString("resultDesc")
                 )
                 return@run
             }
@@ -1275,12 +1275,12 @@ class AntMember : ModelTask() {
             }
             for (i in 0..<availableCollectList.length()) {
                 jo = availableCollectList.getJSONObject(i)
-                if ("UNCLAIMED" != jo.getString("status")) {
+                if ("UNCLAIMED" != jo.optString("status")) {
                     continue
                 }
-                val title = jo.getString("title")
-                val creditFeedbackId = jo.getString("creditFeedbackId")
-                val potentialSize = jo.getString("potentialSize")
+                val title = jo.optString("title")
+                val creditFeedbackId = jo.optString("creditFeedbackId")
+                val potentialSize = jo.optString("potentialSize")
                 if (!withOneClick) {
                     jo = MyUtils.myJSONObject(AntMemberRpcCall.collectCreditFeedback(creditFeedbackId))
                     delay(2000)
@@ -1313,7 +1313,7 @@ class AntMember : ModelTask() {
             jo = jo.getJSONObject("data")
             val signInBall = jo.getJSONObject("signInDTO")
             val otherBallList = jo.getJSONArray("eventToWaitDTOList")
-            if (1 == signInBall.getInt("sendFlowStatus") && 1 == signInBall.getInt("sendType")) {
+            if (1 == signInBall.optInt("sendFlowStatus") && 1 == signInBall.optInt("sendType")) {
                 s = AntMemberRpcCall.collectInsuredGold(signInBall)
                 delay(2000)
                 jo = MyUtils.myJSONObject(s)
@@ -1321,7 +1321,7 @@ class AntMember : ModelTask() {
                     Log.error("$TAG.collectInsuredGold.collectInsuredGold", "保障金🏥[响应失败]#$s")
                     return@run
                 }
-                val gainGold = jo.getJSONObject("data").getString("gainSumInsuredYuan")
+                val gainGold = jo.getJSONObject("data").optString("gainSumInsuredYuan")
                 Log.other("保障金🏥[领取保证金]#+" + gainGold + "元")
             }
             for (i in 0..<otherBallList.length()) {
@@ -1333,7 +1333,7 @@ class AntMember : ModelTask() {
                     Log.error("$TAG.collectInsuredGold.collectInsuredGold", "保障金🏥[响应失败]#$s")
                     return@run
                 }
-                val gainGold = jo.getJSONObject("data").getJSONObject("gainSumInsuredDTO").getString("gainSumInsuredYuan")
+                val gainGold = jo.getJSONObject("data").getJSONObject("gainSumInsuredDTO").optString("gainSumInsuredYuan")
                 Log.other("保障金🏥[领取保证金]+" + gainGold + "元")
             }
         } catch (t: Throwable) {
@@ -1348,10 +1348,10 @@ class AntMember : ModelTask() {
     @Throws(JSONException::class)
     private suspend fun processTask(task: JSONObject): Unit = CoroutineUtils.run {
         val taskConfigInfo = task.getJSONObject("taskConfigInfo")
-        val name = taskConfigInfo.getString("name")
-        val id = taskConfigInfo.getLong("id")
-        val awardParamPoint = taskConfigInfo.getJSONObject("awardParam").getString("awardParamPoint")
-        val targetBusiness = taskConfigInfo.getJSONArray("targetBusiness").getString(0)
+        val name = taskConfigInfo.optString("name")
+        val id = taskConfigInfo.optLong("id")
+        val awardParamPoint = taskConfigInfo.getJSONObject("awardParam").optString("awardParamPoint")
+        val targetBusiness = taskConfigInfo.getJSONArray("targetBusiness").optString(0)
         val targetBusinessArray: Array<String?> = targetBusiness.split("#".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         if (targetBusinessArray.size < 3) {
             Log.error(TAG, "processTask target param err:" + targetBusinessArray.contentToString())
@@ -1383,7 +1383,7 @@ class AntMember : ModelTask() {
             val jsonObject = MyUtils.myJSONObject(str)
             if (!ResChecker.checkRes(TAG + "查询会员任务状态失败:", jsonObject)) {
                 Log.error(
-                    "$TAG.checkMemberTaskFinished", "会员任务响应失败: " + jsonObject.getString("resultDesc")
+                    "$TAG.checkMemberTaskFinished", "会员任务响应失败: " + jsonObject.optString("resultDesc")
                 )
             }
             if (!jsonObject.has("availableTaskList")) {
@@ -1392,7 +1392,7 @@ class AntMember : ModelTask() {
             val taskList = jsonObject.getJSONArray("availableTaskList")
             for (i in 0..<taskList.length()) {
                 val taskConfigInfo = taskList.getJSONObject(i).getJSONObject("taskConfigInfo")
-                val id = taskConfigInfo.getLong("id")
+                val id = taskConfigInfo.optLong("id")
                 if (taskId == id) {
                     return false
                 }
@@ -1805,7 +1805,7 @@ class AntMember : ModelTask() {
 
                     jo = MyUtils.myJSONObject(signInTriggerStr)
                     if (ResChecker.checkRes(TAG, jo)) {
-                        val prizeName = jo.getJSONObject("result").getJSONArray("prizeSendOrderDTOList").getJSONObject(0).getString("prizeName")
+                        val prizeName = jo.getJSONObject("result").getJSONArray("prizeSendOrderDTOList").getJSONObject(0).optString("prizeName")
                         record(TAG, "安心豆🫘[$prizeName]")
                     } else {
                         record(jo.toString())
@@ -1831,7 +1831,7 @@ class AntMember : ModelTask() {
                     return
                 }
 
-                val userCurrentPoint = jo.getJSONObject("result").getInt("userCurrentPoint")
+                val userCurrentPoint = jo.getJSONObject("result").optInt("userCurrentPoint")
 
                 // 检查beanExchangeDetail调用
                 val exchangeDetailStr = AntMemberRpcCall.beanExchangeDetail("IT20230214000700069722")
@@ -1843,10 +1843,10 @@ class AntMember : ModelTask() {
                 }
 
                 jo = jo.getJSONObject("result").getJSONObject("rspContext").getJSONObject("params").getJSONObject("exchangeDetail")
-                val itemId = jo.getString("itemId")
-                val itemName = jo.getString("itemName")
+                val itemId = jo.optString("itemId")
+                val itemName = jo.optString("itemName")
                 jo = jo.getJSONObject("itemExchangeConsultDTO")
-                val realConsumePointAmount = jo.getInt("realConsumePointAmount")
+                val realConsumePointAmount = jo.optInt("realConsumePointAmount")
 
                 if (!jo.getBoolean("canExchange") || realConsumePointAmount > userCurrentPoint) {
                     return
@@ -1977,7 +1977,7 @@ class AntMember : ModelTask() {
 
             // 2. 获取任务信息
             val taskName = timeLimitedTaskVO.optString("longTitle", "未知任务")
-            val templateId = timeLimitedTaskVO.getString("templateId") // 动态获取
+            val templateId = timeLimitedTaskVO.optString("templateId") // 动态获取
             val state = timeLimitedTaskVO.optInt("state", 0) // 1: 可领取, 2: 未到时间
             val tomorrow = timeLimitedTaskVO.optBoolean("tomorrow", false)
             val rewardAmount = timeLimitedTaskVO.optInt("rewardAmount", 0)
@@ -2399,7 +2399,7 @@ class AntMember : ModelTask() {
             if (prizeName.isEmpty()) {
                 val taskExtProps = task.optJSONObject("taskExtProps")
                 if (taskExtProps != null && taskExtProps.has("TASK_MORPHO_DETAIL")) {
-                    val detail = MyUtils.myJSONObject(taskExtProps.getString("TASK_MORPHO_DETAIL"))
+                    val detail = MyUtils.myJSONObject(taskExtProps.optString("TASK_MORPHO_DETAIL"))
                     val `val` = detail.optString("finishOneTaskGetPurificationValue", "")
                     if (!`val`.isEmpty() && "0" != `val`) {
                         prizeName = `val` + "净化值"
@@ -2628,15 +2628,15 @@ class AntMember : ModelTask() {
                     val jaCertList = jo.getJSONArray("certList")
                     for (i in 0..<jaCertList.length()) {
                         jo = jaCertList.getJSONObject(i)
-                        val bizTitle = jo.getString("bizTitle")
-                        val id = jo.getString("id")
-                        val pointAmount = jo.getInt("pointAmount")
+                        val bizTitle = jo.optString("bizTitle")
+                        val id = jo.optString("id")
+                        val pointAmount = jo.optInt("pointAmount")
                         s = AntMemberRpcCall.receivePointByUser(id)
                         jo = MyUtils.myJSONObject(s)
                         if (ResChecker.checkRes(TAG + "会员积分领取失败:", jo)) {
                             Log.other("会员积分🎖️[领取" + bizTitle + "]#" + pointAmount + "积分")
                         } else {
-                            record(jo.getString("resultDesc"))
+                            record(jo.optString("resultDesc"))
                             record(s)
                         }
                     }
@@ -2644,7 +2644,7 @@ class AntMember : ModelTask() {
                         queryPointCert(page + 1, pageSize)
                     }
                 } else {
-                    record(jo.getString("resultDesc"))
+                    record(jo.optString("resultDesc"))
                     record(s)
                 }
             } catch (t: Throwable) {
@@ -2698,7 +2698,7 @@ class AntMember : ModelTask() {
 
             for (i in 0..<taskList.length()) {
                 val task = taskList.getJSONObject(i)
-                val taskTitle = if (task.has("title")) task.getString("title") else "未知任务"
+                val taskTitle = if (task.has("title")) task.optString("title") else "未知任务"
 
                 // 打印任务状态信息用于调试
                 val finishFlag = task.optBoolean("finishFlag", false)
@@ -2727,15 +2727,15 @@ class AntMember : ModelTask() {
                     continue
                 }
 
-                val taskTemplateId = task.getString("templateId")
-                val needCompleteNum = if (task.has("needCompleteNum")) task.getInt("needCompleteNum") else 1
+                val taskTemplateId = task.optString("templateId")
+                val needCompleteNum = if (task.has("needCompleteNum")) task.optInt("needCompleteNum") else 1
                 val completedNum = task.optInt("completedNum", 0)
                 var s: String?
                 val recordId: String?
                 var responseObj: JSONObject?
 
 
-                if (task.has("actionUrl") && task.getString("actionUrl").contains("jumpAction")) {
+                if (task.has("actionUrl") && task.optString("actionUrl").contains("jumpAction")) {
                     // 跳转APP任务 依赖跳转的APP发送请求鉴别任务完成 仅靠hook目标应用无法完成
                     record(TAG, "芝麻信用💳[跳过跳转APP任务]#$taskTitle")
                     skippedCount++
@@ -2758,14 +2758,14 @@ class AntMember : ModelTask() {
                         skippedCount++
                         continue
                     }
-                    recordId = responseObj.getJSONObject("data").getString("recordId")
+                    recordId = responseObj.getJSONObject("data").optString("recordId")
                 } else {
                     if (!task.has("recordId")) {
                         Log.error(TAG, "芝麻信用💳[任务" + taskTitle + "未获取到recordId]#" + task)
                         skippedCount++
                         continue
                     }
-                    recordId = task.getString("recordId")
+                    recordId = task.optString("recordId")
                 }
 
                 // 完成任务
@@ -2807,13 +2807,13 @@ class AntMember : ModelTask() {
                 val s = AntMemberRpcCall.queryActivity()
                 val jo = MyUtils.myJSONObject(s)
                 if (ResChecker.checkRes(TAG, jo)) {
-                    if ("SIGN_IN_ENABLE" == jo.getString("signInStatus")) {
-                        val activityNo = jo.getString("activityNo")
+                    if ("SIGN_IN_ENABLE" == jo.optString("signInStatus")) {
+                        val activityNo = jo.optString("activityNo")
                         val joSignIn = MyUtils.myJSONObject(AntMemberRpcCall.signIn(activityNo))
                         if (ResChecker.checkRes(TAG, joSignIn)) {
                             Log.other("商家服务🏬[开门打卡签到成功]")
                         } else {
-                            record(TAG, joSignIn.getString("errorMsg"))
+                            record(TAG, joSignIn.optString("errorMsg"))
                             record(TAG, joSignIn.toString())
                         }
                     }
@@ -2833,21 +2833,21 @@ class AntMember : ModelTask() {
                 for (i in 0..4) {
                     val jo = MyUtils.myJSONObject(AntMemberRpcCall.queryActivity())
                     if (ResChecker.checkRes(TAG, jo)) {
-                        val activityNo = jo.getString("activityNo")
+                        val activityNo = jo.optString("activityNo")
                         if (TimeUtil.getFormatDate().replace("-", "") != activityNo.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[2]) {
                             break
                         }
-                        if ("SIGN_UP" == jo.getString("signUpStatus")) {
+                        if ("SIGN_UP" == jo.optString("signUpStatus")) {
                             break
                         }
-                        if ("UN_SIGN_UP" == jo.getString("signUpStatus")) {
-                            val activityPeriodName = jo.getString("activityPeriodName")
+                        if ("UN_SIGN_UP" == jo.optString("signUpStatus")) {
+                            val activityPeriodName = jo.optString("activityPeriodName")
                             val joSignUp = MyUtils.myJSONObject(AntMemberRpcCall.signUp(activityNo))
                             if (ResChecker.checkRes(TAG, joSignUp)) {
                                 Log.other("商家服务🏬[" + activityPeriodName + "开门打卡报名]")
                                 return@run
                             } else {
-                                record(TAG, joSignUp.getString("errorMsg"))
+                                record(TAG, joSignUp.optString("errorMsg"))
                                 record(TAG, joSignUp.toString())
                             }
                         }
@@ -2874,8 +2874,8 @@ class AntMember : ModelTask() {
                     return@run
                 }
                 jo = jo.getJSONObject("data")
-                val signResult = jo.getString("signInResult")
-                val reward = jo.getString("todayReward")
+                val signResult = jo.optString("signInResult")
+                val reward = jo.optString("todayReward")
                 if ("SUCCESS" == signResult) {
                     Log.other("商家服务🏬[每日签到]#获得积分$reward")
                 } else {
@@ -2902,12 +2902,12 @@ class AntMember : ModelTask() {
                         if (!task.has("status")) {
                             continue
                         }
-                        val title = task.getString("title")
-                        val reward = task.getString("reward")
-                        val taskStatus = task.getString("status")
+                        val title = task.optString("title")
+                        val reward = task.optString("reward")
+                        val taskStatus = task.optString("status")
                         if ("NEED_RECEIVE" == taskStatus) {
                             if (task.has("pointBallId")) {
-                                jo = MyUtils.myJSONObject(AntMemberRpcCall.ballReceive(task.getString("pointBallId")))
+                                jo = MyUtils.myJSONObject(AntMemberRpcCall.ballReceive(task.optString("pointBallId")))
                                 if (ResChecker.checkRes(TAG, jo)) {
                                     Log.other("商家服务🏬[$title]#领取积分$reward")
                                 }
@@ -2915,13 +2915,13 @@ class AntMember : ModelTask() {
                         } else if ("PROCESSING" == taskStatus || "UNRECEIVED" == taskStatus) {
                             if (task.has("extendLog")) {
                                 val bizExtMap = task.getJSONObject("extendLog").getJSONObject("bizExtMap")
-                                jo = MyUtils.myJSONObject(AntMemberRpcCall.taskFinish(bizExtMap.getString("bizId")))
+                                jo = MyUtils.myJSONObject(AntMemberRpcCall.taskFinish(bizExtMap.optString("bizId")))
                                 if (ResChecker.checkRes(TAG, jo)) {
                                     Log.other("商家服务🏬[$title]#领取积分$reward")
                                 }
                                 doubleCheck = true
                             } else {
-                                when (val taskCode = task.getString("taskCode")) {
+                                when (val taskCode = task.optString("taskCode")) {
                                     "SYH_CPC_DYNAMIC" ->                   // 逛一逛商品橱窗
                                         taskReceive(taskCode, "SYH_CPC_DYNAMIC_VIEWED", title)
 

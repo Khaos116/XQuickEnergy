@@ -12,6 +12,7 @@ import fansirsqi.xposed.sesame.model.modelFieldExt.SelectAndCountModelField
 import fansirsqi.xposed.sesame.task.ModelTask
 import fansirsqi.xposed.sesame.task.TaskCommon
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.ResChecker
 import fansirsqi.xposed.sesame.util.TimeUtil
 import fansirsqi.xposed.sesame.util.maps.CooperateMap
@@ -98,23 +99,23 @@ class AntCooperate : ModelTask() {
             }
             // 3. 普通合种
             if (cooperateWater.value) {
-                val queryUserCooperatePlantList = JSONObject(AntCooperateRpcCall.queryUserCooperatePlantList())
+                val queryUserCooperatePlantList = MyUtils.myJSONObject(AntCooperateRpcCall.queryUserCooperatePlantList())
                 if (ResChecker.checkRes(TAG, queryUserCooperatePlantList)) {
                     // 1. 获取当前能量，设为 var，因为浇水后本地需要扣减，否则下一个合种会误判能量充足
-                    var userCurrentEnergy = queryUserCooperatePlantList.getInt("userCurrentEnergy")
+                    var userCurrentEnergy = queryUserCooperatePlantList.optInt("userCurrentEnergy")
                     val cooperatePlants = queryUserCooperatePlantList.getJSONArray("cooperatePlants")
                     Log.record(TAG, "获取合种列表成功: ${cooperatePlants.length()} 颗合种")
                     for (i in 0 until cooperatePlants.length()) {
                         var plant = cooperatePlants.getJSONObject(i)
-                        val cooperationId = plant.getString("cooperationId")
+                        val cooperationId = plant.optString("cooperationId")
                         // 补全缺失的合种名称信息
                         if (!plant.has("name")) {
                             val detailResp = AntCooperateRpcCall.queryCooperatePlant(cooperationId)
-                            plant = JSONObject(detailResp).getJSONObject("cooperatePlant")
+                            plant = MyUtils.myJSONObject(detailResp).getJSONObject("cooperatePlant")
                         }
 
-                        val name = plant.getString("name")
-                        val admin = plant.getString("admin")
+                        val name = plant.optString("name")
+                        val admin = plant.optString("admin")
 
                         // 2. 合种打招呼逻辑 (独立判断，不影响浇水主流程)
                         if (cooperateSendCooperateBeckon.value && UserMap.currentUid == admin) {
@@ -131,8 +132,8 @@ class AntCooperate : ModelTask() {
                         }
 
                         // 获取服务端限制
-                        val waterDayLimit = plant.getInt("waterDayLimit") // 今日剩余可浇水量
-                        val waterLimit = plant.getJSONObject("cooperateTemplate").getInt("waterLimit") // 每日总上限
+                        val waterDayLimit = plant.optInt("waterDayLimit") // 今日剩余可浇水量
+                        val waterLimit = plant.getJSONObject("cooperateTemplate").optInt("waterLimit") // 每日总上限
                         // val watered = waterLimit - waterDayLimit
                         Log.record(TAG, "获取合种[$name] 浇水信息: 剩余可浇 $waterDayLimit g / 总限制 $waterLimit g")
 
@@ -261,7 +262,7 @@ class AntCooperate : ModelTask() {
             }
 
             val waterResult = AntCooperateRpcCall.loveTeamWater(teamId, waterAmount)
-            val waterJo = JSONObject(waterResult)
+            val waterJo = MyUtils.myJSONObject(waterResult)
 
             if (ResChecker.checkRes(TAG, waterJo)) {
                 Log.forest("真爱合种💖[浇水成功]#${waterAmount}g")
@@ -296,7 +297,7 @@ class AntCooperate : ModelTask() {
 
             // --- 2. 获取服务端数据 (TeamID & 能量) ---
             val homePageStr = AntCooperateRpcCall.queryHomePage()
-            val homeJo = JSONObject(homePageStr)
+            val homeJo = MyUtils.myJSONObject(homePageStr)
             if (!ResChecker.checkRes(TAG, homeJo)) {
                 Log.record(TAG, "queryHomePage 返回异常")
                 return
@@ -322,7 +323,7 @@ class AntCooperate : ModelTask() {
             if (!isTeam(homeJo)) {
 
                 val updateUserConfigStr = AntCooperateRpcCall.updateUserConfig(true)
-                val userConfigJo = JSONObject(updateUserConfigStr)
+                val userConfigJo = MyUtils.myJSONObject(updateUserConfigStr)
                 if (!ResChecker.checkRes(TAG, userConfigJo)) {
                     Log.record(TAG, "updateUserConfig 返回异常")
                     return
@@ -334,7 +335,7 @@ class AntCooperate : ModelTask() {
 
             // --- 3. 获取服务端限制 (剩余可浇水量) ---
             val miscInfoStr = AntCooperateRpcCall.queryMiscInfo("teamCanWaterCount", teamId)
-            val miscJo = JSONObject(miscInfoStr)
+            val miscJo = MyUtils.myJSONObject(miscInfoStr)
             if (!ResChecker.checkRes(TAG, miscJo)) {
                 Log.record(TAG, "queryMiscInfo 查询失败")
                 return
@@ -366,7 +367,7 @@ class AntCooperate : ModelTask() {
 
             Log.record(TAG, "执行浇水: ${finalWaterAmount}g")
             val waterResStr = AntCooperateRpcCall.teamWater(teamId, finalWaterAmount)
-            val waterJo = JSONObject(waterResStr)
+            val waterJo = MyUtils.myJSONObject(waterResStr)
 
             if (ResChecker.checkRes(TAG, waterJo)) {
                 Log.forest("组队合种🌲[浇水成功] #${finalWaterAmount}g")
@@ -379,7 +380,7 @@ class AntCooperate : ModelTask() {
             if (needReturn) {
 
                 val updateUserConfigStr = AntCooperateRpcCall.updateUserConfig(false)
-                val userConfigJo = JSONObject(updateUserConfigStr)
+                val userConfigJo = MyUtils.myJSONObject(updateUserConfigStr)
                 if (!ResChecker.checkRes(TAG, userConfigJo)) {
                     Log.record(TAG, "updateUserConfig 返回异常")
                     return
@@ -415,12 +416,12 @@ class AntCooperate : ModelTask() {
          */
         private fun cooperateWater(coopId: String, count: Int, name: String) {
             try {
-                val jo = JSONObject(AntCooperateRpcCall.cooperateWater(UserMap.currentUid, coopId, count))
+                val jo = MyUtils.myJSONObject(AntCooperateRpcCall.cooperateWater(UserMap.currentUid, coopId, count))
                 if (ResChecker.checkRes(TAG, jo)) {
-                    Log.forest("合种浇水🚿[" + name + "]" + jo.getString("barrageText"))
+                    Log.forest("合种浇水🚿[" + name + "]" + jo.optString("barrageText"))
                     Status.cooperateWaterToday(UserMap.currentUid, coopId)
                 } else {
-                    Log.error(TAG, "浇水失败[" + name + "]: " + jo.getString("resultDesc"))
+                    Log.error(TAG, "浇水失败[" + name + "]: " + jo.optString("resultDesc"))
                 }
             } catch (t: Throwable) {
                 Log.printStackTrace(TAG, "cooperateWater err:", t)
@@ -432,12 +433,12 @@ class AntCooperate : ModelTask() {
          */
         private fun getTotalWatering(coopId: String?): Int {
             try {
-                val jo = JSONObject(AntCooperateRpcCall.queryCooperateRank("A", coopId))
+                val jo = MyUtils.myJSONObject(AntCooperateRpcCall.queryCooperateRank("A", coopId))
                 if (ResChecker.checkRes(TAG, jo)) {
                     val jaList = jo.getJSONArray("cooperateRankInfos")
                     for (i in 0..<jaList.length()) {
                         val joItem = jaList.getJSONObject(i)
-                        val userId = joItem.getString("userId")
+                        val userId = joItem.optString("userId")
                         if (userId == UserMap.currentUid) {
                             // 未获取到累计浇水量 返回 -1 不执行浇水
                             val energySummation = joItem.optInt("energySummation", -1)
@@ -463,15 +464,15 @@ class AntCooperate : ModelTask() {
                 if (TimeUtil.isNowBeforeTimeStr("1800")) {
                     return
                 }
-                var jo = JSONObject(AntCooperateRpcCall.queryCooperateRank("D", cooperationId))
+                var jo = MyUtils.myJSONObject(AntCooperateRpcCall.queryCooperateRank("D", cooperationId))
                 if (ResChecker.checkRes(TAG, jo)) {
                     val cooperateRankInfos = jo.getJSONArray("cooperateRankInfos")
                     for (i in 0..<cooperateRankInfos.length()) {
                         val rankInfo = cooperateRankInfos.getJSONObject(i)
                         if (rankInfo.getBoolean("canBeckon")) {
-                            jo = JSONObject(AntCooperateRpcCall.sendCooperateBeckon(rankInfo.getString("userId"), cooperationId))
+                            jo = MyUtils.myJSONObject(AntCooperateRpcCall.sendCooperateBeckon(rankInfo.optString("userId"), cooperationId))
                             if (ResChecker.checkRes(TAG, jo)) {
-                                Log.forest("合种🚿[" + name + "]#召唤队友[" + rankInfo.getString("displayName") + "]成功")
+                                Log.forest("合种🚿[" + name + "]#召唤队友[" + rankInfo.optString("displayName") + "]成功")
                             }
                             TimeUtil.sleepCompat(300)
                         }

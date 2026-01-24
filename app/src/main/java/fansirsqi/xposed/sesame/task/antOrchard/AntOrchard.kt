@@ -90,7 +90,7 @@ class AntOrchard : ModelTask() {
             executeIntervalInt = maxOf(executeInterval.value, 500)
 
             val indexResponse = AntOrchardRpcCall.orchardIndex()
-            val indexJson = JSONObject(indexResponse)
+            val indexJson = MyUtils.myJSONObject(indexResponse)
 
             if (indexJson.optString("resultCode") != "100") {
                 Log.record(TAG, indexJson.optString("resultDesc", "orchardIndex 调用失败"))
@@ -105,7 +105,7 @@ class AntOrchard : ModelTask() {
 
             val taobaoDataStr = indexJson.optString("taobaoData")
             if (taobaoDataStr.isNotEmpty()) {
-                val taobaoData = JSONObject(taobaoDataStr)
+                val taobaoData = MyUtils.myJSONObject(taobaoDataStr)
                 treeLevel = taobaoData.optJSONObject("gameInfo")
                     ?.optJSONObject("plantInfo")
                     ?.optJSONObject("seedStage")
@@ -239,13 +239,13 @@ class AntOrchard : ModelTask() {
         do {
             try {
                 // 检查肥料余额
-                val orchardIndexData = JSONObject(AntOrchardRpcCall.orchardIndex())
+                val orchardIndexData = MyUtils.myJSONObject(AntOrchardRpcCall.orchardIndex())
                 if (orchardIndexData.optString("resultCode") != "100") break
 
                 val taobaoDataStr = orchardIndexData.optString("taobaoData")
                 if (taobaoDataStr.isEmpty()) break
 
-                val gameInfo = JSONObject(taobaoDataStr).optJSONObject("gameInfo")
+                val gameInfo = MyUtils.myJSONObject(taobaoDataStr).optJSONObject("gameInfo")
                 val accountInfo = gameInfo?.optJSONObject("accountInfo")
 
                 if (accountInfo != null) {
@@ -273,7 +273,7 @@ class AntOrchard : ModelTask() {
 
                 // 执行施肥请求
                 val spreadResponse = AntOrchardRpcCall.orchardSpreadManure(wua, randomSource, useBatchSpread, targetScene)
-                val spreadJson = JSONObject(spreadResponse)
+                val spreadJson = MyUtils.myJSONObject(spreadResponse)
                 val resultCode = spreadJson.optString("resultCode")
 
                 // 摇钱树特有逻辑：达到上限停止 (P14)
@@ -290,7 +290,7 @@ class AntOrchard : ModelTask() {
                 // 更新计数
                 val spreadTaobaoDataStr = spreadJson.optString("taobaoData")
                 if (spreadTaobaoDataStr.isNotEmpty()) {
-                    val spreadTaobaoData = JSONObject(spreadTaobaoDataStr)
+                    val spreadTaobaoData = MyUtils.myJSONObject(spreadTaobaoDataStr)
 
                     // 尝试从服务端获取今日次数，如果不准确(或服务端没返回)则手动累加
                     // 注意：摇钱树模式下 taobaoData 结构可能不同，这里主要针对果树统计
@@ -336,7 +336,7 @@ class AntOrchard : ModelTask() {
             if (hour >= 7 && !Status.hasFlagToday(STATUS_MONEY_TREE_COLLECTED)) {
                 Log.record(TAG, "检测到7点已过，尝试领取摇钱树余额奖励...")
                 val res = AntOrchardRpcCall.moneyTreeTrigger()
-                val json = JSONObject(res)
+                val json = MyUtils.myJSONObject(res)
                 if (json.optBoolean("success")) {
                     val result = json.optJSONObject("result")
                     val awardInfo = result?.optJSONObject("awardInfo")
@@ -369,9 +369,9 @@ class AntOrchard : ModelTask() {
     private fun extraInfoGet(from: String = "entry") {
         try {
             val response = AntOrchardRpcCall.extraInfoGet(from)
-            val jo = JSONObject(response)
+            val jo = MyUtils.myJSONObject(response)
 
-            if (jo.getString("resultCode") == "100") {
+            if (jo.optString("resultCode") == "100") {
                 val data = jo.optJSONObject("data") ?: return
                 val extraData = data.optJSONObject("extraData") ?: return
                 val fertilizerPacket = extraData.optJSONObject("fertilizerPacket") ?: return
@@ -379,8 +379,8 @@ class AntOrchard : ModelTask() {
                 // 状态为 waitTake 时领取
                 if (fertilizerPacket.optString("status") == "todayFertilizerWaitTake") {
                     val num = fertilizerPacket.optInt("todayFertilizerNum")
-                    val setResponse = JSONObject(AntOrchardRpcCall.extraInfoSet())
-                    if (setResponse.getString("resultCode") == "100") {
+                    val setResponse = MyUtils.myJSONObject(AntOrchardRpcCall.extraInfoSet())
+                    if (setResponse.optString("resultCode") == "100") {
                         val typeName = if (from == "water") "礼盒" else "每日"
                         Log.farm("领取${typeName}肥料💩[${num}g]")
                     }
@@ -395,7 +395,7 @@ class AntOrchard : ModelTask() {
         try {
             if (treeLevel == null) return
             val response = AntOrchardRpcCall.querySubplotsActivity(treeLevel!!)
-            val json = JSONObject(response)
+            val json = MyUtils.myJSONObject(response)
             if (!ResChecker.checkRes(TAG, json)) return
 
             val subplots = json.optJSONArray("subplotsActivityList") ?: return
@@ -404,7 +404,7 @@ class AntOrchard : ModelTask() {
                 if (activity.optString("activityType") == "LOTTERY_PLUS") {
                     val extendStr = activity.optString("extend")
                     if (extendStr.isNotEmpty()) {
-                        val lotteryPlusInfo = JSONObject(extendStr)
+                        val lotteryPlusInfo = MyUtils.myJSONObject(extendStr)
                         drawLotteryPlus(lotteryPlusInfo)
                     }
                     break
@@ -419,24 +419,24 @@ class AntOrchard : ModelTask() {
         try {
             if (!lotteryPlusInfo.has("userSevenDaysGiftsItem")) return
 
-            val itemId = lotteryPlusInfo.getString("itemId")
+            val itemId = lotteryPlusInfo.optString("itemId")
             val jo = lotteryPlusInfo.getJSONObject("userSevenDaysGiftsItem")
             val ja = jo.getJSONArray("userEverydayGiftItems")
 
             for (i in 0 until ja.length()) {
                 val jo2 = ja.getJSONObject(i)
-                if (jo2.getString("itemId") == itemId) {
+                if (jo2.optString("itemId") == itemId) {
                     if (!jo2.getBoolean("received")) {
                         Log.record(TAG, "七日礼包: 发现未领取奖励 (itemId=$itemId)")
-                        val jo3 = JSONObject(AntOrchardRpcCall.drawLottery())
-                        if (jo3.getString("resultCode") == "100") {
+                        val jo3 = MyUtils.myJSONObject(AntOrchardRpcCall.drawLottery())
+                        if (jo3.optString("resultCode") == "100") {
                             val userEverydayGiftItems = jo3.getJSONObject("lotteryPlusInfo")
                                 .getJSONObject("userSevenDaysGiftsItem")
                                 .getJSONArray("userEverydayGiftItems")
 
                             for (j in 0 until userEverydayGiftItems.length()) {
                                 val jo4 = userEverydayGiftItems.getJSONObject(j)
-                                if (jo4.getString("itemId") == itemId) {
+                                if (jo4.optString("itemId") == itemId) {
                                     val awardCount = jo4.optInt("awardCount", 1)
                                     Log.farm("七日礼包🎁[获得肥料]#${awardCount}g")
                                     break
@@ -459,7 +459,7 @@ class AntOrchard : ModelTask() {
     private fun doOrchardDailyTask(userId: String) {
         try {
             val response = AntOrchardRpcCall.orchardListTask()
-            val responseJson = JSONObject(response)
+            val responseJson = MyUtils.myJSONObject(response)
 
             if (responseJson.optString("resultCode") != "100") {
                 Log.error("doOrchardDailyTask响应异常", response)
@@ -526,7 +526,7 @@ class AntOrchard : ModelTask() {
                         if (MyUtils._关闭不支持RPC2 && "ANTOCEAN_TASK" == sceneCode && "mokuai_senlin_hydrw" == taskId) {
                           continue
                         }
-                        val finishResponse = JSONObject(AntOrchardRpcCall.finishTask(userId, sceneCode, taskId))
+                        val finishResponse = MyUtils.myJSONObject(AntOrchardRpcCall.finishTask(userId, sceneCode, taskId))
                         if (ResChecker.checkRes(TAG, finishResponse)) {
                             Log.farm("农场广告任务📺[$title] 第${rightsTimes + cnt + 1}次")
                         } else {
@@ -542,7 +542,7 @@ class AntOrchard : ModelTask() {
                 }
 
                 if (actionType == "TRIGGER" || actionType == "ADD_HOME" || actionType == "PUSH_SUBSCRIBE") {
-                    val finishResponse = JSONObject(AntOrchardRpcCall.finishTask(userId, sceneCode, taskId))
+                    val finishResponse = MyUtils.myJSONObject(AntOrchardRpcCall.finishTask(userId, sceneCode, taskId))
                     if (ResChecker.checkRes(TAG, finishResponse)) {
                         Log.farm("农场任务🧾[$title]")
                     } else {
@@ -559,11 +559,11 @@ class AntOrchard : ModelTask() {
         try {
             val currentSignItem = signTaskInfo.getJSONObject("currentSignItem")
             if (!currentSignItem.getBoolean("signed")) {
-                val joSign = JSONObject(AntOrchardRpcCall.orchardSign())
-                if (joSign.getString("resultCode") == "100") {
+                val joSign = MyUtils.myJSONObject(AntOrchardRpcCall.orchardSign())
+                if (joSign.optString("resultCode") == "100") {
                     val awardCount = joSign.getJSONObject("signTaskInfo")
                         .getJSONObject("currentSignItem")
-                        .getInt("awardCount")
+                        .optInt("awardCount")
                     Log.farm("农场签到📅[获得肥料]#${awardCount}g")
                 } else {
                     Log.record(TAG, joSign.toString())
@@ -579,7 +579,7 @@ class AntOrchard : ModelTask() {
     private fun smashedGoldenEgg(count: Int) {
         try {
             val response = AntOrchardRpcCall.smashedGoldenEgg(count)
-            val jo = JSONObject(response)
+            val jo = MyUtils.myJSONObject(response)
 
             if (ResChecker.checkRes(TAG, jo)) {
                 val batchSmashedList = jo.getJSONArray("batchSmashedList")
@@ -600,28 +600,28 @@ class AntOrchard : ModelTask() {
     private fun triggerTbTask() {
         try {
             val response = AntOrchardRpcCall.orchardListTask()
-            val jo = JSONObject(response)
+            val jo = MyUtils.myJSONObject(response)
 
-            if (jo.getString("resultCode") == "100") {
+            if (jo.optString("resultCode") == "100") {
                 val jaTaskList = jo.getJSONArray("taskList")
                 for (i in 0 until jaTaskList.length()) {
                     val jo2 = jaTaskList.getJSONObject(i)
-                    if (jo2.getString("taskStatus") != "FINISHED") continue
+                    if (jo2.optString("taskStatus") != "FINISHED") continue
 
-                    val title = jo2.getJSONObject("taskDisplayConfig").getString("title")
+                    val title = jo2.getJSONObject("taskDisplayConfig").optString("title")
                     val awardCount = jo2.optInt("awardCount", 0)
-                    val taskId = jo2.getString("taskId")
-                    val taskPlantType = jo2.getString("taskPlantType")
+                    val taskId = jo2.optString("taskId")
+                    val taskPlantType = jo2.optString("taskPlantType")
 
-                    val jo3 = JSONObject(AntOrchardRpcCall.triggerTbTask(taskId, taskPlantType))
-                    if (jo3.getString("resultCode") == "100") {
+                    val jo3 = MyUtils.myJSONObject(AntOrchardRpcCall.triggerTbTask(taskId, taskPlantType))
+                    if (jo3.optString("resultCode") == "100") {
                         Log.farm("领取奖励🎖️[$title]#${awardCount}g肥料")
                     } else {
                         Log.record(TAG, jo3.toString())
                     }
                 }
             } else {
-                Log.record(TAG, jo.getString("resultDesc"))
+                Log.record(TAG, jo.optString("resultDesc"))
             }
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "triggerTbTask err:", t)
@@ -639,7 +639,7 @@ class AntOrchard : ModelTask() {
 
             for ((diversionSource, source) in awardSources) {
                 val response = AntOrchardRpcCall.receiveOrchardVisitAward(diversionSource, source)
-                val jo = JSONObject(response)
+                val jo = MyUtils.myJSONObject(response)
 
                 if (!ResChecker.checkRes(TAG, response)) {
                     continue
@@ -674,7 +674,7 @@ class AntOrchard : ModelTask() {
         try {
             val wua = SecurityBodyHelper.getSecurityBodyData(4).toString()
             val response = AntOrchardRpcCall.orchardSyncIndex(wua)
-            val root = JSONObject(response)
+            val root = MyUtils.myJSONObject(response)
             if (!ResChecker.checkRes(TAG, root)) return
 
             val challenge = root.optJSONObject("limitedTimeChallenge") ?: return
@@ -693,7 +693,7 @@ class AntOrchard : ModelTask() {
 
             if (MtaskStatus == "FINISHED" && ongoing) {
                 val awardResp = AntOrchardRpcCall.receiveTaskAward("ORCHARD_LIMITED_TIME_CHALLENGE", MtaskId)
-                val joo = JSONObject(awardResp)
+                val joo = MyUtils.myJSONObject(awardResp)
                 if (ResChecker.checkRes(TAG, joo)) {
                     Log.farm("第 $currentRound 轮 限时任务🎁[肥料 * $MawardCount]")
                 }
@@ -730,7 +730,7 @@ class AntOrchard : ModelTask() {
                     }
                     "GAME_CENTER" -> {
                         val r = AntOrchardRpcCall.noticeGame("2021004165643274")
-                        if (ResChecker.checkRes(TAG, JSONObject(r))) {
+                        if (ResChecker.checkRes(TAG, MyUtils.myJSONObject(r))) {
                             Log.record(TAG, "游戏任务触发成功")
                         }
                     }
@@ -747,7 +747,7 @@ class AntOrchard : ModelTask() {
                         val pageFrom = "ch_url-https://render.alipay.com/p/yuyan/180020010001263018/game.html"
                         val session = "u_41ba1_2f33e"
                         val r = XLightRpcCall.xlightPlugin(finalUrl, pageFrom, session, finalSpaceCode)
-                        val jr = JSONObject(r)
+                        val jr = MyUtils.myJSONObject(r)
 
                         val playingResult = jr.optJSONObject("resData")?.optJSONObject("playingResult") ?: jr.optJSONObject("playingResult")
                         if (playingResult == null) continue
@@ -759,7 +759,7 @@ class AntOrchard : ModelTask() {
 
                         val playEventInfo = infoListArray.getJSONObject(0)
                         val finishResult = XLightRpcCall.finishTask(playingBizId, playEventInfo, sceneCode, groupId)
-                        if (ResChecker.checkRes(TAG, JSONObject(finishResult))) {
+                        if (ResChecker.checkRes(TAG, MyUtils.myJSONObject(finishResult))) {
                             Log.record(TAG, "浏览广告任务完成")
                         }
                     }
@@ -773,53 +773,53 @@ class AntOrchard : ModelTask() {
     private fun querySubplotsActivity(taskRequire: Int) {
         try {
             val response = AntOrchardRpcCall.querySubplotsActivity(treeLevel!!)
-            val jo = JSONObject(response)
+            val jo = MyUtils.myJSONObject(response)
 
-            if (jo.getString("resultCode") == "100") {
+            if (jo.optString("resultCode") == "100") {
                 val subplotsActivityList = jo.getJSONArray("subplotsActivityList")
                 for (i in 0 until subplotsActivityList.length()) {
                     val jo2 = subplotsActivityList.getJSONObject(i)
-                    if (jo2.getString("activityType") != "WISH") continue
+                    if (jo2.optString("activityType") != "WISH") continue
 
-                    val activityId = jo2.getString("activityId")
-                    when (jo2.getString("status")) {
+                    val activityId = jo2.optString("activityId")
+                    when (jo2.optString("status")) {
                         "NOT_STARTED" -> {
-                            val extend = jo2.getString("extend")
-                            val jo3 = JSONObject(extend)
+                            val extend = jo2.optString("extend")
+                            val jo3 = MyUtils.myJSONObject(extend)
                             val wishActivityOptionList = jo3.getJSONArray("wishActivityOptionList")
                             var optionKey: String? = null
 
                             for (j in 0 until wishActivityOptionList.length()) {
                                 val jo4 = wishActivityOptionList.getJSONObject(j)
-                                if (taskRequire == jo4.getInt("taskRequire")) {
-                                    optionKey = jo4.getString("optionKey")
+                                if (taskRequire == jo4.optInt("taskRequire")) {
+                                    optionKey = jo4.optString("optionKey")
                                     break
                                 }
                             }
 
                             if (optionKey != null) {
-                                val jo5 = JSONObject(AntOrchardRpcCall.triggerSubplotsActivity(activityId, "WISH", optionKey))
-                                if (jo5.getString("resultCode") == "100") {
+                                val jo5 = MyUtils.myJSONObject(AntOrchardRpcCall.triggerSubplotsActivity(activityId, "WISH", optionKey))
+                                if (jo5.optString("resultCode") == "100") {
                                     Log.farm("农场许愿✨[每日施肥$taskRequire 次]")
                                 } else {
-                                    Log.record(TAG, jo5.getString("resultDesc"))
+                                    Log.record(TAG, jo5.optString("resultDesc"))
                                 }
                             }
                         }
                         "FINISHED" -> {
-                            val jo3 = JSONObject(AntOrchardRpcCall.receiveOrchardRights(activityId, "WISH"))
-                            if (jo3.getString("resultCode") == "100") {
-                                Log.farm("许愿奖励✨[肥料${jo3.getInt("amount")}g]")
+                            val jo3 = MyUtils.myJSONObject(AntOrchardRpcCall.receiveOrchardRights(activityId, "WISH"))
+                            if (jo3.optString("resultCode") == "100") {
+                                Log.farm("许愿奖励✨[肥料${jo3.optInt("amount")}g]")
                                 querySubplotsActivity(taskRequire)
                                 return
                             } else {
-                                Log.record(TAG, jo3.getString("resultDesc"))
+                                Log.record(TAG, jo3.optString("resultDesc"))
                             }
                         }
                     }
                 }
             } else {
-                Log.record(TAG, jo.getString("resultDesc"))
+                Log.record(TAG, jo.optString("resultDesc"))
             }
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "querySubplotsActivity err:", t)
@@ -840,12 +840,12 @@ class AntOrchard : ModelTask() {
                     Base64.NO_WRAP
                 )
                 val str = AntOrchardRpcCall.achieveBeShareP2P(shareId)
-                val jsonObject = JSONObject(str)
+                val jsonObject = MyUtils.myJSONObject(str)
                 CoroutineUtils.sleepCompat(800)
                 val name = UserMap.getMaskName(uid)
 
                 if (!ResChecker.checkRes(TAG, str)) {
-                    val code = jsonObject.getString("code")
+                    val code = jsonObject.optString("code")
                     if (code == "600000027") {
                         Log.record(TAG, "农场助力💪今日助力他人次数上限")
                         Status.antOrchardAssistFriendToday()

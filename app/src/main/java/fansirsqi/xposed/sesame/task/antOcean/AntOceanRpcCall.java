@@ -5,8 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import fansirsqi.xposed.sesame.hook.RequestManager;
-import fansirsqi.xposed.sesame.util.Log;
-import fansirsqi.xposed.sesame.util.RandomUtil;
+import fansirsqi.xposed.sesame.util.*;
 
 import java.util.Set;
 
@@ -218,7 +217,7 @@ public class AntOceanRpcCall {
             if (!attachAssetsSet.isEmpty()) {
                 JSONArray jsonArray = new JSONArray();
                 for (Integer attachAssets : attachAssetsSet) {
-                    JSONObject jsonObject = new JSONObject();
+                    JSONObject jsonObject = MyUtils.myJSONObject();
                     jsonObject.put("assets", assets);
                     jsonObject.put("assetsNum", 1);
                     jsonObject.put("attachAssets", attachAssets);
@@ -239,7 +238,7 @@ public class AntOceanRpcCall {
      */
     public static String createSeaAreaExtraCollect() {
         try {
-            JSONObject param = new JSONObject();
+            JSONObject param = MyUtils.myJSONObject();
             param.put("source", "chInfo_ch_appcenter__chsub_9patch");
             param.put("uniqueId", getUniqueId());
 

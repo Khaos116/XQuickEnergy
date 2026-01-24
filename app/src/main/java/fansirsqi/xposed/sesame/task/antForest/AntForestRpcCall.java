@@ -13,8 +13,7 @@ import fansirsqi.xposed.sesame.entity.AlipayVersion;
 import fansirsqi.xposed.sesame.entity.RpcEntity;
 import fansirsqi.xposed.sesame.hook.ApplicationHook;
 import fansirsqi.xposed.sesame.hook.RequestManager;
-import fansirsqi.xposed.sesame.util.Log;
-import fansirsqi.xposed.sesame.util.RandomUtil;
+import fansirsqi.xposed.sesame.util.*;
 
 /** 森林 RPC 调用类 */
 public class AntForestRpcCall {
@@ -46,13 +45,13 @@ public class AntForestRpcCall {
 
     public static String queryFriendsEnergyRanking() {
         try {
-            JSONObject arg = new JSONObject();
+            JSONObject arg = MyUtils.myJSONObject();
             arg.put("source", "chInfo_ch_appcenter__chsub_9patch");
             arg.put("periodType", "total");
             arg.put("rankType", "energyRank");
             arg.put("version", VERSION);
             String param = "[" + arg + "]";
-            JSONObject correlationLocal = new JSONObject();
+            JSONObject correlationLocal = MyUtils.myJSONObject();
             correlationLocal.put("pathList", new JSONArray().put("friendRanking").put("myself").put("totalDatas"));
             String relationLocal = "[" + correlationLocal + "]";
             return RequestManager.requestString("alipay.antmember.forest.h5.queryEnergyRanking", param, relationLocal);
@@ -63,7 +62,7 @@ public class AntForestRpcCall {
 
     public static String queryTopEnergyChallengeRanking() {
         try {
-            JSONObject arg = new JSONObject();
+            JSONObject arg = MyUtils.myJSONObject();
             arg.put("source", "chInfo_ch_appcenter__chsub_9patch");
             String param = "[" + arg + "]";
             return RequestManager.requestString("alipay.antforest.forest.h5.queryTopEnergyChallengeRanking", param);
@@ -76,11 +75,11 @@ public class AntForestRpcCall {
     /** 批量获取好友能量信息（标准版） */
     public static String fillUserRobFlag(JSONArray userIdList) {
         try {
-            JSONObject arg = new JSONObject();
+            JSONObject arg = MyUtils.myJSONObject();
             arg.put("source", "chInfo_ch_appcenter__chsub_9patch");
             arg.put("userIdList", userIdList);
             String param = "[" + arg + "]";
-            JSONObject joRelationLocal = new JSONObject();
+            JSONObject joRelationLocal = MyUtils.myJSONObject();
             joRelationLocal.put("pathList", new JSONArray().put("friendRanking"));
             String relationLocal = "[" + joRelationLocal + "]";
             return RequestManager.requestString("alipay.antforest.forest.h5.fillUserRobFlag", param, relationLocal);
@@ -92,7 +91,7 @@ public class AntForestRpcCall {
     /** 批量获取好友能量信息（增强版 - PK排行榜专用） */
     public static String fillUserRobFlag(JSONArray userIdList, boolean needFillUserInfo) {
         try {
-            JSONObject arg = new JSONObject();
+            JSONObject arg = MyUtils.myJSONObject();
             arg.put("source", "chInfo_ch_appcenter__chsub_9patch");
             arg.put("userIdList", userIdList);
             arg.put("needFillUserInfo", needFillUserInfo);
@@ -104,9 +103,9 @@ public class AntForestRpcCall {
     }
 
     public static String queryHomePage() throws JSONException {
-        JSONObject requestObject = new JSONObject()
-                .put("activityParam", new JSONObject())
-                .put("configVersionMap", new JSONObject().put("wateringBubbleConfig", "0"))
+        JSONObject requestObject = MyUtils.myJSONObject()
+                .put("activityParam", MyUtils.myJSONObject())
+                .put("configVersionMap", MyUtils.myJSONObject().put("wateringBubbleConfig", "0"))
                 .put("skipWhackMole", false)
                 .put("source", "chInfo_ch_appcenter__chsub_9patch")
                 .put("version", VERSION);
@@ -123,8 +122,8 @@ public class AntForestRpcCall {
             if (fromAct == null) {
                 fromAct = "TAKE_LOOK_FRIEND";
             }
-            JSONObject arg = new JSONObject();
-            JSONObject arg1 = new JSONObject();
+            JSONObject arg = MyUtils.myJSONObject();
+            JSONObject arg1 = MyUtils.myJSONObject();
             arg1.put("wateringBubbleConfig", "0");
             arg.put("canRobFlags", "T,F,F,F,F");
             arg.put("configVersionMap", arg1);
@@ -143,7 +142,7 @@ public class AntForestRpcCall {
     /** 找能量方法 - 查找可收取能量的好友（带跳过用户列表） */
     public static String takeLook(JSONObject skipUsers) {
         try {
-            JSONObject requestData = new JSONObject();
+            JSONObject requestData = MyUtils.myJSONObject();
             requestData.put("contactsStatus", "N");
             requestData.put("exposedUserId", "");
             requestData.put("skipUsers", skipUsers);
@@ -161,7 +160,7 @@ public class AntForestRpcCall {
 
     public static RpcEntity energyRpcEntity(String bizType, String userId, long bubbleId) {
         try {
-            JSONObject args = new JSONObject();
+            JSONObject args = MyUtils.myJSONObject();
             JSONArray bubbleIds = new JSONArray();
             bubbleIds.put(bubbleId);
             args.put("bizType", bizType);
@@ -188,7 +187,7 @@ public class AntForestRpcCall {
     public static RpcEntity batchEnergyRpcEntity(String bizType, String userId, List<
             Long> bubbleIds)
             throws JSONException {
-        JSONObject arg = new JSONObject();
+        JSONObject arg = MyUtils.myJSONObject();
         arg.put("bizType", bizType);
         arg.put("bubbleIds", new JSONArray(bubbleIds));
         arg.put("fromAct", "BATCH_ROB_ENERGY");
@@ -202,7 +201,7 @@ public class AntForestRpcCall {
     /** 收取复活能量 */
     public static String collectRebornEnergy() {
         try {
-            JSONObject arg = new JSONObject();
+            JSONObject arg = MyUtils.myJSONObject();
             arg.put("source", "chInfo_ch_appcenter__chsub_9patch");
             String param = "[" + arg + "]";
             return RequestManager.requestString("alipay.antforest.forest.h5.collectRebornEnergy", param);
@@ -214,10 +213,10 @@ public class AntForestRpcCall {
 
     public static String transferEnergy(String targetUser, String bizNo, int energyId, boolean notifyFriend) {
         try {
-            JSONObject arg = new JSONObject();
+            JSONObject arg = MyUtils.myJSONObject();
             arg.put("bizNo", bizNo + UUID.randomUUID().toString());
             arg.put("energyId", energyId);
-            arg.put("extInfo", new JSONObject().put("sendChat", notifyFriend ? "Y" : "N"));
+            arg.put("extInfo", MyUtils.myJSONObject().put("sendChat", notifyFriend ? "Y" : "N"));
             arg.put("from", "friendIndex");
             arg.put("source", "chInfo_ch_appcenter__chsub_9patch");
             arg.put("targetUser", targetUser);
@@ -260,8 +259,8 @@ public class AntForestRpcCall {
     }
 
     public static String queryTaskList() throws JSONException {
-        JSONObject jo = new JSONObject();
-        jo.put("extend", new JSONObject());
+        JSONObject jo = MyUtils.myJSONObject();
+        jo.put("extend", MyUtils.myJSONObject());
         jo.put("fromAct", "home_task_list");
         jo.put("source", "chInfo_ch_appcenter__chsub_9patch");
         jo.put("version", VERSION);
@@ -270,8 +269,8 @@ public class AntForestRpcCall {
 
     /*青春特权道具任务状态查询🔍*/
     public static String queryTaskListV2(String firstTaskType) throws JSONException {
-        JSONObject jo = new JSONObject();
-        JSONObject extend = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
+        JSONObject extend = MyUtils.myJSONObject();
         extend.put("firstTaskType", firstTaskType); // DNHZ_SL_college,DXS_BHZ，DXS_JSQ
         jo.put("extend", extend);
         jo.put("fromAct", "home_task_list");
@@ -286,7 +285,7 @@ public class AntForestRpcCall {
     }
 
     public static String receiveTaskAward(String sceneCode, String taskType) throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("ignoreLimit", false);
         jo.put("requestType", "H5");
         jo.put("sceneCode", sceneCode);
@@ -297,7 +296,7 @@ public class AntForestRpcCall {
 
     /** 领取青春特权道具 */
     public static String receiveTaskAwardV2(String taskType) throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("ignoreLimit", false);
         jo.put("requestType", "H5");
         jo.put("sceneCode", "ANTFOREST_VITALITY_TASK");
@@ -308,7 +307,7 @@ public class AntForestRpcCall {
 
     public static String finishTask(String sceneCode, String taskType) throws JSONException {
         String outBizNo = taskType + "_" + RandomUtil.nextDouble();
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("outBizNo", outBizNo);
         jo.put("requestType", "H5");
         jo.put("sceneCode", sceneCode);
@@ -320,7 +319,7 @@ public class AntForestRpcCall {
 
     public static String antiepSign(String entityId, String userId, String sceneCode)
             throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("entityId", entityId);
         jo.put("requestType", "rpc");
         jo.put("sceneCode", sceneCode);
@@ -332,7 +331,7 @@ public class AntForestRpcCall {
 
     /** 查询背包道具列表 */
     public static String queryPropList(boolean onlyGive) throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("onlyGive", onlyGive ? "Y" : "");
         jo.put("source", "chInfo_ch_appcenter__chsub_9patch");
         jo.put("version", VERSION);
@@ -340,7 +339,7 @@ public class AntForestRpcCall {
     }
 
     public static String queryAnimalPropList() throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("source", "chInfo_ch_appcenter__chsub_9patch");
         return RequestManager.requestString("alipay.antforest.forest.h5.queryAnimalPropList", new JSONArray().put(jo).toString());
     }
@@ -348,7 +347,7 @@ public class AntForestRpcCall {
     /** 创建使用道具的请求数据 */
     private static JSONObject createConsumePropRequestData(String propGroup, String propId, String propType, Boolean secondConfirm)
             throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         if (propGroup != null && !propGroup.isEmpty()) {
             jo.put("propGroup", propGroup);
         }
@@ -386,7 +385,7 @@ public class AntForestRpcCall {
 
     public static String giveProp(String giveConfigId, String propId, String targetUserId)
             throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("giveConfigId", giveConfigId);
         jo.put("propId", propId);
         jo.put("source", "self_corner");
@@ -395,7 +394,7 @@ public class AntForestRpcCall {
     }
 
     public static String collectProp(String giveConfigId, String giveId) throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("giveConfigId", giveConfigId);
         jo.put("giveId", giveId);
         jo.put("source", "chInfo_ch_appcenter__chsub_9patch");
@@ -404,7 +403,7 @@ public class AntForestRpcCall {
 
     /** 收取能量炸弹卡 */
     public static String collectBombCardEnergy(String propId) throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("propId", propId);
         jo.put("source", "chInfo_ch_appcenter__chsub_9patch");
         return RequestManager.requestString("alipay.antforest.forest.h5.collectBombCardEnergy", new JSONArray().put(jo).toString());
@@ -425,7 +424,7 @@ public class AntForestRpcCall {
     }
 
     public static String exchangeBenefit(String spuId, String skuId) throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("sceneCode", "ANTFOREST_VITALITY");
         jo.put("requestId", System.currentTimeMillis() + "_" + RandomUtil.getRandomInt(17));
         jo.put("spuId", spuId);
@@ -436,21 +435,21 @@ public class AntForestRpcCall {
 
     /** 巡护保护地 */
     public static String queryUserPatrol() throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("source", "ant_forest");
         jo.put("timezoneId", "Asia/Shanghai");
         return RequestManager.requestString("alipay.antforest.forest.h5.queryUserPatrol", new JSONArray().put(jo).toString());
     }
 
     public static String queryMyPatrolRecord() throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("source", "ant_forest");
         jo.put("timezoneId", "Asia/Shanghai");
         return RequestManager.requestString("alipay.antforest.forest.h5.queryMyPatrolRecord", new JSONArray().put(jo).toString());
     }
 
     public static String switchUserPatrol(String targetPatrolId) throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("source", "ant_forest");
         jo.put("targetPatrolId", targetPatrolId);
         jo.put("timezoneId", "Asia/Shanghai");
@@ -534,7 +533,7 @@ public class AntForestRpcCall {
     /** 6秒拼手速 打地鼠 */
     public static String startWhackMole() throws JSONException
     {
-        JSONObject param = new JSONObject();
+        JSONObject param = MyUtils.myJSONObject();
         param.put("source", "senlinguangchangdadishu");
         return RequestManager.requestString(
                 "alipay.antforest.forest.h5.startWhackMole",
@@ -550,7 +549,7 @@ public class AntForestRpcCall {
     /** 打单个地鼠 道具 */
     public static String whackMole(long moleId, String token) throws JSONException
     {
-        JSONObject param = new JSONObject();
+        JSONObject param = MyUtils.myJSONObject();
         param.put("moleId", moleId);
         param.put("source", "senlinguangchangdadishu");
         param.put("token", token);
@@ -577,7 +576,7 @@ public class AntForestRpcCall {
         List<Integer> moleIdList = IntStream.rangeClosed(1, 15)
                 .boxed()
                 .collect(Collectors.toList());
-        JSONObject param = new JSONObject();
+        JSONObject param = MyUtils.myJSONObject();
         param.put("moleIdList", new JSONArray(moleIdList));
         param.put("settlementScene", "NORMAL");
         param.put("source", "senlinguangchangdadishu");
@@ -624,7 +623,7 @@ public class AntForestRpcCall {
     }
 
     public static String studentQqueryCheckInModel() throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("chInfo", "ch_appcollect__chsub_my-recentlyUsed");
         jo.put("skipTaskModule", false);
         return RequestManager.requestString("alipay.membertangram.biz.rpc.student.queryCheckInModel", new JSONArray().put(jo).toString());
@@ -632,7 +631,7 @@ public class AntForestRpcCall {
 
     /*青春特权领红包*/
     public static String studentCheckin() throws JSONException {
-        JSONObject jo = new JSONObject();
+        JSONObject jo = MyUtils.myJSONObject();
         jo.put("source", "chInfo_ch_appcenter__chsub_9patch");
         return RequestManager.requestString("alipay.membertangram.biz.rpc.student.checkIn", new JSONArray().put(jo).toString());
     }
@@ -704,7 +703,7 @@ public class AntForestRpcCall {
     public static String enterDrawActivityopengreen(String activityId, String sceneCode, String source)
             throws JSONException {
         // 根据抓包日志，正确的参数结构是直接传递，不需要requestData包装
-        JSONObject requestData = new JSONObject();
+        JSONObject requestData = MyUtils.myJSONObject();
         if (activityId != null && !activityId.isEmpty()) {
             requestData.put("activityId", activityId);
         } else {
@@ -722,7 +721,7 @@ public class AntForestRpcCall {
     /** 森林抽抽乐-请求任务列表（最终修复版） */
     public static String listTaskopengreen(String sceneCode, String source) throws JSONException {
         // 根据抓包日志，正确的参数结构是直接传递，不需要requestData包装
-        JSONObject requestData = new JSONObject();
+        JSONObject requestData = MyUtils.myJSONObject();
         requestData.put("requestType", "RPC");
         requestData.put("sceneCode", sceneCode); // 必须传递 sceneCode
         requestData.put("source", source); // 必须传递 source
@@ -736,7 +735,7 @@ public class AntForestRpcCall {
     public static String drawopengreen(String activityId, String sceneCode, String source, String userId)
             throws JSONException {
         // 根据抓包日志，正确的参数结构是直接传递，不需要requestData包装
-        JSONObject requestData = new JSONObject();
+        JSONObject requestData = MyUtils.myJSONObject();
         requestData.put("activityId", activityId);
         requestData.put("requestType", "RPC");
         requestData.put("sceneCode", sceneCode); // 必须传递 sceneCode
@@ -752,7 +751,7 @@ public class AntForestRpcCall {
     public static String receiveTaskAwardopengreen(String source, String sceneCode, String taskType)
             throws JSONException {
         // 根据抓包日志，正确的参数结构是直接传递，不需要requestData包装
-        JSONObject requestData = new JSONObject();
+        JSONObject requestData = MyUtils.myJSONObject();
         requestData.put("ignoreLimit", true);
         requestData.put("requestType", "RPC");
         requestData.put("sceneCode", sceneCode);
@@ -768,7 +767,7 @@ public class AntForestRpcCall {
     public static String exchangeTimesFromTaskopengreen(String activityId, String sceneCode, String source, String taskSceneCode, String taskType)
             throws JSONException {
         // 根据抓包日志，正确的参数结构是直接传递，不需要requestData包装
-        JSONObject requestData = new JSONObject();
+        JSONObject requestData = MyUtils.myJSONObject();
         requestData.put("activityId", activityId);
         requestData.put("requestType", "RPC");
         requestData.put("sceneCode", sceneCode);
@@ -784,7 +783,7 @@ public class AntForestRpcCall {
     /** 森林抽抽乐-任务-广告（支持普通版和活动版） */
     public static String finishTask4Chouchoule(String taskType, String sceneCode)
             throws JSONException {
-        JSONObject params = new JSONObject();
+        JSONObject params = MyUtils.myJSONObject();
         params.put("outBizNo", taskType + RandomUtil.getRandomTag());
         params.put("requestType", "RPC");
         params.put("sceneCode", sceneCode);
@@ -807,7 +806,7 @@ public class AntForestRpcCall {
     /** 完成森林抽抽乐任务（支持普通版和活动版） */
     public static String finishTaskopengreen(String taskType, String sceneCode)
             throws JSONException {
-        JSONObject params = new JSONObject();
+        JSONObject params = MyUtils.myJSONObject();
         params.put("outBizNo", taskType + RandomUtil.getRandomTag());
         params.put("requestType", "RPC");
         params.put("sceneCode", sceneCode);

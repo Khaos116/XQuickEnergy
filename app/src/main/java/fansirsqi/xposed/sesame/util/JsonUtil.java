@@ -378,7 +378,7 @@ public class JsonUtil {
                     int index = Integer.parseInt(part.replaceAll("\\D", "")); // 获取数组索引
                     current = ((JSONArray) current).get(index); // 从 JSONArray 获取值
                 } else {
-                    current = new JSONObject(current.toString()).get(part); // 将当前对象转为 JSONObject 并获取值
+                    current = MyUtils.myJSONObject(current.toString()).get(part); // 将当前对象转为 JSONObject 并获取值
                 }
             }
             return current; // 返回最终的值
@@ -398,13 +398,13 @@ public class JsonUtil {
             // 检查字符串是否为空或null
             if (jsonStr == null || jsonStr.trim().isEmpty()) {
                 Log.record(TAG, "收到空响应，可能是网络异常或服务端错误");
-                return new JSONObject(); // 返回空的JSONObject
+                return MyUtils.myJSONObject(); // 返回空的JSONObject
             }
-            return new JSONObject(jsonStr);
+            return MyUtils.myJSONObject(jsonStr);
         } catch (Exception e) {
             Log.record(TAG, "JSON解析失败: " + e.getMessage());
             Log.record(TAG, "原始响应: " + (jsonStr.length() > 200 ? jsonStr.substring(0, 200) + "..." : jsonStr));
-            return new JSONObject(); // 返回空的JSONObject
+            return MyUtils.myJSONObject(); // 返回空的JSONObject
         }
     }
 

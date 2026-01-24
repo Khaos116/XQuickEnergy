@@ -15,12 +15,9 @@ import fansirsqi.xposed.sesame.model.ModelGroup;
 import fansirsqi.xposed.sesame.model.modelFieldExt.SelectAndCountModelField;
 import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.task.TaskCommon;
-import fansirsqi.xposed.sesame.util.GlobalThreadPools;
-import fansirsqi.xposed.sesame.util.Log;
+import fansirsqi.xposed.sesame.util.*;
 import fansirsqi.xposed.sesame.util.maps.IdMapManager;
 import fansirsqi.xposed.sesame.util.maps.ReserveaMap;
-import fansirsqi.xposed.sesame.util.RandomUtil;
-import fansirsqi.xposed.sesame.util.ResChecker;
 import fansirsqi.xposed.sesame.data.Status;
 
 public class Reserve extends ModelTask {
@@ -68,7 +65,7 @@ public class Reserve extends ModelTask {
     public static void initReserve() {
         try {
             String response = ReserveRpcCall.queryTreeItemsForExchange();
-            JSONObject jsonResponse = new JSONObject(response);
+            JSONObject jsonResponse = MyUtils.myJSONObject(response);
             if (ResChecker.checkRes(TAG, jsonResponse)) {
                 JSONArray treeItems = jsonResponse.optJSONArray("treeItems");
                 if (treeItems != null) {
@@ -79,11 +76,11 @@ public class Reserve extends ModelTask {
                             continue;
                         }
                         // 过滤出 projectType 为 "RESERVE" 且 applyAction 为 "AVAILABLE" 的项目
-                        if ("RESERVE".equals(item.getString("projectType")) && "AVAILABLE".equals(item.getString("applyAction"))) {
+                        if ("RESERVE".equals(item.optString("projectType")) && "AVAILABLE".equals(item.optString("applyAction"))) {
                             // 将符合条件的项目添加到 ReserveIdMapUtil
-                            String itemId = item.getString("itemId");
-                            String itemName = item.getString("itemName");
-                            int energy = item.getInt("energy");
+                            String itemId = item.optString("itemId");
+                            String itemName = item.optString("itemName");
+                            int energy = item.optInt("energy");
                             IdMapManager.getInstance(ReserveaMap.class).add(itemId, itemName + "(" + energy + "g)");
                         }
                     }
@@ -114,7 +111,7 @@ public class Reserve extends ModelTask {
                 GlobalThreadPools.sleepCompat(RandomUtil.delay());
                 s = ReserveRpcCall.queryTreeItemsForExchange();
             }
-            JSONObject jo = new JSONObject(s);
+            JSONObject jo = MyUtils.myJSONObject(s);
             if (ResChecker.checkRes(TAG, jo)) {
                 JSONArray ja = jo.getJSONArray("treeItems");
                 for (int i = 0; i < ja.length(); i++) {
@@ -122,14 +119,14 @@ public class Reserve extends ModelTask {
                     if (!jo.has("projectType")) {
                         continue;
                     }
-                    if (!"RESERVE".equals(jo.getString("projectType"))) {
+                    if (!"RESERVE".equals(jo.optString("projectType"))) {
                         continue;
                     }
-                    if (!"AVAILABLE".equals(jo.getString("applyAction"))) {
+                    if (!"AVAILABLE".equals(jo.optString("applyAction"))) {
                         continue;
                     }
-                    String projectId = jo.getString("itemId");
-                    String itemName = jo.getString("itemName");
+                    String projectId = jo.optString("itemId");
+                    String itemName = jo.optString("itemName");
                     Map<String, Integer> map = reserveList.getValue();
                     for (Map.Entry<String, Integer> entry : map.entrySet()) {
                         if (Objects.equals(entry.getKey(), projectId)) {
@@ -142,7 +139,7 @@ public class Reserve extends ModelTask {
                     }
                 }
             } else {
-                Log.record(TAG, jo.getString("resultDesc"));
+                Log.record(TAG, jo.optString("resultDesc"));
             }
         } catch (Throwable t) {
             Log.printStackTrace(TAG, "animalReserve err:",t);
@@ -154,24 +151,24 @@ public class Reserve extends ModelTask {
     private boolean queryTreeForExchange(String projectId) {
         try {
             String s = ReserveRpcCall.queryTreeForExchange(projectId);
-            JSONObject jo = new JSONObject(s);
+            JSONObject jo = MyUtils.myJSONObject(s);
             if (ResChecker.checkRes(TAG, jo)) {
-                String applyAction = jo.getString("applyAction");
-                int currentEnergy = jo.getInt("currentEnergy");
+                String applyAction = jo.optString("applyAction");
+                int currentEnergy = jo.optInt("currentEnergy");
                 jo = jo.getJSONObject("exchangeableTree");
                 if ("AVAILABLE".equals(applyAction)) {
-                    if (currentEnergy >= jo.getInt("energy")) {
+                    if (currentEnergy >= jo.optInt("energy")) {
                         return true;
                     } else {
-                        Log.forest("领保护地🏕️[" + jo.getString("projectName") + "]#能量不足停止申请");
+                        Log.forest("领保护地🏕️[" + jo.optString("projectName") + "]#能量不足停止申请");
                         return false;
                     }
                 } else {
-                    Log.forest("领保护地🏕️[" + jo.getString("projectName") + "]#似乎没有了");
+                    Log.forest("领保护地🏕️[" + jo.optString("projectName") + "]#似乎没有了");
                     return false;
                 }
             } else {
-                Log.record(jo.getString("resultDesc"));
+                Log.record(jo.optString("resultDesc"));
                 Log.record(s);
             }
         } catch (Throwable t) {
@@ -190,7 +187,7 @@ public class Reserve extends ModelTask {
                 return;
             for (int applyCount = 1; applyCount <= count; applyCount++) {
                 s = ReserveRpcCall.exchangeTree(projectId);
-                jo = new JSONObject(s);
+                jo = MyUtils.myJSONObject(s);
                 if (ResChecker.checkRes(TAG, jo)) {
                     int vitalityAmount = jo.optInt("vitalityAmount", 0);
                     appliedTimes = Status.getReserveTimes(projectId) + 1;
@@ -199,7 +196,7 @@ public class Reserve extends ModelTask {
                     Log.forest(str);
                     Status.reserveToday(projectId, 1);
                 } else {
-                    //Log.record(jo.getString("resultDesc"));
+                    //Log.record(jo.optString("resultDesc"));
                     //Log.runtime(jo.toString());
                     Log.error("领保护地🏕️[" + itemName + "]#发生未知错误，停止申请");
                     // Statistics.reserveToday(projectId, count);

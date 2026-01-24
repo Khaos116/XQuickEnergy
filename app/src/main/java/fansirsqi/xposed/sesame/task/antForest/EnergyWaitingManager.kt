@@ -2,6 +2,7 @@ package fansirsqi.xposed.sesame.task.antForest
 
 import android.annotation.SuppressLint
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.TimeUtil
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineName
@@ -398,7 +399,7 @@ object EnergyWaitingManager {
                         try {
                             val userHomeResponse = AntForestRpcCall.queryFriendHomePage(task.userId, task.fromTag)
                             if (!userHomeResponse.isNullOrEmpty()) {
-                                val userHomeObj = JSONObject(userHomeResponse)
+                                val userHomeObj = MyUtils.myJSONObject(userHomeResponse)
                                 if (ForestUtil.shouldSkipWaitingDueToProtection(userHomeObj, task.produceTime)) {
                                     // 有保护罩覆盖，取消蹲点
                                     val shieldEnd = ForestUtil.getShieldEndTime(userHomeObj)
@@ -921,7 +922,7 @@ object EnergyWaitingManager {
                             return@forEach
                         }
 
-                        val userHomeObj = JSONObject(userHomeResponse)
+                        val userHomeObj = MyUtils.myJSONObject(userHomeResponse)
 
                         // 好友账号：如果保护罩覆盖能量成熟期则移除
                         if (ForestUtil.shouldSkipWaitingDueToProtection(userHomeObj, task.produceTime)) {

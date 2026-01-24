@@ -8,8 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import fansirsqi.xposed.sesame.util.JsonUtil;
-import fansirsqi.xposed.sesame.util.Log;
+import fansirsqi.xposed.sesame.util.*;
 import lombok.Getter;
 import lombok.Setter;
 import okhttp3.MediaType;
@@ -59,12 +58,12 @@ public class TongyiAI implements AnswerAIInterface {
                     .writeTimeout(30, TimeUnit.SECONDS)   // 设置写超时时间为 30 秒
                     .readTimeout(30, TimeUnit.SECONDS)    // 设置读超时时间为 30 秒
                     .build();
-            JSONObject contentObject = new JSONObject();
+            JSONObject contentObject = MyUtils.myJSONObject();
             contentObject.put("role", "user");
             contentObject.put("content", text);
             JSONArray messageArray = new JSONArray();
             messageArray.put(contentObject);
-            JSONObject bodyObject = new JSONObject();
+            JSONObject bodyObject = MyUtils.myJSONObject();
             bodyObject.put("model", this.modelName);
             bodyObject.put("messages", messageArray);
             RequestBody body = RequestBody.create(bodyObject.toString(), MediaType.parse(CONTENT_TYPE));
@@ -84,7 +83,7 @@ public class TongyiAI implements AnswerAIInterface {
                 Log.record(TAG,"Tongyi接口异常：" + json);
                 return result;
             }
-            JSONObject jsonObject = new JSONObject(json);
+            JSONObject jsonObject = MyUtils.myJSONObject(json);
             result = JsonUtil.getValueByPath(jsonObject, JSON_PATH);
         } catch (JSONException | IOException e) {
             Log.printStackTrace(TAG, e);

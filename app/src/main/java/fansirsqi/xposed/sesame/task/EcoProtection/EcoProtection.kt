@@ -11,6 +11,7 @@ import fansirsqi.xposed.sesame.task.ModelTask
 import fansirsqi.xposed.sesame.task.TaskCommon
 import fansirsqi.xposed.sesame.util.GlobalThreadPools.sleepCompat
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.ResChecker
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -86,7 +87,7 @@ class EcoProtection : ModelTask() {
 
         private fun ancientTreeProtect(cityCode: String) {
             try {
-                val jo = JSONObject(EcoProtectionRpcCall.homePage(cityCode))
+                val jo = MyUtils.myJSONObject(EcoProtectionRpcCall.homePage(cityCode))
                 if (ResChecker.checkRes(TAG, jo)) {
                     val data = jo.getJSONObject("data")
                     if (!data.has("districtBriefInfoList")) {
@@ -98,7 +99,7 @@ class EcoProtection : ModelTask() {
                         val userCanProtectTreeNum = districtBriefInfo.optInt("userCanProtectTreeNum", 0)
                         if (userCanProtectTreeNum < 1) continue
                         val districtInfo = districtBriefInfo.getJSONObject("districtInfo")
-                        val districtCode = districtInfo.getString("districtCode")
+                        val districtCode = districtInfo.optString("districtCode")
                         districtDetail(districtCode)
                         sleepCompat(1000L)
                     }
@@ -111,16 +112,16 @@ class EcoProtection : ModelTask() {
 
         private fun districtDetail(districtCode: String?) {
             try {
-                var jo = JSONObject(EcoProtectionRpcCall.districtDetail(districtCode))
+                var jo = MyUtils.myJSONObject(EcoProtectionRpcCall.districtDetail(districtCode))
                 if (ResChecker.checkRes(TAG, jo)) {
                     var data = jo.getJSONObject("data")
                     if (!data.has("ancientTreeList")) {
                         return
                     }
                     val districtInfo = data.getJSONObject("districtInfo")
-                    var cityCode = districtInfo.getString("cityCode")
-                    val cityName = districtInfo.getString("cityName")
-                    val districtName = districtInfo.getString("districtName")
+                    var cityCode = districtInfo.optString("cityCode")
+                    val cityName = districtInfo.optString("cityName")
+                    val districtName = districtInfo.optString("districtName")
                     val ancientTreeList = data.getJSONArray("ancientTreeList")
                     for (i in 0..<ancientTreeList.length()) {
                         val ancientTreeItem = ancientTreeList.getJSONObject(i)
@@ -129,35 +130,35 @@ class EcoProtection : ModelTask() {
                         val quota = ancientTreeControlInfo.optInt("quota", 0)
                         val useQuota = ancientTreeControlInfo.optInt("useQuota", 0)
                         if (quota <= useQuota) continue
-                        val itemId = ancientTreeItem.getString("projectId")
-                        val ancientTreeDetail = JSONObject(EcoProtectionRpcCall.projectDetail(itemId, cityCode))
+                        val itemId = ancientTreeItem.optString("projectId")
+                        val ancientTreeDetail = MyUtils.myJSONObject(EcoProtectionRpcCall.projectDetail(itemId, cityCode))
                         if (ResChecker.checkRes(TAG, ancientTreeDetail)) {
                             data = ancientTreeDetail.getJSONObject("data")
                             if (data.getBoolean("canProtect")) {
-                                val currentEnergy = data.getInt("currentEnergy")
+                                val currentEnergy = data.optInt("currentEnergy")
                                 val ancientTree = data.getJSONObject("ancientTree")
-                                val activityId = ancientTree.getString("activityId")
-                                val projectId = ancientTree.getString("projectId")
+                                val activityId = ancientTree.optString("activityId")
+                                val projectId = ancientTree.optString("projectId")
                                 val ancientTreeInfo = ancientTree.getJSONObject("ancientTreeInfo")
-                                val name = ancientTreeInfo.getString("name")
-                                val age = ancientTreeInfo.getInt("age")
-                                val protectExpense = ancientTreeInfo.getInt("protectExpense")
-                                cityCode = ancientTreeInfo.getString("cityCode")
+                                val name = ancientTreeInfo.optString("name")
+                                val age = ancientTreeInfo.optInt("age")
+                                val protectExpense = ancientTreeInfo.optInt("protectExpense")
+                                cityCode = ancientTreeInfo.optString("cityCode")
                                 if (currentEnergy < protectExpense) break
                                 sleepCompat(200)
-                                jo = JSONObject(EcoProtectionRpcCall.protect(activityId, projectId, cityCode))
+                                jo = MyUtils.myJSONObject(EcoProtectionRpcCall.protect(activityId, projectId, cityCode))
                                 if (ResChecker.checkRes(TAG, jo)) {
                                     Log.forest(
                                         ("保护古树🎐[" + cityName + "-" + districtName
                                                 + "]#" + age + "年" + name + ",消耗能量" + protectExpense + "g")
                                     )
                                 } else {
-                                    Log.record(jo.getString("resultDesc"))
+                                    Log.record(jo.optString("resultDesc"))
                                     Log.record(jo.toString())
                                 }
                             }
                         } else {
-                            Log.record(jo.getString("resultDesc"))
+                            Log.record(jo.optString("resultDesc"))
                             Log.record(ancientTreeDetail.toString())
                         }
                         sleepCompat(500L)

@@ -4,8 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-import fansirsqi.xposed.sesame.util.Files;
-import fansirsqi.xposed.sesame.util.Log;
+
+import fansirsqi.xposed.sesame.util.*;
+
 /**
  * 区域代码类，继承自IdAndName。
  * 该类用于管理城市代码和城市名称。
@@ -60,12 +61,12 @@ public class AreaCode extends MapperEntity {
             // 解析失败，使用默认城市代码
             Log.record(TAG, "parseCityCode failed with error message: " + e.getMessage()+"\n Now use default cities.");
             JSONArray defaultCities = new JSONArray();
-            defaultCities.put(new JSONObject().put("cityCode", "350100").put("cityName", "福州市"));
-            defaultCities.put(new JSONObject().put("cityCode", "440100").put("cityName", "广州市"));
-            defaultCities.put(new JSONObject().put("cityCode", "330100").put("cityName", "杭州市"));
-            defaultCities.put(new JSONObject().put("cityCode", "370100").put("cityName", "济南市"));
-            defaultCities.put(new JSONObject().put("cityCode", "320100").put("cityName", "南京市"));
-            defaultCities.put(new JSONObject().put("cityCode", "430100").put("cityName", "长沙市"));
+            defaultCities.put(MyUtils.myJSONObject().put("cityCode", "350100").put("cityName", "福州市"));
+            defaultCities.put(MyUtils.myJSONObject().put("cityCode", "440100").put("cityName", "广州市"));
+            defaultCities.put(MyUtils.myJSONObject().put("cityCode", "330100").put("cityName", "杭州市"));
+            defaultCities.put(MyUtils.myJSONObject().put("cityCode", "370100").put("cityName", "济南市"));
+            defaultCities.put(MyUtils.myJSONObject().put("cityCode", "320100").put("cityName", "南京市"));
+            defaultCities.put(MyUtils.myJSONObject().put("cityCode", "430100").put("cityName", "长沙市"));
             return defaultCities;
         }
     }

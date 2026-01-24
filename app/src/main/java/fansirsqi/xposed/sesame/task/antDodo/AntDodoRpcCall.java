@@ -3,6 +3,7 @@ package fansirsqi.xposed.sesame.task.antDodo;
 import org.json.JSONObject;
 
 import fansirsqi.xposed.sesame.hook.RequestManager;
+import fansirsqi.xposed.sesame.util.MyUtils;
 import fansirsqi.xposed.sesame.util.RandomUtil;
 
 public class AntDodoRpcCall {
@@ -114,7 +115,7 @@ public class AntDodoRpcCall {
     public static String queryBookList(int pageSize, String pageStart) {
         try {
             // 使用 JSONObject 构造可以避免手动拼接字符串导致的转义和逗号错误
-            JSONObject params = new JSONObject();
+            JSONObject params = MyUtils.myJSONObject();
             params.put("pageSize", pageSize);
             params.put("v2", "true");
 

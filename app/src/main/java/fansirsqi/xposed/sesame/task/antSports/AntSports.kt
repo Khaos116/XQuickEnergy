@@ -441,9 +441,9 @@ class AntSports : ModelTask() {
 
                 for (i in 0 until taskList.length()) {
                     val taskDetail = taskList.getJSONObject(i)
-                    val taskId = taskDetail.getString("taskId")
-                    val taskName = taskDetail.getString("taskName")
-                    val taskStatus = taskDetail.getString("taskStatus")
+                    val taskId = taskDetail.optString("taskId")
+                    val taskName = taskDetail.optString("taskName")
+                    val taskStatus = taskDetail.optString("taskStatus")
                     val taskType = taskDetail.optString("taskType", "")
 
                     // 排除自动结算任务
@@ -501,8 +501,8 @@ class AntSports : ModelTask() {
      */
     private fun receiveTaskReward(taskDetail: JSONObject, taskName: String): Boolean {
         return try {
-            val assetId = taskDetail.getString("assetId")
-            val prizeAmount = taskDetail.getInt("prizeAmount").toString()
+            val assetId = taskDetail.optString("assetId")
+            val prizeAmount = taskDetail.optInt("prizeAmount").toString()
 
             val result = AntSportsRpcCall.pickBubbleTaskEnergy(assetId)
             val resultData = MyUtils.myJSONObject(result)
@@ -531,10 +531,10 @@ class AntSports : ModelTask() {
      */
     private fun completeTask(taskDetail: JSONObject, taskName: String): Boolean {
         return try {
-            val taskId = taskDetail.getString("taskId")
-            val prizeAmount = taskDetail.getString("prizeAmount")
-            val currentNum = taskDetail.getInt("currentNum")
-            val limitConfigNum = taskDetail.getInt("limitConfigNum")
+            val taskId = taskDetail.optString("taskId")
+            val prizeAmount = taskDetail.optString("prizeAmount")
+            val currentNum = taskDetail.optInt("currentNum")
+            val limitConfigNum = taskDetail.optInt("limitConfigNum")
             val remainingNum = limitConfigNum - currentNum
             val needSignUp = taskDetail.optBoolean("needSignUp", false)
 
@@ -704,7 +704,7 @@ class AntSports : ModelTask() {
                         val itemSigned = configItem.getBoolean("signed")
 
                         if (toDay && !itemSigned) {
-                            val coinAmount = configItem.getInt("coinAmount")
+                            val coinAmount = configItem.optInt("coinAmount")
                             val signJo = MyUtils.myJSONObject(AntSportsRpcCall.signInCoinTask("signIn"))
                             if (ResChecker.checkRes(TAG, signJo)) {
                                 val signData = signJo.getJSONObject("data")
@@ -713,9 +713,9 @@ class AntSports : ModelTask() {
                                 else MyUtils.myJSONObject()
 
                                 val expireDays = if (subscribeConfig.has("subscribeExpireDays"))
-                                    subscribeConfig.getString("subscribeExpireDays")
+                                    subscribeConfig.optString("subscribeExpireDays")
                                 else "未知"
-                                val toast = if (signData.has("toast")) signData.getString("toast") else ""
+                                val toast = if (signData.has("toast")) signData.optString("toast") else ""
 
                                 Log.other(
                                     "做任务得能量🎈[签到${expireDays}天|" +
@@ -753,8 +753,8 @@ class AntSports : ModelTask() {
                 val ja = data.getJSONArray("receiveCoinBubbleList")
                 for (i in 0 until ja.length()) {
                     jo = ja.getJSONObject(i)
-                    val assetId = jo.getString("assetId")
-                    val coinAmount = jo.getInt("coinAmount")
+                    val assetId = jo.optString("assetId")
+                    val coinAmount = jo.optInt("coinAmount")
                     val res = MyUtils.myJSONObject(AntSportsRpcCall.receiveCoinAsset(assetId, coinAmount))
                     if (ResChecker.checkRes(TAG, res)) {
                         Log.other("收集金币💰[$coinAmount 个]")
@@ -800,8 +800,8 @@ class AntSports : ModelTask() {
             val userPathStep = path.getJSONObject("userPathStep")
 
             //如果是 JOIN 则还没走完
-            if ("COMPLETED" == userPathStep.getString("pathCompleteStatus")) {
-                Log.record(TAG, "行走路线🚶🏻‍♂️路线[${userPathStep.getString("pathName")}]已完成")
+            if ("COMPLETED" == userPathStep.optString("pathCompleteStatus")) {
+                Log.record(TAG, "行走路线🚶🏻‍♂️路线[${userPathStep.optString("pathName")}]已完成")
                 // 获取新路线 ID
                 val newPathId = queryJoinPath(walkPathThemeId)    //walkPathThemeId 在进入walk()之前已经获取了
                 if (!newPathId.isNullOrEmpty()) {
@@ -814,15 +814,15 @@ class AntSports : ModelTask() {
             }
 
             val pathObj = path.getJSONObject("path")
-            val minGoStepCount = pathObj.getInt("minGoStepCount")
-            val pathStepCount = pathObj.getInt("pathStepCount")
-            val forwardStepCount = userPathStep.getInt("forwardStepCount")
-            val remainStepCount = userPathStep.getInt("remainStepCount")
+            val minGoStepCount = pathObj.optInt("minGoStepCount")
+            val pathStepCount = pathObj.optInt("pathStepCount")
+            val forwardStepCount = userPathStep.optInt("forwardStepCount")
+            val remainStepCount = userPathStep.optInt("remainStepCount")
             val needStepCount = pathStepCount - forwardStepCount
 
             if (remainStepCount >= minGoStepCount) {
                 val useStepCount = min(remainStepCount, needStepCount)
-                walkGo(userPathStep.getString("pathId"), useStepCount, userPathStep.getString("pathName"))
+                walkGo(userPathStep.optString("pathId"), useStepCount, userPathStep.optString("pathName"))
             }
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "walk err:", t)
@@ -901,7 +901,7 @@ class AntSports : ModelTask() {
                 val ja = jo.getJSONObject("data").getJSONArray("treasureBoxList")
                 for (i in 0 until ja.length()) {
                     val treasureBox = ja.getJSONObject(i)
-                    receiveEvent(treasureBox.getString("boxNo"))
+                    receiveEvent(treasureBox.optString("boxNo"))
                 }
             } else {
                 Log.error(TAG, "queryPath失败： $jo")
@@ -964,7 +964,7 @@ class AntSports : ModelTask() {
                 val reward = ja.getJSONObject(i)
                 Log.record(
                     TAG,
-                    "行走路线🎁开启宝箱[${reward.getString("rewardName")}]*${reward.getInt("count")}"
+                    "行走路线🎁开启宝箱[${reward.optString("rewardName")}]*${reward.optInt("count")}"
                 )
             }
         } catch (t: Throwable) {
@@ -988,13 +988,13 @@ class AntSports : ModelTask() {
             }
             val cityList = theme.getJSONArray("cityList")
             for (i in 0 until cityList.length()) {
-                val cityId = cityList.getJSONObject(i).getString("cityId")
+                val cityId = cityList.getJSONObject(i).optString("cityId")
                 val city = queryCityPath(cityId) ?: continue
                 val cityPathList = city.getJSONArray("cityPathList")
                 for (j in 0 until cityPathList.length()) {
                     val cityPath = cityPathList.getJSONObject(j)
-                    pathId = cityPath.getString("pathId")
-                    if ("COMPLETED" != cityPath.getString("pathCompleteStatus")) {
+                    pathId = cityPath.optString("pathId")
+                    if ("COMPLETED" != cityPath.optString("pathCompleteStatus")) {
                         return pathId
                     }
                 }
@@ -1018,7 +1018,7 @@ class AntSports : ModelTask() {
             val jo = MyUtils.myJSONObject(AntSportsRpcCall.joinPath(realPathId))
             if (ResChecker.checkRes(TAG, jo)) {
                 val path = queryPath(realPathId)
-                Log.record(TAG, "行走路线🚶🏻‍♂️路线[${path?.getJSONObject("path")?.getString("name")}]已加入")
+                Log.record(TAG, "行走路线🚶🏻‍♂️路线[${path?.getJSONObject("path")?.optString("name")}]已加入")
             } else {
                 Log.error(TAG, "行走路线🚶🏻‍♂️路线[$realPathId]有误，无法加入！")
             }
@@ -1052,10 +1052,10 @@ class AntSports : ModelTask() {
             var s = AntSportsRpcCall.queryMyHomePage()
             var jo = MyUtils.myJSONObject(s)
             if (ResChecker.checkRes(TAG, jo)) {
-                val pathJoinStatus = jo.getString("pathJoinStatus")
+                val pathJoinStatus = jo.optString("pathJoinStatus")
                 if ("GOING" == pathJoinStatus) {
                     if (jo.has("pathCompleteStatus")) {
-                        if ("COMPLETED" == jo.getString("pathCompleteStatus")) {
+                        if ("COMPLETED" == jo.optString("pathCompleteStatus")) {
                             jo = MyUtils.myJSONObject(AntSportsRpcCall.queryBaseList())
                             if (ResChecker.checkRes(TAG, jo)) {
                                 val allPathBaseInfoList = jo.getJSONArray("allPathBaseInfoList")
@@ -1064,29 +1064,29 @@ class AntSports : ModelTask() {
                                     .getJSONArray("allPathBaseInfoList")
                                 join(loader, allPathBaseInfoList, otherAllPathBaseInfoList, "")
                             } else {
-                                Log.record(TAG, jo.getString("resultDesc"))
+                                Log.record(TAG, jo.optString("resultDesc"))
                             }
                         }
                     } else {
-                        val rankCacheKey = jo.getString("rankCacheKey")
+                        val rankCacheKey = jo.optString("rankCacheKey")
                         val ja = jo.getJSONArray("treasureBoxModelList")
                         for (i in 0 until ja.length()) {
                             parseTreasureBoxModel(loader, ja.getJSONObject(i), rankCacheKey)
                         }
                         val joPathRender = jo.getJSONObject("pathRenderModel")
-                        val title = joPathRender.getString("title")
-                        val minGoStepCount = joPathRender.getInt("minGoStepCount")
+                        val title = joPathRender.optString("title")
+                        val minGoStepCount = joPathRender.optInt("minGoStepCount")
                         jo = jo.getJSONObject("dailyStepModel")
-                        val consumeQuantity = jo.getInt("consumeQuantity")
-                        val produceQuantity = jo.getInt("produceQuantity")
-                        val day = jo.getString("day")
+                        val consumeQuantity = jo.optInt("consumeQuantity")
+                        val produceQuantity = jo.optInt("produceQuantity")
+                        val day = jo.optString("day")
                         val canMoveStepCount = produceQuantity - consumeQuantity
                         if (canMoveStepCount >= minGoStepCount) {
                             go(loader, day, rankCacheKey, canMoveStepCount, title)
                         }
                     }
                 } else if ("NOT_JOIN" == pathJoinStatus) {
-                    val firstJoinPathTitle = jo.getString("firstJoinPathTitle")
+                    val firstJoinPathTitle = jo.optString("firstJoinPathTitle")
                     val allPathBaseInfoList = jo.getJSONArray("allPathBaseInfoList")
                     val otherAllPathBaseInfoList = jo.getJSONArray("otherAllPathBaseInfoList")
                         .getJSONObject(0)
@@ -1094,7 +1094,7 @@ class AntSports : ModelTask() {
                     join(loader, allPathBaseInfoList, otherAllPathBaseInfoList, firstJoinPathTitle)
                 }
             } else {
-                Log.record(TAG, jo.getString("resultDesc"))
+                Log.record(TAG, jo.optString("resultDesc"))
             }
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "queryMyHomePage err:", t)
@@ -1119,8 +1119,8 @@ class AntSports : ModelTask() {
             for (i in allPathBaseInfoList.length() - 1 downTo 0) {
                 jo = allPathBaseInfoList.getJSONObject(i)
                 if (jo.getBoolean("unlocked")) {
-                    title = jo.getString("title")
-                    pathId = jo.getString("pathId")
+                    title = jo.optString("title")
+                    pathId = jo.optString("pathId")
                     index = i
                     break
                 }
@@ -1130,8 +1130,8 @@ class AntSports : ModelTask() {
                     jo = otherAllPathBaseInfoList.getJSONObject(j)
                     if (jo.getBoolean("unlocked")) {
                         if (j != otherAllPathBaseInfoList.length() - 1 || index != allPathBaseInfoList.length() - 1) {
-                            title = jo.getString("title")
-                            pathId = jo.getString("pathId")
+                            title = jo.optString("title")
+                            pathId = jo.optString("pathId")
                             index = j
                         }
                         break
@@ -1149,7 +1149,7 @@ class AntSports : ModelTask() {
                     Log.other("加入线路🚶🏻‍♂️[$title]")
                     queryMyHomePage(loader)
                 } else {
-                    Log.record(TAG, jo.getString("resultDesc"))
+                    Log.record(TAG, jo.optString("resultDesc"))
                 }
             } else {
                 Log.record(TAG, "好像没有可走的线路了！")
@@ -1167,8 +1167,8 @@ class AntSports : ModelTask() {
             val s = AntSportsRpcCall.go(day, rankCacheKey, stepCount)
             val jo = MyUtils.myJSONObject(s)
             if (ResChecker.checkRes(TAG, jo)) {
-                Log.other("行走线路🚶🏻‍♂️[$title]#前进了${jo.getInt("goStepCount")}步")
-                val completed = "COMPLETED" == jo.getString("completeStatus")
+                Log.other("行走线路🚶🏻‍♂️[$title]#前进了${jo.optInt("goStepCount")}步")
+                val completed = "COMPLETED" == jo.optString("completeStatus")
                 val ja = jo.getJSONArray("allTreasureBoxModelList")
                 for (i in 0 until ja.length()) {
                     parseTreasureBoxModel(loader, ja.getJSONObject(i), rankCacheKey)
@@ -1178,7 +1178,7 @@ class AntSports : ModelTask() {
                     queryMyHomePage(loader)
                 }
             } else {
-                Log.record(TAG, jo.getString("resultDesc"))
+                Log.record(TAG, jo.optString("resultDesc"))
             }
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "go err:", t)
@@ -1190,10 +1190,10 @@ class AntSports : ModelTask() {
      */
     private fun parseTreasureBoxModel(loader: ClassLoader, jo: JSONObject, rankCacheKey: String) {
         try {
-            val canOpenTime = jo.getString("canOpenTime")
-            val issueTime = jo.getString("issueTime")
-            val boxNo = jo.getString("boxNo")
-            val userId = jo.getString("userId")
+            val canOpenTime = jo.optString("canOpenTime")
+            val issueTime = jo.optString("issueTime")
+            val boxNo = jo.optString("boxNo")
+            val userId = jo.optString("userId")
             if (canOpenTime == issueTime) {
                 openTreasureBox(boxNo, userId)
             } else {
@@ -1245,15 +1245,15 @@ class AntSports : ModelTask() {
                 var num = 0
                 for (i in 0 until ja.length()) {
                     jo = ja.getJSONObject(i)
-                    num += jo.getInt("num")
-                    Log.other("运动宝箱🎁[$num${jo.getString("name")}]")
+                    num += jo.optInt("num")
+                    Log.other("运动宝箱🎁[$num${jo.optString("name")}]")
                 }
                 return num
-            } else if ("TREASUREBOX_NOT_EXIST" == jo.getString("resultCode")) {
-                Log.record(jo.getString("resultDesc"))
+            } else if ("TREASUREBOX_NOT_EXIST" == jo.optString("resultCode")) {
+                Log.record(jo.optString("resultDesc"))
                 return 1
             } else {
-                Log.record(jo.getString("resultDesc"))
+                Log.record(jo.optString("resultDesc"))
             }
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "openTreasureBox err:", t)
@@ -1272,19 +1272,19 @@ class AntSports : ModelTask() {
         try {
             var jo = MyUtils.myJSONObject(AntSportsRpcCall.queryProjectList(0))
             if (ResChecker.checkRes(TAG, jo)) {
-                var charityCoinCount = jo.getInt("charityCoinCount")
+                var charityCoinCount = jo.optInt("charityCoinCount")
                 if (charityCoinCount < donateCharityCoinAmount.value) return
 
                 val ja = jo.getJSONObject("projectPage").getJSONArray("data")
                 for (i in 0 until ja.length()) {
                     if (charityCoinCount < donateCharityCoinAmount.value) break
                     val basicModel = ja.getJSONObject(i).getJSONObject("basicModel")
-                    if ("DONATE_COMPLETED" == basicModel.getString("footballFieldStatus")) break
+                    if ("DONATE_COMPLETED" == basicModel.optString("footballFieldStatus")) break
                     donate(
                         loader,
                         donateCharityCoinAmount.value,
-                        basicModel.getString("projectId"),
-                        basicModel.getString("title")
+                        basicModel.optString("projectId"),
+                        basicModel.optString("title")
                     )
                     Status.donateCharityCoin()
                     charityCoinCount -= donateCharityCoinAmount.value
@@ -1292,7 +1292,7 @@ class AntSports : ModelTask() {
                 }
             } else {
                 Log.record(TAG)
-                Log.record(jo.getString("resultDesc"))
+                Log.record(jo.optString("resultDesc"))
             }
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "queryProjectList err:", t)
@@ -1309,7 +1309,7 @@ class AntSports : ModelTask() {
             if (ResChecker.checkRes(TAG, jo)) {
                 Log.other("捐赠活动❤️[$title][$donateCharityCoin 能量🎈]")
             } else {
-                Log.record(TAG, jo.getString("resultDesc"))
+                Log.record(TAG, jo.optString("resultDesc"))
             }
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "donate err:", t)
@@ -1325,7 +1325,7 @@ class AntSports : ModelTask() {
             var jo = MyUtils.myJSONObject(s)
             if (ResChecker.checkRes(TAG, jo)) {
                 jo = jo.getJSONObject("dailyStepModel")
-                val produceQuantity = jo.getInt("produceQuantity")
+                val produceQuantity = jo.optInt("produceQuantity")
                 val hour = TimeUtil.getFormatTime().split(":").first().toInt()
 
                 if (produceQuantity >= minExchangeCount.value || hour >= latestExchangeTime.value) {
@@ -1339,25 +1339,25 @@ class AntSports : ModelTask() {
                         Status.exchangeToday(UserMap.currentUid ?: return)
                         return
                     }
-                    val donateToken = walkDonateHomeModel.getString("donateToken")
+                    val donateToken = walkDonateHomeModel.optString("donateToken")
                     val walkCharityActivityModel = walkDonateHomeModel.getJSONObject("walkCharityActivityModel")
-                    val activityId = walkCharityActivityModel.getString("activityId")
+                    val activityId = walkCharityActivityModel.optString("activityId")
                     s = AntSportsRpcCall.exchange(activityId, produceQuantity, donateToken)
                     jo = MyUtils.myJSONObject(s)
                     if (jo.getBoolean("isSuccess")) {
                         val donateExchangeResultModel = jo.getJSONObject("donateExchangeResultModel")
-                        val userCount = donateExchangeResultModel.getInt("userCount")
+                        val userCount = donateExchangeResultModel.optInt("userCount")
                         val amount = donateExchangeResultModel.getJSONObject("userAmount").getDouble("amount")
                         Log.other("捐出活动❤️[$userCount 步]#兑换$amount 元公益金")
                         Status.exchangeToday(UserMap.currentUid ?: return)
                     } else if (s.contains("已捐步")) {
                         Status.exchangeToday(UserMap.currentUid ?: return)
                     } else {
-                        Log.record(TAG, jo.getString("resultDesc"))
+                        Log.record(TAG, jo.optString("resultDesc"))
                     }
                 }
             } else {
-                Log.record(TAG, jo.getString("resultDesc"))
+                Log.record(TAG, jo.optString("resultDesc"))
             }
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "queryWalkStep err:", t)
@@ -1380,10 +1380,10 @@ class AntSports : ModelTask() {
                 val userTaskList = jo.getJSONArray("userTaskList")
                 for (i in 0 until userTaskList.length()) {
                     jo = userTaskList.getJSONObject(i)
-                    if ("TODO" != jo.getString("status")) continue
+                    if ("TODO" != jo.optString("status")) continue
                     val taskInfo = jo.getJSONObject("taskInfo")
-                    val bizType = taskInfo.getString("bizType")
-                    val taskId = taskInfo.getString("taskId")
+                    val bizType = taskInfo.optString("bizType")
+                    val taskId = taskInfo.optString("taskId")
                     val res = MyUtils.myJSONObject(AntSportsRpcCall.userTaskComplete(bizType, taskId))
                     if (ResChecker.checkRes(TAG, res)) {
                         val taskName = taskInfo.optString("taskName", taskId)
@@ -1416,20 +1416,20 @@ class AntSports : ModelTask() {
                     val dataList = jo.getJSONArray("dataList")
                     for (i in 0 until dataList.length()) {
                         jo = dataList.getJSONObject(i)
-                        if ("P" != jo.getString("status")) continue
+                        if ("P" != jo.optString("status")) continue
                         if (jo.has("userRecord")) continue
                         val instanceList = jo.getJSONArray("instanceList")
                         var pointOptions = 0
-                        val roundId = jo.getString("id")
+                        val roundId = jo.optString("id")
                         var instanceId: String? = null
                         var resultId: String? = null
 
                         for (j in instanceList.length() - 1 downTo 0) {
                             val inst = instanceList.getJSONObject(j)
-                            if (inst.getInt("pointOptions") < pointOptions) continue
-                            pointOptions = inst.getInt("pointOptions")
-                            instanceId = inst.getString("id")
-                            resultId = inst.getString("instanceResultId")
+                            if (inst.optInt("pointOptions") < pointOptions) continue
+                            pointOptions = inst.optInt("pointOptions")
+                            instanceId = inst.optString("id")
+                            resultId = inst.optString("instanceResultId")
                         }
                         //{"error":3000,"errorMessage":"系统出错，正在排查","errorNo":3,"errorTip":"3000"}
                         val key = "${pointOptions}_${instanceId}_${resultId}_${roundId}"
@@ -1447,8 +1447,8 @@ class AntSports : ModelTask() {
                         MyUtils.setSp功能异常(key, res)
                         if (ResChecker.checkRes(TAG, res)) {
                             val data = res.getJSONObject("data")
-                            val roundDescription = data.getString("roundDescription")
-                            val targetStepCount = data.getInt("targetStepCount")
+                            val roundDescription = data.optString("roundDescription")
+                            val targetStepCount = data.optInt("targetStepCount")
                             Log.other("走路挑战🚶🏻‍♂️[$roundDescription]#$targetStepCount")
                         } else {
                             Log.record(TAG, "走路挑战赛 $res")
@@ -1475,10 +1475,10 @@ class AntSports : ModelTask() {
                 val userTaskList = jo.getJSONArray("userTaskList")
                 for (i in 0 until userTaskList.length()) {
                     jo = userTaskList.getJSONObject(i)
-                    if ("COMPLETED" != jo.getString("status")) continue
-                    val userTaskId = jo.getString("userTaskId")
+                    if ("COMPLETED" != jo.optString("status")) continue
+                    val userTaskId = jo.optString("userTaskId")
                     val taskInfo = jo.getJSONObject("taskInfo")
-                    val taskId = taskInfo.getString("taskId")
+                    val taskId = taskInfo.optString("taskId")
                     val res = MyUtils.myJSONObject(AntSportsRpcCall.userTaskRightsReceive(taskId, userTaskId))
                     if (ResChecker.checkRes(TAG, res)) {
                         val taskName = taskInfo.optString("taskName", taskId)
@@ -1486,9 +1486,9 @@ class AntSports : ModelTask() {
                         val award = StringBuilder()
                         for (j in 0 until rightsRuleList.length()) {
                             val r = rightsRuleList.getJSONObject(j)
-                            award.append(r.getString("rightsName"))
+                            award.append(r.optString("rightsName"))
                                 .append("*")
-                                .append(r.getInt("baseAwardCount"))
+                                .append(r.optInt("baseAwardCount"))
                         }
                         Log.other("领取奖励🎖️[$taskName]#$award")
                     } else {
@@ -1514,12 +1514,12 @@ class AntSports : ModelTask() {
             var jo = MyUtils.myJSONObject(s)
             if (ResChecker.checkRes(TAG, jo)) {
                 val path = jo.getJSONObject("path")
-                val pathId = path.getString("pathId")
-                val title = path.getString("title")
-                val minGoStepCount = path.getInt("minGoStepCount")
+                val pathId = path.optString("pathId")
+                val title = path.optString("title")
+                val minGoStepCount = path.optInt("minGoStepCount")
                 if (jo.has("userPath")) {
                     val userPath = jo.getJSONObject("userPath")
-                    val userPathRecordStatus = userPath.getString("userPathRecordStatus")
+                    val userPathRecordStatus = userPath.optString("userPathRecordStatus")
                     if ("COMPLETED" == userPathRecordStatus) {
                         pathMapHomepage(pathId)
                         pathMapJoin(title, pathId)
@@ -1528,9 +1528,9 @@ class AntSports : ModelTask() {
                         val countDate = TimeUtil.getFormatDate()
                         jo = MyUtils.myJSONObject(AntSportsRpcCall.stepQuery(countDate, pathId))
                         if (ResChecker.checkRes(TAG, jo)) {
-                            val canGoStepCount = jo.getInt("canGoStepCount")
+                            val canGoStepCount = jo.optInt("canGoStepCount")
                             if (canGoStepCount >= minGoStepCount) {
-                                val userPathRecordId = userPath.getString("userPathRecordId")
+                                val userPathRecordId = userPath.optString("userPathRecordId")
                                 tiyubizGo(countDate, title, canGoStepCount, pathId, userPathRecordId)
                             }
                         }
@@ -1539,7 +1539,7 @@ class AntSports : ModelTask() {
                     pathMapJoin(title, pathId)
                 }
             } else {
-                Log.record(TAG, jo.getString("resultDesc"))
+                Log.record(TAG, jo.optString("resultDesc"))
             }
         } catch (t: Throwable) {
             Log.printStackTrace(TAG, "pathFeatureQuery err:", t)
@@ -1558,8 +1558,8 @@ class AntSports : ModelTask() {
                 val userPathGoRewardList = jo.getJSONArray("userPathGoRewardList")
                 for (i in 0 until userPathGoRewardList.length()) {
                     jo = userPathGoRewardList.getJSONObject(i)
-                    if ("UNRECEIVED" != jo.getString("status")) continue
-                    val userPathRewardId = jo.getString("userPathRewardId")
+                    if ("UNRECEIVED" != jo.optString("status")) continue
+                    val userPathRewardId = jo.optString("userPathRewardId")
                     val res = MyUtils.myJSONObject(AntSportsRpcCall.rewardReceive(pathId, userPathRewardId))
                     if (ResChecker.checkRes(TAG, res)) {
                         val detail = res.getJSONObject("userPathRewardDetail")
@@ -1567,9 +1567,9 @@ class AntSports : ModelTask() {
                         val award = StringBuilder()
                         for (j in 0 until rightsRuleList.length()) {
                             val right = rightsRuleList.getJSONObject(j).getJSONObject("rightsContent")
-                            award.append(right.getString("name"))
+                            award.append(right.optString("name"))
                                 .append("*")
-                                .append(right.getInt("count"))
+                                .append(right.optInt("count"))
                         }
                         Log.other("文体宝箱🎁[$award]")
                     } else {
@@ -1620,10 +1620,10 @@ class AntSports : ModelTask() {
                 jo = jo.getJSONObject("userPath")
                 Log.other(
                     "行走线路🚶🏻‍♂️[$title]#前进了" +
-                        jo.getInt("userPathRecordForwardStepCount") + "步"
+                        jo.optInt("userPathRecordForwardStepCount") + "步"
                 )
                 pathMapHomepage(pathId)
-                val completed = "COMPLETED" == jo.getString("userPathRecordStatus")
+                val completed = "COMPLETED" == jo.optString("userPathRecordStatus")
                 if (completed) {
                     Log.other("完成线路🚶🏻‍♂️[$title]")
                     pathFeatureQuery()
@@ -2367,7 +2367,7 @@ class AntSports : ModelTask() {
                     } else if (!item.optBoolean("initState") &&
                         item.optString("medEnergyBallInfoRecordId").isNotEmpty()
                     ) {
-                        ids.add(item.getString("medEnergyBallInfoRecordId"))
+                        ids.add(item.optString("medEnergyBallInfoRecordId"))
                     }
                 }
 

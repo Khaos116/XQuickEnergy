@@ -8,8 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import fansirsqi.xposed.sesame.util.JsonUtil;
-import fansirsqi.xposed.sesame.util.Log;
+import fansirsqi.xposed.sesame.util.*;
 import lombok.Getter;
 import lombok.Setter;
 import okhttp3.MediaType;
@@ -38,16 +37,16 @@ public class CustomService implements AnswerAIInterface {
     }
 
     private JSONObject buildRequestJson(String text) throws JSONException {
-        JSONObject requestJson = new JSONObject();
+        JSONObject requestJson = MyUtils.myJSONObject();
         requestJson.put("model", modelName);
 
         JSONArray messages = new JSONArray();
-        JSONObject systemMessage = new JSONObject();
+        JSONObject systemMessage = MyUtils.myJSONObject();
         systemMessage.put("role", "system");
         systemMessage.put("content", SYSTEM_MESSAGE);
         messages.put(systemMessage);
 
-        JSONObject userMessage = new JSONObject();
+        JSONObject userMessage = MyUtils.myJSONObject();
         userMessage.put("role", "user");
         userMessage.put("content", text);
         messages.put(userMessage);
@@ -95,7 +94,7 @@ public class CustomService implements AnswerAIInterface {
             JSONObject requestJson = buildRequestJson(text);
             String jsonResponse = sendRequest(requestJson);
             if (!jsonResponse.isEmpty()) {
-                JSONObject jsonObject = new JSONObject(jsonResponse);
+                JSONObject jsonObject = MyUtils.myJSONObject(jsonResponse);
                 result = JsonUtil.getValueByPath(jsonObject, JSON_PATH);
             }
         } catch (IOException | JSONException e) {

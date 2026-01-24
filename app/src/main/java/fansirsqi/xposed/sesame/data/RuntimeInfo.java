@@ -1,8 +1,8 @@
 package fansirsqi.xposed.sesame.data;
 import org.json.JSONException;
 import org.json.JSONObject;
-import fansirsqi.xposed.sesame.util.Files;
-import fansirsqi.xposed.sesame.util.Log;
+
+import fansirsqi.xposed.sesame.util.*;
 import fansirsqi.xposed.sesame.util.maps.UserMap;
 import java.util.Objects;
 /**
@@ -46,14 +46,14 @@ public class RuntimeInfo {
         String content = Files.readFromFile(Files.runtimeInfoFile(userId));
         // 如果文件读取成功，则解析 JSON 数据，否则初始化为空的 JSON 对象
         try {
-            joAll = new JSONObject(content);
+            joAll = MyUtils.myJSONObject(content);
         } catch (Exception ignored) {
-            joAll = new JSONObject();
+            joAll = MyUtils.myJSONObject();
         }
         // 确保 "joAll" 中包含当前用户的条目
         try {
             if (!joAll.has(userId)) {
-                joAll.put(userId, new JSONObject());
+                joAll.put(userId, MyUtils.myJSONObject());
             }
         } catch (Exception ignored) {
         }
@@ -61,7 +61,7 @@ public class RuntimeInfo {
         try {
             joCurrent = joAll.getJSONObject(userId);
         } catch (Exception ignored) {
-            joCurrent = new JSONObject();
+            joCurrent = MyUtils.myJSONObject();
         }
     }
     /**

@@ -20,7 +20,7 @@ public class FriendWatch extends MapperEntity {
     private static final String TAG = FriendWatch.class.getSimpleName();
 
     @Getter
-    private static JSONObject joFriendWatch = new JSONObject();
+    private static JSONObject joFriendWatch = MyUtils.myJSONObject();
 
     @Getter
     private String startTime;
@@ -54,11 +54,11 @@ public class FriendWatch extends MapperEntity {
     public static void friendWatch(String id, int collectedEnergy) {
         try {
             if (getJoFriendWatch() == null) {
-                setJoFriendWatch(new JSONObject());
+                setJoFriendWatch(MyUtils.myJSONObject());
             }
             JSONObject joSingle = getJoFriendWatch().optJSONObject(id);
             if (joSingle == null) {
-                joSingle = new JSONObject();
+                joSingle = MyUtils.myJSONObject();
                 joSingle.put("name", UserMap.getMaskName(id));
                 joSingle.put("allGet", 0);
                 joSingle.put("startTime", TimeUtil.getDateStr());
@@ -74,7 +74,7 @@ public class FriendWatch extends MapperEntity {
     public static synchronized void save(String userId) {
         try {
             if (getJoFriendWatch() == null) {
-                setJoFriendWatch(new JSONObject());
+                setJoFriendWatch(MyUtils.myJSONObject());
                 Log.record(getTAG(), "初始化joFriendWatch对象");
             }
             String notformat = getJoFriendWatch().toString();
@@ -124,20 +124,20 @@ public class FriendWatch extends MapperEntity {
 
             String strFriendWatch = Files.readFromFile(Files.getFriendWatchFile(userId));
             if (!strFriendWatch.isEmpty()) {
-                setJoFriendWatch(new JSONObject(strFriendWatch));
+                setJoFriendWatch(MyUtils.myJSONObject(strFriendWatch));
             } else {
-                setJoFriendWatch(new JSONObject());
+                setJoFriendWatch(MyUtils.myJSONObject());
             }
             return true;
-        } catch (JSONException e) {
+        } catch (Exception e) {
             Log.printStackTrace(e);
-            setJoFriendWatch(new JSONObject());
+            setJoFriendWatch(MyUtils.myJSONObject());
         }
         return false;
     }
 
     public static synchronized void unload() {
-        setJoFriendWatch(new JSONObject());
+        setJoFriendWatch(MyUtils.myJSONObject());
     }
 
     public static boolean needUpdateAll(long last) {
@@ -159,16 +159,16 @@ public class FriendWatch extends MapperEntity {
         try {
             JSONObject joFriendWatch;
             if (StringUtil.isEmpty(strFriendWatch)) {
-                joFriendWatch = new JSONObject();
+                joFriendWatch = MyUtils.myJSONObject();
             } else {
-                joFriendWatch = new JSONObject(strFriendWatch);
+                joFriendWatch = MyUtils.myJSONObject(strFriendWatch);
             }
             Iterator<String> ids = joFriendWatch.keys();
             while (ids.hasNext()) {
                 String id = ids.next();
                 JSONObject friend = joFriendWatch.optJSONObject(id);
                 if (friend == null) {
-                    friend = new JSONObject();
+                    friend = MyUtils.myJSONObject();
                 }
                 String name = friend.optString("name");
                 FriendWatch friendWatch = new FriendWatch(id, name);
@@ -182,7 +182,7 @@ public class FriendWatch extends MapperEntity {
             Log.record(getTAG(), "FriendWatch getList: ");
             Log.printStackTrace(getTAG(), t);
             try {
-                Files.write2File(new JSONObject().toString(), Files.getFriendWatchFile(userId));
+                Files.write2File(MyUtils.myJSONObject().toString(), Files.getFriendWatchFile(userId));
             } catch (Exception e) {
                 Log.printStackTrace(e);
             }

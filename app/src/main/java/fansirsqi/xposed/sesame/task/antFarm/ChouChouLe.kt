@@ -3,6 +3,7 @@ package fansirsqi.xposed.sesame.task.antFarm
 
 import fansirsqi.xposed.sesame.util.GlobalThreadPools
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.ResChecker
 import fansirsqi.xposed.sesame.util.maps.UserMap
 import org.json.JSONArray
@@ -57,7 +58,7 @@ class ChouChouLe {
         var allFinished = true
         try {
             val response = AntFarmRpcCall.queryLoveCabin(UserMap.currentUid)
-            val jo = JSONObject(response)
+            val jo = MyUtils.myJSONObject(response)
             if (!ResChecker.checkRes(TAG, jo)) {
                 return false
             }
@@ -96,7 +97,7 @@ class ChouChouLe {
         try {
             do {
                 doubleCheck = false
-                val jo = JSONObject(AntFarmRpcCall.chouchouleListFarmTask(drawType))
+                val jo = MyUtils.myJSONObject(AntFarmRpcCall.chouchouleListFarmTask(drawType))
                 if (!ResChecker.checkRes(TAG, jo)) {
                     Log.error(TAG, if (drawType == "ipDraw") "IP抽抽乐任务列表获取失败" else "抽抽乐任务列表获取失败")
                     return false
@@ -146,7 +147,7 @@ class ChouChouLe {
     private fun verifyFinished(drawType: String): Boolean {
         return try {
             // 校验任务
-            val jo = JSONObject(AntFarmRpcCall.chouchouleListFarmTask(drawType))
+            val jo = MyUtils.myJSONObject(AntFarmRpcCall.chouchouleListFarmTask(drawType))
             if (!ResChecker.checkRes(TAG, jo)) return false
 
             val farmTaskList = jo.getJSONArray("farmTaskList")
@@ -188,9 +189,9 @@ class ChouChouLe {
         for (i in 0 until array.length()) {
             val item = array.getJSONObject(i)
             val info = TaskInfo(
-                taskStatus = item.getString("taskStatus"),
-                title = item.getString("title"),
-                taskId = item.getString("bizKey"),
+                taskStatus = item.optString("taskStatus"),
+                title = item.optString("title"),
+                taskId = item.optString("bizKey"),
                 innerAction = item.optString("innerAction"),
                 rightsTimes = item.optInt("rightsTimes", 0),
                 rightsTimesLimit = item.optInt("rightsTimesLimit", 0),
@@ -223,7 +224,7 @@ class ChouChouLe {
                 }
             }
             val s = AntFarmRpcCall.chouchouleDoFarmTask(drawType, task.taskId)
-            val jo = JSONObject(s)
+            val jo = MyUtils.myJSONObject(s)
             if (ResChecker.checkRes(TAG, jo)) {
                 Log.farm("$taskName🧾️[任务: ${task.title}]")
                 if (task.title == "消耗饲料换机会") {
@@ -257,7 +258,7 @@ class ChouChouLe {
             // 如果有referToken，尝试执行广告任务
             if (!referToken.isNullOrEmpty()) {
                 val response = AntFarmRpcCall.xlightPlugin(referToken, "HDWFCJGXNZW_CUSTOM_20250826173111")
-                val jo = JSONObject(response)
+                val jo = MyUtils.myJSONObject(response)
 
                 if (jo.optString("retCode") == "0") {
                     val resData = jo.getJSONObject("resData")
@@ -282,7 +283,7 @@ class ChouChouLe {
             val outBizNo = task.taskId + "_" + System.currentTimeMillis() + "_" +
                     Integer.toHexString((Math.random() * 0xFFFFFF).toInt())
             val response = AntFarmRpcCall.finishTask(task.taskId, taskSceneCode, outBizNo)
-            val jo = JSONObject(response)
+            val jo = MyUtils.myJSONObject(response)
 
             if (jo.optBoolean("success", false)) {
                 Log.farm((if (drawType == "ipDraw") "IP抽抽乐" else "抽抽乐") + "🧾️[任务: ${task.title}]")
@@ -312,7 +313,7 @@ class ChouChouLe {
                 val ad = adList.getJSONObject(i)
                 val schemaJson = ad.optString("schemaJson", "")
                 if (schemaJson.isNotEmpty()) {
-                    val schema = JSONObject(schemaJson)
+                    val schema = MyUtils.myJSONObject(schemaJson)
                     val price = schema.optInt("price", -1)
                     if (price > 0) {
                         if (correctPrice == -1 || abs(price - 11888) < abs(correctPrice - 11888)) {
@@ -338,7 +339,7 @@ class ChouChouLe {
                         val response = AntFarmRpcCall.finishAdTask(
                             playBizId, playEventInfo, task.taskId, taskSceneCode
                         )
-                        val jo = JSONObject(response)
+                        val jo = MyUtils.myJSONObject(response)
 
                         if (jo.optJSONObject("resData") != null &&
                             jo.getJSONObject("resData").optBoolean("success", false)
@@ -368,7 +369,7 @@ class ChouChouLe {
     private fun receiveTaskAward(drawType: String, taskId: String): Boolean {
         try {
             val s = AntFarmRpcCall.chouchouleReceiveFarmTaskAward(drawType, taskId)
-            val jo = JSONObject(s)
+            val jo = MyUtils.myJSONObject(s)
             if (ResChecker.checkRes(TAG, jo)) {
                 return true
             }
@@ -383,7 +384,7 @@ class ChouChouLe {
      */
     private fun handleIpDraw(): Boolean {
         try {
-            val jo = JSONObject(
+            val jo = MyUtils.myJSONObject(
                 AntFarmRpcCall.queryDrawMachineActivity_New(
                     "ipDrawMachine", "dailyDrawMachine"
                 )
@@ -431,7 +432,7 @@ class ChouChouLe {
      */
     private fun handleDailyDraw(): Boolean {
         try {
-            val jo = JSONObject(
+            val jo = MyUtils.myJSONObject(
                 AntFarmRpcCall.queryDrawMachineActivity_New(
                     "dailyDrawMachine", "ipDrawMachine"
                 )
@@ -480,7 +481,7 @@ class ChouChouLe {
      */
     private fun drawPrize(prefix: String, response: String): Boolean {
         try {
-            val jo = JSONObject(response)
+            val jo = MyUtils.myJSONObject(response)
             if (ResChecker.checkRes(TAG, jo)) {
                 val prizeList = jo.optJSONArray("drawMachinePrizeList")
                 if (prizeList != null && prizeList.length() > 0) {
@@ -512,7 +513,7 @@ class ChouChouLe {
     fun batchExchangeRewards(activityId: String) {
         try {
             val response = AntFarmRpcCall.getItemList(activityId, 10, 0)
-            val respJson = JSONObject(response)
+            val respJson = MyUtils.myJSONObject(response)
 
             if (respJson.optBoolean("success", false) || respJson.optString("code") == "100000000") {
                 var totalCent = 0
@@ -582,7 +583,7 @@ class ChouChouLe {
                             activityId, "ANTFARM_IP_DRAW_MALL", "antfarm_villa"
                         )
 
-                        val resObj = JSONObject(result)
+                        val resObj = MyUtils.myJSONObject(result)
                         val resultCode = resObj.optString("resultCode")
 
                         if ("SUCCESS" == resultCode) {

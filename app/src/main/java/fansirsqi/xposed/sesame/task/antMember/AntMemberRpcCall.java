@@ -9,8 +9,7 @@ import java.util.UUID;
 
 import fansirsqi.xposed.sesame.hook.ApplicationHook;
 import fansirsqi.xposed.sesame.hook.RequestManager;
-import fansirsqi.xposed.sesame.util.RandomUtil;
-import fansirsqi.xposed.sesame.util.TimeUtil;
+import fansirsqi.xposed.sesame.util.*;
 
 public class AntMemberRpcCall {
     private static String getUniqueId() {
@@ -492,7 +491,7 @@ public class AntMemberRpcCall {
             ANNUAL_REVIEW_COMPONENT_PREFIX + "_independent_component_task_reward_get_reward";
 
     private static JSONObject buildAnnualReviewBasePayload() throws JSONException {
-        JSONObject root = new JSONObject();
+        JSONObject root = MyUtils.myJSONObject();
         root.put("channel", "share");
         root.put("cityCode", "110000");
         root.put("operationParamIdentify", ANNUAL_REVIEW_OPERATION_IDENTIFY);
@@ -510,8 +509,8 @@ public class AntMemberRpcCall {
     public static String annualReviewQueryTasks() {
         try {
             JSONObject body = buildAnnualReviewBasePayload();
-            JSONObject components = new JSONObject();
-            components.put(ANNUAL_REVIEW_QUERY_COMPONENT, new JSONObject());
+            JSONObject components = MyUtils.myJSONObject();
+            components.put(ANNUAL_REVIEW_QUERY_COMPONENT, MyUtils.myJSONObject());
             body.put("components", components);
             body.put("source", ANNUAL_REVIEW_QUERY_COMPONENT);
 
@@ -534,12 +533,12 @@ public class AntMemberRpcCall {
         try {
             JSONObject body = buildAnnualReviewBasePayload();
 
-            JSONObject compBody = new JSONObject();
+            JSONObject compBody = MyUtils.myJSONObject();
             compBody.put("code", code);
             compBody.put("consultAfterLuckDraw", "false");
             compBody.put("skipLuckDrawConsult", "true");
 
-            JSONObject components = new JSONObject();
+            JSONObject components = MyUtils.myJSONObject();
             components.put(ANNUAL_REVIEW_APPLY_COMPONENT, compBody);
 
             body.put("components", components);
@@ -564,11 +563,11 @@ public class AntMemberRpcCall {
         try {
             JSONObject body = buildAnnualReviewBasePayload();
 
-            JSONObject compBody = new JSONObject();
+            JSONObject compBody = MyUtils.myJSONObject();
             compBody.put("code", code);
             compBody.put("recordNo", recordNo);
 
-            JSONObject components = new JSONObject();
+            JSONObject components = MyUtils.myJSONObject();
             components.put(ANNUAL_REVIEW_PROCESS_COMPONENT, compBody);
 
             body.put("components", components);
@@ -592,13 +591,13 @@ public class AntMemberRpcCall {
         try {
             JSONObject body = buildAnnualReviewBasePayload();
 
-            JSONObject compBody = new JSONObject();
+            JSONObject compBody = MyUtils.myJSONObject();
             compBody.put("code", code);
             compBody.put("consultAfterLuckDraw", "false");
             compBody.put("recordNo", recordNo);
             compBody.put("skipLuckDrawConsult", "true");
 
-            JSONObject components = new JSONObject();
+            JSONObject components = MyUtils.myJSONObject();
             components.put(ANNUAL_REVIEW_GET_REWARD_COMPONENT, compBody);
 
             body.put("components", components);
@@ -622,11 +621,11 @@ public class AntMemberRpcCall {
      */
     public static String zhimaTreeHomePage() {
         try {
-            JSONObject args = new JSONObject();
+            JSONObject args = MyUtils.myJSONObject();
             args.put("operation", "ZHIMA_TREE_HOME_PAGE");
             args.put("playInfo", ZHIMATREE_PLAY_INFO);
             args.put("refer", ZHIMATREE_REFER);
-            args.put("extInfo", new JSONObject());
+            args.put("extInfo", MyUtils.myJSONObject());
 
             return RequestManager.requestString("alipay.promoprod.play.trigger",
                     new JSONArray().put(args).toString());
@@ -640,12 +639,12 @@ public class AntMemberRpcCall {
      */
     public static String zhimaTreeCleanAndPush(String treeCode) {
         try {
-            JSONObject args = new JSONObject();
+            JSONObject args = MyUtils.myJSONObject();
             args.put("operation", "ZHIMA_TREE_CLEAN_AND_PUSH");
             args.put("playInfo", ZHIMATREE_PLAY_INFO);
             args.put("refer", ZHIMATREE_REFER);
 
-            JSONObject extInfo = new JSONObject();
+            JSONObject extInfo = MyUtils.myJSONObject();
             extInfo.put("clickNum", "1");
             extInfo.put("treeCode", treeCode);
 
@@ -663,12 +662,12 @@ public class AntMemberRpcCall {
      */
     public static String queryRentGreenTaskList() {
         try {
-            JSONObject args = new JSONObject();
+            JSONObject args = MyUtils.myJSONObject();
             args.put("operation", "RENT_GREEN_TASK_LIST_QUERY");
             args.put("playInfo", ZHIMATREE_PLAY_INFO);
             args.put("refer", ZHIMATREE_REFER);
 
-            JSONObject extInfo = new JSONObject();
+            JSONObject extInfo = MyUtils.myJSONObject();
             extInfo.put("chInfo", "ch_share__chsub_ALPContact");
             extInfo.put("batchId", "");
             args.put("extInfo", extInfo);
@@ -686,12 +685,12 @@ public class AntMemberRpcCall {
      */
     public static String rentGreenTaskFinish(String taskId, String stageCode) {
         try {
-            JSONObject args = new JSONObject();
+            JSONObject args = MyUtils.myJSONObject();
             args.put("operation", "RENT_GREEN_TASK_FINISH");
             args.put("playInfo", ZHIMATREE_PLAY_INFO);
             args.put("refer", ZHIMATREE_REFER);
 
-            JSONObject extInfo = new JSONObject();
+            JSONObject extInfo = MyUtils.myJSONObject();
             extInfo.put("chInfo", "ch_share__chsub_ALPContact");
             extInfo.put("taskId", taskId);
             extInfo.put("stageCode", stageCode);
@@ -709,7 +708,7 @@ public class AntMemberRpcCall {
      */
     public static String queryWelfareHome() {
         try {
-            JSONObject args = new JSONObject();
+            JSONObject args = MyUtils.myJSONObject();
             args.put("isResume", true);
             // 接口: com.alipay.finaggexpbff.needle.welfareCenter.index
             return RequestManager.requestString("com.alipay.finaggexpbff.needle.welfareCenter.index",
@@ -724,7 +723,7 @@ public class AntMemberRpcCall {
      */
     public static String taskQueryPush(String taskId) {
         try {
-            JSONObject args = new JSONObject();
+            JSONObject args = MyUtils.myJSONObject();
             args.put("mode", 1); // 固定参数
             args.put("taskId", taskId);
 
@@ -742,7 +741,7 @@ public class AntMemberRpcCall {
      */
     public static String welfareCenterTrigger(String type) {
         try {
-            JSONObject args = new JSONObject();
+            JSONObject args = MyUtils.myJSONObject();
             args.put("type", type);
             return RequestManager.requestString("com.alipay.finaggexpbff.needle.welfareCenter.trigger",
                     new JSONArray().put(args).toString());
@@ -756,7 +755,7 @@ public class AntMemberRpcCall {
      */
     public static String goldBillTaskTrigger(String taskId) {
         try {
-            JSONObject args = new JSONObject();
+            JSONObject args = MyUtils.myJSONObject();
             args.put("taskId", taskId);
             return RequestManager.requestString("com.alipay.wealthgoldtwa.goldbill.v4.task.trigger",
                     new JSONArray().put(args).toString());
@@ -771,9 +770,9 @@ public class AntMemberRpcCall {
      */
     public static String queryConsumeHome() {
         try {
-            JSONObject args = new JSONObject();
-            args.put("tabBubbleDeliverParam", new JSONObject());
-            args.put("tabTypeDeliverParam", new JSONObject());
+            JSONObject args = MyUtils.myJSONObject();
+            args.put("tabBubbleDeliverParam", MyUtils.myJSONObject());
+            args.put("tabTypeDeliverParam", MyUtils.myJSONObject());
             // 接口: com.alipay.wealthgoldtwa.needle.consume.query
             return RequestManager.requestString("com.alipay.wealthgoldtwa.needle.consume.query",
                     new JSONArray().put(args).toString());
@@ -790,7 +789,7 @@ public class AntMemberRpcCall {
      */
     public static String submitConsume(int amount, String productId, int bonusAmount) {
         try {
-            JSONObject args = new JSONObject();
+            JSONObject args = MyUtils.myJSONObject();
             args.put("exchangeAmount", amount);
             // 计算金额：100份 = 0.10元。公式：份数 / 1000.0
             args.put("exchangeMoney", String.format("%.2f", amount / 1000.0));
@@ -1018,7 +1017,7 @@ public class AntMemberRpcCall {
          */
         public static String queryScoreProgress() {
             try {
-                JSONObject args = new JSONObject();
+                JSONObject args = MyUtils.myJSONObject();
                 args.put("needTotalProcess", "TRUE");
                 args.put("queryGuideInfo", true);
                 args.put("switchNewPage", true);
@@ -1039,7 +1038,7 @@ public class AntMemberRpcCall {
          */
         public static String collectProgressBall(JSONArray ballIdList) {
             try {
-                JSONObject args = new JSONObject();
+                JSONObject args = MyUtils.myJSONObject();
                 args.put("ballIdList", ballIdList); // 直接用 JSONArray
 
                 return RequestManager.requestString(

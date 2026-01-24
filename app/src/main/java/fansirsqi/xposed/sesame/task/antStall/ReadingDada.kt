@@ -4,6 +4,7 @@ import fansirsqi.xposed.sesame.model.ModelGroup
 import fansirsqi.xposed.sesame.task.AnswerAI.AnswerAI
 import fansirsqi.xposed.sesame.util.JsonUtil
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import org.json.JSONObject
 
 /**
@@ -26,7 +27,7 @@ object ReadingDada {
         try {
             // 获取任务跳转URL
             val taskJumpUrl = bizInfo.optString("taskJumpUrl").takeIf { it.isNotEmpty() }
-                ?: bizInfo.getString("targetUrl")
+                ?: bizInfo.optString("targetUrl")
 
             // 解析活动ID
             val activityId = taskJumpUrl.split("activityId%3D")[1].split("%26")[0]
@@ -40,11 +41,11 @@ object ReadingDada {
 
             // 获取问题
             val questionResponse = ReadingDadaRpcCall.getQuestion(activityId)
-            val questionJson = JSONObject(questionResponse)
+            val questionJson = MyUtils.myJSONObject(questionResponse)
 
-            if (questionJson.getString("resultCode") == "200") {
+            if (questionJson.optString("resultCode") == "200") {
                 val options = questionJson.getJSONArray("options")
-                val question = questionJson.getString("title")
+                val question = questionJson.optString("title")
 
                 // 使用AI获取答案
                 var answer = AnswerAI.getAnswer(
@@ -55,19 +56,19 @@ object ReadingDada {
 
                 // 如果AI未返回答案,使用第一个选项
                 if (answer.isNullOrEmpty()) {
-                    answer = options.getString(0)
+                    answer = options.optString(0)
                 }
 
                 // 提交答案
                 val submitResponse = ReadingDadaRpcCall.submitAnswer(
                     activityId,
                     outBizId,
-                    questionJson.getString("questionId"),
+                    questionJson.optString("questionId"),
                     answer
                 )
 
-                val submitJson = JSONObject(submitResponse)
-                return if (submitJson.getString("resultCode") == "200") {
+                val submitJson = MyUtils.myJSONObject(submitResponse)
+                return if (submitJson.optString("resultCode") == "200") {
                     Log.record(TAG, "答题完成")
                     true
                 } else {

@@ -13,10 +13,8 @@ import fansirsqi.xposed.sesame.entity.RpcEntity;
 import fansirsqi.xposed.sesame.hook.ApplicationHook;
 import fansirsqi.xposed.sesame.hook.rpc.intervallimit.RpcIntervalLimit;
 import fansirsqi.xposed.sesame.model.BaseModel;
-import fansirsqi.xposed.sesame.util.Log;
-import fansirsqi.xposed.sesame.util.Notify;
-import fansirsqi.xposed.sesame.util.StringUtil;
-import fansirsqi.xposed.sesame.util.TimeUtil;
+import fansirsqi.xposed.sesame.util.*;
+
 public class OldRpcBridge implements RpcBridge {
     private static final String TAG = OldRpcBridge.class.getSimpleName();
     private ClassLoader loader;
@@ -133,7 +131,7 @@ public class OldRpcBridge implements RpcBridge {
      */
     private RpcEntity processResponse(RpcEntity rpcEntity, Object response, int id, String method, String args, int retryInterval) throws Throwable {
         String resultStr = (String) getResponseMethod.invoke(response); // 获取响应字符串
-        JSONObject resultObject = new JSONObject(resultStr);
+        JSONObject resultObject = MyUtils.myJSONObject(resultStr);
         rpcEntity.setResponseObject(resultObject, resultStr); // 设置响应对象
         // 检查响应中的 "memo" 字段是否包含 "系统繁忙"
         if (resultObject.optString("memo", "").contains("系统繁忙")) {
@@ -229,12 +227,12 @@ public class OldRpcBridge implements RpcBridge {
     private void handleException(RpcEntity rpcEntity) {
         try {
             String jsonString;
-            JSONObject jo = new JSONObject();
+            JSONObject jo = MyUtils.myJSONObject();
             jo.put("resultCode", "FAIL");
             jo.put("memo", "MMTPException");
             jo.put("resultDesc", "MMTPException");
             jsonString = jo.toString();
-            rpcEntity.setResponseObject(new JSONObject(jsonString), jsonString); // 设置 MMTP 异常响应
+            rpcEntity.setResponseObject(MyUtils.myJSONObject(jsonString), jsonString); // 设置 MMTP 异常响应
         } catch (JSONException e) {
             Log.printStackTrace(e); // 打印异常信息
         }

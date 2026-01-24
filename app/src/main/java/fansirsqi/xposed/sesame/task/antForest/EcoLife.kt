@@ -7,6 +7,7 @@ import fansirsqi.xposed.sesame.util.DataStore
 import fansirsqi.xposed.sesame.util.DataStore.put
 import fansirsqi.xposed.sesame.util.JsonUtil
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.RandomUtil
 import fansirsqi.xposed.sesame.util.ResChecker
 import fansirsqi.xposed.sesame.util.StringUtil
@@ -32,7 +33,7 @@ object EcoLife {
     fun ecoLife() {
         try {
             // 查询首页信息
-            var jsonObject = JSONObject(AntForestRpcCall.ecolifeQueryHomePage())
+            var jsonObject = MyUtils.myJSONObject(AntForestRpcCall.ecolifeQueryHomePage())
             if (!jsonObject.optBoolean("success")) {
                 Log.record("$TAG.ecoLife.queryHomePage", jsonObject.optString("resultDesc"))
                 return
@@ -59,9 +60,9 @@ object EcoLife {
                     if (!openEcoLife() || !AntForest.ecoLifeOpen!!.value) {
                         return
                     }
-                    jsonObject = JSONObject(AntForestRpcCall.ecolifeQueryHomePage())
+                    jsonObject = MyUtils.myJSONObject(AntForestRpcCall.ecolifeQueryHomePage())
                     data = jsonObject.getJSONObject("data")
-                    dayPoint = data.getString("dayPoint")
+                    dayPoint = data.optString("dayPoint")
                 }
                 ecoLifeTick(actionListVO, dayPoint)
             }
@@ -78,7 +79,7 @@ object EcoLife {
      */
     @Throws(JSONException::class)
     fun openEcoLife(): Boolean {
-        val jsonObject = JSONObject(AntForestRpcCall.ecolifeOpenEcolife())
+        val jsonObject = MyUtils.myJSONObject(AntForestRpcCall.ecolifeOpenEcolife())
         if (!jsonObject.optBoolean("success")) {
             Log.record("$TAG.ecoLife.openEcolife", jsonObject.optString("resultDesc"))
             return false
@@ -113,15 +114,15 @@ object EcoLife {
                     val actionItem = actionItemList.getJSONObject(j)
                     if (!actionItem.has("actionId")) continue
                     if (actionItem.getBoolean("actionStatus")) continue
-                    val actionId = actionItem.getString("actionId")
-                    val actionName = actionItem.getString("actionName")
+                    val actionId = actionItem.optString("actionId")
+                    val actionName = actionItem.optString("actionName")
                     if ("photoguangpan" == actionId) continue
-                    val jo = JSONObject(AntForestRpcCall.ecolifeTick(actionId, dayPoint, source))
+                    val jo = MyUtils.myJSONObject(AntForestRpcCall.ecolifeTick(actionId, dayPoint, source))
                     if (ResChecker.checkRes(TAG, jo)) {
                         Log.forest("绿色打卡🍀[$actionName]") // 成功打卡日志
                     } else {
                         // 记录失败原因
-                        Log.error(TAG + jo.getString("resultDesc"))
+                        Log.error(TAG + jo.optString("resultDesc"))
                         Log.error(TAG + jo)
                     }
                 }
@@ -155,7 +156,7 @@ object EcoLife {
             Log.record("$TAG [DEBUG] guangPanPhoto 数据内容: $allPhotos")
             // 查询今日任务状态
             var str = AntForestRpcCall.ecolifeQueryDish(source, dayPoint)
-            var jo = JSONObject(str)
+            var jo = MyUtils.myJSONObject(str)
             // 如果请求失败，则记录错误信息并返回
             if (!ResChecker.checkRes(TAG, jo)) {
                 Log.record("$TAG.photoGuangPan.ecolifeQueryDish", jo.optString("resultDesc"))
@@ -223,7 +224,7 @@ object EcoLife {
                 0.7597949,
                 dayPoint
             )
-            jo = JSONObject(str)
+            jo = MyUtils.myJSONObject(str)
             if (!ResChecker.checkRes(TAG, jo)) {
                 return
             }
@@ -235,19 +236,19 @@ object EcoLife {
                 0.0006858421,
                 dayPoint
             )
-            jo = JSONObject(str)
+            jo = MyUtils.myJSONObject(str)
             if (!ResChecker.checkRes(TAG, jo)) {
                 return
             }
             // 提交任务
             str = AntForestRpcCall.ecolifeTick("photoguangpan", dayPoint, source)
-            jo = JSONObject(str)
+            jo = MyUtils.myJSONObject(str)
             // 如果提交失败，记录错误信息并返回
             if (!ResChecker.checkRes(TAG, jo)) {
                 return
             }
             // 任务完成，输出完成日志
-            val toastMsg = "光盘行动🍛任务完成#" + jo.getJSONObject("data").getString("toastMsg")
+            val toastMsg = "光盘行动🍛任务完成#" + jo.getJSONObject("data").optString("toastMsg")
             Status.setFlagToday("EcoLife::photoGuangPan")
             Log.forest(toastMsg)
             Toast.show(toastMsg)

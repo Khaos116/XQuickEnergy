@@ -4,6 +4,7 @@ import fansirsqi.xposed.sesame.data.Status
 import fansirsqi.xposed.sesame.task.TaskStatus
 import fansirsqi.xposed.sesame.util.GlobalThreadPools.sleepCompat
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.ResChecker
 import fansirsqi.xposed.sesame.util.maps.UserMap
 import org.json.JSONObject
@@ -47,7 +48,7 @@ class ForestChouChouLe {
         }
 
         // 扩展函数：简化 JSON 解析和检查
-        private fun String.toJson(): JSONObject? = runCatching { JSONObject(this) }.getOrNull()
+        private fun String.toJson(): JSONObject? = runCatching { MyUtils.myJSONObject(this) }.getOrNull()
         private fun JSONObject.check(): Boolean = ResChecker.checkRes(TAG, this)
 
         // 动态获取抽奖场景配置
@@ -263,7 +264,7 @@ class ForestChouChouLe {
     private fun processSingleTask(s: Scene, task: JSONObject): Boolean {
         val baseInfo = task.optJSONObject("taskBaseInfo") ?: return false
         val bizInfoStr = baseInfo.optString("bizInfo")
-        val bizInfo = if (bizInfoStr.isNotEmpty()) JSONObject(bizInfoStr) else JSONObject()
+        val bizInfo = if (bizInfoStr.isNotEmpty()) MyUtils.myJSONObject(bizInfoStr) else MyUtils.myJSONObject()
 
         val taskName = bizInfo.optString("title", "未知任务")
         val taskCode = baseInfo.optString("sceneCode")

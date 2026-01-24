@@ -480,7 +480,7 @@ class AntStall : ModelTask() {
                 }
 
                 // 超时判断
-                val bizStartTime = seat.getLong("bizStartTime")
+                val bizStartTime = seat.optLong("bizStartTime")
                 val endTime = bizStartTime + stallAllowOpenTime.value * 60 * 1000L
 
                 if (System.currentTimeMillis() > endTime) {
@@ -563,7 +563,7 @@ class AntStall : ModelTask() {
                 if (shop.optString("status") != "OPEN") continue
 
                 val rentLastEnv = shop.getJSONObject("rentLastEnv")
-                val gmtLastRent = rentLastEnv.getLong("gmtLastRent")
+                val gmtLastRent = rentLastEnv.optLong("gmtLastRent")
                 val shopTime = gmtLastRent + stallSelfOpenTime.value * 60 * 1000L
                 val shopId = shop.optString("shopId")
                 val rentLastBill = shop.optString("rentLastBill")
@@ -656,7 +656,7 @@ class AntStall : ModelTask() {
                 }
 
                 if (isStallOpen) {
-                    val hot = friendRank.getInt("hot")
+                    val hot = friendRank.optInt("hot")
                     seats.add(Seat(userId, hot))
                 }
             }
@@ -1190,7 +1190,7 @@ class AntStall : ModelTask() {
 
             val astManureInfoVO = json.getJSONObject("astManureInfoVO")
             if (astManureInfoVO.optBoolean("hasManure")) {
-                val manure = astManureInfoVO.getInt("manure")
+                val manure = astManureInfoVO.optInt("manure")
                 val collectResponse = AntStallRpcCall.collectManure()
                 val collectJson = MyUtils.myJSONObject(collectResponse)
 
@@ -1331,7 +1331,7 @@ class AntStall : ModelTask() {
                         return
                     }
 
-                    if (json.getInt("canPasteTicketCount") == 0) {
+                    if (json.optInt("canPasteTicketCount") == 0) {
                         Log.record(TAG, "蚂蚁新村👍[今日罚单已贴完]")
                         Status.pasteTicketTime()
                         return

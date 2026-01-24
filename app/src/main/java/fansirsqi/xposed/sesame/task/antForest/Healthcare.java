@@ -3,9 +3,7 @@ package fansirsqi.xposed.sesame.task.antForest;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import fansirsqi.xposed.sesame.util.Log;
-import fansirsqi.xposed.sesame.util.ResChecker;
-import fansirsqi.xposed.sesame.util.TimeUtil;
+import fansirsqi.xposed.sesame.util.*;
 
 /**
  * @author Byseven
@@ -18,7 +16,7 @@ public class Healthcare {
 
     public static void queryForestEnergy(String scene) {
         try {
-            JSONObject jo = new JSONObject(AntForestRpcCall.queryForestEnergy(scene));
+            JSONObject jo = MyUtils.myJSONObject(AntForestRpcCall.queryForestEnergy(scene));
             if (!ResChecker.checkRes(TAG, jo)) {
                 return;
             }
@@ -44,13 +42,13 @@ public class Healthcare {
     private static JSONArray produceForestEnergy(String scene) {
         JSONArray energyGeneratedList = new JSONArray();
         try {
-            JSONObject jo = new JSONObject(AntForestRpcCall.produceForestEnergy(scene));
+            JSONObject jo = MyUtils.myJSONObject(AntForestRpcCall.produceForestEnergy(scene));
             if (ResChecker.checkRes(TAG, jo)) {
                 jo = jo.getJSONObject("data").getJSONObject("response");
                 energyGeneratedList = jo.getJSONArray("energyGeneratedList");
                 if (energyGeneratedList.length() > 0) {
                     String title = scene.equals("FEEDS") ? "绿色医疗" : "电子小票";
-                    int cumulativeEnergy = jo.getInt("cumulativeEnergy");
+                    int cumulativeEnergy = jo.optInt("cumulativeEnergy");
                     Log.forest("医疗健康🚑完成[" + title + "]#产生[" + cumulativeEnergy + "g能量]");
                 }
             }
@@ -63,12 +61,12 @@ public class Healthcare {
 
     private static Boolean harvestForestEnergy(String scene, JSONArray bubbles) {
         try {
-            JSONObject jo = new JSONObject(AntForestRpcCall.harvestForestEnergy(scene, bubbles));
+            JSONObject jo = MyUtils.myJSONObject(AntForestRpcCall.harvestForestEnergy(scene, bubbles));
             if (!ResChecker.checkRes(TAG, jo)) {
                 return false;
             }
             jo = jo.getJSONObject("data").getJSONObject("response");
-            int collectedEnergy = jo.getInt("collectedEnergy");
+            int collectedEnergy = jo.optInt("collectedEnergy");
             if (collectedEnergy > 0) {
                 String title = scene.equals("FEEDS") ? "绿色医疗" : "电子小票";
                 Log.forest("医疗健康🚑收取[" + title + "]#获得[" + collectedEnergy + "g能量]");

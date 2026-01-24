@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import fansirsqi.xposed.sesame.data.Status
 import fansirsqi.xposed.sesame.hook.Toast
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.ResChecker
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -92,7 +93,7 @@ object WhackMole {
             val startTs = System.currentTimeMillis()
 
             // 1. 开始游戏 (使用 oldstartWhackMole)
-            val response = JSONObject(AntForestRpcCall.oldstartWhackMole(SOURCE))
+            val response = MyUtils.myJSONObject(AntForestRpcCall.oldstartWhackMole(SOURCE))
             if (!response.optBoolean("success")) {
                 Log.record(TAG, response.optString("resultDesc", "开始失败"))
                 return
@@ -107,7 +108,7 @@ object WhackMole {
 
             for (i in 0 until moleInfoArray.length()) {
                 val mole = moleInfoArray.getJSONObject(i)
-                val moleId = mole.getLong("id")
+                val moleId = mole.optLong("id")
                 allMoleIds.add(moleId)
                 if (mole.has("bubbleId")) bubbleMoleIds.add(moleId)
             }
@@ -116,7 +117,7 @@ object WhackMole {
             var hitCount = 0
             bubbleMoleIds.forEach { moleId ->
                 try {
-                    val whackResp = JSONObject(AntForestRpcCall.oldwhackMole(moleId, token, SOURCE))
+                    val whackResp = MyUtils.myJSONObject(AntForestRpcCall.oldwhackMole(moleId, token, SOURCE))
                     if (whackResp.optBoolean("success")) {
                         val energy = whackResp.optInt("energyAmount", 0)
                         hitCount++
@@ -137,7 +138,7 @@ object WhackMole {
             val elapsedTime = System.currentTimeMillis() - startTs
             delay(max(0L, 6000L - elapsedTime - 200L))
 
-            val settleResp = JSONObject(AntForestRpcCall.oldsettlementWhackMole(token, remainingIds, SOURCE))
+            val settleResp = MyUtils.myJSONObject(AntForestRpcCall.oldsettlementWhackMole(token, remainingIds, SOURCE))
             if (ResChecker.checkRes(TAG, settleResp)) {
                 val total = settleResp.optInt("totalEnergy", 0)
                 Log.forest("森林能量⚡️[兼容模式完成(打${remainingIds.size + hitCount}个) 总能量+${total}g]")
@@ -186,7 +187,7 @@ object WhackMole {
     private suspend fun startSingleRound(round: Int): GameSession? {
         try {
             // 标准接口调用
-            val startResp = JSONObject(AntForestRpcCall.startWhackMole())
+            val startResp = MyUtils.myJSONObject(AntForestRpcCall.startWhackMole())
             if (!ResChecker.checkRes(TAG, startResp)) return null
 
             if (!startResp.optBoolean("canPlayToday", true)) {
@@ -205,7 +206,7 @@ object WhackMole {
     private suspend fun settleStandardRound(session: GameSession): Int {
         try {
             // 标准结算调用 (RPC 内部会自动处理 moleIdList 1-15)
-            val resp = JSONObject(AntForestRpcCall.settlementWhackMole(session.token))
+            val resp = MyUtils.myJSONObject(AntForestRpcCall.settlementWhackMole(session.token))
             if (ResChecker.checkRes(TAG, resp)) {
                 return resp.optInt("totalEnergy", 0)
             }

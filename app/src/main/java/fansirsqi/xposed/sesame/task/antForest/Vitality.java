@@ -7,11 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fansirsqi.xposed.sesame.entity.VitalityStore.ExchangeStatus;
-import fansirsqi.xposed.sesame.util.Log;
+import fansirsqi.xposed.sesame.util.*;
 import fansirsqi.xposed.sesame.util.maps.IdMapManager;
 import fansirsqi.xposed.sesame.util.maps.UserMap;
 import fansirsqi.xposed.sesame.util.maps.VitalityRewardsMap;
-import fansirsqi.xposed.sesame.util.ResChecker;
 import fansirsqi.xposed.sesame.data.Status;
 
 /**
@@ -26,7 +25,7 @@ public class Vitality {
     public static JSONArray ItemListByType(String labelType) {
         JSONArray itemInfoVOList = null;
         try {
-            JSONObject jo = new JSONObject(AntForestRpcCall.itemList(labelType));
+            JSONObject jo = MyUtils.myJSONObject(AntForestRpcCall.itemList(labelType));
             if (ResChecker.checkRes(TAG + "查询森林活力值商品列表失败:", jo)) {
                 itemInfoVOList = jo.optJSONArray("itemInfoVOList");
             }
@@ -39,7 +38,7 @@ public class Vitality {
 
     public static void ItemDetailBySpuId(String spuId) {
         try {
-            JSONObject jo = new JSONObject(AntForestRpcCall.itemDetail(spuId));
+            JSONObject jo = MyUtils.myJSONObject(AntForestRpcCall.itemDetail(spuId));
             if (ResChecker.checkRes(TAG + "查询森林活力值商品详情失败:", jo)) {
                 JSONObject ItemDetail = jo.getJSONObject("spuItemInfoVO");
                 handleItemDetail(ItemDetail);
@@ -74,10 +73,10 @@ public class Vitality {
             JSONArray skuModelList = vitalityItem.getJSONArray("skuModelList");
             for (int i = 0; i < skuModelList.length(); i++) {
                 JSONObject skuModel = skuModelList.getJSONObject(i);
-                String skuId = skuModel.getString("skuId");
+                String skuId = skuModel.optString("skuId");
                 String oderInfo;
-                String skuName = skuModel.getString("skuName");
-                int price = skuModel.getJSONObject("price").getInt("amount");
+                String skuName = skuModel.optString("skuName");
+                int price = skuModel.getJSONObject("price").optInt("amount");
                 oderInfo = skuName + "\n价格" + price + "🍃活力值";
                 if (skuName.contains("能量雨") || skuName.contains("敦煌") || skuName.contains("保护罩") || skuName.contains("海洋") || skuName.contains("物种") || skuName.contains("收能量") || skuName.contains("隐身")) {
                     oderInfo = skuName + "\n价格" + price + "🍃活力值" + "\n每日限时兑1个";
@@ -99,12 +98,12 @@ public class Vitality {
 
     private static void handleItemDetail(JSONObject ItemDetail) {
         try {
-            String spuId = ItemDetail.getString("spuId");
+            String spuId = ItemDetail.optString("spuId");
             JSONArray skuModelList = ItemDetail.getJSONArray("skuModelList");
             for (int i = 0; i < skuModelList.length(); i++) {
                 JSONObject skuModel = skuModelList.getJSONObject(i);
-                String skuId = skuModel.getString("skuId");
-                String skuName = skuModel.getString("skuName");
+                String skuId = skuModel.optString("skuId");
+                String skuName = skuModel.optString("skuName");
                 if (!skuModel.has("spuId")) {
                     skuModel.put("spuId", spuId);
                 }
@@ -140,10 +139,10 @@ public class Vitality {
             return false;
         }
         try {
-            String skuName = sku.getString("skuName");
+            String skuName = sku.optString("skuName");
             JSONArray itemStatusList = sku.getJSONArray("itemStatusList");
             for (int i = 0; i < itemStatusList.length(); i++) {
-                String itemStatus = itemStatusList.getString(i);
+                String itemStatus = itemStatusList.optString(i);
                 ExchangeStatus Status = ExchangeStatus.valueOf(itemStatus);
                 if (Status.name().equals(itemStatus) || Status.name().equals(itemStatus) || Status.name().equals(itemStatus)) {
                     Log.record(TAG, "活力兑换🍃[" + skuName + "]停止:" + Status.getNickName());
@@ -154,7 +153,7 @@ public class Vitality {
                     return false;
                 }
             }
-            String spuId = sku.getString("spuId");
+            String spuId = sku.optString("spuId");
             if (VitalityExchange(spuId, skuId, skuName)) {
                 if (skuName.contains("限时")) {
                     Status.setFlagToday("forest::VitalityExchangeLimit::" + skuId);
@@ -186,7 +185,7 @@ public class Vitality {
 
     private static Boolean VitalityExchange(String spuId, String skuId) {
         try {
-            JSONObject jo = new JSONObject(AntForestRpcCall.exchangeBenefit(spuId, skuId));
+            JSONObject jo = MyUtils.myJSONObject(AntForestRpcCall.exchangeBenefit(spuId, skuId));
             if (!jo.optBoolean("success")) {
                 String resultCode = jo.optString("resultCode", "");
                 if ("QUOTA_USER_NOT_ENOUGH".equals(resultCode)) {
@@ -216,7 +215,7 @@ public class Vitality {
             for (String key : skuInfo.keySet()) {
                 JSONObject sku = skuInfo.get(key);
                 assert sku != null;
-                if (sku.getString("skuName").contains(spuName)) {
+                if (sku.optString("skuName").contains(spuName)) {
                     return sku;
                 }
             }

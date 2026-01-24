@@ -35,7 +35,7 @@ enum class GameTask(
             val mark = AlipayMiniMarkHelper.getAlipayMiniMark(appId, version)
             val reqId = "${System.currentTimeMillis()}_${(1..350).random()}"
 
-            val body = JSONObject().apply {
+            val body = MyUtils.myJSONObject().apply {
                 put("v", version); put("code", authCode); put("pf", "zfb")
                 put("reqId", reqId); put("gid", gid); put("version", version)
             }.toString()
@@ -55,7 +55,7 @@ enum class GameTask(
             val stream = if (respCode in 200..299) conn.inputStream else conn.errorStream
             val responseText = stream?.bufferedReader()?.use { it.readText() } ?: "EMPTY"
 
-            val resJson = JSONObject(responseText)
+            val resJson = MyUtils.myJSONObject(responseText)
             if (resJson.optInt("code") == 1) {
                 val token = resJson.optJSONObject("data")?.optString("token")
                 //Log.record(title, "✅ 登录成功，Token 已获取")
@@ -98,7 +98,7 @@ enum class GameTask(
     private fun executeSingleReport(current: Int, total: Int): Boolean {
         return try {
             val mark = AlipayMiniMarkHelper.getAlipayMiniMark(appId, version)
-            val body = JSONObject().apply {
+            val body = MyUtils.myJSONObject().apply {
                 put("v", version); put("version", version)
                 put("reqId", "${System.currentTimeMillis()}_${(10..99).random()}")
                 put("gid", gid); put("action_code", action); put("action_finish_channel", channel)
@@ -121,7 +121,7 @@ enum class GameTask(
             val stream = if (respCode in 200..299) conn.inputStream else conn.errorStream
             val responseText = stream?.bufferedReader()?.use { it.readText() } ?: "NULL_RESPONSE"
 
-            val resJson = JSONObject(responseText)
+            val resJson = MyUtils.myJSONObject(responseText)
             if (resJson.optInt("code") == 1) {
                 if (current % requestsPerEgg == 0) Log.other(title, "📈 进度: $current/$total (已达成 ${current/requestsPerEgg} 个蛋)")
                 true
