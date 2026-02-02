@@ -329,6 +329,25 @@ public class AntForestRpcCall {
         return RequestManager.requestString("com.alipay.antiep.sign", args);
     }
 
+    public static String antiepSign(String userId, String sceneCode)
+            throws JSONException {
+        JSONObject jo = new JSONObject();
+        jo.put("requestType", "rpc");
+        jo.put("sceneCode", sceneCode);
+        jo.put("source", "ANTFOREST");
+        jo.put("userId", userId);
+        String args = "[" + jo + "]";
+        return RequestManager.requestString("com.alipay.antiep.sign", args);
+    }
+
+    public static String queryCommonSign(String bizType) throws JSONException {
+        JSONObject jo = new JSONObject();
+        jo.put("bizType", bizType);
+        jo.put("source", "chInfo_ch_appcenter__chsub_9patch");
+        jo.put("withEntity", true);
+        return RequestManager.requestString("alipay.antforest.forest.h5.queryCommonSign", new JSONArray().put(jo).toString());
+    }
+
     /** 查询背包道具列表 */
     public static String queryPropList(boolean onlyGive) throws JSONException {
         JSONObject jo = MyUtils.myJSONObject();

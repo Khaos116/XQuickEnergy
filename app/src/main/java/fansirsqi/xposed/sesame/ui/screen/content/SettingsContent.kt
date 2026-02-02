@@ -1,6 +1,7 @@
 package fansirsqi.xposed.sesame.ui.screen.content
 
 import SettingsSwitchItem
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import androidx.compose.foundation.clickable
 import android.os.Build
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.rounded.BugReport
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.Extension
 import androidx.compose.material.icons.rounded.Groups
+import androidx.compose.material.icons.rounded.HideSource
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.SatelliteAlt
 import androidx.compose.material3.MaterialTheme
@@ -34,29 +36,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
 import fansirsqi.xposed.sesame.BuildConfig
+import fansirsqi.xposed.sesame.SesameApplication.Companion.PREFERENCES_KEY
 import fansirsqi.xposed.sesame.entity.UserEntity
 import fansirsqi.xposed.sesame.ui.MainActivity
 import fansirsqi.xposed.sesame.ui.ManualTaskActivity
 import fansirsqi.xposed.sesame.ui.RpcDebugActivity
 import fansirsqi.xposed.sesame.ui.compose.CommonAlertDialog
 import fansirsqi.xposed.sesame.ui.extension.joinQQGroup
+import fansirsqi.xposed.sesame.ui.extension.performNavigationToSettings
 import fansirsqi.xposed.sesame.ui.screen.components.SettingsItem
 import fansirsqi.xposed.sesame.ui.screen.components.UserItemCard
+import fansirsqi.xposed.sesame.ui.theme.ThemeManager.setDynamicColor
+import fansirsqi.xposed.sesame.util.IconManager
 
 
 @Composable
 fun SettingsContent(
     userList: List<UserEntity>,
     isDynamicColor: Boolean,          // 新增参数
-    onToggleDynamicColor: (Boolean) -> Unit, // 新增参数
-    onNavigateToSettings: (UserEntity) -> Unit,
     onEvent: (MainActivity.MainUiEvent) -> Unit
 ) {
     // 状态定义在最外层
     var showClearConfigDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
+    val prefs = context.getSharedPreferences(PREFERENCES_KEY, MODE_PRIVATE)
+    var isIconHidden by remember { mutableStateOf(prefs.getBoolean("is_icon_hidden", false)) }
 
     // 使用 Box 或 Column 包裹，或者直接平铺
     Box(modifier = Modifier.fillMaxSize()) {
@@ -97,7 +104,9 @@ fun SettingsContent(
                 }
             } else {
                 items(userList) { user ->
-                    UserItemCard(user = user, onClick = { onNavigateToSettings(user) })
+                    UserItemCard(user = user, onClick = {
+                        context.performNavigationToSettings(user)
+                    })
                 }
             }
 
@@ -159,9 +168,23 @@ fun SettingsContent(
                         subtitle = "跟随壁纸颜色 (Material You)",
                         icon = Icons.Rounded.Palette,
                         checked = isDynamicColor,
-                        onCheckedChange = onToggleDynamicColor
+                        onCheckedChange = { setDynamicColor(!isDynamicColor) }
                     )
                 }
+            }
+
+            item {
+                SettingsSwitchItem(
+                    title = "隐藏应用图标",
+                    subtitle = "在桌面取消显示图标,从模块管理器中进入",
+                    icon = Icons.Rounded.HideSource,
+                    checked = isIconHidden,
+                    onCheckedChange = {
+                        isIconHidden=!isIconHidden
+                        context.getSharedPreferences(PREFERENCES_KEY, MODE_PRIVATE).edit { putBoolean("is_icon_hidden", isIconHidden) }
+                        IconManager.syncIconState(context, isIconHidden)
+                    }
+                )
             }
 
             item {

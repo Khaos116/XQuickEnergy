@@ -36,6 +36,8 @@ fun DeviceInfoCard(info: Map<String, String>) {
             .fillMaxWidth()
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(4.dp)//阴影
+        ,
+        colors=CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
     ) {
         Column(
             modifier = Modifier

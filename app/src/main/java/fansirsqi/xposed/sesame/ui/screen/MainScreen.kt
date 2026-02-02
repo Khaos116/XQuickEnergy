@@ -5,19 +5,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,7 +38,6 @@ import fansirsqi.xposed.sesame.ui.navigation.BottomNavItem
 import fansirsqi.xposed.sesame.ui.screen.content.HomeContent
 import fansirsqi.xposed.sesame.ui.screen.content.LogsContent
 import fansirsqi.xposed.sesame.ui.screen.content.SettingsContent
-import fansirsqi.xposed.sesame.ui.theme.ThemeManager
 import fansirsqi.xposed.sesame.ui.viewmodel.MainViewModel
 import fansirsqi.xposed.sesame.util.CommandUtil.serviceStatus
 
@@ -48,7 +50,6 @@ fun MainScreen(
     viewModel: MainViewModel,
     isDynamicColor: Boolean, // 传给 MainScreen
     userList: List<UserEntity>, // 🔥 确保 userList 被传入 MainScreen
-    onNavigateToSettings: (UserEntity) -> Unit, // 🔥 新增回调：跳转设置
     onEvent: (MainActivity.MainUiEvent) -> Unit,
 ) {
     val context = LocalContext.current
@@ -83,8 +84,16 @@ fun MainScreen(
                             BottomNavItem.Settings -> "模块设置"
                         },
                         style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 28.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        fontSize = 24.sp,
+                        fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                        color = when (currentScreen) {
+                            BottomNavItem.Home -> when (activeUserName) {
+                                "未载入" -> MaterialTheme.colorScheme.error
+                                else -> MaterialTheme.colorScheme.primary
+                            }
+                            else -> MaterialTheme.colorScheme.secondary
+
+                        }
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -92,22 +101,17 @@ fun MainScreen(
                 ),
                 actions = {
 
-                    IconButton(onClick = { showMenu = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "更多")
+
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                        tooltip = { PlainTooltip { Text("重启目标应用") } },
+                        state = rememberTooltipState()
+                    ) {
+                        IconButton(onClick = { }) {
+                            val tint = MaterialTheme.colorScheme.primary
+                            Icon(Icons.Default.Refresh, "refresh account list", tint = tint)
+                        }
                     }
-
-                    DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-
-                        DropdownMenuItem(
-                            text = { Text(if (isIconHidden) "显示应用图标" else "隐藏应用图标") },
-                            onClick = {
-                                isIconHidden = !isIconHidden
-                                onEvent(MainActivity.MainUiEvent.ToggleIconHidden(isIconHidden))
-                                showMenu = false
-                            }
-                        )
-                    }
-
                 }
             )
         },
@@ -153,8 +157,6 @@ fun MainScreen(
                 BottomNavItem.Settings -> SettingsContent(
                     userList = userList,
                     isDynamicColor = isDynamicColor, // 传给 MainScreen
-                    onToggleDynamicColor = ThemeManager::setDynamicColor, // 传入回调
-                    onNavigateToSettings = onNavigateToSettings,
                     onEvent = onEvent
                 )
             }

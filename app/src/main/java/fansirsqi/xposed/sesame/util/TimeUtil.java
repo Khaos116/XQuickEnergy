@@ -442,4 +442,30 @@ public class TimeUtil {
 
         return String.format(Locale.getDefault(), "%02d:%02d:%02d:%03d", hour, minute, second, millis);
     }
+
+    /**
+     * 获取无分隔符的日期字符串
+     *
+     * @return yyyyMMdd
+     */
+    public static String getDateStrNoSplite() {
+        return getDateStrNoSplite(0);
+    }
+
+    /**
+     * 获取无分隔符的日期字符串
+     *
+     * @param plusDay 日期偏移量
+     * @return yyyyMMdd
+     */
+    public static String getDateStrNoSplite(int plusDay) {
+        Calendar c = Calendar.getInstance();
+        if (plusDay != 0) {
+            c.add(Calendar.DATE, plusDay);
+        }
+        Date date = c.getTime();
+        // 使用 yyyyMMdd 格式，匹配好家无忧卡签到记录中的 date 格式
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+        return sdf.format(date);
+    }
 }

@@ -1,11 +1,11 @@
 package fansirsqi.xposed.sesame.task.other.credit2101
 
-
 import android.annotation.SuppressLint
 import fansirsqi.xposed.sesame.data.Status
 import fansirsqi.xposed.sesame.data.StatusFlags
 import fansirsqi.xposed.sesame.hook.internal.LocationHelper
 import fansirsqi.xposed.sesame.model.modelFieldExt.SelectAndCountModelField
+import fansirsqi.xposed.sesame.model.modelFieldExt.SelectModelField
 import fansirsqi.xposed.sesame.util.DataStore
 import fansirsqi.xposed.sesame.util.GlobalThreadPools
 import fansirsqi.xposed.sesame.util.Log
@@ -48,7 +48,6 @@ object Credit2101 {
     //creditSpValue                 印记碎片 购买道具用的
     //staminaAvailable              注能值   进行任务需要的，可以天赋升级
 
-
     //道具类型和ID
     //  SP_PRIZE      印记碎片
     //  CARD_PRIZE    藏品卡片  benefitId：   100021 路引文书(蓝)      100043 驷马难追(紫)       100050 草鞋(蓝)        100051 春秋(蓝)        100061 尾生抱柱(蓝)        100065 铜币(蓝)      100072机械钟(蓝)        100074电子钟(紫)    100075智能手表(金)    100080 破镜重圆(蓝)    100081 凤求凰(蓝)       100082 乞巧针(蓝)          100083 化蝶(紫)         100084 比翼鸟(紫)     100085 白头吟(金)   100070 [日晷]蓝
@@ -64,22 +63,34 @@ object Credit2101 {
      * 信用2101 专用任务/游戏类型定义
      */
     object EventType {
-        /** 消除小游戏 🎮 */
-        const val MINI_GAME_ELIMINATE = "MINI_GAME_ELIMINATE"
-        /** 收集小游戏 🏺 */
-        const val MINI_GAME_COLLECTYJ = "MINI_GAME_COLLECTYJ"
-        /** 击杀小游戏 🧩 */
-        const val MINI_GAME_MATCH3 = "MINI_GAME_MATCH3"
-        /** 金色印记 🟡 */
-        const val GOLD_MARK = "GOLD_MARK"
-        /** 黑色印记 ⚫ */
-        const val BLACK_MARK = "BLACK_MARK"
-        /** 时空之门 🌀 */
-        const val SPACE_TIME_GATE = "SPACE_TIME_GATE"
+            /** 消除小游戏 🎮 */
+            const val MINI_GAME_ELIMINATE = "MINI_GAME_ELIMINATE"
+            /** 收集小游戏 🏺 */
+            const val MINI_GAME_COLLECTYJ = "MINI_GAME_COLLECTYJ"
+            /** 击杀小游戏 🧩 */
+            const val MINI_GAME_MATCH3 = "MINI_GAME_MATCH3"
+            /** 金色印记 🟡 */
+            const val GOLD_MARK = "GOLD_MARK"
+            /** 黑色印记 ⚫ */
+            const val BLACK_MARK = "BLACK_MARK"
+            /** 时空之门 🌀 */
+            const val SPACE_TIME_GATE = "SPACE_TIME_GATE"
+        }
+    object TaskType {
+        /** 自动开宝箱 🎁 */
+        const val AUTO_OPEN_CHEST = "AUTO_OPEN_CHEST"
+        /** 自动签到 📅 */
+        const val AUTO_SIGN_IN = "AUTO_SIGN_IN"
+        /** 每日任务 👷‍♂️ */
+        const val DAILY_TASKS = "DAILY_TASKS"
+        /** 天赋升级 ⚡ */
+        const val UPGRADE_TALENT = "UPGRADE_TALENT"
+        /** 图鉴合成/章节任务 📖 */
+        const val CHAPTER_TASKS = "CHAPTER_TASKS"
     }
     // 私有变量：用于存放整个选项控件
-    private var mCreditOptions: SelectAndCountModelField? = null
-
+    private var mCreditTaskOptions: SelectModelField? = null
+    private var mCreditEventOptions: SelectAndCountModelField? = null
 
 
     /** 故事ID数组 */
@@ -216,25 +227,45 @@ object Credit2101 {
 
     @SuppressLint("DefaultLocale")
     @JvmStatic
-    fun doCredit2101(autoOpenChest: Boolean ,creditoptions: SelectAndCountModelField) {
+    fun doCredit2101(credittaskoptions: SelectModelField ,creditoptions: SelectAndCountModelField) {
         try {
             Log.record(TAG, "执行开始 信用2101")
-            this.mCreditOptions = creditoptions
+            this.mCreditTaskOptions = credittaskoptions
+            this.mCreditEventOptions = creditoptions
+            val selectedTasks = credittaskoptions.value ?: emptyList<String>()
+
             var account = queryAccountAsset() ?: run {
                 Log.error(TAG, "信用2101❌[账户查询失败] 返回为空或非 SUCCESS")
                 return
             }
-            // 1. 开宝箱（如有）
-            if (account.lotteryNo > 0 && autoOpenChest) {
-                openChest(account.lotteryNo)
-                account = queryAccountAsset() ?: account
+            // 1. 开宝箱 (对应 AUTO_OPEN_CHEST)
+            if (selectedTasks.contains(TaskType.AUTO_OPEN_CHEST)) {
+                var account = queryAccountAsset()
+                if (account != null && account.lotteryNo > 0) {
+                    Log.record(TAG, "检测到宝箱数量: ${account.lotteryNo}，准备开启")
+                    openChest(account.lotteryNo)
+                }
             }
-            // 2. 签到
-            handleSignIn()
-            // 3. 每日任务
-            handleUserTasks()
-            // 4. 天赋检查
-            handleAutoUpgradeTalent()
+
+            // 2. 签到 (对应 AUTO_SIGN_IN)
+            if (selectedTasks.contains(TaskType.AUTO_SIGN_IN)) {
+                handleSignIn()
+            }
+
+            // 3. 每日任务 (对应 DAILY_TASKS)
+            if (selectedTasks.contains(TaskType.DAILY_TASKS)) {
+                handleUserTasks()
+            }
+
+            // 4. 天赋检查 (对应 UPGRADE_TALENT)
+            if (selectedTasks.contains(TaskType.UPGRADE_TALENT)) {
+                handleAutoUpgradeTalent()
+            }
+
+            // 5. 图鉴合成 (对应 CHAPTER_TASKS)
+            if (selectedTasks.contains(TaskType.CHAPTER_TASKS)&&!isTaskInBlacklist(StatusFlags.FLAG_CREDIT2101_CHAPTER_TASK_DONE)) {
+                    handleChapterTasks()
+            }
             // 5. 获取经纬度 + cityCode
             val location = resolveLocation(account.cityCode)
             var currentLat: Double
@@ -352,10 +383,7 @@ object Credit2101 {
                 }
             }
 
-            // ================== 所有任务结束后检查是否合成 ==================
-            if (!isTaskInBlacklist(StatusFlags.FLAG_CREDIT2101_CHAPTER_TASK_DONE)) {
-                handleChapterTasks()
-            }
+
             Log.record(TAG, "执行结束 信用2101")
 
         } catch (t: Throwable) {
@@ -918,7 +946,7 @@ object Credit2101 {
 
         var handledCount = 0
         var remainEnergy = account.energyStamina
-        val configMap = mCreditOptions?.value ?: emptyMap()
+        val configMap = mCreditEventOptions?.value ?: emptyMap()
 
         for (i in 0 until eventList.length()) {
             GlobalThreadPools.sleepCompat(1000L)

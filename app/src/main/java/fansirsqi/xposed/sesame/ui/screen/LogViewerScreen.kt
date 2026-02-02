@@ -176,11 +176,7 @@ fun LogViewerScreen(
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    // ✅ 统一使用 Surface (背景) 和 OnSurface (前景)
                     containerColor = MaterialTheme.colorScheme.background,
-//                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-//                    actionIconContentColor = MaterialTheme.colorScheme.onSurface,
-//                    titleContentColor = MaterialTheme.colorScheme.onSurface
                 ),
                 navigationIcon = {
                     TooltipBox(
@@ -234,29 +230,26 @@ fun LogViewerScreen(
                                     unfocusedContainerColor = Color.Transparent,
                                     focusedIndicatorColor = Color.Transparent,
                                     unfocusedIndicatorColor = Color.Transparent,
-                                    // ✅ 修正光标颜色
                                     cursorColor = MaterialTheme.colorScheme.onSurface
                                 ),
-                                // ✅ 修正输入文字颜色
                                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                                     color = MaterialTheme.colorScheme.onSurface
                                 ),
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(onSearch = { /* 收起键盘逻辑 */ })
                             )
-                        } else {
+                        }
+                        else {
                             Column {
                                 Text(
                                     File(filePath).name,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    // ✅ 统一颜色
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     if (state.isLoading) "Loading..." else "${state.totalCount} lines",
                                     style = MaterialTheme.typography.bodySmall,
-                                    // ✅ 统一颜色
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -279,7 +272,8 @@ fun LogViewerScreen(
                                     Icon(Icons.Default.Close, "Clear")
                                 }
                             }
-                        } else {
+                        }
+                        else {
                             Row {
                                 val autoScrollText = if (state.autoScroll) "暂停自动滚动" else "开启自动滚动"
                                 TooltipBox(

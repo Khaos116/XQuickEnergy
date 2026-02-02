@@ -43,7 +43,7 @@ fun ServicesStatusCard(
             .padding(horizontal = 8.dp, vertical = 4.dp), // 稍微调整间距
         colors = CardDefaults.elevatedCardColors(
             containerColor = when (status) {
-                is ServiceStatus.Active -> MaterialTheme.colorScheme.primary
+                is ServiceStatus.Active -> MaterialTheme.colorScheme.primaryContainer
                 is ServiceStatus.Inactive -> MaterialTheme.colorScheme.errorContainer
                 is ServiceStatus.Loading -> MaterialTheme.colorScheme.surfaceVariant
                 else -> {

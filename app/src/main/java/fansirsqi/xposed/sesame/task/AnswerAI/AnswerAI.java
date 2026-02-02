@@ -56,11 +56,11 @@ public class AnswerAI extends Model {
     private final StringModelField GeminiToken = new StringModelField("GeminiAIToken", "gemini-2.5-flash | 设置令牌", "");
     private final TextModelField.UrlTextModelField getDeepSeekToken = new TextModelField.UrlTextModelField("getDeepSeekToken", "DeepSeek | 获取令牌", "https://platform.deepseek.com/usage");
     private final StringModelField DeepSeekToken = new StringModelField("DeepSeekToken", "DeepSeek-R1 | 设置令牌", "");
-    private final TextModelField.ReadOnlyTextModelField getCustomServiceToken = new TextModelField.ReadOnlyTextModelField("getCustomServiceToken", "粉丝福利😍", "下面这个不用动可以白嫖到3月10号让我们感谢讯飞大善人🙏");
+    private final TextModelField.ReadOnlyTextModelField getCustomServiceToken = new TextModelField.ReadOnlyTextModelField("getCustomServiceToken", "粉丝福利😍", "感谢 Summer 提供公益 API");
 
-    private final StringModelField CustomServiceToken = new StringModelField("CustomServiceToken", "自定义服务 | 设置令牌", "sk-pQF9jek0CTTh3boKDcA9DdD7340a4e929eD00a13F681Cd8e");
-    private final StringModelField CustomServiceUrl = new StringModelField("CustomServiceBaseUrl", "自定义服务 | 设置BaseUrl", "https://maas-api.cn-huabei-1.xf-yun.com/v1");
-    private final StringModelField CustomServiceModel = new StringModelField("CustomServiceModel", "自定义服务 | 设置模型", "xdeepseekr1");
+    private final StringModelField CustomServiceToken = new StringModelField("CustomServiceToken", "自定义服务 | 设置令牌", "sk-bklfjplvrjvlufyzkdciaiyjwjulekawrlkmrmhsxxosswnu");
+    private final StringModelField CustomServiceUrl = new StringModelField("CustomServiceBaseUrl", "自定义服务 | 设置BaseUrl", "https://api.siliconflow.cn/v1");
+    private final StringModelField CustomServiceModel = new StringModelField("CustomServiceModel", "自定义服务 | 设置模型", "deepseek-ai/DeepSeek-V3");
 
     @Override
     public ModelFields getFields() {

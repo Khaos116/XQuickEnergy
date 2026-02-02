@@ -45,7 +45,7 @@ fun ModuleStatusCard(
         colors = CardDefaults.elevatedCardColors(
             containerColor =
                 when (status) {
-                    is MainViewModel.ModuleStatus.Activated -> MaterialTheme.colorScheme.primary
+                    is MainViewModel.ModuleStatus.Activated -> MaterialTheme.colorScheme.primaryContainer
                     is MainViewModel.ModuleStatus.NotActivated -> MaterialTheme.colorScheme.errorContainer
                     is MainViewModel.ModuleStatus.Loading -> MaterialTheme.colorScheme.surfaceVariant
                 }

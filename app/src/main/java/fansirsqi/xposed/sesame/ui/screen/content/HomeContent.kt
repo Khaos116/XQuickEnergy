@@ -43,7 +43,6 @@ fun HomeContent(
 ) {
     val context = LocalContext.current
     var isServiceCardExpanded by remember { mutableStateOf(false) }
-
     var isStatusCardExpanded by remember { mutableStateOf(false) }
     LazyColumn(
         modifier = Modifier

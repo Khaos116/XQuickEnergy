@@ -2,6 +2,7 @@ package fansirsqi.xposed.sesame.ui.theme
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import fansirsqi.xposed.sesame.SesameApplication.Companion.PREFERENCES_KEY
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +22,6 @@ object ThemeManager {
 
     fun setDynamicColor(enabled: Boolean) {
         _isDynamicColor.value = enabled
-        prefs.edit().putBoolean("dynamic_color", enabled).apply()
+        prefs.edit { putBoolean("dynamic_color", enabled) }
     }
 }

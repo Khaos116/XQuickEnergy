@@ -1,5 +1,7 @@
 package fansirsqi.xposed.sesame.hook.server
 
+import fansirsqi.xposed.sesame.hook.server.handlers.AlipayMiniMarkHandler
+import fansirsqi.xposed.sesame.hook.server.handlers.AuthCodeHandler
 import fansirsqi.xposed.sesame.hook.server.handlers.DebugHandler
 import fansirsqi.xposed.sesame.hook.server.handlers.HttpHandler
 import fansirsqi.xposed.sesame.util.Log
@@ -18,6 +20,9 @@ class ModuleHttpServer(
     init {
         // 注册路由
         register("/debugHandler", DebugHandler(secretToken), "调试接口")
+        // 在 ModuleHttpServer 的 init 块中添加
+        register("/getAlipayMiniMark", AlipayMiniMarkHandler(), "获取支付宝小程序标记")
+        register("/getAuthCode", AuthCodeHandler(), "获取OAuth2授权码")
     }
 
     @Suppress("SameParameterValue")

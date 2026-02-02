@@ -571,7 +571,7 @@ public class AntFarmRpcCall {
     }
 
     /**
-     * 获取芝麻NPC任务列表
+     * 获取芝麻NPC任务列表  大表哥
      */
     public static String listZhimaNpcFarmTask() {
         String args = "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"zhimaxiaoji_lianjin\",\"taskSceneCode\":\"ANTFARM_ZHIMA_NPC_TASK\",\"version\":\"" + VERSION + "\"}]";
@@ -591,7 +591,81 @@ public class AntFarmRpcCall {
                 "[{\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"chouchoule\"}]");
     }
 
+    /**
+     * 获取黄金小鸡任务列表
+     * 对应日志中的 taskSceneCode: "ANTFARM_CAIFU_NPC_TASK"
+     */
+    public static String listGoldChickenFarmTask() {
+        String args = "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"taskSceneCode\":\"ANTFARM_CAIFU_NPC_TASK\",\"version\":\"" + VERSION + "\"}]";
+        return RequestManager.requestString("com.alipay.antfarm.listFarmTask", args);
+    }
 
+    /**
+     * 领取黄金小鸡任务奖励 (新增)
+     * taskSceneCode: ANTFARM_CAIFU_NPC_TASK
+     */
+    public static String receiveGoldChickenTaskAward(String taskId) {
+        String args = "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"taskId\":\"" + taskId + "\",\"taskSceneCode\":\"ANTFARM_CAIFU_NPC_TASK\",\"version\":\"" + VERSION + "\"}]";
+        return RequestManager.requestString("com.alipay.antfarm.receiveFarmTaskAward", args);
+    }
+
+    /**
+     * 理财体验金：查询活动首页
+     */
+    public static String lctyj2025PromoIndex() {
+        String args = "[{\"blockFeature\":{},\"isAdoutterPos\":\"N\",\"pageType\":\"normal\"}]";
+        // 注意：headers 需要根据实际抓包补充，这里简化处理，通常 RPC 框架会自动处理 headers
+        return RequestManager.requestString("com.alipay.fundscenebff.needle.lctyj2025.promoIndex", args);
+    }
+
+    /**
+     * 理财体验金：开启体验计划
+     */
+    public static String lctyj2025OpenPlan() {
+        // 构造模拟的请求数据，基于日志分析
+        // 关键参数：conditionType, userPurchaseAmount, payChannelIndex
+        String args = "[{" +
+                "\"conditionType\":\"STABLE_AND_EQUITY_BUY_ONE_POSITIVE_PROFIT\"," +
+                "\"context\":{" +
+                "\"AuthenticationType\":\"PASSWORD\"," +
+                "\"payChannelFullName\":\"余额宝\"," +
+                "\"payChannelIndex\":\"[\\\"FUND_DC_MONEYFUND_DEFAULT_ALIPAY_NULL\\\"]\"," +
+                "\"payChannelType\":\"MONEYFUND\"," +
+                "\"userPurchaseAmount\":\"10\"" +
+                "}," +
+                "\"mismatch\":\"AGREE_MISMATCH\"," +
+                "\"needCreatePackage\":true," +
+                "\"packageType\":\"bigAmountCamp\"" +
+                "}]";
+        return RequestManager.requestString("com.alipay.fundscenebff.needle.lctyj2025.openPlan", args);
+    }
+
+    /**
+     * 黄金票任务：模拟进入黄金攒存页面（仅查询，不涉及交易）
+     */
+    public static String queryGoldCollectionV2() {
+        String args = "[{\"pageSize\":10,\"queryType\":\"CREATE_PLAN\",\"specifyGram\":\"2\",\"subQueryType\":\"MAKE_PLAN\"}]";
+        return RequestManager.requestString("com.alipay.ficcbffweb.gold.collectionV2.query", args);
+    }
+
+    /**
+     * 获取农场小鸡(肥料鸡)任务列表
+     * source: feiliaoji_202507
+     * taskSceneCode: ANTFARM_ORCHARD_NPC_TASK
+     */
+    public static String listFarmChickenFarmTask() {
+        String args = "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"feiliaoji_202507\",\"taskSceneCode\":\"ANTFARM_ORCHARD_NPC_TASK\",\"version\":\"" + VERSION + "\"}]";
+        return RequestManager.requestString("com.alipay.antfarm.listFarmTask", args);
+    }
+
+    /**
+     * 领取农场小鸡任务奖励
+     * awardType: NPC_ANIMAL_FOOD
+     */
+    public static String receiveFarmChickenTaskAward(String taskId) {
+        String args = "[{\"awardType\":\"NPC_ANIMAL_FOOD\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"feiliaoji_202507\",\"taskId\":\"" + taskId + "\",\"taskSceneCode\":\"ANTFARM_ORCHARD_NPC_TASK\",\"version\":\"" + VERSION + "\"}]";
+        return RequestManager.requestString("com.alipay.antfarm.receiveFarmTaskAward", args);
+    }
 
     /**
      * 领取蚂蚁庄园游戏中心奖励 (开宝箱)
