@@ -7,7 +7,7 @@ plugins {
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.rikka.tools.refine)
 }
-val mVersionName = "1.0.0"
+val mVersionName = "1.0.0fix"
 android {
   namespace = "fansirsqi.xposed.sesame"
   compileSdk = 36
