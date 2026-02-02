@@ -89,7 +89,7 @@ fun SettingsContent(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.outline,
                         modifier = Modifier.clickable {
-                          onNavigateToSettings(
+                          context.performNavigationToSettings(
                             UserEntity(
                               userId = "0",
                               account = "0",
