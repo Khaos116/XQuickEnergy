@@ -28,8 +28,8 @@ android {
         //Android15.0       35
         //noinspection EditedTargetSdkVersion,OldTargetApi
         targetSdk 34
-        versionCode 1389
-        versionName "v1.8.9fix"//需要带上fix，不然自动发布会有判断问题
+        versionCode 1390
+        versionName "v1.9.0fix"//需要带上fix，不然自动发布会有判断问题
 
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
         //resConfigs "zh-rCN", "zh-rTW", "zh-rHK", "en-rUS", "en-rGB"
@@ -130,6 +130,8 @@ dependencies {
     compatibleImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.5'
     //noinspection NewerVersionAvailable,GradleDependency
     compatibleImplementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.13.5'
+    // NanoHTTPD 核心依赖（最新稳定版）
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
 }
 
 //打包处理
