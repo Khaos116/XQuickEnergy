@@ -4,6 +4,7 @@ import fansirsqi.xposed.sesame.data.Status
 import fansirsqi.xposed.sesame.hook.Toast
 import fansirsqi.xposed.sesame.util.GameTask
 import fansirsqi.xposed.sesame.util.Log
+import fansirsqi.xposed.sesame.util.MyUtils
 import fansirsqi.xposed.sesame.util.ResChecker
 import fansirsqi.xposed.sesame.util.maps.UserMap
 import kotlinx.coroutines.delay
@@ -71,7 +72,7 @@ object EnergyRainCoroutine {
             val maxPlayLimit = 10
 
             do {
-                val joEnergyRainHome = JSONObject(AntForestRpcCall.queryEnergyRainHome())
+                val joEnergyRainHome = MyUtils.myJSONObject(AntForestRpcCall.queryEnergyRainHome())
                 randomDelay(250, 400) // 随机延迟 300-400ms
                 if (!ResChecker.checkRes(TAG, joEnergyRainHome)) {
                     Log.record(TAG, "查询能量雨状态失败")
@@ -92,7 +93,7 @@ object EnergyRainCoroutine {
                 // 2️⃣ 检查是否可以赠送能量雨
                 if (canGrantStatus) {
                     Log.record(TAG, "有送能量雨的机会")
-                    val joEnergyRainCanGrantList = JSONObject(AntForestRpcCall.queryEnergyRainCanGrantList())
+                    val joEnergyRainCanGrantList = MyUtils.myJSONObject(AntForestRpcCall.queryEnergyRainCanGrantList())
                     val grantInfos = joEnergyRainCanGrantList.optJSONArray("grantInfos") ?: org.json.JSONArray()
                     val giveEnergyRainSet = AntForest.giveEnergyRainList!!.value
                     var granted = false
@@ -100,9 +101,9 @@ object EnergyRainCoroutine {
                     for (j in 0 until grantInfos.length()) {
                         val grantInfo = grantInfos.getJSONObject(j)
                         if (grantInfo.optBoolean("canGrantedStatus", false)) {
-                            val uid = grantInfo.getString("userId")
+                            val uid = grantInfo.optString("userId")
                             if (giveEnergyRainSet.contains(uid)) {
-                                val rainJsonObj = JSONObject(AntForestRpcCall.grantEnergyRainChance(uid))
+                                val rainJsonObj = MyUtils.myJSONObject(AntForestRpcCall.grantEnergyRainChance(uid))
                                 Log.record(TAG, "尝试送能量雨给【${UserMap.getMaskName(uid)}】")
                                 if (ResChecker.checkRes(TAG, rainJsonObj)) {
                                     Log.forest(
@@ -194,10 +195,10 @@ object EnergyRainCoroutine {
     private suspend fun startEnergyRain() {
         try {
             Log.record("开始执行能量雨🌧️")
-            val joStart = JSONObject(AntForestRpcCall.startEnergyRain())
+            val joStart = MyUtils.myJSONObject(AntForestRpcCall.startEnergyRain())
 
             if (ResChecker.checkRes(TAG, joStart)) {
-                val token = joStart.getString("token")
+                val token = joStart.optString("token")
                 val bubbleEnergyList = joStart.getJSONObject("difficultyInfo").getJSONArray("bubbleEnergyList")
                 var sum = 0
 
@@ -206,7 +207,7 @@ object EnergyRainCoroutine {
                 }
 
                 randomDelay(5000, 5200) // 随机延迟 5-5.2秒，模拟真人玩游戏
-                val resultJson = JSONObject(AntForestRpcCall.energyRainSettlement(sum, token))
+                val resultJson = MyUtils.myJSONObject(AntForestRpcCall.energyRainSettlement(sum, token))
 
                 if (ResChecker.checkRes(TAG, resultJson)) {
                     val s = "收获能量雨🌧️[${sum}g]"
@@ -236,7 +237,7 @@ object EnergyRainCoroutine {
         try {
             // 1. 查询当前是否有可接或已接的游戏任务
             val response = AntForestRpcCall.queryEnergyRainEndGameList()
-            val jo = JSONObject(response)
+            val jo = MyUtils.myJSONObject(response)
             if (!ResChecker.checkRes(TAG, jo)) {
                 //Log.error(TAG, "查询能量雨游戏任务失败 $jo")
                 return false
@@ -244,7 +245,7 @@ object EnergyRainCoroutine {
             // 2. 先处理“有新任务可以接”的情况
             if (jo.optBoolean("needInitTask", false)) {
                 // Log.record(TAG, "检测到新任务，准备接入[森林救援队]...")
-                val initRes = JSONObject(AntForestRpcCall.initTask("GAME_DONE_SLJYD"))
+                val initRes = MyUtils.myJSONObject(AntForestRpcCall.initTask("GAME_DONE_SLJYD"))
                 if (!ResChecker.checkRes(TAG, initRes)) {
                     // Log.record(TAG, "[森林救援队] 任务接入失败")
                     // 初始化失败，直接返回false

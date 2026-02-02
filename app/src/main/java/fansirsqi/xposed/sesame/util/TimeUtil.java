@@ -459,7 +459,7 @@ public class TimeUtil {
      * @return yyyyMMdd
      */
     public static String getDateStrNoSplite(int plusDay) {
-        Calendar c = Calendar.getInstance();
+        Calendar c = MyUtils.getInstance();
         if (plusDay != 0) {
             c.add(Calendar.DATE, plusDay);
         }
