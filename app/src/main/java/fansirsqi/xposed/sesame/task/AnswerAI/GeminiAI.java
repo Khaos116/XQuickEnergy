@@ -1,165 +1,124 @@
 package fansirsqi.xposed.sesame.task.AnswerAI;
 
-import static fansirsqi.xposed.sesame.util.JsonUtil.getValueByPath;
-
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+import fansirsqi.xposed.sesame.util.JsonUtil;
 import fansirsqi.xposed.sesame.util.Log;
-import fansirsqi.xposed.sesame.util.MyUtils;
-import lombok.Getter;
-import lombok.Setter;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 
 /**
- * GeminiAI帮助类，用于与Gemini接口交互以获取AI回答
- * 支持单条文本问题及带有候选答案列表的问题请求
+ * GenAI帮助类
+ *
+ * @author Xiong
  */
 public class GeminiAI implements AnswerAIInterface {
-    private static final String TAG = GeminiAI.class.getSimpleName();
-    private static final String BASE_URL = "https://api.genai.gd.edu.kg/google";
-    private static final String CONTENT_TYPE = "application/json";
-    private static final String JSON_PATH = "candidates.[0].content.parts.[0].text";
-    private static final String PREFIX = "只回答答案 ";
-    private static final Integer TIME_OUT_SECONDS = 180;
+  @Override
+  public void setModelName(String modelName) {
+    Log.other("不接受更改Gemini模型:" + modelName);
+  }
 
-    @Setter
-    @Getter
-    private String modelName = "gemini-2.5-flash";
-    private final String token;
+  @Override
+  public String getModelName() {
+    return "gemini-2.5-flash";
+  }
 
-    public GeminiAI(String token) {
-        this.token = token != null && !token.isEmpty() ? token : "";
+  @Override
+  public String getAnswerStr(String text, String model) {
+    setModelName(model);
+    return getAnswerStr(text);
+  }
+
+  private final String TAG = GeminiAI.class.getSimpleName();
+
+  private final String apiUrl = "https://api.genai.gd.edu.kg/google";
+
+  private final String token;
+
+  // 私有构造函数，防止外部实例化
+  public GeminiAI(String token) {
+    if (token != null && !token.isEmpty()) {
+      this.token = token;
+    } else {
+      this.token = "";
     }
+  }
 
-    // 移除控制字符
-    private String removeControlCharacters(String text) {
-        return text.replaceAll("\\p{Cntrl}&&[^\n" + "\t]", "");
-    }
+  /**
+   * 获取AI回答结果
+   *
+   * @param text 问题内容
+   * @return AI回答结果
+   */
+  @Override
+  public String getAnswerStr(String text) {
+    Response response = null;
+    try {
+      JSONObject jsonReq = new JSONObject();
+      // 针对选择题优化的 Prompt
+      String fullPrompt = "直接给出答案文字，严禁解释，不要标点符号。题目：" + text;
 
-    /**
-     * 构建请求体
-     *
-     * @param text 问题内容
-     * @return 请求体的JSON字符串
-     */
-    private String buildRequestBody(String text) {
-        text = removeControlCharacters(text);
-        return String.format("{" + "\"contents\":[{" + "\"parts\":[{" + "\"text\":\"%s\"" + "}]" + "}]" + "}", PREFIX + text);
-    }
+      JSONArray contents = new JSONArray();
+      contents.put(new JSONObject().put("parts", new JSONArray().put(new JSONObject().put("text", fullPrompt))));
+      jsonReq.put("contents", contents);
 
-    /**
-     * 构建请求URL
-     *
-     * @return 完整的请求URL
-     */
-    private String buildRequestUrl() {
-        return String.format("%s/v1beta/models/%s:generateContent?key=%s",
-                BASE_URL, this.modelName, token);
-    }
+      // 必须开启 google_search，否则无法回答最新的常识题（如蚂蚁庄园）
+      jsonReq.put("tools", new JSONArray().put(new JSONObject().put("google_search", new JSONObject())));
 
-    @Override
-    public String getAnswerStr(String text, String model) {
-        setModelName(model);
-        return getAnswerStr(text);
-    }
+      OkHttpClient client = new OkHttpClient();
+      RequestBody body = RequestBody.create(jsonReq.toString(), MediaType.parse("application/json"));
 
-    /**
-     * 获取AI回答结果
-     *
-     * @param text 问题内容
-     * @return AI回答结果
-     */
-    @Override
-    public String getAnswerStr(String text) {
-        String result = "";
-        try {
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(TIME_OUT_SECONDS, TimeUnit.SECONDS)
-                    .writeTimeout(TIME_OUT_SECONDS, TimeUnit.SECONDS)
-                    .readTimeout(TIME_OUT_SECONDS, TimeUnit.SECONDS)
-                    .build();
+      String modelName = "gemini-2.5-flash"; // 确保使用你刚才测通的模型
+      String finalUrl = apiUrl + "/v1beta/models/" + modelName + ":generateContent?key=" + token;
 
-            String content = buildRequestBody(text);
-            MediaType mediaType = MediaType.parse(CONTENT_TYPE);
-            RequestBody body = RequestBody.create(content, mediaType);
-            String url = buildRequestUrl();
-            Request request = new Request.Builder()
-                    .url(url)
-                    .method("POST", body)
-                    .addHeader("Content-Type", CONTENT_TYPE)
-                    .build();
+      Request request = new Request.Builder().url(finalUrl).post(body).build();
+      response = client.newCall(request).execute();
 
-            try (Response response = client.newCall(request).execute()) {
-                if (response.body() == null) {
-                    return result;
-                }
-                String json = response.body().string();
-                if (!response.isSuccessful()) {
-                    Log.other("Gemini请求失败");
-                    Log.record(TAG, "Gemini接口异常：" + json);
-                    return result;
-                }
-                JSONObject jsonObject = MyUtils.myJSONObject(json);
-                result = getValueByPath(jsonObject, JSON_PATH);
-            }
-        } catch (Exception e) {
-            Log.printStackTrace(TAG, e);
+      if (response.body() != null) {
+        String jsonStr = response.body().string();
+        // 调试建议：Log.i("Gemini Raw: " + jsonStr);
+        JSONObject resObj = new JSONObject(jsonStr);
+        String answer = JsonUtil.getValueByPath(resObj, "candidates.[0].content.parts.[0].text");
+
+        if (answer != null) {
+          // 清理所有可能干扰匹配的杂质
+          return answer.trim().replaceAll("[。，.！!？? \"'“”]", "");
         }
-        return result;
+      }
+    } catch (Exception e) {
+      Log.printStackTrace(TAG, e);
+      Log.error("Gemini答题出错: " + e.getMessage());
+      Log.other("Gemini答题出错: " + e.getMessage());
+    } finally {
+      if (response != null) response.close();
     }
+    return "";
+  }
 
-    /**
-     * 获取答案
-     *
-     * @param title      问题
-     * @param answerList 答案集合
-     * @return 空没有获取到
-     */
-    @Override
-    public Integer getAnswer(String title, List<String> answerList) {
-        try {
-            StringBuilder answerStr = new StringBuilder();
-            for (int i = 0; i < answerList.size(); i++) {
-                answerStr.append(i + 1).append(".[")
-                        .append(answerList.get(i)).append("]\n");
-            }
-
-            final String question = "问题：" + title + "\n\n" +
-                    "答案列表：\n\n" + answerStr + "\n\n" +
-                    "请只返回答案列表中的序号";
-
-            // 同步调用，主线程等待结果
-            String answerResult = getAnswerStr(question);
-
-            if (answerResult != null && !answerResult.isEmpty()) {
-                try {
-                    int index = Integer.parseInt(answerResult.trim()) - 1;
-                    if (index >= 0 && index < answerList.size()) {
-                        return index;
-                    }
-                } catch (NumberFormatException e) {
-                    // 如果不是纯数字，尝试模糊匹配答案内容
-                    Log.other("AI🧠回答，非序号格式：" + answerResult);
-                }
-
-                // 模糊匹配答案内容
-                for (int i = 0; i < answerList.size(); i++) {
-                    if (answerResult.contains(answerList.get(i))) {
-                        return i;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.printStackTrace(TAG, e);
+  /**
+   * 获取答案
+   *
+   * @param title      问题
+   * @param answerList 答案集合
+   * @return 空没有获取到
+   */
+  @Override
+  public Integer getAnswer(String title, List<String> answerList) {
+    StringBuilder answerStr = new StringBuilder();
+    for (String answer : answerList) {
+      answerStr.append("[").append(answer).append("]");
+    }
+    String answerResult = getAnswerStr(title + "\n" + answerStr);
+    if (answerResult != null && !answerResult.isEmpty()) {
+      for (int i = 0, size = answerList.size(); i < size; i++) {
+        if (answerResult.contains(answerList.get(i))) {
+          return i;
         }
-        return -1;
+      }
     }
+    return -1;
+  }
 }
+
