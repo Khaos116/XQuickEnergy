@@ -705,8 +705,12 @@ class ApplicationHook {
                 record(successMsg)
                 show(successMsg)
                 Log.other(successMsg)
+                Log.farm(successMsg)
+                Log.forest(successMsg)
                 record(TAG, "编译时间：" + BuildConfig.BUILD_DATE + " " + BuildConfig.BUILD_TIME)
                 Log.other(TAG, "编译时间：" + BuildConfig.BUILD_DATE + " " + BuildConfig.BUILD_TIME)
+                Log.farm("编译时间：" + BuildConfig.BUILD_DATE + " " + BuildConfig.BUILD_TIME)
+                Log.forest(TAG, "编译时间：" + BuildConfig.BUILD_DATE + " " + BuildConfig.BUILD_TIME)
 
                 offline = false
                 init = true
