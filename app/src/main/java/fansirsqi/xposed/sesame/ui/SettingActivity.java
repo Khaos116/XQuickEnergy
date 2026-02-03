@@ -67,7 +67,7 @@ public class SettingActivity extends BaseActivity {
             this.userId = intent.getStringExtra("userId");
             this.userName = intent.getStringExtra("userName");
         }
-
+        Log.other("当前设置账号:" + userName);
         // 初始化各种配置数据
         Model.initAllModel();
         UserMap.setCurrentUserId(this.userId);
